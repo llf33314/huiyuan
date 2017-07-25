@@ -1,0 +1,64 @@
+####### 使用YML语法形式配置，注意分号后面需要加空格
+####### 例如：port: 8088
+######################## 容器 ########################
+server:
+ port: 8080
+ context-path: /
+
+######################## Spring 全局设置 ########################
+spring:
+ application:
+  name: zhangmz-SpringBoot
+ profiles:
+  active: dev
+#  active: test
+#  active: prod
+  # SpringMvc 配置
+ mvc:
+  view:
+   prefix: /jsp/
+   suffix: .jsp
+# security:
+#  jwt:
+#    tokenExpirationTime: 15 # Number of minutes
+#    refreshTokenExpTime: 60 # Minutes
+#    tokenIssuer: zhangmz
+#    tokenSigningKey: xm8EV6Hy5RMFK4EEACIDAwQus
+ http:
+  encoding:
+    force: true
+    charset: UTF-8
+    enabled: true
+# thymeleaf:
+#  mode: LEGACYHTML5
+#  suffix: .jsp
+
+  #自动重启默认关闭
+ devtools:
+  restart:
+   enabled: true
+
+
+######################## 日志 ########################
+#logging:
+# 注：二者不能同时使用，如若同时使用，则只有logging.file生效
+# path: logs #日志文件目录
+# 默认情况下，日志文件的大小达到10MB时会切分一次，产生新的日志文件，默认级别为：ERROR、WARN、INFO
+# file: logs/member.log #日志文件名
+# mybatis 路径
+mybatis:
+ mapperLocations: classpath*:mapper/*.xml
+ type-aliases-package: com.gt.member.entity
+
+
+
+######################## Logback ########################
+
+# debug: true
+
+######################## 全局配置 ########################
+#web:
+#  homeUrl: http://192.168.2.100:8081/
+
+
+

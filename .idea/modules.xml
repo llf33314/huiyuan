@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/member-common/member-common.iml" filepath="$PROJECT_DIR$/member-common/member-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/member-dao/member-dao.iml" filepath="$PROJECT_DIR$/member-dao/member-dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/member-entity/member-entity.iml" filepath="$PROJECT_DIR$/member-entity/member-entity.iml" />
+      <module fileurl="file://$PROJECT_DIR$/member-generator/member-generator.iml" filepath="$PROJECT_DIR$/member-generator/member-generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/member-service/member-service.iml" filepath="$PROJECT_DIR$/member-service/member-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/member-web/member-web.iml" filepath="$PROJECT_DIR$/member-web/member-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/parent.iml" filepath="$PROJECT_DIR$/parent.iml" />
+    </modules>
+  </component>
+</project>

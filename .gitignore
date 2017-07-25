@@ -1,0 +1,9 @@
+# Created by .ignore support plugin (hsz.mobi)
+/.idea/
+/member-common/member-common.iml
+/member-dao/member-dao.iml
+/member-entity/member-entity.iml
+/member-generator/member-generator.iml
+/member-service/member-service.iml
+/member-web/member-web.iml
+/parent.iml

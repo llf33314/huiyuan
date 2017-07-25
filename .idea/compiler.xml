@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="member-common" />
+        <module name="member-dao" />
+        <module name="member-entity" />
+        <module name="member-generator" />
+        <module name="member-service" />
+        <module name="member-web" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="member-common" target="1.7" />
+      <module name="member-dao" target="1.7" />
+      <module name="member-entity" target="1.7" />
+      <module name="member-generator" target="1.7" />
+      <module name="member-service" target="1.7" />
+      <module name="member-web" target="1.7" />
+      <module name="parent" target="1.7" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
