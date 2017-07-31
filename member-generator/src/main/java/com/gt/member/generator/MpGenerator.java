@@ -16,24 +16,23 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * @author zhangmz
+ * @author zhangmz`
  * @create 2017/7/9
  */
 public class MpGenerator {
 
     // 项目的绝对路径
-    public static final  String   outPutBaseDir      = "E:/work_news/member/member-generator/";
+    public static final  String   outPutBaseDir      = "F:/work/member/member-generator/";
     // 生成*.java 的文件路径
     public static final  String   outPutJavaModel    = outPutBaseDir + "src/main/java";
     // 需要生成的表
-    public static final  String[] generatorTableName = new String[] { "t_member_applet_image"
-	};
-    // 作者
-    private static final String   author             = "yangqian";
+    public static final  String[] generatorTableName = new String[] {
+		    "bus_user","t_wx_public_users"
+    };
     // 去除表前缀 例如：bus_user 填入bus 生成的 user
-    public static final  String[] tablePrefix        = new String[] {"t"};
+    public static final  String[] tablePrefix        = new String[] { "t_" };
     // 生成的包路径
-    public static final  String   packagePath        = "com.gt.member.generator";
+    public static final  String   packagePath        = "com.gt.member";
     public static final  String   moduleName         = "";
     // 生成mapper.xml 文件路径
     public static final  String   generatorXmlPath   = outPutBaseDir + "src/main/java/com/gt/member/generator/xml/";
@@ -50,13 +49,14 @@ public class MpGenerator {
     // 驱动
     public static final  String   driverName         = "com.mysql.jdbc.Driver";
     // url
-    public static final  String   url                = "jdbc:mysql://14.29.79.226:3306/gt?characterEncoding=utf8";
+    public static final  String   url                = "jdbc:mysql://14.29.79.226:3306/gt_aliyuan?characterEncoding=utf8";
     // 数据库用户名
     public static final  String   username           = "root";
     // 密码
     public static final  String   password           = "gt123456";
-
-    private static Logger logger = LoggerFactory.getLogger( MpGenerator.class );
+    // 作者
+    private static final String   author             = "pengjiangli";
+    private static       Logger   logger             = LoggerFactory.getLogger( MpGenerator.class );
 
     /**
      * <p>
@@ -109,11 +109,11 @@ public class MpGenerator {
 					// 自定义 mapper 父类
 					.setSuperMapperClass( "com.baomidou.mybatisplus.mapper.BaseMapper" )
 					// 自定义 service 父类
-					.setSuperServiceClass( "BaseService" )
+					.setSuperServiceClass( "com.gt.member.base.BaseService" )
 					// 自定义 service 实现类父类
-					.setSuperServiceImplClass( "BaseServiceImpl" )
+					.setSuperServiceImplClass( "com.gt.member.base.BaseServiceImpl" )
 					// 自定义 controller 父类
-					.setSuperControllerClass( "BaseController" )
+					.setSuperControllerClass( "com.gt.member.base.BaseController" )
 					// 【实体】是否生成字段常量（默认 false）
 					// public static final String ID = "test_id";
 					// .setEntityColumnConstant(true)

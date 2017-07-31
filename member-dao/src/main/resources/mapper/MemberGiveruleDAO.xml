@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberGiveruleDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberGiverule">
+		<id column="gr_id" property="grId" />
+		<result column="public_id" property="publicId" />
+		<result column="gt_id" property="gtId" />
+		<result column="ct_id" property="ctId" />
+		<result column="gr_rechargeMoney" property="grRechargeMoney" />
+		<result column="gr_number" property="grNumber" />
+		<result column="gr_discount" property="grDiscount" />
+		<result column="gr_giveCount" property="grGiveCount" />
+		<result column="gr_giveType" property="grGiveType" />
+		<result column="gr_startDate" property="grStartDate" />
+		<result column="gr_validDate" property="grValidDate" />
+		<result column="gr_upgradeType" property="grUpgradeType" />
+		<result column="gr_upgradeCount" property="grUpgradeCount" />
+		<result column="gr_equities" property="grEquities" />
+		<result column="create_userId" property="createUserId" />
+		<result column="creatDate" property="creatDate" />
+		<result column="delayDay" property="delayDay" />
+		<result column="busId" property="busId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        gr_id AS grId, public_id AS publicId, gt_id AS gtId, ct_id AS ctId, gr_rechargeMoney AS grRechargeMoney, gr_number AS grNumber, gr_discount AS grDiscount, gr_giveCount AS grGiveCount, gr_giveType AS grGiveType, gr_startDate AS grStartDate, gr_validDate AS grValidDate, gr_upgradeType AS grUpgradeType, gr_upgradeCount AS grUpgradeCount, gr_equities AS grEquities, create_userId AS createUserId, creatDate, delayDay, busId
+    </sql>
+
+	<select id="findByBusIdAndCtId" resultType="Map">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM t_member_giverule
+		where busId=#{busId} and ct_id=${ctId} ORDER BY gr_id ASC
+	</select>
+
+	<delete id="deleteBygrIds">
+		delete from t_member_giverule
+		where	gr_id in
+		<foreach close=")" collection="grIds" index="index" item="grId" open="(" separator=",">
+			#{grId}
+		</foreach>
+	</delete>
+
+	<select id="findBybusIdAndGtId" resultType="java.lang.Integer">
+		select gr_id FROM t_member_giverule where busId=#{busId} and gt_id=#{gtId}
+	</select>
+
+	<select id="findBybusIdAndGtIdAndCtId" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" />
+		from t_member_giverule where busId=#{busId} and gt_id=#{gtId} and ct_id=${ctId} LIMIT 1
+	</select>
+
+
+	<select id="findBybusIdAndCtId1" resultType="Map">
+		SELECT
+		*
+		FROM t_member_giverule gr inner join t_member_gradetype gt on gr.gt_id=gt.gt_id
+		where gr.busId=#{busId} and gr.ct_id=${ctId} ORDER BY gr.gr_id ASC
+	</select>
+
+
+</mapper>

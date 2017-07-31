@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberAppletOpenidDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberAppletOpenid">
+		<id column="id" property="id" />
+		<result column="openid" property="openid" />
+		<result column="member_id" property="memberId" />
+		<result column="style" property="style" />
+		<result column="bus_id" property="busId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, openid, member_id AS memberId, style, bus_id AS busId
+    </sql>
+
+	<select id="findByOpenId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List"/>
+		from t_wx_member_applet_openid
+		where openid = #{openid}
+		limit 0,1
+	</select>
+
+	<select id="findByOpenIdAndBusId" resultMap="BaseResultMap" >
+		select
+		<include refid="Base_Column_List"/>
+		from t_wx_member_applet_openid
+		where openid = #{openid} and bus_id = #{busId,jdbcType=INTEGER}
+		limit 0,1
+	</select>
+
+	<update id="updateMemberId">
+		update t_wx_member_applet_openid set member_id=#{memberId} where member_id=#{memberIdOld}
+	</update>
+
+	<select id="findByMemberId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"/>
+		from t_wx_member_applet_openid
+		where style = #{style} and member_id = #{memberId} limit 0,1
+	</select>
+
+</mapper>

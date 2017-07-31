@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.mapper.BusUserDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.BusUser">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="email" property="email" />
+		<result column="password" property="password" />
+		<result column="phone" property="phone" />
+		<result column="gender" property="gender" />
+		<result column="register_ip" property="registerIp" />
+		<result column="recent_ip" property="recentIp" />
+		<result column="ctime" property="ctime" />
+		<result column="mtime" property="mtime" />
+		<result column="status" property="status" />
+		<result column="fans_currency" property="fansCurrency" />
+		<result column="flow" property="flow" />
+		<result column="city_id" property="cityId" />
+		<result column="level" property="level" />
+		<result column="startTime" property="startTime" />
+		<result column="endTime" property="endTime" />
+		<result column="years" property="years" />
+		<result column="statTime" property="statTime" />
+		<result column="industryid" property="industryid" />
+		<result column="pid" property="pid" />
+		<result column="sms_count" property="smsCount" />
+		<result column="istechnique" property="istechnique" />
+		<result column="advert" property="advert" />
+		<result column="busmoney_level" property="busmoneyLevel" />
+		<result column="regionids" property="regionids" />
+		<result column="isagent" property="isagent" />
+		<result column="agentid" property="agentid" />
+		<result column="realname" property="realname" />
+		<result column="login_source" property="loginSource" />
+		<result column="is_binding" property="isBinding" />
+		<result column="unbundling_time" property="unbundlingTime" />
+		<result column="fixed_phone" property="fixedPhone" />
+		<result column="customer_id" property="customerId" />
+		<result column="merchant_name" property="merchantName" />
+		<result column="add_source" property="addSource" />
+		<result column="wz_auth" property="wzAuth" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, email, password, phone, gender, register_ip AS registerIp, recent_ip AS recentIp, ctime, mtime, status, fans_currency AS fansCurrency, flow, city_id AS cityId, level, startTime, endTime, years, statTime, industryid, pid, sms_count AS smsCount, istechnique, advert, busmoney_level AS busmoneyLevel, regionids, isagent, agentid, realname, login_source AS loginSource, is_binding AS isBinding, unbundling_time AS unbundlingTime, fixed_phone AS fixedPhone, customer_id AS customerId, merchant_name AS merchantName, add_source AS addSource, wz_auth AS wzAuth
+    </sql>
+
+</mapper>

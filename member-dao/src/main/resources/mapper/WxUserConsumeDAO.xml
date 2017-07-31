@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.WxUserConsumeDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.WxUserConsume">
+		<id column="id" property="id" />
+		<result column="public_id" property="publicId" />
+		<result column="busUserId" property="busUserId" />
+		<result column="memberId" property="memberId" />
+		<result column="mcId" property="mcId" />
+		<result column="ctId" property="ctId" />
+		<result column="gt_id" property="gtId" />
+		<result column="recordType" property="recordType" />
+		<result column="ucType" property="ucType" />
+		<result column="totalMoney" property="totalMoney" />
+		<result column="integral" property="integral" />
+		<result column="fenbi" property="fenbi" />
+		<result column="uccount" property="uccount" />
+		<result column="discount" property="discount" />
+		<result column="discountMoney" property="discountMoney" />
+		<result column="orderId" property="orderId" />
+		<result column="giveIntegral" property="giveIntegral" />
+		<result column="giveFlow" property="giveFlow" />
+		<result column="giveFenbi" property="giveFenbi" />
+		<result column="ucTable" property="ucTable" />
+		<result column="createDate" property="createDate" />
+		<result column="paymentType" property="paymentType" />
+		<result column="dvId" property="dvId" />
+		<result column="disCountdepict" property="disCountdepict" />
+		<result column="balance" property="balance" />
+		<result column="payStatus" property="payStatus" />
+		<result column="giveGift" property="giveGift" />
+		<result column="giftCount" property="giftCount" />
+		<result column="orderCode" property="orderCode" />
+		<result column="moduleType" property="moduleType" />
+		<result column="storeId" property="storeId" />
+		<result column="isParent" property="isParent" />
+		<result column="freightMoney" property="freightMoney" />
+		<result column="offlinePayType" property="offlinePayType" />
+		<result column="cardType" property="cardType" />
+		<result column="flowState" property="flowState" />
+		<result column="dataSource" property="dataSource" />
+		<result column="moduleOrderType" property="moduleOrderType" />
+		<result column="isend" property="isend" />
+		<result column="ischongzhi" property="ischongzhi" />
+		<result column="isendDate" property="isendDate" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, public_id AS publicId, busUserId, memberId, mcId, ctId, gt_id AS gtId, recordType, ucType, totalMoney, integral, fenbi, uccount, discount, discountMoney, orderId, giveIntegral, giveFlow, giveFenbi, ucTable, createDate, paymentType, dvId, disCountdepict, balance, payStatus, giveGift, giftCount, orderCode, moduleType, storeId, isParent, freightMoney, offlinePayType, cardType, flowState, dataSource, moduleOrderType, isend, ischongzhi, isendDate
+    </sql>
+
+</mapper>

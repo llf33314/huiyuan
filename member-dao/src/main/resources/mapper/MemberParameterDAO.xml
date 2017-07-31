@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberParameterDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberParameter">
+		<id column="id" property="id" />
+		<result column="memberId" property="memberId" />
+		<result column="signDate" property="signDate" />
+		<result column="provinceCode" property="provinceCode" />
+		<result column="cityCode" property="cityCode" />
+		<result column="countyCode" property="countyCode" />
+		<result column="address" property="address" />
+		<result column="getMoney" property="getMoney" />
+		<result column="headImg" property="headImg" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, memberId, signDate, provinceCode, cityCode, countyCode, address, getMoney, headImg
+    </sql>
+
+	<select id="findByMemberId" resultMap="BaseResultMap">
+		select * from t_member_parameter where memberId=#{memberId}
+	</select>
+
+</mapper>

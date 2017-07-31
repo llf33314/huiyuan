@@ -33,12 +33,24 @@ public class QueryDuofenCardBo implements Serializable{
      *  参数：busId  receiveId
      */
 
+    /**
+     *卡包信息（购买） 美容
+     * 接口名:findReceive
+     * 参数:busId
+     */
+
+    /**
+     * 根据卡包查询卡券信息
+     * 接口名:findDuofenCard
+     * 参数:busId 、 receiveId
+     *
+     */
 
     private Integer memberId;   //粉丝id
     private Integer wxshopId;  //门店信息
     private Double money;  //金额
     private Integer busId; //商家id
-    private Integer receiveId;
+    private Integer receiveId;  //卡包id
 
 
     public Integer getMemberId() {

@@ -16,5 +16,10 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>com.gt.member</groupId>
+            <artifactId>member-entity</artifactId>
+            <version>1.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

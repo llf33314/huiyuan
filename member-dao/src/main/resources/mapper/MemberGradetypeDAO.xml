@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberGradetypeDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberGradetype">
+		<id column="gt_id" property="gtId" />
+		<result column="gt_grade_name" property="gtGradeName" />
+		<result column="gt_name" property="gtName" />
+		<result column="gt_name_color" property="gtNameColor" />
+		<result column="gt_login_url" property="gtLoginUrl" />
+		<result column="cm_id" property="cmId" />
+		<result column="gt_text_color" property="gtTextColor" />
+		<result column="ct_id" property="ctId" />
+		<result column="public_id" property="publicId" />
+		<result column="is_publish" property="isPublish" />
+		<result column="isCheck" property="isCheck" />
+		<result column="applyType" property="applyType" />
+		<result column="buyMoney" property="buyMoney" />
+		<result column="buyModel" property="buyModel" />
+		<result column="costMoney" property="costMoney" />
+		<result column="balance" property="balance" />
+		<result column="giveflow" property="giveflow" />
+		<result column="givefenbi" property="givefenbi" />
+		<result column="giveIntegral" property="giveIntegral" />
+		<result column="url" property="url" />
+		<result column="isView" property="isView" />
+		<result column="ismemberDate" property="ismemberDate" />
+		<result column="isUploadImg" property="isUploadImg" />
+		<result column="imgExplain" property="imgExplain" />
+		<result column="isleft" property="isleft" />
+		<result column="iseasy" property="iseasy" />
+		<result column="easyApply" property="easyApply" />
+		<result column="busId" property="busId" />
+		<result column="giveMoney" property="giveMoney" />
+		<result column="pickMoney" property="pickMoney" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        gt_id AS gtId, gt_grade_name AS gtGradeName, gt_name AS gtName, gt_name_color AS gtNameColor, gt_login_url AS gtLoginUrl, cm_id AS cmId, gt_text_color AS gtTextColor, ct_id AS ctId, public_id AS publicId, is_publish AS isPublish, isCheck, applyType, buyMoney, buyModel, costMoney, balance, giveflow, givefenbi, giveIntegral, url, isView, ismemberDate, isUploadImg, imgExplain, isleft, iseasy, easyApply, busId, giveMoney, pickMoney
+    </sql>
+
+
+
+	<select id="findBybusId" resultType="Map">
+		SELECT gt.gt_id AS id,ct.ct_id as ctId,ct.ct_name AS ctName,cm.cm_url AS cmUrl,cm.cm_Type as cmType,gt.is_publish AS publish,applyType,gt.buyModel,gt.url,gt.iseasy,gt.easyApply  FROM t_member_gradetype gt
+		INNER JOIN t_member_cardtype  ct ON gt.ct_id=ct.ct_id
+		INNER JOIN t_member_cardmodel cm ON cm.cm_id=gt.cm_id
+		WHERE gt.busId=#{busId} GROUP BY gt.ct_id
+	</select>
+
+	<select id="findBybusIdAndCtId" resultType="Map">
+		SELECT
+		gt.gt_id AS gtId, gt.gt_grade_name AS gtGradeName, gt.gt_name AS gtName,
+		gt.gt_name_color AS gtNameColor, gt.gt_login_url AS gtLoginUrl, gt.cm_id AS cmId, gt.gt_text_color AS gtTextColor,
+		gt.ct_id AS ctId, gt.public_id AS pulicId,
+		ct.ct_name AS ctName,cm.cm_url AS cmUrl,cm.cm_Type AS cmType,gt.cm_id AS cmId,gt.buyModel as buyModel, gt.buyMoney as buyMoney,
+		gt.costMoney as costMoney, gt.balance as balance,
+		gt.is_publish as ispulish,gt.ismemberDate,gt.isView,gt.isleft,gt.iseasy
+		FROM t_member_gradetype gt
+		INNER JOIN t_member_cardtype  ct ON gt.ct_id=ct.ct_id
+		INNER JOIN t_member_cardmodel cm ON cm.cm_id=gt.cm_id
+		WHERE gt.busId=#{busId} and gt.ct_id=#{ctId} and gt.iseasy=0  order by gt.gt_id ASC
+	</select>
+
+
+	<select id="findBybusIdAndCmType" resultType="Map">
+		SELECT
+		gt.gt_id as gtId, gt.gt_grade_name as gtGradeName, gt.gt_name as gtName,
+		gt.gt_name_color as gtNameColor, gt.gt_login_url as gtLoginUrl, gt.cm_id as cmId, gt.gt_text_color as gtTextColor,
+		gt.ct_id as ctId, gt.public_id as pulicId,
+		ct.ct_name AS ctName,cm.cm_url AS cmUrl,cm.cm_Type as cmType  FROM t_member_gradetype gt
+		INNER JOIN t_member_cardtype  ct ON gt.ct_id=ct.ct_id
+		INNER JOIN t_member_cardmodel cm ON cm.cm_id=gt.cm_id
+		WHERE gt.busId=#{busId} and gt.cm_id in (select cm1.cm_id from t_member_cardmodel cm1 where cm1.cm_type=#{cmType}) order by gt.gt_id ASC
+	</select>
+
+
+
+	<select id="findBybusIdAndCtId1" resultType="Map">
+		SELECT <include refid="Base_Column_List" /> FROM t_member_gradetype
+		WHERE gt_Id NOT IN (SELECT gt_id FROM t_member_giverule gr where gr.busId=#{busId} and gr.ct_id=#{ctId}) and busId=#{busId} and ct_id=#{ctId}
+
+	</select>
+
+	<select id="findBybusIdAndCtId2" resultType="Map">
+		select is_publish from t_member_gradetype where busId=#{busId} and ct_id=#{ctId}
+	</select>
+
+	<delete id="deleteBybusIdAndCtId">
+		delete from t_member_gradetype where busId=#{busId} and ct_id=#{ctId}
+	</delete>
+
+
+	<select id="findBybusId1" resultType="Map">
+		SELECT gt.ct_id as ctId,ct_name as ctName,gt.isCheck,gt.applyType,gt.buyMoney,gt.isleft,is_publish FROM t_member_gradetype gt
+		INNER JOIN t_member_cardtype ct ON gt.ct_id=ct.ct_id
+		WHERE gt.busId=#{busId} AND is_publish=1 and iseasy=0 GROUP BY gt.ct_id
+	</select>
+
+	<select id="findByPublicId1" resultType="Map">
+		SELECT gt.ct_id as ctId,ct_name as ctName,gt.isCheck,gt.applyType,gt.buyMoney,gt.isleft FROM t_member_gradetype gt
+		INNER JOIN t_member_cardtype ct ON gt.ct_id=ct.ct_id
+		WHERE gt.public_id=#{publicId} AND is_publish=1 and iseasy=0 GROUP BY gt.ct_id
+	</select>
+
+
+
+	<select id="findBybusId2" resultType="Map">
+		SELECT gt.gt_grade_name AS gradeName,gt.ct_id as ctId,ct_name as ctName,gt.isCheck,gt.applyType,gt.buyMoney,
+		gt.isView,gt.url,gt.balance,gt.costMoney
+		FROM t_member_gradetype gt
+		INNER JOIN t_member_cardtype ct ON gt.ct_id=ct.ct_id
+		WHERE gt.busId=#{busId} AND gt.ct_id=#{ctId} and is_publish=1
+	</select>
+
+	<select id="findBybusIdAndCtId3" resultType="Map">
+		select gt_id, gt_grade_name,isUploadImg,imgExplain,isCheck,giveflow, givefenbi,applyType,
+		giveIntegral,giveMoney from t_member_gradetype
+		where busId=#{busId} and ct_id=#{ctId} and  iseasy=0 order by gt_id
+	</select>
+
+
+
+
+	<select id="findByCtId" resultType="Map">
+		SELECT
+		gt.gt_id AS gtId,gt.gt_grade_name as gradeName,gt.isCheck,gt.applyType,gt.buyModel,gt.giveIntegral,
+		gt.isView,gt.giveflow, gt.givefenbi,gt.isUploadImg,gt.imgExplain,gt.ct_id as ctId,gt.giveMoney, gt.pickMoney
+		FROM t_member_gradetype gt
+		WHERE gt.busId=#{busId} AND gt.ct_id=#{ctId} and gt.iseasy=0 ORDER BY gt.gt_id ASC
+	</select>
+
+	<update id="updateByCtId">
+		update t_member_gradetype set is_publish=1,isCheck=#{isChecked},applyType=#{applyType},giveIntegral=#{giveIntegral},isView=#{isView},
+		givefenbi=#{givefenbi},giveflow=#{giveflow},
+		isUploadImg=#{isUploadImg},imgExplain=#{imgExplain},giveMoney=#{giveMoney},pickMoney=#{pickMoney}
+		where busId=#{busId} and ct_id=#{ctId}
+	</update>
+
+	<select id="findByApplyType" resultType="Map">
+		select  gt.gt_id AS gtId  FROM t_member_gradetype gt
+		WHERE gt.busId=#{busId} and gt.applyType!=3
+	</select>
+
+
+	<select id="findBybusId3" resultType="Map">
+		SELECT gt.ct_id as ctId,ct_name as ctName,gt.buyMoney FROM t_member_gradetype gt
+		INNER JOIN t_member_cardtype ct ON gt.ct_id=ct.ct_id
+		WHERE gt.busId=#{busId} AND is_publish=1 and gt.applyType=3  GROUP BY gt.ct_id
+	</select>
+
+	<update id="updateUrlByCtId">
+		update t_member_gradetype set url=#{url} where busId=#{busId} and ct_id=#{ctId}
+	</update>
+
+
+	<select id="findAllBybusId" resultType="Map">
+		SELECT * FROM t_member_gradetype gt
+		INNER JOIN t_member_giverule  gr ON gr.gt_id=gt.gt_id
+		WHERE gt.busId=#{busId}  and gt.ct_id=#{ctId} and gt.iseasy=0
+	</select>
+
+	<select id="findGroupByctId" resultType="Map">
+		SELECT gt.ct_id as ctId,ct_name as ctName,gt.isCheck,gt.applyType,gt.buyMoney,gt.isleft,gt.isView,gt.is_publish,gt.applyType  FROM t_member_gradetype gt
+		INNER JOIN t_member_cardtype ct ON gt.ct_id=ct.ct_id
+		WHERE gt.busId=#{busId} AND is_publish=1 and gt.ct_id=#{ctId} and iseasy=0 group by gt.ct_id
+	</select>
+
+	<select id="findByIseasy" resultType="Map">
+		SELECT
+		gt.gt_id AS gtId, gt.gt_grade_name AS gtGradeName, gt.gt_name AS gtName,
+		gt.gt_name_color AS gtNameColor, gt.gt_login_url AS gtLoginUrl, gt.cm_id AS cmId, gt.gt_text_color AS gtTextColor,
+		gt.ct_id AS ctId, gt.public_id AS pulicId,
+		ct.ct_name AS ctName,cm.cm_url AS cmUrl,cm.cm_Type AS cmType,gt.cm_id AS cmId,gt.buyModel as buyModel, gt.buyMoney as buyMoney,
+		gt.costMoney as costMoney, gt.balance as balance,
+		gt.is_publish as ispulish,gt.ismemberDate,gt.isView,gt.isleft
+		FROM t_member_gradetype gt
+		INNER JOIN t_member_cardtype  ct ON gt.ct_id=ct.ct_id
+		INNER JOIN t_member_cardmodel cm ON cm.cm_id=gt.cm_id
+		WHERE gt.busId=#{busId} and gt.ct_id=#{ctId} and gt.iseasy=1 limit 1
+	</select>
+
+	<select id="countIseasy" resultType="Integer">
+		select count(gt_id) from t_member_gradetype where busId=#{busId} and iseasy=1
+	</select>
+
+
+
+	<select id="findByBusIdAndCtIdAndIseasy" resultType="Map">
+		SELECT
+		gt.gt_id AS gtId, gt.gt_grade_name AS gtGradeName, gt.gt_name AS gtName,
+		gt.gt_name_color AS gtNameColor, gt.gt_login_url AS gtLoginUrl, gt.cm_id AS cmId, gt.gt_text_color AS gtTextColor,
+		gt.ct_id AS ctId, gt.public_id AS pulicId,
+		ct.ct_name AS ctName,cm.cm_url AS cmUrl,cm.cm_Type AS cmType,gt.cm_id AS cmId,gt.buyModel as buyModel, gt.buyMoney as buyMoney,
+		gt.costMoney as costMoney, gt.balance as balance,
+		gt.is_publish as ispulish,gt.ismemberDate,gt.isView,gt.isleft,gt.iseasy
+		FROM t_member_gradetype gt
+		INNER JOIN t_member_cardtype  ct ON gt.ct_id=ct.ct_id
+		INNER JOIN t_member_cardmodel cm ON cm.cm_id=gt.cm_id
+		WHERE gt.busId=#{busId} and gt.ct_id=#{ctId} and gt.iseasy=1
+	</select>
+
+
+	<select id="findAllByBusIdAndCtId" resultType="Map">
+		SELECT
+		gt.gt_id AS gtId, gt.gt_grade_name AS gtGradeName, gt.gt_name AS gtName,
+		gt.gt_name_color AS gtNameColor, gt.gt_login_url AS gtLoginUrl, gt.cm_id AS cmId, gt.gt_text_color AS gtTextColor,
+		gt.ct_id AS ctId, gt.public_id AS pulicId,
+		ct.ct_name AS ctName,cm.cm_url AS cmUrl,cm.cm_Type AS cmType,gt.cm_id AS cmId,gt.buyModel as buyModel, gt.buyMoney as buyMoney,
+		gt.costMoney as costMoney, gt.balance as balance,
+		gt.is_publish as ispulish,gt.ismemberDate,gt.isView,gt.isleft,gt.iseasy
+		FROM t_member_gradetype gt
+		INNER JOIN t_member_cardtype  ct ON gt.ct_id=ct.ct_id
+		INNER JOIN t_member_cardmodel cm ON cm.cm_id=gt.cm_id
+		WHERE gt.busId=#{busId} and gt.ct_id=#{ctId}
+	</select>
+
+
+	<select id="updateEasyApplyByCtId" resultType="Integer">
+		update t_member_gradetype set easyApply=#{easyApply} where busId=#{busId} and iseasy=1 and ct_id=#{ctId}
+	</select>
+
+
+
+	<select id="findByIsesasy" resultMap="BaseResultMap">
+		select * from t_member_gradetype where busId=#{busId} and iseasy=1 and easyApply=1 limit 1
+	</select>
+
+
+	<select id="updateEasyApplyBybusId" resultType="Integer">
+		update t_member_gradetype set easyApply=0 where busId=#{busId} and iseasy=1
+	</select>
+
+	<select id="countIspublish" resultType="Integer">
+		select count(gt_id) from t_member_gradetype where busId=#{busId} and is_publish=1
+	</select>
+
+
+
+	<select id="findGradeTyeBybusId" resultType="Map">
+		SELECT gt.ct_id as ctId,ct_name as ctName,gt.isCheck,gt.applyType,gt.buyMoney,gt.isleft FROM t_member_gradetype gt
+		INNER JOIN t_member_cardtype ct ON gt.ct_id=ct.ct_id
+		WHERE gt.busId=#{busId}  GROUP BY gt.ct_id
+	</select>
+
+	<select id="findByBusIdAndIsPulish1" resultType="Map">
+		SELECT gt.ct_id,ct.`ct_name` FROM t_member_gradetype  gt
+		INNER JOIN t_member_cardtype ct ON gt.ct_id=ct.ct_id   WHERE gt.busId=#{busId} and  gt.applyType=0 GROUP BY ct_id
+	</select>
+
+	<select id="findGtName" resultType="Map">
+		SELECT gt_id,gt_grade_name,gt_name FROM t_member_gradetype WHERE busId=#{busId} AND
+		ct_id in
+		<foreach close=")" collection="ctIds" item="ctId" open="(" separator=",">
+			#{ctId}
+		</foreach>
+	</select>
+
+	<select id="findGtNameByGtId" resultType="Map">
+		SELECT gt_id,gt_grade_name,gt_name FROM t_member_gradetype WHERE busId=#{busId} AND
+		gt_id in
+		<foreach close=")" collection="gtIds" item="gtId" open="(" separator=",">
+			#{gtId}
+		</foreach>
+	</select>
+
+	<select id="findCtIdByIseasy" resultType="Map">
+		SELECT ct_id as ctId,easyApply from t_member_gradetype gt
+		WHERE gt.busId=#{busId} and gt.iseasy=1
+	</select>
+
+	<select id="findIsmemberDateByCtId" resultMap="BaseResultMap">
+		select ismemberDate from t_member_gradetype where  busId=#{busId} AND ct_id=#{ctId} order by gt_id ASC limit 1
+	</select>
+
+	<select id="findGiveMoney" resultMap="BaseResultMap">
+		select pickMoney from t_member_gradetype where  busId=#{busId} AND ct_id=#{ctId} order by gt_id ASC limit 1
+	</select>
+
+
+	<select id="findGradeTypeByApplyType" resultType="Map">
+		SELECT gt.ct_id as ctId,ct.`ct_name` as ctName FROM t_member_gradetype  gt
+		INNER JOIN t_member_cardtype ct ON gt.ct_id=ct.ct_id
+		WHERE gt.busId=#{busId} and is_publish=1 and  gt.applyType!=3 GROUP BY gt.ct_id
+
+	</select>
+
+</mapper>

@@ -15,14 +15,15 @@ import java.util.List;
 public class DuofenCardReceiveBo implements Serializable{
 
     /**
-     * 根据卡包查询卡券信息
-     * 接口名：findCardByReceiveId
+     * 1:根据卡包查询卡券信息   2:根据卡包查询卡券信息
+     * 接口名：1:findCardByReceiveId    2:findDuofenCardByReceiveId
      * 参数：duofenCardBos 以下DuofenCardReceiveBo对象
      *
      * duofenCardBos包含:
      *
      */
      private List<DuofenCardBo> duofenCardBos;
+
 
 
     /**
@@ -155,6 +156,8 @@ public class DuofenCardReceiveBo implements Serializable{
     private Integer giveFlow;
 
     private Double  lpjBuyMoney;  //礼品券购买金额
+
+    private Integer guoqi;  //卡包过期
 
     public Integer getId() {
 	return id;
@@ -449,5 +452,13 @@ public class DuofenCardReceiveBo implements Serializable{
 
     public void setLpjBuyMoney( Double lpjBuyMoney ) {
 	this.lpjBuyMoney = lpjBuyMoney;
+    }
+
+    public Integer getGuoqi() {
+	return guoqi;
+    }
+
+    public void setGuoqi( Integer guoqi ) {
+	this.guoqi = guoqi;
     }
 }

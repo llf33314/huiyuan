@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberCardmodelDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberCardmodel">
+		<id column="cm_id" property="cmId" />
+		<result column="cm_url" property="cmUrl" />
+		<result column="cm_type" property="cmType" />
+		<result column="cm_sort" property="cmSort" />
+		<result column="publicId" property="publicId" />
+		<result column="cm_name" property="cmName" />
+		<result column="creatpeople" property="creatpeople" />
+		<result column="creattime" property="creattime" />
+		<result column="cm_state" property="cmState" />
+		<result column="busId" property="busId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        cm_id AS cmId, cm_url AS cmUrl, cm_type AS cmType, cm_sort AS cmSort, publicId, cm_name AS cmName, creatpeople, creattime, cm_state AS cmState, busId
+    </sql>
+
+
+	<select id="findGroupByType" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_member_cardmodel where busId=0 or busId=#{busId} GROUP BY
+		cm_type,busId
+	</select>
+
+	<select id="findByType" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_member_cardmodel
+		where cm_Type=#{cmType} and cm_state=0
+	</select>
+
+	<select id="findCmType" resultType="Integer">
+		SELECT cm_type FROM t_member_cardmodel
+		WHERE cm_id=(SELECT cm_id FROM t_member_gradeType WHERE
+		public_id=#{publicId} AND ct_id=#{ctId} LIMIT 1)
+	</select>
+
+	<select id="findCardNotInCmId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_member_cardmodel
+		where cm_id not in
+		<foreach close=")" collection="cmIds" item="cmid" open="("
+				 separator=",">
+			#{cmid}
+		</foreach>
+		and cm_type=#{cmType} and cm_state=0
+	</select>
+
+	<select id="findCardModel" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_member_cardmodel where cm_state=0 order by cm_id desc limit 1
+	</select>
+
+	<!-- 根据gtid查询会员卡的名字颜色卡号等级及背景 -->
+	<select id="findCardBackgroundModel" resultType="Map">
+		select
+		tmg.gt_grade_name as "gtGradeName",
+		tmg.gt_name as "gtName",
+		tmg.gt_name_color as "gtNameColor",
+		tmg.gt_login_url as "gtLoginUrl",
+		tmc.cm_url as "cmUrl"
+		from t_member_cardmodel tmc RIGHT JOIN t_member_gradetype tmg on
+		tmc.cm_id=tmg.cm_id where tmg.gt_id=#{gtId}
+	</select>
+
+
+	<select id="findBybusId" resultType="Map">
+		select cm_id as cmId,cm_url as cmUrl from t_member_cardmodel where busId=0
+		or busId=#{busId} and cm_state=0
+	</select>
+
+</mapper>

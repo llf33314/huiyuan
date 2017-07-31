@@ -724,7 +724,6 @@ public class CardCouponsWS {
 	    }
 	    fb.setDuofenCardBos( list );
 	    br.setCode( ReturnCode.SUCCESS );
-	    br.setMsg( "查询数据失败" );
 	    br.setData( JSONObject.fromObject( fb ) );
 	}catch ( Exception e ){
 	    LOG.error( "findByThreeMemberId查询数据异常",e );
@@ -786,7 +785,6 @@ public class CardCouponsWS {
 	    DuofenCardReceiveBo db = null;
 	    for ( Map map : returnList ) {
 		db = new DuofenCardReceiveBo();
-		db = new DuofenCardReceiveBo();
 		db.setCardsName( CommonUtil.toString( map.get( "cardsName" ) ) );
 		db.setBackColor( CommonUtil.toString( map.get( "backColor" ) ) );
 		db.setReceiveDate( DateTimeKit.parseDate( map.get( "receiveDate" ).toString() ) );
@@ -811,10 +809,14 @@ public class CardCouponsWS {
     /**
      * 商场支付成功回调 分配卡券
      */
-    public Map< String,Object > successPayBack( Integer receiveId, Integer num, Integer memberId ) {
-	Map< String,Object > map = new HashMap< String,Object >();
-
+    public BaseResult successPayBack(BaseParam baseParam) {
+	BaseResult br=new BaseResult();
 	try {
+	    SuccessPayBackBo dfcb = com.alibaba.fastjson.JSONObject.parseObject( com.alibaba.fastjson.JSONObject.toJSONString( baseParam.getReqdata() ), SuccessPayBackBo.class );
+	    Integer receiveId=dfcb.getReceiveId();
+	    Integer memberId=dfcb.getMemberId();
+	    Integer num=dfcb.getNum();
+	    LOG.error( "用户id:" + memberId + "购买了" + num + "个卡券包id:" + receiveId );
 	    DuofenCardReceive receives = duofenCardReceiveMapper.selectById( receiveId );
 	    String[] strId = receives.getCardIds().split( "," );
 	    List< Integer > ids = new ArrayList<>();
@@ -873,19 +875,19 @@ public class CardCouponsWS {
 		    try {
 			HttpClienUtil.httpPost( memberConfig.getWxmp_home()+SEND_SMS, JSONObject.fromObject( params ), true );
 		    } catch ( Exception e ) {
-			LOG.error( "短信发送失败", e );
+			LOG.error( "successPayBack短信发送失败", e );
 		    }
 		}
 	    }
-	    map.put( "result", true );
-	    map.put( "message", "发放成功" );
+	    br.setCode( ReturnCode.SUCCESS );
+	    br.setMsg( "发放成功" );
 	} catch ( Exception e ) {
 	    e.printStackTrace();
-	    map.put( "result", false );
-	    map.put( "message", "发放失败" );
-	    LOG.error( "用户id:" + memberId + "购买了" + num + "个卡券包id:" + receiveId, e );
+	    LOG.error( "successPayBack商城发放卡包异常",e );
+	    br.setCode( ReturnCode.ERROR_1 );
+	    br.setMsg( "商城发放卡包失败" );
 	}
-	return map;
+	return br;
     }
 
     /**
@@ -909,87 +911,121 @@ public class CardCouponsWS {
     /**
      * 根据卡包查询卡券信息 取值 看数据库文档名称 map中key guoqi=1标示该包或该券过期
      */
-    @Override
-    public Map< String,Object > findDuofenCardByReceiveId( Integer receiveId ) {
-	DuofenCardReceive receives = duofenCardReceiveMapper.selectById( receiveId );
-	String[] strId = receives.getCardIds().split( "," );
-	List< Integer > ids = new ArrayList< Integer >();
-	for ( String str : strId ) {
-	    if ( CommonUtil.isNotEmpty( str ) ) {
-		ids.add( CommonUtil.toInteger( str ) );
-	    }
-	}
-	if ( ids.size() > 0 ) {
-	    Map< String,Object > map = new HashMap< String,Object >();
-	    Map< String,Object > recevieMap = JsonUtil.json2Map( JSONObject.fromObject( receives ).toString() );
-	    if ( !DateTimeKit.laterThanNow( receives.getReceiveDate() ) ) {
-		recevieMap.put( "guoqi", 1 );
-	    } else {
-		recevieMap.put( "guoqi", 0 );
-	    }
-	    List< DuofenCard > duofencards = duofenCardMapper.findInCardIds( ids );
-	    JSONArray jsonList = JSONArray.fromObject( duofencards );
-	    List< Map< String,Object > > duofencardList = JsonUtil.json2List( jsonList.toString() );
-
-	    List< Map< String,Object > > returnDuofencardList = new ArrayList< Map< String,Object > >();
-	    for ( Map< String,Object > map2 : duofencardList ) {
-		// 礼券包
-		if ( "DATE_TYPE_FIX_TIME_RANGE".equals( CommonUtil.toString( map2.get( "type" ) ) ) ) {
-		    JSONObject jsonObject = JSONObject.fromObject( map2.get( "endTimestamp" ) );
-		    Date date = new Date( jsonObject.getLong( "time" ) );
-		    if ( !DateTimeKit.laterThanNow( date ) ) {
-			map2.put( "guoqi", 1 );
-		    } else {
-			map2.put( "guoqi", 0 );
-		    }
+    public BaseResult findDuofenCardByReceiveId(BaseParam baseParam) {
+	BaseResult br=new BaseResult();
+	try {
+	    GetById getById = com.alibaba.fastjson.JSONObject.parseObject( com.alibaba.fastjson.JSONObject.toJSONString( baseParam.getReqdata() ), GetById.class );
+	    DuofenCardReceive receives = duofenCardReceiveMapper.selectById( getById.getId() );
+	    String[] strId = receives.getCardIds().split( "," );
+	    List< Integer > ids = new ArrayList< Integer >();
+	    for ( String str : strId ) {
+		if ( CommonUtil.isNotEmpty( str ) ) {
+		    ids.add( CommonUtil.toInteger( str ) );
 		}
-		if ( "4".equals( CommonUtil.toString( map2.get( "cardType" ) ) ) ) {
-		    String dateTimeSet = CommonUtil.toString( map2.get( "datetimeset" ) );
-		    List< Map< String,Object > > timeList = JsonUtil.json2List( dateTimeSet );
-		    for ( Map< String,Object > map3 : timeList ) {
-			Date startTime = DateTimeKit.parse( CommonUtil.toString( map3.get( "startTime" ) ), "yyyy-MM-dd" );
-			Date endTime = DateTimeKit.parse( CommonUtil.toString( map3.get( "endTime" ) ), "yyyy-MM-dd" );
-			if ( !DateTimeKit.laterThanNow( startTime ) && DateTimeKit.laterThanNow( endTime ) ) {
-			    map2.put( "money", CommonUtil.toString( map3.get( "money" ) ) ); // 礼券销售金
-			    recevieMap.put( "buyMoney", CommonUtil.toString( map3.get( "money" ) ) );
+	    }
+	    if ( ids.size() > 0 ) {
+		Map< String,Object > map = new HashMap< String,Object >();
+		Map< String,Object > recevieMap = JsonUtil.json2Map( JSONObject.fromObject( receives ).toString() );
+		if ( !DateTimeKit.laterThanNow( receives.getReceiveDate() ) ) {
+		    recevieMap.put( "guoqi", 1 );
+		} else {
+		    recevieMap.put( "guoqi", 0 );
+		}
+		List< DuofenCard > duofencards = duofenCardMapper.findInCardIds( ids );
+		JSONArray jsonList = JSONArray.fromObject( duofencards );
+		List< Map< String,Object > > duofencardList = JsonUtil.json2List( jsonList.toString() );
+
+		List< Map< String,Object > > returnDuofencardList = new ArrayList< Map< String,Object > >();
+		for ( Map< String,Object > map2 : duofencardList ) {
+		    // 礼券包
+		    if ( "DATE_TYPE_FIX_TIME_RANGE".equals( CommonUtil.toString( map2.get( "type" ) ) ) ) {
+			JSONObject jsonObject = JSONObject.fromObject( map2.get( "endTimestamp" ) );
+			Date date = new Date( jsonObject.getLong( "time" ) );
+			if ( !DateTimeKit.laterThanNow( date ) ) {
+			    map2.put( "guoqi", 1 );
+			} else {
+			    map2.put( "guoqi", 0 );
 			}
 		    }
-		    if ( CommonUtil.isEmpty( map2.get( "money" ) ) ) {
-			map2.put( "money", 0 );
-			recevieMap.put( "buyMoney", 0 );
+		    if ( "4".equals( CommonUtil.toString( map2.get( "cardType" ) ) ) ) {
+			String dateTimeSet = CommonUtil.toString( map2.get( "datetimeset" ) );
+			List< Map< String,Object > > timeList = JsonUtil.json2List( dateTimeSet );
+			for ( Map< String,Object > map3 : timeList ) {
+			    Date startTime = DateTimeKit.parse( CommonUtil.toString( map3.get( "startTime" ) ), "yyyy-MM-dd" );
+			    Date endTime = DateTimeKit.parse( CommonUtil.toString( map3.get( "endTime" ) ), "yyyy-MM-dd" );
+			    if ( !DateTimeKit.laterThanNow( startTime ) && DateTimeKit.laterThanNow( endTime ) ) {
+				map2.put( "money", CommonUtil.toString( map3.get( "money" ) ) ); // 礼券销售金
+				recevieMap.put( "buyMoney", CommonUtil.toString( map3.get( "money" ) ) );
+			    }
+			}
+			if ( CommonUtil.isEmpty( map2.get( "money" ) ) ) {
+			    map2.put( "money", 0 );
+			    recevieMap.put( "buyMoney", 0 );
+			}
 		    }
+		    returnDuofencardList.add( map2 );
 		}
-		returnDuofencardList.add( map2 );
+
+		DuofenCardReceiveBo db = new DuofenCardReceiveBo();
+		db.setCardsName( CommonUtil.toString( recevieMap.get( "cardsName" ) ) );
+		db.setBackColor( CommonUtil.toString( recevieMap.get( "backColor" ) ) );
+		db.setReceiveDate( DateTimeKit.parseDate( recevieMap.get( "receiveDate" ).toString() ) );
+		db.setDeliveryType1( CommonUtil.toInteger( recevieMap.get( "deliveryType1" ) ) );
+		db.setNumlimit( CommonUtil.toInteger( recevieMap.get( "numlimit" ) ) );
+		db.setMaxNumType( CommonUtil.toInteger( recevieMap.get( "maxNumType" ) ) );
+		db.setMaxNum( CommonUtil.toInteger( recevieMap.get( "maxNum" ) ) );
+		db.setCardType( CommonUtil.toInteger( recevieMap.get( "cardType" ) ) );
+		db.setLpjBuyMoney( CommonUtil.toDouble( recevieMap.get( "buyMoney" ) ) );
+		db.setGuoqi( CommonUtil.toInteger( recevieMap.get( "guoqi" ) ) );
+
+
+		List< DuofenCardBo > list = new ArrayList<>();
+		DuofenCardBo dcb = null;
+		for ( DuofenCard d : duofencards ) {
+		    dcb = new DuofenCardBo();
+		    dcb.setId( d.getId() );
+		    dcb.setImage( d.getImage() );
+		    dcb.setCard_type( d.getCardType() );
+		    dcb.setTitle( d.getTitle() );
+		    dcb.setReduce_cost( d.getReduceCost() );
+		    dcb.setDiscount( d.getDiscount() );
+		    dcb.setCash_least_cost( d.getCashLeastCost() );
+		    dcb.setType( d.getType() );
+		    dcb.setFixed_begin_term( d.getFixedBeginTerm() );
+		    dcb.setFixed_term( d.getFixedTerm() );
+		    dcb.setBegin_timestamp( d.getBeginTimestamp() );
+		    dcb.setEnd_timestamp( d.getEndTimestamp() );
+		    list.add( dcb );
+		}
+		db.setDuofenCardBos( list );
+		br.setCode( ReturnCode.SUCCESS );
+		br.setData( com.alibaba.fastjson.JSONObject.toJSONString( db ) );
+		return br;
 	    }
-	    map.put( "recevieMap", recevieMap );
-	    map.put( "returnDuofencardList", returnDuofencardList );
-	    return map;
+	    br.setCode( ReturnCode.ERROR_7 );
+	}catch ( Exception e ){
+	    e.printStackTrace();
+	    LOG.error( "findDuofenCardByReceiveId根据卡包查询卡券信息",e );
+	    br.setCode( ReturnCode.ERROR_1 );
+	    br.setMsg( "根据卡包查询卡券信息失败" );
 	}
-	return null;
+	return br;
     }
 
-    @Override
-    public String findCardCode( Integer cardId, Integer memberId, int num ) {
-	List< Map< String,Object > > dfcg = duofenCardGetMapper.findByCardId( cardId, memberId, num );
-	String duofenCode = "";
-	for ( Map< String,Object > map : dfcg ) {
-	    duofenCode += map.get( "code" ) + ",";
-	}
-	return duofenCode;
-    }
 
-    @Override
-    public Map< String,Object > verificationCard_2( Map< String,Object > params ) {
-	Map< String,Object > map = new HashMap< String,Object >();
+    public BaseResult verificationCard( BaseParam baseParam ) {
+	BaseResult br=new BaseResult();
 	try {
-	    if ( CommonUtil.isEmpty( params.get( "codes" ) ) ) {
-		map.put( "result", false );
-		map.put( "message", "没有要核销的卡券code值" );
-		return map;
+	    VerificationCardBo verificationCardBo = com.alibaba.fastjson.JSONObject.parseObject( com.alibaba.fastjson.JSONObject.toJSONString( baseParam.getReqdata() ), VerificationCardBo.class );
+
+	    String codes=verificationCardBo.getCodes();
+	    if ( CommonUtil.isEmpty(codes)) {
+		br.setCode( ReturnCode.ERROR_5 );
+		br.setMsg("没有要核销的卡券code值" );
+		return br;
 	    }
 
 	    // 多粉优惠券处理
-	    String codes = params.get( "codes" ).toString();
 	    String[] str = codes.split( "," );
 	    List< String > codeList = new ArrayList< String >();
 	    for ( String s : str ) {
@@ -1000,22 +1036,21 @@ public class CardCouponsWS {
 
 	    List< Map< String,Object > > stateMap = duofenCardGetMapper.findByCodes( codeList );
 	    if ( CommonUtil.isEmpty( stateMap ) || stateMap.size() == 0 ) {
-		map.put( "result", false );
-		map.put( "message", "卡券不存在" );
-		return map;
+		br.setCode( ReturnCode.ERROR_7);
+		br.setMsg("未查询到相应数据" );
+		return br;
 	    }
 	    for ( Map< String,Object > map2 : stateMap ) {
 		if ( "1".equals( map2.get( "state" ) ) || "2".equals( map2.get( "state" ) ) ) {
-		    map.put( "result", false );
-		    map.put( "message", "卡券过期或已核销,不能执行卡券核销操作" );
-		    return map;
+		    br.setCode( ReturnCode.ERROR_7);
+		    br.setMsg("卡券过期或已核销,不能执行卡券核销操作" );
+		    return br;
 		}
 	    }
-
-	    if ( CommonUtil.isEmpty( params.get( "storeId" ) ) ) {
+		Integer storeId=verificationCardBo.getStoreId();
+	    if ( CommonUtil.isEmpty( storeId ) ) {
 		duofenCardGetMapper.updateByCodes( codeList ); // 卡券核销
 	    } else {
-		Integer storeId = CommonUtil.toInteger( params.get( "storeId" ) );
 		duofenCardGetMapper.updateStoreIdByCodes( codeList, storeId ); // 卡券核销
 	    }
 
@@ -1026,474 +1061,415 @@ public class CardCouponsWS {
 		    tuijianGive( recommend );
 		}
 	    }
-
-	    map.put( "result", true );
-	    map.put( "message", "核销成功" );
+	    br.setCode( ReturnCode.SUCCESS );
+	    br.setMsg( "卡券核销成功" );
 	} catch ( Exception e ) {
-	    map.put( "result", false );
-	    map.put( "message", "核销失败" );
+	    LOG.error( "verificationCard卡券核销异常",e );
+	    br.setCode( ReturnCode.ERROR_1 );
+	    br.setMsg( "卡券核销失败" );
 	}
-	return map;
+	return br;
     }
 
 
-    public Map< String,Object > publishShelve( Integer id ) {
-	Map< String,Object > map = new HashMap< String,Object >();
-	try {
-	    DuofenCardReceive wsc = duofenCardReceiveMapper.selectById( id );
-	    int day = -1;
-	    if ( CommonUtil.isNotEmpty( wsc.getReceiveDate() ) ) {
-		day = DateTimeKit.daysBetween( new Date(), wsc.getReceiveDate() );
-		if ( day < 0 ) {
-		    map.put( "result", false );
-		    map.put( "message", "包已过期不能发布" );
-		    return map;
-		}
-	    }
 
-	    if ( wsc.getDeliveryAddr() == 1 ) {
-		// 第三方投放
-		Map< String,Object > params = new HashMap< String,Object >();
-		params.put( "busId", wsc.getBusId() );
-		params.put( "bagId", wsc.getId() );
-		params.put( "mainId", wsc.getThreeMallId() );
-		params.put( "bagId", wsc.getId() );
-		params.put( "classifyId", wsc.getClassifyId() );
-		params.put( "day", day );
-		params.put( "number", wsc.getThreeNum() );
-		params.put( "time", DateTimeKit.getDate() );
-		params.put( "details", "" );
-		if ( wsc.getDeliveryType1() == 0 && wsc.getJifen() == 0 && wsc.getFenbi() == 0 ) {
-		    params.put( "type", 0 );
-		} else if ( wsc.getDeliveryType1() == 1 ) {
-		    params.put( "type", 1 );
-		    params.put( "amount", wsc.getBuyMoney() );
-		} else {
-		    params.put( "type", 2 );
-		    params.put( "integral", wsc.getJifen() );
-		    params.put( "fanscurrency", wsc.getFenbi() );
-		}
-		params.put( "bitGiftCoupon", wsc.getCardType() );
-		//				Map<String, Object> returnMap = couponMallPutlistService
-		//						.putCouponMall(params);
-		//				if ("0".equals(returnMap.get("code").toString())
-		//						|| "2".equals(returnMap.get("code").toString())) {
-		//					map.put("result", false);
-		//					map.put("message", "投放失败");
-		//					return map;
-		//				}
-	    }
-	    DuofenCardReceive wcs1 = new DuofenCardReceive();
-	    wcs1.setId( id );
-	    wcs1.setState( 1 );
-	    wcs1.setCode( CommonUtil.getNominateCode( 6 ) );
-	    duofenCardReceiveMapper.updateById( wcs1 );
-	    map.put( "result", true );
-	    map.put( "message", "发布成功" );
-	} catch ( Exception e ) {
-	    map.put( "result", false );
-	    map.put( "message", "发布失败" );
-	}
-	return map;
-    }
+//    public Map< String,Object > threeShopGetCard( Integer threeMemberId, Member member, Integer busId, Integer bagId ) throws Exception {
+//	Map< String,Object > returnMap = new HashMap< String,Object >();
+//	try {
+//	    DuofenCardReceive dfcr = duofenCardReceiveMapper.selectById( bagId );
+//
+//	    Map< String,Object > dfcrl = duofenCardReceiveLogMapper.countByCrIdAndMemberId( dfcr.getId(), member.getId() );
+//
+//	    if ( 1 == dfcr.getNumlimit() ) {
+//		if ( 1 == dfcr.getMaxNumType() ) {
+//		    if ( CommonUtil.isNotEmpty( dfcrl ) && dfcrl.size() > 0 ) {
+//			if ( CommonUtil.isNotEmpty( dfcrl.get( "crId" ) ) && CommonUtil.toString( dfcr.getId() ).equals( dfcrl.get( "crId" ).toString() ) ) {
+//			    Integer maxNum = CommonUtil.toInteger( dfcr.getMaxNum() );
+//			    Integer count = CommonUtil.toInteger( dfcrl.get( "cId" ) );
+//			    if ( maxNum <= count ) {
+//				returnMap.put( "result", false );
+//				returnMap.put( "message", "该卡券包您已领取完" ); // 领取状态
+//				return returnMap;
+//			    }
+//			}
+//		    }
+//		} else {
+//		    Integer id = dfcr.getId();
+//		    Date beginDate = DateTimeKit.parse( DateTimeKit.getDate() + " 00:00:00", "yyyy-MM-dd HH:mm:ss" );
+//		    Map< String,Object > logList = duofenCardReceiveLogMapper.countByCrIdAndDate( id, member.getId(), beginDate );
+//		    if ( CommonUtil.isNotEmpty( logList ) ) {
+//			Integer maxNum = dfcr.getMaxNum();
+//			Integer count = CommonUtil.toInteger( logList.get( "cId" ) );
+//			if ( maxNum <= count ) {
+//			    returnMap.put( "result", false );
+//			    returnMap.put( "message", "该卡券包您今天已领取完" ); // 领取状态
+//			    return returnMap;
+//			}
+//		    }
+//		}
+//	    }
+//
+//	    Member m1 = new Member();
+//	    boolean flag = false; // 用来标示是否修改修改用户数据
+//	    if ( dfcr.getJifen() > 0 ) {
+//		// 扣除用户积分
+//		if ( member.getIntegral() < dfcr.getJifen() ) {
+//		    returnMap.put( "result", false );
+//		    returnMap.put( "message", "积分不足,不能领取" );
+//		    return returnMap;
+//		}
+//		if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
+//		    memberCardService.saveCardRecordNew( member.getMcId(), (byte) 2, dfcr.getJifen() + "积分", "领取优惠券扣除积分", member.getBusId(), null, 0, -dfcr.getJifen() );
+//		}
+//		flag = true;
+//		m1.setIntegral( member.getIntegral() - dfcr.getJifen() );
+//	    }
+//
+//	    if ( dfcr.getFenbi() > 0 ) {
+//		// 扣除用户粉币
+//		if ( member.getFansCurrency() < dfcr.getFenbi() ) {
+//		    returnMap.put( "result", false );
+//		    returnMap.put( "message", "粉币不足,不能领取" );
+//		    return returnMap;
+//		}
+//		if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
+//		    memberCardService.saveCardRecordNew( member.getMcId(), (byte) 3, dfcr.getFenbi() + "粉币", "领取优惠券扣除粉币", member.getBusId(), null, 0, -dfcr.getFenbi() );
+//		}
+//		flag = true;
+//		m1.setFansCurrency( member.getFansCurrency() - dfcr.getFenbi() );
+//
+//		// 归还商户粉币
+//		returnfansCurrency( member.getBusId(), new Double( -dfcr.getFenbi() ) );
+//	    }
+//	    if ( flag ) {
+//		m1.setId( member.getId() );
+//		memberMapper.updateById( m1 );
+//	    }
+//
+//	    String[] cardIds = dfcr.getCardIds().split( "," );
+//	    List< Integer > cardList = new ArrayList< Integer >();
+//	    for ( int i = 0; i < cardIds.length; i++ ) {
+//		if ( CommonUtil.isNotEmpty( cardIds[i] ) ) {
+//		    cardList.add( CommonUtil.toInteger( cardIds[i] ) );
+//		}
+//	    }
+//
+//	    List< Map< String,Object > > listMap = duofenCardMapper.findByCardIds( dfcr.getBusId(), cardList );
+//	    for ( Map< String,Object > map : listMap ) {
+//		DuofenCardGet duofenCardGet = new DuofenCardGet();
+//		duofenCardGet.setPublicId( dfcr.getPublicId() );
+//		duofenCardGet.setMemberId( member.getId() );
+//		String code = getCode( 12 );
+//		duofenCardGet.setCode( code );
+//		duofenCardGet.setGetType( 3 );
+//		duofenCardGet.setCardId( CommonUtil.toInteger( map.get( "id" ) ) );
+//		duofenCardGet.setGetDate( new Date() );
+//		duofenCardGet.setCardReceiveId( dfcr.getId() );
+//
+//		if ( "DATE_TYPE_FIX_TIME_RANGE".equals( map.get( "type" ) ) ) {
+//		    duofenCardGet.setStartTime( DateTimeKit.parseDate( map.get( "begin_timestamp" ).toString() ) );
+//		    duofenCardGet.setEndTime( DateTimeKit.parseDate( map.get( "end_timestamp" ).toString() ) );
+//		} else {
+//		    duofenCardGet.setStartTime( DateTimeKit.addDate( new Date(), CommonUtil.toInteger( map.get( "fixed_begin_term" ) ) ) );
+//		    duofenCardGet.setEndTime( DateTimeKit.addDate( new Date(), CommonUtil.toInteger( map.get( "fixed_term" ) ) ) );
+//		}
+//		duofenCardGet.setBusId( member.getBusId() );
+//		duofenCardGetMapper.insert( duofenCardGet );
+//
+//	    }
+//
+//	    DuofenCardReceivelog duofenCardReceiveLog = new DuofenCardReceivelog();
+//	    duofenCardReceiveLog.setCrId( dfcr.getId() );
+//	    duofenCardReceiveLog.setCreateDate( new Date() );
+//	    duofenCardReceiveLog.setMemberId( member.getId() );
+//	    duofenCardReceiveLog.setThreeMemberId( threeMemberId );
+//	    duofenCardReceiveLogMapper.insert( duofenCardReceiveLog );
+//
+//	    // 短信通知
+//	    if ( dfcr.getIsCallSms() == 1 ) {
+//		Map< String,Object > params = new HashMap< String,Object >();
+//		params.put( "busId", member.getBusId() );
+//		params.put( "model", 12 );
+//		params.put( "phone", dfcr.getMobilePhone() );
+//		params.put( "content", "用户领取一个包,包名：" + dfcr.getCardsName() );
+//		try {
+//		    HttpClienUtil.httpPost( memberConfig.getWxmp_home()+SEND_SMS, JSONObject.fromObject( params ), true );
+//		} catch ( Exception e ) {
+//		    LOG.error( "短信发送失败", e );
+//		}
+//	    }
+//
+//	    int type = 0;
+//	    if ( flag ) {
+//		type = 2;
+//	    }
+//	    if ( dfcr.getDeliveryType1() == 1 ) {
+//		type = 1;
+//	    }
+//	    Map< String,Object > params = new HashMap< String,Object >();
+//	    params.put( "bagId", bagId );
+//	    params.put( "memberId", threeMemberId );
+//	    params.put( "type", type );
+//	    if ( CommonUtil.isNotEmpty( dfcr.getReceiveDate() ) ) {
+//		params.put( "day", DateTimeKit.daysBetween( new Date(), dfcr.getReceiveDate() ) );
+//	    }
+//
+//	    //	couponMallOrderService.saveCouponMallOrder(params);
+//
+//	    returnMap.put( "result", true );
+//	    returnMap.put( "message", "领取成功" );
+//
+//	    return returnMap;
+//	} catch ( Exception e ) {
+//	    LOG.error( "领取优惠券异常", e );
+//	    throw new Exception();
+//	}
+//    }
 
-    @Transactional( rollbackFor = Exception.class )
-    @Override
-    public Map< String,Object > threeShopGetCard( Integer threeMemberId, Member member, Integer busId, Integer bagId ) throws Exception {
-	Map< String,Object > returnMap = new HashMap< String,Object >();
-	try {
-	    DuofenCardReceive dfcr = duofenCardReceiveMapper.selectById( bagId );
+//    @Override
+//    public List< DuofenCardGet > findUserCardByReceiveId( Integer memberId, Integer receiveId ) {
+//	return duofenCardGetMapper.findUserCardByReceiveId( receiveId, memberId );
+//
+//    }
 
-	    Map< String,Object > dfcrl = duofenCardReceiveLogMapper.countByCrIdAndMemberId( dfcr.getId(), member.getId() );
+//    @Override
+//    public List< DuofenCard > findCardOverTime( Integer cardReceiveId, Integer memberId ) {
+//
+//	List< DuofenCardGet > gs = duofenCardGetMapper.findThreeByOverTime( cardReceiveId, memberId );
+//	if ( CommonUtil.isEmpty( gs ) ) {
+//	    return null;
+//	}
+//	List< Integer > ids = new ArrayList< Integer >();
+//	for ( DuofenCardGet d : gs ) {
+//	    ids.add( d.getCardId() );
+//	}
+//	if ( ids.size() > 0 ) {
+//	    List< DuofenCard > list = duofenCardMapper.findInCardIds( ids );
+//	    return list;
+//	}
+//	return null;
+//    }
 
-	    if ( 1 == dfcr.getNumlimit() ) {
-		if ( 1 == dfcr.getMaxNumType() ) {
-		    if ( CommonUtil.isNotEmpty( dfcrl ) && dfcrl.size() > 0 ) {
-			if ( CommonUtil.isNotEmpty( dfcrl.get( "crId" ) ) && CommonUtil.toString( dfcr.getId() ).equals( dfcrl.get( "crId" ).toString() ) ) {
-			    Integer maxNum = CommonUtil.toInteger( dfcr.getMaxNum() );
-			    Integer count = CommonUtil.toInteger( dfcrl.get( "cId" ) );
-			    if ( maxNum <= count ) {
-				returnMap.put( "result", false );
-				returnMap.put( "message", "该卡券包您已领取完" ); // 领取状态
-				return returnMap;
-			    }
-			}
-		    }
-		} else {
-		    Integer id = dfcr.getId();
-		    Date beginDate = DateTimeKit.parse( DateTimeKit.getDate() + " 00:00:00", "yyyy-MM-dd HH:mm:ss" );
-		    Map< String,Object > logList = duofenCardReceiveLogMapper.countByCrIdAndDate( id, member.getId(), beginDate );
-		    if ( CommonUtil.isNotEmpty( logList ) ) {
-			Integer maxNum = dfcr.getMaxNum();
-			Integer count = CommonUtil.toInteger( logList.get( "cId" ) );
-			if ( maxNum <= count ) {
-			    returnMap.put( "result", false );
-			    returnMap.put( "message", "该卡券包您今天已领取完" ); // 领取状态
-			    return returnMap;
-			}
-		    }
-		}
-	    }
+//    @Override
+//    public List< Map< String,Object > > findCardReceive( Integer busId, Integer memberId1, Integer page ) {
+//	if ( CommonUtil.isEmpty( page ) ) {
+//	    page = 0;
+//	}
+//	Integer firstResult = 5 * page;
+//	Integer pageSize = 10;
+//
+//	// 查询卡包下卡券信息
+//	List< Map< String,Object > > receives = duofenCardReceiveMapper.findCardReceiveBydeliveryType1( busId, new Date(), 0, firstResult, pageSize );
+//
+//	if ( CommonUtil.isEmpty( receives ) || receives.size() == 0 ) {
+//	    return null;
+//	}
+//
+//	List< Integer > cardIdList = new ArrayList< Integer >();
+//	for ( Map< String,Object > map : receives ) {
+//	    String[] cardIds = CommonUtil.toString( map.get( "cardIds" ) ).split( "," );
+//	    for ( String str : cardIds ) {
+//		if ( CommonUtil.isNotEmpty( str ) ) {
+//		    cardIdList.add( CommonUtil.toInteger( str ) );
+//		}
+//	    }
+//	}
+//
+//	// 卡券没有 返回null
+//	if ( cardIdList.size() == 0 ) {
+//	    return null;
+//	}
+//
+//	List< Map< String,Object > > duofencards = duofenCardMapper.findByCardIds( busId, cardIdList );
+//
+//	List< Map< String,Object > > receiveList = new ArrayList< Map< String,Object > >();
+//	List< Map< String,Object > > dList = new ArrayList< Map< String,Object > >();
+//	for ( Map< String,Object > r : receives ) {
+//	    for ( Map< String,Object > d : duofencards ) {
+//		if ( CommonUtil.toString( r.get( "cardIds" ) ).contains( CommonUtil.toString( d.get( "id" ) ) ) ) {
+//		    dList.add( d );
+//		}
+//	    }
+//	    r.put( "duofencard", dList );
+//	    receiveList.add( r );
+//	}
+//	return receiveList;
+//    }
 
-	    Member m1 = new Member();
-	    boolean flag = false; // 用来标示是否修改修改用户数据
-	    if ( dfcr.getJifen() > 0 ) {
-		// 扣除用户积分
-		if ( member.getIntegral() < dfcr.getJifen() ) {
-		    returnMap.put( "result", false );
-		    returnMap.put( "message", "积分不足,不能领取" );
-		    return returnMap;
-		}
-		if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
-		    memberCardService.saveCardRecordNew( member.getMcId(), (byte) 2, dfcr.getJifen() + "积分", "领取优惠券扣除积分", member.getBusId(), null, 0, -dfcr.getJifen() );
-		}
-		flag = true;
-		m1.setIntegral( member.getIntegral() - dfcr.getJifen() );
-	    }
-
-	    if ( dfcr.getFenbi() > 0 ) {
-		// 扣除用户粉币
-		if ( member.getFansCurrency() < dfcr.getFenbi() ) {
-		    returnMap.put( "result", false );
-		    returnMap.put( "message", "粉币不足,不能领取" );
-		    return returnMap;
-		}
-		if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
-		    memberCardService.saveCardRecordNew( member.getMcId(), (byte) 3, dfcr.getFenbi() + "粉币", "领取优惠券扣除粉币", member.getBusId(), null, 0, -dfcr.getFenbi() );
-		}
-		flag = true;
-		m1.setFansCurrency( member.getFansCurrency() - dfcr.getFenbi() );
-
-		// 归还商户粉币
-		returnfansCurrency( member.getBusId(), new Double( -dfcr.getFenbi() ) );
-	    }
-	    if ( flag ) {
-		m1.setId( member.getId() );
-		memberMapper.updateById( m1 );
-	    }
-
-	    String[] cardIds = dfcr.getCardIds().split( "," );
-	    List< Integer > cardList = new ArrayList< Integer >();
-	    for ( int i = 0; i < cardIds.length; i++ ) {
-		if ( CommonUtil.isNotEmpty( cardIds[i] ) ) {
-		    cardList.add( CommonUtil.toInteger( cardIds[i] ) );
-		}
-	    }
-
-	    List< Map< String,Object > > listMap = duofenCardMapper.findByCardIds( dfcr.getBusId(), cardList );
-	    for ( Map< String,Object > map : listMap ) {
-		DuofenCardGet duofenCardGet = new DuofenCardGet();
-		duofenCardGet.setPublicId( dfcr.getPublicId() );
-		duofenCardGet.setMemberId( member.getId() );
-		String code = getCode( 12 );
-		duofenCardGet.setCode( code );
-		duofenCardGet.setGetType( 3 );
-		duofenCardGet.setCardId( CommonUtil.toInteger( map.get( "id" ) ) );
-		duofenCardGet.setGetDate( new Date() );
-		duofenCardGet.setCardReceiveId( dfcr.getId() );
-
-		if ( "DATE_TYPE_FIX_TIME_RANGE".equals( map.get( "type" ) ) ) {
-		    duofenCardGet.setStartTime( DateTimeKit.parseDate( map.get( "begin_timestamp" ).toString() ) );
-		    duofenCardGet.setEndTime( DateTimeKit.parseDate( map.get( "end_timestamp" ).toString() ) );
-		} else {
-		    duofenCardGet.setStartTime( DateTimeKit.addDate( new Date(), CommonUtil.toInteger( map.get( "fixed_begin_term" ) ) ) );
-		    duofenCardGet.setEndTime( DateTimeKit.addDate( new Date(), CommonUtil.toInteger( map.get( "fixed_term" ) ) ) );
-		}
-		duofenCardGet.setBusId( member.getBusId() );
-		duofenCardGetMapper.insert( duofenCardGet );
-
-	    }
-
-	    DuofenCardReceivelog duofenCardReceiveLog = new DuofenCardReceivelog();
-	    duofenCardReceiveLog.setCrId( dfcr.getId() );
-	    duofenCardReceiveLog.setCreateDate( new Date() );
-	    duofenCardReceiveLog.setMemberId( member.getId() );
-	    duofenCardReceiveLog.setThreeMemberId( threeMemberId );
-	    duofenCardReceiveLogMapper.insert( duofenCardReceiveLog );
-
-	    // 短信通知
-	    if ( dfcr.getIsCallSms() == 1 ) {
-		Map< String,Object > params = new HashMap< String,Object >();
-		params.put( "busId", member.getBusId() );
-		params.put( "model", 12 );
-		params.put( "phone", dfcr.getMobilePhone() );
-		params.put( "content", "用户领取一个包,包名：" + dfcr.getCardsName() );
-		try {
-		    HttpClienUtil.httpPost( memberConfig.getWxmp_home()+SEND_SMS, JSONObject.fromObject( params ), true );
-		} catch ( Exception e ) {
-		    LOG.error( "短信发送失败", e );
-		}
-	    }
-
-	    int type = 0;
-	    if ( flag ) {
-		type = 2;
-	    }
-	    if ( dfcr.getDeliveryType1() == 1 ) {
-		type = 1;
-	    }
-	    Map< String,Object > params = new HashMap< String,Object >();
-	    params.put( "bagId", bagId );
-	    params.put( "memberId", threeMemberId );
-	    params.put( "type", type );
-	    if ( CommonUtil.isNotEmpty( dfcr.getReceiveDate() ) ) {
-		params.put( "day", DateTimeKit.daysBetween( new Date(), dfcr.getReceiveDate() ) );
-	    }
-
-	    //	couponMallOrderService.saveCouponMallOrder(params);
-
-	    returnMap.put( "result", true );
-	    returnMap.put( "message", "领取成功" );
-
-	    return returnMap;
-	} catch ( Exception e ) {
-	    LOG.error( "领取优惠券异常", e );
-	    throw new Exception();
-	}
-    }
-
-    @Override
-    public List< DuofenCardGet > findUserCardByReceiveId( Integer memberId, Integer receiveId ) {
-	return duofenCardGetMapper.findUserCardByReceiveId( receiveId, memberId );
-
-    }
-
-    @Override
-    public List< DuofenCard > findCardOverTime( Integer cardReceiveId, Integer memberId ) {
-
-	List< DuofenCardGet > gs = duofenCardGetMapper.findThreeByOverTime( cardReceiveId, memberId );
-	if ( CommonUtil.isEmpty( gs ) ) {
-	    return null;
-	}
-	List< Integer > ids = new ArrayList< Integer >();
-	for ( DuofenCardGet d : gs ) {
-	    ids.add( d.getCardId() );
-	}
-	if ( ids.size() > 0 ) {
-	    List< DuofenCard > list = duofenCardMapper.findInCardIds( ids );
-	    return list;
-	}
-	return null;
-    }
-
-    @Override
-    public List< Map< String,Object > > findCardReceive( Integer busId, Integer memberId1, Integer page ) {
-	if ( CommonUtil.isEmpty( page ) ) {
-	    page = 0;
-	}
-	Integer firstResult = 5 * page;
-	Integer pageSize = 10;
-
-	// 查询卡包下卡券信息
-	List< Map< String,Object > > receives = duofenCardReceiveMapper.findCardReceiveBydeliveryType1( busId, new Date(), 0, firstResult, pageSize );
-
-	if ( CommonUtil.isEmpty( receives ) || receives.size() == 0 ) {
-	    return null;
-	}
-
-	List< Integer > cardIdList = new ArrayList< Integer >();
-	for ( Map< String,Object > map : receives ) {
-	    String[] cardIds = CommonUtil.toString( map.get( "cardIds" ) ).split( "," );
-	    for ( String str : cardIds ) {
-		if ( CommonUtil.isNotEmpty( str ) ) {
-		    cardIdList.add( CommonUtil.toInteger( str ) );
-		}
-	    }
-	}
-
-	// 卡券没有 返回null
-	if ( cardIdList.size() == 0 ) {
-	    return null;
-	}
-
-	List< Map< String,Object > > duofencards = duofenCardMapper.findByCardIds( busId, cardIdList );
-
-	List< Map< String,Object > > receiveList = new ArrayList< Map< String,Object > >();
-	List< Map< String,Object > > dList = new ArrayList< Map< String,Object > >();
-	for ( Map< String,Object > r : receives ) {
-	    for ( Map< String,Object > d : duofencards ) {
-		if ( CommonUtil.toString( r.get( "cardIds" ) ).contains( CommonUtil.toString( d.get( "id" ) ) ) ) {
-		    dList.add( d );
-		}
-	    }
-	    r.put( "duofencard", dList );
-	    receiveList.add( r );
-	}
-	return receiveList;
-    }
-
-    @Override
-    public List< Map< String,Object > > findCardReceive1( Integer busId, Integer memberId, Integer page ) {
-	if ( CommonUtil.isEmpty( page ) ) {
-	    page = 0;
-	}
-	Integer firstResult = 5 * page;
-	Integer pageSize = 10;
-
-	// 查询卡包下卡券信息
-	List< Map< String,Object > > receives = duofenCardReceiveMapper.findCardReceiveBydeliveryType1( busId, new Date(), 1, firstResult, pageSize );
-
-	if ( CommonUtil.isEmpty( receives ) || receives.size() == 0 ) {
-	    return null;
-	}
-
-	List< Integer > cardIdList = new ArrayList< Integer >();
-	for ( Map< String,Object > map : receives ) {
-	    String[] cardIds = CommonUtil.toString( map.get( "cardIds" ) ).split( "," );
-	    for ( String str : cardIds ) {
-		if ( CommonUtil.isNotEmpty( str ) ) {
-		    cardIdList.add( CommonUtil.toInteger( str ) );
-		}
-	    }
-	}
-
-	// 卡券没有 返回null
-	if ( cardIdList.size() == 0 ) {
-	    return null;
-	}
-
-	List< Map< String,Object > > duofencards = duofenCardMapper.findByCardIds( busId, cardIdList );
-
-	List< Map< String,Object > > receiveList = new ArrayList< Map< String,Object > >();
-	List< Map< String,Object > > dList = new ArrayList< Map< String,Object > >();
-	for ( Map< String,Object > r : receives ) {
-	    for ( Map< String,Object > d : duofencards ) {
-		if ( CommonUtil.toString( r.get( "cardIds" ) ).contains( CommonUtil.toString( d.get( "id" ) ) ) ) {
-		    dList.add( d );
-		}
-	    }
-	    r.put( "duofencard", dList );
-	    receiveList.add( r );
-	}
-	return receiveList;
-    }
-
-    @Transactional( rollbackFor = Exception.class )
-    @Override
-    public Map< String,Object > pcBuyReceive( Integer memberId, Integer busId, Integer cardreceiveId ) throws Exception {
-	Map< String,Object > map = new HashMap< String,Object >();
-	try {
-	    DuofenCardReceive dfcr = duofenCardReceiveMapper.selectById( cardreceiveId );
-
-	    Map< String,Object > dfcrl = duofenCardReceiveLogMapper.countByCrIdAndMemberId( dfcr.getId(), memberId );
-
-	    if ( 1 == dfcr.getNumlimit() ) {
-		if ( 1 == dfcr.getMaxNumType() ) {
-		    if ( CommonUtil.isNotEmpty( dfcrl ) && dfcrl.size() > 0 ) {
-			if ( CommonUtil.isNotEmpty( dfcrl.get( "crId" ) ) && CommonUtil.toString( dfcr.getId() ).equals( dfcrl.get( "crId" ).toString() ) ) {
-			    Integer maxNum = CommonUtil.toInteger( dfcr.getMaxNum() );
-			    Integer count = CommonUtil.toInteger( dfcrl.get( "cId" ) );
-			    if ( maxNum <= count ) {
-				map.put( "result", false );
-				map.put( "message", "该卡券包您已领取完" ); // 领取状态 1已领取完
-				// 0还可以领取
-				return map;
-			    }
-			}
-		    }
-		} else {
-		    Integer id = dfcr.getId();
-		    Date beginDate = DateTimeKit.parse( DateTimeKit.getDate() + " 00:00:00", "yyyy-MM-dd HH:mm:ss" );
-		    Map< String,Object > logList = duofenCardReceiveLogMapper.countByCrIdAndDate( id, memberId, beginDate );
-		    if ( CommonUtil.isNotEmpty( logList ) ) {
-			Integer maxNum = dfcr.getMaxNum();
-			Integer count = CommonUtil.toInteger( logList.get( "cId" ) );
-			if ( maxNum <= count ) {
-			    map.put( "result", false );
-			    map.put( "message", "该卡券包您今天已领取完" ); // 领取状态 1已领取完
-			    return map;
-			}
-		    }
-		}
-	    }
-
-	    String[] cardIds = dfcr.getCardIds().split( "," );
-	    List< Integer > cardList = new ArrayList< Integer >();
-	    for ( int i = 0; i < cardIds.length; i++ ) {
-		if ( CommonUtil.isNotEmpty( cardIds[i] ) ) {
-		    cardList.add( CommonUtil.toInteger( cardIds[i] ) );
-		}
-	    }
-
-	    List< Map< String,Object > > cardMessage = JsonUtil.json2List( dfcr.getCardMessage() );
-
-	    List< Map< String,Object > > listMap = duofenCardMapper.findByCardIds( dfcr.getBusId(), cardList );
-
-	    List< DuofenCardGet > dcg = new ArrayList<>();
-	    for ( Map< String,Object > map1 : listMap ) {
-		for ( Map< String,Object > card : cardMessage ) {
-		    if ( CommonUtil.toString( card.get( "cardId" ) ).equals( CommonUtil.toString( map1.get( "id" ) ) ) ) {
-			int num = CommonUtil.toInteger( card.get( "num" ) );
-			if ( num == 0 ) {
-			    num = 1;
-			}
-			for ( int i = 0; i < num; i++ ) {
-			    DuofenCardGet duofenCardGet = new DuofenCardGet();
-			    duofenCardGet.setPublicId( dfcr.getPublicId() );
-			    duofenCardGet.setMemberId( memberId );
-			    String code = getCode( 12 );
-			    duofenCardGet.setCode( code );
-			    duofenCardGet.setGetType( 4 );
-			    duofenCardGet.setCardId( CommonUtil.toInteger( map1.get( "id" ) ) );
-			    duofenCardGet.setGetDate( new Date() );
-			    duofenCardGet.setCardReceiveId( dfcr.getId() );
-			    duofenCardGet.setBusId( busId );
-			    duofenCardGet.setState( 0 );
-			    if ( "DATE_TYPE_FIX_TIME_RANGE".equals( map1.get( "type" ) ) ) {
-				duofenCardGet.setStartTime( DateTimeKit.parseDate( map1.get( "begin_timestamp" ).toString() ) );
-				duofenCardGet.setEndTime( DateTimeKit.parseDate( map1.get( "end_timestamp" ).toString() ) );
-			    } else {
-				duofenCardGet.setStartTime( DateTimeKit.addDate( new Date(), CommonUtil.toInteger( map1.get( "fixed_begin_term" ) ) ) );
-				duofenCardGet.setEndTime( DateTimeKit.addDate( new Date(), CommonUtil.toInteger( map1.get( "fixed_term" ) ) ) );
-			    }
-			    //	duofenCardGetMapper.insertSelective(duofenCardGet);
-			    dcg.add( duofenCardGet );
-			}
-		    }
-		}
-	    }
-
-	    if ( dcg.size() > 0 ) {
-		duofenCardGetMapper.insertList( dcg );
-
-		DuofenCardReceivelog duofenCardReceiveLog = new DuofenCardReceivelog();
-		duofenCardReceiveLog.setCrId( dfcr.getId() );
-		duofenCardReceiveLog.setCreateDate( new Date() );
-		duofenCardReceiveLog.setMemberId( memberId );
-		duofenCardReceiveLogMapper.insert( duofenCardReceiveLog );
-	    }
-
-	    // 短信通知
-	    if ( dfcr.getIsCallSms() == 1 ) {
-		Map< String,Object > params = new HashMap< String,Object >();
-		params.put( "busId", busId );
-		params.put( "model", 12 );
-		params.put( "phone", dfcr.getMobilePhone() );
-		params.put( "content", "用户领取一个包,包名：" + dfcr.getCardsName() );
-		try {
-		    HttpClienUtil.httpPost( memberConfig.getWxmp_home()+SEND_SMS, JSONObject.fromObject( params ), true );
-		} catch ( Exception e ) {
-		    LOG.error( "短信发送失败", e );
-		}
-	    }
-
-	    map.put( "result", true );
-	    map.put( "message", "领取成功" );
-	} catch ( Exception e ) {
-	    LOG.error( "ERP领取优惠券失败", e );
-	    throw new Exception();
-	}
-	return map;
-    }
+//    @Override
+//    public List< Map< String,Object > > findCardReceive1( Integer busId, Integer memberId, Integer page ) {
+//	if ( CommonUtil.isEmpty( page ) ) {
+//	    page = 0;
+//	}
+//	Integer firstResult = 5 * page;
+//	Integer pageSize = 10;
+//
+//	// 查询卡包下卡券信息
+//	List< Map< String,Object > > receives = duofenCardReceiveMapper.findCardReceiveBydeliveryType1( busId, new Date(), 1, firstResult, pageSize );
+//
+//	if ( CommonUtil.isEmpty( receives ) || receives.size() == 0 ) {
+//	    return null;
+//	}
+//
+//	List< Integer > cardIdList = new ArrayList< Integer >();
+//	for ( Map< String,Object > map : receives ) {
+//	    String[] cardIds = CommonUtil.toString( map.get( "cardIds" ) ).split( "," );
+//	    for ( String str : cardIds ) {
+//		if ( CommonUtil.isNotEmpty( str ) ) {
+//		    cardIdList.add( CommonUtil.toInteger( str ) );
+//		}
+//	    }
+//	}
+//
+//	// 卡券没有 返回null
+//	if ( cardIdList.size() == 0 ) {
+//	    return null;
+//	}
+//
+//	List< Map< String,Object > > duofencards = duofenCardMapper.findByCardIds( busId, cardIdList );
+//
+//	List< Map< String,Object > > receiveList = new ArrayList< Map< String,Object > >();
+//	List< Map< String,Object > > dList = new ArrayList< Map< String,Object > >();
+//	for ( Map< String,Object > r : receives ) {
+//	    for ( Map< String,Object > d : duofencards ) {
+//		if ( CommonUtil.toString( r.get( "cardIds" ) ).contains( CommonUtil.toString( d.get( "id" ) ) ) ) {
+//		    dList.add( d );
+//		}
+//	    }
+//	    r.put( "duofencard", dList );
+//	    receiveList.add( r );
+//	}
+//	return receiveList;
+//    }
+//
+//    @Transactional( rollbackFor = Exception.class )
+//    @Override
+//    public Map< String,Object > pcBuyReceive( Integer memberId, Integer busId, Integer cardreceiveId ) throws Exception {
+//	Map< String,Object > map = new HashMap< String,Object >();
+//	try {
+//	    DuofenCardReceive dfcr = duofenCardReceiveMapper.selectById( cardreceiveId );
+//
+//	    Map< String,Object > dfcrl = duofenCardReceiveLogMapper.countByCrIdAndMemberId( dfcr.getId(), memberId );
+//
+//	    if ( 1 == dfcr.getNumlimit() ) {
+//		if ( 1 == dfcr.getMaxNumType() ) {
+//		    if ( CommonUtil.isNotEmpty( dfcrl ) && dfcrl.size() > 0 ) {
+//			if ( CommonUtil.isNotEmpty( dfcrl.get( "crId" ) ) && CommonUtil.toString( dfcr.getId() ).equals( dfcrl.get( "crId" ).toString() ) ) {
+//			    Integer maxNum = CommonUtil.toInteger( dfcr.getMaxNum() );
+//			    Integer count = CommonUtil.toInteger( dfcrl.get( "cId" ) );
+//			    if ( maxNum <= count ) {
+//				map.put( "result", false );
+//				map.put( "message", "该卡券包您已领取完" ); // 领取状态 1已领取完
+//				// 0还可以领取
+//				return map;
+//			    }
+//			}
+//		    }
+//		} else {
+//		    Integer id = dfcr.getId();
+//		    Date beginDate = DateTimeKit.parse( DateTimeKit.getDate() + " 00:00:00", "yyyy-MM-dd HH:mm:ss" );
+//		    Map< String,Object > logList = duofenCardReceiveLogMapper.countByCrIdAndDate( id, memberId, beginDate );
+//		    if ( CommonUtil.isNotEmpty( logList ) ) {
+//			Integer maxNum = dfcr.getMaxNum();
+//			Integer count = CommonUtil.toInteger( logList.get( "cId" ) );
+//			if ( maxNum <= count ) {
+//			    map.put( "result", false );
+//			    map.put( "message", "该卡券包您今天已领取完" ); // 领取状态 1已领取完
+//			    return map;
+//			}
+//		    }
+//		}
+//	    }
+//
+//	    String[] cardIds = dfcr.getCardIds().split( "," );
+//	    List< Integer > cardList = new ArrayList< Integer >();
+//	    for ( int i = 0; i < cardIds.length; i++ ) {
+//		if ( CommonUtil.isNotEmpty( cardIds[i] ) ) {
+//		    cardList.add( CommonUtil.toInteger( cardIds[i] ) );
+//		}
+//	    }
+//
+//	    List< Map< String,Object > > cardMessage = JsonUtil.json2List( dfcr.getCardMessage() );
+//
+//	    List< Map< String,Object > > listMap = duofenCardMapper.findByCardIds( dfcr.getBusId(), cardList );
+//
+//	    List< DuofenCardGet > dcg = new ArrayList<>();
+//	    for ( Map< String,Object > map1 : listMap ) {
+//		for ( Map< String,Object > card : cardMessage ) {
+//		    if ( CommonUtil.toString( card.get( "cardId" ) ).equals( CommonUtil.toString( map1.get( "id" ) ) ) ) {
+//			int num = CommonUtil.toInteger( card.get( "num" ) );
+//			if ( num == 0 ) {
+//			    num = 1;
+//			}
+//			for ( int i = 0; i < num; i++ ) {
+//			    DuofenCardGet duofenCardGet = new DuofenCardGet();
+//			    duofenCardGet.setPublicId( dfcr.getPublicId() );
+//			    duofenCardGet.setMemberId( memberId );
+//			    String code = getCode( 12 );
+//			    duofenCardGet.setCode( code );
+//			    duofenCardGet.setGetType( 4 );
+//			    duofenCardGet.setCardId( CommonUtil.toInteger( map1.get( "id" ) ) );
+//			    duofenCardGet.setGetDate( new Date() );
+//			    duofenCardGet.setCardReceiveId( dfcr.getId() );
+//			    duofenCardGet.setBusId( busId );
+//			    duofenCardGet.setState( 0 );
+//			    if ( "DATE_TYPE_FIX_TIME_RANGE".equals( map1.get( "type" ) ) ) {
+//				duofenCardGet.setStartTime( DateTimeKit.parseDate( map1.get( "begin_timestamp" ).toString() ) );
+//				duofenCardGet.setEndTime( DateTimeKit.parseDate( map1.get( "end_timestamp" ).toString() ) );
+//			    } else {
+//				duofenCardGet.setStartTime( DateTimeKit.addDate( new Date(), CommonUtil.toInteger( map1.get( "fixed_begin_term" ) ) ) );
+//				duofenCardGet.setEndTime( DateTimeKit.addDate( new Date(), CommonUtil.toInteger( map1.get( "fixed_term" ) ) ) );
+//			    }
+//			    //	duofenCardGetMapper.insertSelective(duofenCardGet);
+//			    dcg.add( duofenCardGet );
+//			}
+//		    }
+//		}
+//	    }
+//
+//	    if ( dcg.size() > 0 ) {
+//		duofenCardGetMapper.insertList( dcg );
+//
+//		DuofenCardReceivelog duofenCardReceiveLog = new DuofenCardReceivelog();
+//		duofenCardReceiveLog.setCrId( dfcr.getId() );
+//		duofenCardReceiveLog.setCreateDate( new Date() );
+//		duofenCardReceiveLog.setMemberId( memberId );
+//		duofenCardReceiveLogMapper.insert( duofenCardReceiveLog );
+//	    }
+//
+//	    // 短信通知
+//	    if ( dfcr.getIsCallSms() == 1 ) {
+//		Map< String,Object > params = new HashMap< String,Object >();
+//		params.put( "busId", busId );
+//		params.put( "model", 12 );
+//		params.put( "phone", dfcr.getMobilePhone() );
+//		params.put( "content", "用户领取一个包,包名：" + dfcr.getCardsName() );
+//		try {
+//		    HttpClienUtil.httpPost( memberConfig.getWxmp_home()+SEND_SMS, JSONObject.fromObject( params ), true );
+//		} catch ( Exception e ) {
+//		    LOG.error( "短信发送失败", e );
+//		}
+//	    }
+//
+//	    map.put( "result", true );
+//	    map.put( "message", "领取成功" );
+//	} catch ( Exception e ) {
+//	    LOG.error( "ERP领取优惠券失败", e );
+//	    throw new Exception();
+//	}
+//	return map;
+//    }
 
     /**
-     * 商场支付成功回调 分配卡券
+     * (汽车ERP) 购买 手机端购买支付成功 回调
      */
-    @Override
-    public Map< String,Object > successBuyReceive( Integer receiveId, Integer num, Integer memberId ) {
-	Map< String,Object > map = new HashMap< String,Object >();
-
+    public BaseResult successBuyReceive( BaseParam baseParam ) {
+	BaseResult br=new BaseResult();
 	try {
+	    SuccessPayBackBo dfcb = com.alibaba.fastjson.JSONObject.parseObject( com.alibaba.fastjson.JSONObject.toJSONString( baseParam.getReqdata() ), SuccessPayBackBo.class );
+	    Integer receiveId=dfcb.getReceiveId();
+	    Integer memberId=dfcb.getMemberId();
+	    Integer num=dfcb.getNum();
 	    DuofenCardReceive receives = duofenCardReceiveMapper.selectById( receiveId );
 	    String[] strId = receives.getCardIds().split( "," );
 	    List< Integer > ids = new ArrayList< Integer >();
@@ -1522,7 +1498,7 @@ public class CardCouponsWS {
 				    dfg.setCardId( duofenCard.getId() );
 				    dfg.setGetType( 4 );
 				    dfg.setState( 0 );
-				    dfg.setCode( getCode( 12 ) );
+				    dfg.setCode( getCode() );
 				    dfg.setGetDate( new Date() );
 				    dfg.setCardReceiveId( receiveId );
 				    dfg.setMemberId( memberId );
@@ -1560,43 +1536,99 @@ public class CardCouponsWS {
 		    }
 		}
 	    }
-	    map.put( "result", true );
-	    map.put( "message", "发放成功" );
+	    br.setCode( ReturnCode.SUCCESS );
+	    br.setMsg( "发放成功" );
 	} catch ( Exception e ) {
 	    e.printStackTrace();
-	    map.put( "result", false );
-	    map.put( "message", "发放失败" );
-	    LOG.error( "用户id:" + memberId + "购买了" + num + "个卡券包id:" + receiveId, e );
+	    LOG.error( "successPayBack商城发放卡包异常",e );
+	    br.setCode( ReturnCode.ERROR_1 );
+	    br.setMsg( "商城发放卡包失败" );
 	}
-	return map;
-    }
-
-    @Override
-    public List< Map< String,Object > > findReceive( Integer busId ) {
-	// 查询卡包下卡券信息
-	List< Map< String,Object > > receives = duofenCardReceiveMapper.findCardReceivesBydeliveryType1( busId, new Date(), 1 );
-	return receives;
+	return br;
     }
 
     /**
-     * 根据卡包查询卡券信息 取值 看数据库文档名称
+     * 卡包信息（购买） 美容
+     * @return
      */
-    @Override
-    public List< Map< String,Object > > findDuofenCard( Integer busId, Integer receiveId ) {
-	DuofenCardReceive receives = duofenCardReceiveMapper.selectById( receiveId );
-	String[] strId = receives.getCardIds().split( "," );
-	List< Integer > ids = new ArrayList< Integer >();
-	for ( String str : strId ) {
-	    if ( CommonUtil.isNotEmpty( str ) ) {
-		ids.add( CommonUtil.toInteger( str ) );
+    public BaseResult findReceive(BaseParam baseParam) {
+	// 查询卡包下卡券信息
+	BaseResult br=new BaseResult(  );
+	try {
+	    QueryDuofenCardBo dfcb = com.alibaba.fastjson.JSONObject.parseObject( com.alibaba.fastjson.JSONObject.toJSONString( baseParam.getReqdata() ), QueryDuofenCardBo.class );
+	    List< Map< String,Object > > receives = duofenCardReceiveMapper.findCardReceivesBydeliveryType1( dfcb.getBusId(), new Date(), 1 );
+	    DuofenCardReceiveListBo drs=new DuofenCardReceiveListBo();
+	    List< DuofenCardReceiveBo > dr = new ArrayList<>();
+	    DuofenCardReceiveBo db = null;
+	    for ( Map map : receives ) {
+		db = new DuofenCardReceiveBo();
+		db.setCardsName( CommonUtil.toString( map.get( "cardsName" ) ) );
+		db.setBackColor( CommonUtil.toString( map.get( "backColor" ) ) );
+		db.setReceiveDate( DateTimeKit.parseDate( map.get( "receiveDate" ).toString() ) );
+		db.setDeliveryType1( CommonUtil.toInteger( map.get( "deliveryType1" ) ) );
+		db.setNumlimit( CommonUtil.toInteger( map.get( "numlimit" ) ) );
+		db.setMaxNumType( CommonUtil.toInteger( map.get( "maxNumType" ) ) );
+		db.setMaxNum( CommonUtil.toInteger( map.get( "maxNum" ) ) );
+		db.setBuyMoney( CommonUtil.toDouble( map.get( "buyMoney" ) ) );
+		db.setCardMessage( CommonUtil.toString( map.get( "cardMessage" ) ) );
+		dr.add( db );
 	    }
+	    drs.setDuofenCardReceiveBos( dr );
+	    br.setCode( ReturnCode.SUCCESS );
+	    br.setData( com.alibaba.fastjson.JSONObject.toJSONString(drs  ) );
+	} catch ( Exception e ) {
+	    LOG.error( "findReceive查询异常",e );
+	    br.setCode( ReturnCode.ERROR_1 );
+	    br.setMsg( "查询数据失败" );
 	}
-	if ( ids.size() > 0 ) {
-	    List< Map< String,Object > > duofencards = duofenCardMapper.findByCardIds( busId, ids );
-	    return duofencards;
-	}
+	return br;
+    }
 
-	return null;
+    /**
+     * 根据卡包查询卡券信息
+     */
+    public BaseResult findDuofenCard( BaseParam baseParam) {
+	BaseResult br=new BaseResult(  );
+	try {
+	    QueryDuofenCardBo dfcb = com.alibaba.fastjson.JSONObject.parseObject( com.alibaba.fastjson.JSONObject.toJSONString( baseParam.getReqdata() ), QueryDuofenCardBo.class );
+	    DuofenCardReceive receives = duofenCardReceiveMapper.selectById( dfcb.getReceiveId() );
+	    String[] strId = receives.getCardIds().split( "," );
+	    List< Integer > ids = new ArrayList< Integer >();
+	    for ( String str : strId ) {
+		if ( CommonUtil.isNotEmpty( str ) ) {
+		    ids.add( CommonUtil.toInteger( str ) );
+		}
+	    }
+	    if ( ids.size() > 0 ) {
+	        DuofenCardReceiveListBo dfb=new DuofenCardReceiveListBo();
+		List< Map< String,Object > > duofencards = duofenCardMapper.findByCardIds( dfcb.getBusId(), ids );
+		List< DuofenCardBo > list = new ArrayList<>();
+		DuofenCardBo dcb = null;
+		for ( Map map : duofencards ) {
+		    dcb = new DuofenCardBo();
+		    dcb.setId(CommonUtil.toInteger( map.get( "id" ) ));
+		    dcb.setCard_type( CommonUtil.toInteger( map.get( "card_type" ) ) );
+		    dcb.setTitle( CommonUtil.toString( map.get( "title" ) ) );
+		    dcb.setReduce_cost( CommonUtil.toDouble( map.get( "reduce_cost" ) ));
+		    dcb.setDiscount(CommonUtil.toDouble( map.get( "discount" ) ) );
+		    dcb.setCash_least_cost( CommonUtil.toDouble( map.get(  "cash_least_cost") ));
+		    dcb.setType(CommonUtil.toString( map.get( "type" ) ) );
+		    dcb.setFixed_begin_term( CommonUtil.toInteger(  map.get( "fixed_begin_term" )) );
+		    dcb.setFixed_term(  CommonUtil.toInteger(  map.get( "fixed_term" )) );
+		    dcb.setBegin_timestamp( DateTimeKit.parseDate( CommonUtil.toString( map.get( "begin_timestamp" ) ) ) );
+		    dcb.setEnd_timestamp( DateTimeKit.parseDate( CommonUtil.toString( map.get( "end_timestamp" ) ) ));
+		    list.add( dcb );
+		}
+		dfb.setDuofenCardBos( list );
+		br.setCode( ReturnCode.SUCCESS );
+		br.setData( com.alibaba.fastjson.JSONObject.toJSONString( dfb ) );
+	    }
+	} catch ( Exception e ) {
+	    LOG.error( "findDuofenCard查询异常",e );
+	    br.setCode( ReturnCode.ERROR_1 );
+	    br.setMsg( "查询数据失败" );
+	}
+	return br;
     }
 
     /**
@@ -1759,7 +1791,6 @@ public class CardCouponsWS {
 	return map;
     }
 
-    @Override
     public Map< String,Object > verificationCard_3( Map< String,Object > params ) {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {

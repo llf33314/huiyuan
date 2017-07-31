@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberPicklogDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberPicklog">
+		<id column="id" property="id" />
+		<result column="memberId" property="memberId" />
+		<result column="busId" property="busId" />
+		<result column="pickMoney" property="pickMoney" />
+		<result column="pickDate" property="pickDate" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, memberId, busId, pickMoney, pickDate
+    </sql>
+
+
+	<select id="findByMemberId"  resultMap="BaseResultMap">
+		select   <include refid="Base_Column_List" /> from t_member_picklog where busId=#{busId} and memberId=#{memberId} order by id desc
+	</select>
+
+	<select id="findBybusId" resultMap="BaseResultMap">
+		select   <include refid="Base_Column_List" /> from t_member_picklog where busId=#{busId}
+	</select>
+
+	<select id="countPickLog" resultType="java.lang.Integer">
+		select count(p.id) from   t_member_picklog p inner join t_wx_bus_member m on m.id=p.memberId where p.busId=#{busId}
+		<if test="search!=null">
+			and m.phone=#{search}
+		</if>
+	</select>
+
+	<select id="findPickLog" resultType="Map">
+		select p.id, p.pickMoney, p.pickDate,m.nickname,m.phone from t_member_picklog p inner join t_wx_bus_member m on m.id=p.memberId
+		where p.busId=#{busId}
+		<if test="search!=null">
+			and m.phone=#{search}
+		</if>
+		limit #{fristpage},#{pagesize}
+	</select>
+</mapper>

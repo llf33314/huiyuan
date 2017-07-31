@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberRechargegiveDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberRechargegive">
+		<id column="id" property="id" />
+		<result column="money" property="money" />
+		<result column="giveCount" property="giveCount" />
+		<result column="number" property="number" />
+		<result column="gr_id" property="grId" />
+		<result column="publicId" property="publicId" />
+		<result column="ctId" property="ctId" />
+		<result column="isDate" property="isDate" />
+		<result column="busId" property="busId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, money, giveCount, number, gr_id AS grId, publicId, ctId, isDate, busId
+    </sql>
+
+
+
+	<select id="findBybusId" resultType="Map">
+		select * from t_member_rechargegive where busId=#{busId} and ctId=#{ctId} order by money asc
+	</select>
+
+	<delete id="deleteBybusIdAndGrid">
+		delete from t_member_rechargegive where busId=#{busId} and gr_id=#{grId}
+	</delete>
+
+	<select id="findBybusIdAndGrId" resultType="Map">
+		select * from t_member_rechargegive where busId=#{busId} and gr_id=#{grId} and isDate=#{isDate} order by money asc
+	</select>
+
+</mapper>

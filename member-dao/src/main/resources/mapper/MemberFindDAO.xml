@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberFindDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberFind">
+		<id column="id" property="id" />
+		<result column="title" property="title" />
+		<result column="image" property="image" />
+		<result column="url" property="url" />
+		<result column="text" property="text" />
+		<result column="model" property="model" />
+		<result column="publicId" property="publicId" />
+		<result column="type" property="type" />
+		<result column="color" property="color" />
+		<result column="soure" property="soure" />
+		<result column="integral" property="integral" />
+		<result column="busId" property="busId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, title, image, url, text, model, publicId, type, color, soure, integral, busId
+    </sql>
+
+	<select id="findBybusId" resultType="Map">
+		select * from t_member_find where busId=#{busId} and soure=#{soure}
+	</select>
+
+	<select id="countByModel" resultType="Integer">
+		select count(id) from t_member_find where busId=#{busId} and model=1 and soure=0
+	</select>
+
+	<select id="findByQianDao" resultMap="BaseResultMap">
+		select * from t_member_find where busId=#{busId} and model=1 and soure=0 LIMIT 1
+	</select>
+
+</mapper>

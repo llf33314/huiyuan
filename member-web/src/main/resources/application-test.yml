@@ -50,3 +50,7 @@ server:
   port: 8081
   session:
     timeout: 30
+
+
+cxf:
+ path: /services

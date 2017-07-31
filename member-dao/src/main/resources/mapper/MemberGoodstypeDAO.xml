@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberGoodstypeDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberGoodstype">
+		<id column="gt_id" property="gtId" />
+		<result column="gt_name" property="gtName" />
+		<result column="gt_flow" property="gtFlow" />
+		<result column="public_id" property="publicId" />
+		<result column="gt_unit" property="gtUnit" />
+		<result column="gType_id" property="gTypeId" />
+		<result column="busId" property="busId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        gt_id AS gtId, gt_name AS gtName, gt_flow AS gtFlow, public_id AS publicId, gt_unit AS gtUnit, gType_id AS gTypeId, busId
+    </sql>
+
+
+	<select id="findBy0" resultType="Map">
+		select
+		gt_id as gtId, gt_name as gtName, gt_flow as gtFlow, public_id as publicId, gt_unit as gtUnit, gType_id as gTypeId
+		from t_member_goodstype where public_Id=0
+		<if test="gradeIds!=null">
+			or  gType_id in
+			<foreach close=")" collection="gradeIds" index="index" item="id" open="(" separator=",">
+				#{id}
+			</foreach>
+		</if>
+	</select>
+
+	<select id="findNotInidAndInGtypeId" resultType="Map">
+		select
+		gt_id as gtId, gt_name as gtName, gt_flow as gtFlow, public_id as publicId, gt_unit as gtUnit, gType_id as gTypeId
+		from t_member_goodstype
+		<where>
+			<if test="gradeIds!=null">
+				gType_id in
+				<foreach close=")" collection="gradeIds" index="index" item="id" open="(" separator=",">
+					#{id}
+				</foreach>
+			</if>
+
+			<if test="goodTypeIds!=null">
+				and gt_id not in
+				<foreach close=")" collection="goodTypeIds" index="index" item="gtid" open="(" separator=",">
+					#{gtid}
+				</foreach>
+			</if>
+		</where>
+	</select>
+
+</mapper>

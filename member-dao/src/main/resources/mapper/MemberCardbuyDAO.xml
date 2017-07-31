@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberCardbuyDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberCardbuy">
+		<id column="id" property="id" />
+		<result column="publicId" property="publicId" />
+		<result column="ctId" property="ctId" />
+		<result column="memberId" property="memberId" />
+		<result column="buyMoney" property="buyMoney" />
+		<result column="busId" property="busId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, publicId, ctId, memberId, buyMoney, busId
+    </sql>
+
+
+	<select id="findByMemberId" resultMap="BaseResultMap">
+		select  <include refid="Base_Column_List" />
+		from t_member_cardbuy where busId=#{busId} and memberId=#{memberId} limit 1
+	</select>
+</mapper>

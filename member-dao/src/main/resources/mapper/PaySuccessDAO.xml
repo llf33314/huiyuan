@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.PaySuccessDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.PaySuccess">
+		<id column="id" property="id" />
+		<result column="payname" property="payname" />
+		<result column="modelName" property="modelName" />
+		<result column="model" property="model" />
+		<result column="optionType" property="optionType" />
+		<result column="gameUrl" property="gameUrl" />
+		<result column="remarks" property="remarks" />
+		<result column="publicId" property="publicId" />
+		<result column="phone" property="phone" />
+		<result column="countType" property="countType" />
+		<result column="jifenOpen" property="jifenOpen" />
+		<result column="fenbiOpen" property="fenbiOpen" />
+		<result column="buttonText" property="buttonText" />
+		<result column="wxyhjOpen" property="wxyhjOpen" />
+		<result column="duofenCardOpen" property="duofenCardOpen" />
+		<result column="receiveType" property="receiveType" />
+		<result column="image" property="image" />
+		<result column="busId" property="busId" />
+		<result column="firstGive" property="firstGive" />
+		<result column="firstType" property="firstType" />
+		<result column="cardIds" property="cardIds" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, payname, modelName, model, optionType, gameUrl, remarks, publicId, phone, countType, jifenOpen, fenbiOpen, buttonText, wxyhjOpen, duofenCardOpen, receiveType, image, busId, firstGive, firstType, cardIds
+    </sql>
+
+	<select id="findBybusId" resultType="Map">
+		select * from t_pay_success where busId=#{busId}
+	</select>
+
+	<select id="findBybusIdAndModel" resultMap="BaseResultMap">
+		select * from t_pay_success where busId=#{busId} and model=#{model} limit 1
+	</select>
+
+</mapper>

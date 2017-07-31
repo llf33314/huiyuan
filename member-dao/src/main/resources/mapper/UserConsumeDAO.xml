@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.UserConsumeDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.UserConsume">
+		<id column="id" property="id" />
+		<result column="public_id" property="publicId" />
+		<result column="busUserId" property="busUserId" />
+		<result column="memberId" property="memberId" />
+		<result column="mcId" property="mcId" />
+		<result column="ctId" property="ctId" />
+		<result column="gt_id" property="gtId" />
+		<result column="recordType" property="recordType" />
+		<result column="ucType" property="ucType" />
+		<result column="totalMoney" property="totalMoney" />
+		<result column="integral" property="integral" />
+		<result column="fenbi" property="fenbi" />
+		<result column="uccount" property="uccount" />
+		<result column="discount" property="discount" />
+		<result column="discountMoney" property="discountMoney" />
+		<result column="orderId" property="orderId" />
+		<result column="giveIntegral" property="giveIntegral" />
+		<result column="giveFlow" property="giveFlow" />
+		<result column="giveFenbi" property="giveFenbi" />
+		<result column="ucTable" property="ucTable" />
+		<result column="createDate" property="createDate" />
+		<result column="paymentType" property="paymentType" />
+		<result column="dvId" property="dvId" />
+		<result column="disCountdepict" property="disCountdepict" />
+		<result column="balance" property="balance" />
+		<result column="payStatus" property="payStatus" />
+		<result column="giveGift" property="giveGift" />
+		<result column="giftCount" property="giftCount" />
+		<result column="orderCode" property="orderCode" />
+		<result column="moduleType" property="moduleType" />
+		<result column="storeId" property="storeId" />
+		<result column="isParent" property="isParent" />
+		<result column="freightMoney" property="freightMoney" />
+		<result column="offlinePayType" property="offlinePayType" />
+		<result column="cardType" property="cardType" />
+		<result column="flowState" property="flowState" />
+		<result column="dataSource" property="dataSource" />
+		<result column="moduleOrderType" property="moduleOrderType" />
+		<result column="isend" property="isend" />
+		<result column="ischongzhi" property="ischongzhi" />
+		<result column="isendDate" property="isendDate" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, public_id AS publicId, busUserId, memberId, mcId, ctId, gt_id AS gtId, recordType, ucType, totalMoney, integral, fenbi, uccount, discount, discountMoney, orderId, giveIntegral, giveFlow, giveFenbi, ucTable, createDate, paymentType, dvId, disCountdepict, balance, payStatus, giveGift, giftCount, orderCode, moduleType, storeId, isParent, freightMoney, offlinePayType, cardType, flowState, dataSource, moduleOrderType, isend, ischongzhi, isendDate
+    </sql>
+
+	<insert id="insertBatchFlowRecord" parameterType="ArrayList">
+		<selectKey keyProperty="id" order="AFTER" resultType="long">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		insert into t_wx_user_consume (public_id, busUserId,
+		memberId, giveFlow, orderId)
+		values
+		<foreach collection="list" index="index" item="item" separator=",">
+			( #{item.publicId}, #{item.bususerid},
+			#{item.memberid} ,#{item.giveflow}, #{item.orderid}
+			)
+		</foreach>
+	</insert>
+
+
+
+	<select id="findUserConume" resultType="Map">
+		select  uc.id, uc.public_id, uc.busUserId, uc.memberId, uc.mcId, uc.ctId, uc.gt_id, uc.recordType, uc.ucType, uc.totalMoney,
+		uc.integral, uc.fenbi, uc.uccount, uc.discount, uc.discountMoney, uc.orderId, uc.giveIntegral, uc.giveFlow,
+		uc.giveFenbi, uc.ucTable, uc.createDate, uc.paymentType,uc.dvId, uc.disCountdepict,uc.payStatus,
+		bm.openid, bm.phone,
+		bm.nickname, bm.sex, bm.operate_type, bm.mc_id , mc.cardNo
+		from t_wx_user_consume  uc
+		INNER JOIN  t_wx_bus_member bm ON  uc.memberId=bm.id
+		INNER JOIN t_member_card mc ON mc.mc_id=bm.mc_id
+		where uc.busUserId=#{busId}
+		<if test="ctId!=0">
+			and uc.ctId=#{ctId}
+		</if>
+		<if test="recordType!=null">
+			and uc.recordType=#{recordType}
+		</if>
+		<if test="startDate!=null">
+			and uc.createDate <![CDATA[>=]]>#{startDate}
+		</if>
+		<if test="search !=null">
+			and (mc.cardNo=#{search} or bm.phone=#{search})
+		</if>
+		<if test="endDate!=null">
+			and uc.createDate <![CDATA[<=]]>#{endDate}
+		</if>
+		ORDER BY id DESC
+
+		limit #{first},#{pageSize}
+	</select>
+
+	<select id="countUserConume" resultType="java.lang.Integer">
+		select count(uc.id) from t_wx_user_consume uc
+		INNER JOIN  t_wx_bus_member bm ON  uc.memberId=bm.id
+		INNER JOIN t_member_card mc ON mc.mc_id=bm.mc_id
+		where busUserId=#{busId}
+		<if test="ctId!=0">
+			and ctId=#{ctId}
+		</if>
+		<if test="recordType!=null">
+			and recordType=#{recordType}
+		</if>
+		<if test="startDate!=null">
+			and createDate <![CDATA[>=]]>#{startDate}
+		</if>
+
+		<if test="endDate!=null">
+			and createDate <![CDATA[<=]]>#{endDate}
+		</if>
+		<if test="search !=null">
+			and (mc.cardNo=#{search} or bm.phone=#{search})
+		</if>
+
+	</select>
+
+
+
+
+	<select id="findUserConume1" resultType="Map">
+		select  uc.id, uc.public_id, uc.busUserId, uc.memberId, uc.mcId, uc.ctId, uc.gt_id, uc.recordType, uc.ucType, uc.totalMoney,
+		uc.integral, uc.fenbi, uc.uccount, uc.discount, uc.discountMoney, uc.orderId,uc.orderCode, uc.giveIntegral, uc.giveFlow,
+		uc.giveFenbi, uc.ucTable, uc.createDate, uc.paymentType,uc.dvId, uc.disCountdepict,uc.payStatus,
+		uc.offlinePayType,
+		bm.openid, bm.phone,
+		bm.nickname, bm.sex, bm.operate_type, bm.mc_id
+		from t_wx_user_consume  uc
+		left JOIN  t_wx_bus_member bm ON  uc.memberId=bm.id
+		where uc.busUserId=#{busId} and uc.ucType=18
+		<if test="payStatus!=-1">
+			and uc.payStatus=#{payStatus}
+		</if>
+
+		<if test="recordType!=null">
+			and uc.recordType=#{recordType}
+		</if>
+		<if test="startDate!=null">
+			and uc.createDate <![CDATA[>=]]>#{startDate}
+		</if>
+
+		<if test="endDate!=null">
+			and uc.createDate <![CDATA[<=]]>#{endDate}
+		</if>
+		ORDER BY uc.id DESC
+
+		limit #{first},#{pageSize}
+	</select>
+
+	<select id="countUserConume1" resultType="java.lang.Integer">
+		select count(id) from t_wx_user_consume where busUserId=#{busId} and ucType=18
+
+		<if test="payStatus!=-1">
+			and payStatus=#{payStatus}
+		</if>
+
+		<if test="recordType!=null">
+			and recordType=#{recordType}
+		</if>
+		<if test="startDate!=null">
+			and createDate <![CDATA[>=]]>#{startDate}
+		</if>
+
+		<if test="endDate!=null">
+			and createDate <![CDATA[<=]]>#{endDate}
+		</if>
+	</select>
+
+	<select id="findByMemberId" resultType="Map">
+		select   <include refid="Base_Column_List" /> from t_wx_user_consume where busUserId=#{busId} and memberId=#{memberId} order by id desc
+	</select>
+
+	<select id="findByOrderCode" resultType="Map">
+		select   <include refid="Base_Column_List" /> from t_wx_user_consume where orderCode=#{orderCode}
+	</select>
+
+	<select id="findById" resultType="Map">
+		select   <include refid="Base_Column_List" /> from t_wx_user_consume where id=#{id}
+	</select>
+
+	<select id="findByOrderCode1" resultMap="BaseResultMap">
+		select   <include refid="Base_Column_List" /> from t_wx_user_consume where orderCode=#{orderCode} limit 1
+	</select>
+
+	<select id="findWxcardReceive" resultType="Map">
+		SELECT wxc.card_type,wxc.title,uc.createDate,uc.memberId,uc.discountdepict,mem.name AS memName,bu.name AS buName,uc.moduleType,uc.storeId FROM `t_wx_user_consume` uc LEFT JOIN `t_wx_card` wxc ON uc.dvId=wxc.id
+		LEFT JOIN t_wx_bus_member mem ON mem.id=uc.memberId LEFT JOIN `bus_user` bu ON bu.id=uc.busUserId WHERE uc.`busUserId`=#{busId} AND  uc.ucType=14
+		and uc.cardType=#{cardType} and uc.storeId in
+		<foreach close=")" collection="shopIds" item="shopId" open="(" separator=",">
+			#{shopId}
+		</foreach>
+		order by uc.id desc
+		limit #{first},#{pageSize}
+	</select>
+
+	<select id="countWxcardReceive" resultType="java.lang.Integer">
+		SELECT count(uc.id) FROM `t_wx_user_consume` uc WHERE uc.`busUserId`=#{busId}
+		and uc.cardType=#{cardType} and  uc.storeId in
+		<foreach close=")" collection="shopIds" item="shopId" open="(" separator=",">
+			#{shopId}
+		</foreach>
+	</select>
+
+
+
+	<select id="findDuofencardReceive" resultType="Map">
+		SELECT wxc.card_type,wxc.title,uc.createDate,uc.memberId,uc.discountdepict,mem.name AS memName,bu.name AS buName,uc.moduleType,uc.storeId,s.business_name FROM `t_wx_user_consume` uc LEFT JOIN `t_duofen_card` wxc ON uc.dvId=wxc.id
+		LEFT JOIN t_wx_bus_member mem ON mem.id=uc.memberId LEFT JOIN `bus_user` bu ON bu.id=uc.busUserId
+		left join t_wx_shop s on s.id=uc.storeId
+		WHERE uc.`busUserId`=#{busId}
+		and uc.cardType=#{cardType} and uc.storeId in
+		<foreach close=")" collection="shopIds" item="shopId" open="(" separator=",">
+			#{shopId}
+		</foreach>
+		order by uc.id desc
+		limit #{first},#{pageSize}
+	</select>
+
+	<select id="countDuofencardReceive" resultType="java.lang.Integer">
+		SELECT count(uc.id) FROM `t_wx_user_consume` uc WHERE uc.`busUserId`=#{busId}
+		and uc.cardType=#{cardType} and  uc.storeId in
+		<foreach close=")" collection="shopIds" item="shopId" open="(" separator=",">
+			#{shopId}
+		</foreach>
+	</select>
+
+
+	<select id="findUserConumeByMember" resultType="Map">
+		select totalMoney,createDate,paymentType,giftCount,discountMoney,payStatus,orderCode from t_wx_user_consume  uc
+		where uc.busUserId=#{busId} and uc.recordType=1 and uc.memberId=#{memberId}
+		<if test="startDate!=null">
+			and uc.createDate <![CDATA[>=]]>#{startDate}
+		</if>
+
+		<if test="endDate!=null">
+			and uc.createDate <![CDATA[<=]]>#{endDate}
+		</if>
+		ORDER BY id DESC limit #{first},#{pageSize}
+	</select>
+
+
+
+	<select id="countUserConumeByMember" resultType="java.lang.Integer">
+		select count(id) from t_wx_user_consume  uc
+		where uc.busUserId=#{busId} and uc.recordType=1 and uc.memberId=#{memberId}
+		<if test="startDate!=null">
+			and uc.createDate <![CDATA[>=]]>#{startDate}
+		</if>
+
+		<if test="endDate!=null">
+			and uc.createDate <![CDATA[<=]]>#{endDate}
+		</if>
+	</select>
+
+	<select id="countJifenDuiHan" resultType="Map">
+		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS a1, SUM(integral) as integralCount FROM t_wx_user_consume WHERE  busUserId=#{busId} and  ctId=1 and ucType=5   GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
+		ORDER BY a1 DESC  LIMIT 7
+	</select>
+
+	<select id="countOrder" resultType="java.lang.Integer">
+		select count(id) from t_wx_user_consume where (
+		<if test="ctId==1">
+			ucType=0 or
+		</if>
+		<if test="ctId==2">
+			ucType=2 or
+		</if>
+		<if test="ctId==3">
+			ucType=1 or
+		</if>
+		<if test="ctId==5">
+			ucType=3 or
+		</if>
+		ucType=18 or ucType=14 ) and ctId=#{ctId} and busUserId=#{busId} and payStatus=1
+	</select>
+
+	<select id="countUseJifen" resultType="java.lang.Integer">
+		SELECT SUM(integral) FROM t_wx_user_consume  WHERE  ctId=1 and busUserId=#{busId} and payStatus=1
+	</select>
+
+	<select id="sumXiaofei" resultType="java.lang.Double">
+		select sum(discountMoney) from t_wx_user_consume where 	(
+		<if test="ctId==1">
+			ucType=0 or
+		</if>
+		<if test="ctId==2">
+			ucType=2 or
+		</if>
+		<if test="ctId==3">
+			ucType=1 or
+		</if>
+		<if test="ctId==5">
+			ucType=3 or
+		</if>
+		ucType=18 or ucType=14) and ctId=#{ctId} and busUserId=#{busId} and payStatus=1
+	</select>
+
+	<select id="buyCard" resultType="java.lang.Double">
+		select sum(discountMoney) from t_wx_user_consume where 	ucType=13 and ctId=#{ctId} and payStatus=1
+	</select>
+
+	<select id="sum7DayOrder" resultType="Map">
+		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS a3, SUM(discountMoney) AS a4 FROM t_wx_user_consume
+		where (
+		<if test="ctId==1">
+			ucType=0 or
+		</if>
+		<if test="ctId==2">
+			ucType=2 or
+		</if>
+		<if test="ctId==3">
+			ucType=1 or
+		</if>
+		<if test="ctId==5">
+			ucType=3 or
+		</if>
+		ucType=18 or ucType=14) and ctId=#{ctId} and busUserId=#{busId} and payStatus=1 and createDate <![CDATA[<=]]>#{date}
+		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
+		ORDER BY a3 DESC  LIMIT 7
+	</select>
+
+
+	<select id="sumDisCount" resultType="java.lang.Double">
+		SELECT SUM(totalMoney*(100-discount)/100)  FROM t_wx_user_consume
+		WHERE (ucType=2 OR ucType=14 OR ucType=18) AND ctId=2 AND busUserId=#{busId} AND payStatus=1
+	</select>
+
+	<select id="sum7DayBuyCard" resultType="Map">
+		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS a1, SUM(discountMoney) AS a2 FROM t_wx_user_consume
+		where
+		ucType=13 and ctId=#{ctId} and busUserId=#{busId} and payStatus=1 and createDate <![CDATA[<=]]>#{date}
+		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
+		ORDER BY a1 DESC  LIMIT 7
+	</select>
+
+	<select id="sum7DayDiscount" resultType="Map">
+		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') as a1,SUM(totalMoney*(100-discount)/100) AS a2 FROM t_wx_user_consume
+		WHERE (ucType=2 OR ucType=14 OR ucType=18) AND ctId=2 AND busUserId=#{busId} AND payStatus=1
+		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
+		ORDER BY a1 DESC   LIMIT 7
+	</select>
+
+	<select id="sumChongzhi" resultType="java.lang.Double">
+		select sum(discountMoney) as a1 from t_wx_user_consume where ucType=7 and busUserId=#{busId} and ctId=3 AND payStatus=1
+	</select>
+
+	<select id="sumChongzhi7Day" resultType="Map">
+		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS a1,SUM(discountMoney) AS a2 FROM t_wx_user_consume WHERE  ucType=7 AND busUserId=#{busId} AND ctId=3 AND payStatus=1
+		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
+		ORDER BY a1 DESC
+		LIMIT 7
+	</select>
+
+	<select id="sumCiKa" resultType="Map">
+		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS a1,SUM(uccount) AS a2 FROM t_wx_user_consume WHERE  ucType=3 AND busUserId=#{busId} AND ctId=5 AND payStatus=1
+		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
+		ORDER BY a1 DESC
+		LIMIT 7
+	</select>
+
+	<select id="userCiKa" resultType="java.lang.Integer">
+		SELECT SUM(uccount) FROM t_wx_user_consume WHERE ucType=3 AND busUserId=#{busId} AND payStatus=1
+	</select>
+
+	<select id="findBybusIdAndOrderCode" resultMap="BaseResultMap">
+		select id from t_wx_user_consume where busUserId=#{busId} and moduleType=#{moduleType} and orderCode=#{orderCode}
+	</select>
+
+</mapper>

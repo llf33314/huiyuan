@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberCardDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberCard">
+		<id column="mc_id" property="mcId" />
+		<result column="cardNo" property="cardNo" />
+		<result column="ct_id" property="ctId" />
+		<result column="gt_id" property="gtId" />
+		<result column="public_Id" property="publicId" />
+		<result column="receiveDate" property="receiveDate" />
+		<result column="source" property="source" />
+		<result column="isbinding" property="isbinding" />
+		<result column="money" property="money" />
+		<result column="frequency" property="frequency" />
+		<result column="gr_id" property="grId" />
+		<result column="expireDate" property="expireDate" />
+		<result column="ucId" property="ucId" />
+		<result column="nominateCode" property="nominateCode" />
+		<result column="systemcode" property="systemcode" />
+		<result column="isChecked" property="isChecked" />
+		<result column="applyType" property="applyType" />
+		<result column="memberId" property="memberId" />
+		<result column="changeCardType" property="changeCardType" />
+		<result column="entityMemberId" property="entityMemberId" />
+		<result column="cardStatus" property="cardStatus" />
+		<result column="busId" property="busId" />
+		<result column="oldId" property="oldId" />
+		<result column="giveMoney" property="giveMoney" />
+		<result column="shopId" property="shopId" />
+		<result column="online" property="online" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        mc_id AS mcId, cardNo, ct_id AS ctId, gt_id AS gtId, public_Id AS publicId, receiveDate, source, isbinding, money, frequency, gr_id AS grId, expireDate, ucId, nominateCode, systemcode, isChecked, applyType, memberId, changeCardType, entityMemberId, cardStatus, busId, oldId, giveMoney, shopId, online
+    </sql>
+
+	<select id="countCardAll" resultType="java.lang.Integer">
+		select count(mc_id) from  t_member_card where busId=#{busId}
+	</select>
+
+	<select id="countCardisBinding" resultType="java.lang.Integer">
+		select count(mc_id) from  t_member_card where busId=#{busId}
+	</select>
+
+
+
+	<select id="countCard" resultType="java.lang.Integer">
+		select count(mc_id) from  t_member_card where busId=#{busId} and ct_id in
+		<foreach close=")" collection="ctIds" item="ctId" open="(" separator=",">
+			#{ctId}
+		</foreach>
+	</select>
+
+	<select id="countCard1" resultType="java.lang.Integer">
+		SELECT COUNT(m.mc_id) FROM  t_member_card c INNER JOIN t_wx_bus_member m ON c.`mc_id`=m.`mc_id`
+		where c.busId=#{busId} and c.ct_id =#{ctId}
+	</select>
+
+	<select id="countCardByTime" resultType="java.lang.Integer">
+		select count(mc_id) from t_member_card where busId=#{busId} and isbinding=1 and
+		receiveDate <![CDATA[ >= ]]> #{date}
+	</select>
+
+	<select id="countCardByCardNo" resultType="java.lang.Integer">
+		select count(mc_id) from t_member_card where busId=#{busId} and cardNo=#{cardNo} limit 1
+	</select>
+
+	<select id="findCardById" resultType="Map">
+		SELECT *,gt.applyType as applyTypes FROM t_member_card c
+		INNER JOIN t_member_cardtype ct ON c.ct_id=ct.ct_id
+		INNER JOIN t_member_gradetype gt ON gt.gt_id=c.gt_id
+		INNER JOIN t_member_cardmodel cm ON cm.cm_id=gt.cm_id
+		WHERE c.mc_id=#{id}
+	</select>
+
+	<select id="findCardByCardNo" resultMap="BaseResultMap">
+		select  <include refid="Base_Column_List" /> from t_member_card where busId=#{busId} and cardNo=#{cardNo} limit 1
+	</select>
+
+	<select id="findCardAll" resultType="Map">
+		select  <include refid="Base_Column_List" /> from t_member_card where busId=#{busId}
+	</select>
+
+	<select id="findCardByCtIds" resultType="Map">
+		select  <include refid="Base_Column_List" />  from  t_member_card where busId=#{busId} and ct_id in
+		<foreach close=")" collection="ctIds" item="ctId" open="(" separator=",">
+			#{ctId}
+		</foreach>
+	</select>
+
+
+	<select id="countByNominateCode" resultType="java.lang.Integer">
+		select count(mc_id) from t_member_card where busId=#{busId} and nominateCode=#{nominateCode}
+	</select>
+
+
+	<select id="countBySystemCode" resultType="java.lang.Integer">
+		select count(mc_id) from t_member_card where  busId=#{busId} and systemcode=#{systemcode}
+	</select>
+
+	<select id="findBySystemCode" resultType="Map">
+		select * from t_member_card where  busId=#{busId} and systemcode=#{systemcode}
+	</select>
+
+	<select id="findCardByCtIdsAndGtIds" resultType="Map">
+		select  mc_id  from  t_member_card where busId=#{busId} and ct_id in
+		<foreach close=")" collection="ctIds" item="ctId" open="(" separator=",">
+			#{ctId}
+		</foreach>
+		and gt_id in
+		<foreach close=")" collection="gtIds" item="gtId" open="(" separator=",">
+			#{gtId}
+		</foreach>
+	</select>
+
+	<select id="findGroupBygtId" resultType="Map">
+		SELECT COUNT(c.mc_id) AS countMcId,c.gt_id,g.gt_grade_name FROM t_member_card c
+		INNER JOIN t_member_gradetype g ON c.gt_id=g.gt_id WHERE c.busId=#{busId} and c.ct_id=#{ctId} GROUP BY gt_id
+	</select>
+
+	<select id="sumMoney" resultType="java.lang.Double">
+		select sum(money) from t_member_card where busId=#{busId} and ct_id=3
+	</select>
+
+
+	<select id="sumfrequency" resultType="java.lang.Integer">
+		select sum(frequency) from t_member_card where busId=#{busId} and ct_id=5
+	</select>
+
+	<select id="selectByPrimaryKeys" resultMap="BaseResultMap">
+		select  <include refid="Base_Column_List" />  from t_member_card where mc_id in (${ids})
+	</select>
+
+	<select id="countMember" resultType="Map">
+		SELECT COUNT(c.mc_id) as countId,c.shopId,c.online,p.business_name FROM t_member_card  c
+		LEFT JOIN t_wx_shop p ON p.id=c.shopId
+		WHERE c.busId=#{busId}
+		GROUP BY shopId,online  ORDER BY c.shopId ASC
+	</select>
+
+</mapper>

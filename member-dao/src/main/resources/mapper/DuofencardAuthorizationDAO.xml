@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.DuofencardAuthorizationDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.DuofencardAuthorization">
+		<id column="id" property="id" />
+		<result column="openId" property="openId" />
+		<result column="status" property="status" />
+		<result column="shopId" property="shopId" />
+		<result column="busId" property="busId" />
+		<result column="memberId" property="memberId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, openId, status, shopId, busId, memberId
+    </sql>
+
+	<select id="countAuthorization" resultType="java.lang.Integer">
+		select count(id) from t_duofencard_authorization where busId=#{busId}
+	</select>
+
+	<select id="findAuthorization" resultType="Map">
+		select a.*,sh.business_name from t_duofencard_authorization a inner join t_wx_shop sh on sh.id=a.shopId  where a.busId=#{busId} limit #{first},#{pageSize}
+	</select>
+
+	<select id="findByMemberOpenId" resultType="java.lang.Integer">
+		select count(id) from t_duofencard_authorization where busId=#{busId} and  openId = #{openId}
+	</select>
+
+	<select id="findByOpenId" resultMap="BaseResultMap">
+		select * from t_duofencard_authorization where busId=#{busId} and  openId = #{openId} and status=0 limit 1
+	</select>
+</mapper>

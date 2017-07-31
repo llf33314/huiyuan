@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.SystemnoticecallDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.Systemnoticecall">
+		<id column="id" property="id" />
+		<result column="describes" property="describes" />
+		<result column="memberId" property="memberId" />
+		<result column="createDate" property="createDate" />
+		<result column="status" property="status" />
+		<result column="publicId" property="publicId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, describes, memberId, createDate, status, publicId
+    </sql>
+
+
+	<update id="updateByMemberId">
+		update systemnoticecall set status=1 where memberId=#{memberId}
+	</update>
+
+	<select id="findByMemberId" resultType="Map">
+		select * from systemnoticecall where memberId=#{memberId} order by id desc
+	</select>
+
+	<select id="findCountByMemberId" resultType="java.lang.Integer">
+		select count(*) from systemnoticecall where  memberId=#{memberId} and status=0
+	</select>
+
+
+
+	<insert id="saveList">
+		insert into systemnoticecall (describes, memberId)
+		values
+		<foreach collection="notices" item="n" index="index" separator="," >
+			(#{n.describes,jdbcType=VARCHAR}, #{n.memberid,jdbcType=INTEGER})
+		</foreach>
+
+	</insert>
+</mapper>

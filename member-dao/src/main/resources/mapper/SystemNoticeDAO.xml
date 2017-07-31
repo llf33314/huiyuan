@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.SystemNoticeDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.SystemNotice">
+		<id column="id" property="id" />
+		<result column="callType" property="callType" />
+		<result column="msgStatus" property="msgStatus" />
+		<result column="publicId" property="publicId" />
+		<result column="smsStatus" property="smsStatus" />
+		<result column="publicMsg" property="publicMsg" />
+		<result column="publicIdMsgId" property="publicIdMsgId" />
+		<result column="busId" property="busId" />
+		<result column="msgContent" property="msgContent" />
+		<result column="smsContent" property="smsContent" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, callType, msgStatus, publicId, smsStatus, publicMsg, publicIdMsgId, busId, msgContent, smsContent
+    </sql>
+
+	<select id="findBybusId" resultType="Map">
+		select   <include refid="Base_Column_List" /> from system_notice where busId=#{busId}
+	</select>
+
+
+	<select id="findBybusIdAndCallType" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" /> from system_notice where busId=#{busId} and callType=#{callType}
+	</select>
+
+
+	<select id="findBybusIdEq7" resultType="Map">
+		select msgStatus,smsStatus,busId from system_notice where callType=13 and busId in
+		<foreach close=")" collection="busIds" item="b" open="(" separator=",">
+			#{b}
+		</foreach>
+	</select>
+
+</mapper>

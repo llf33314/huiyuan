@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.OfflinepayDetailDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.OfflinepayDetail">
+		<id column="id" property="id" />
+		<result column="offId" property="offId" />
+		<result column="dayTime" property="dayTime" />
+		<result column="beginTime" property="beginTime" />
+		<result column="endTime" property="endTime" />
+		<result column="eachMoney" property="eachMoney" />
+		<result column="reduceMoney" property="reduceMoney" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, offId, dayTime, beginTime, endTime, eachMoney, reduceMoney
+    </sql>
+
+	<delete id="deleteByoffId">
+		delete from t_offlinepay_detail where offId=#{offId}
+	</delete>
+
+	<select id="findByOffId" resultType="Map">
+		select    <include refid="Base_Column_List" />
+		from t_offlinepay_detail where offId=#{offId}
+	</select>
+
+</mapper>

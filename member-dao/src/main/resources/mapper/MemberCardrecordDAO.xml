@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberCardrecordDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberCardrecord">
+		<id column="id" property="id" />
+		<result column="cardId" property="cardId" />
+		<result column="recordType" property="recordType" />
+		<result column="number" property="number" />
+		<result column="createDate" property="createDate" />
+		<result column="itemName" property="itemName" />
+		<result column="publicId" property="publicId" />
+		<result column="balance" property="balance" />
+		<result column="ctId" property="ctId" />
+		<result column="amount" property="amount" />
+		<result column="busId" property="busId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, cardId, recordType, number, createDate, itemName, publicId, balance, ctId, amount, busId
+    </sql>
+
+
+	<select id="findByCardId" resultType="Map">
+		select * from t_member_cardrecord where cardId=#{cardId} and recordType=1  order by id desc
+	</select>
+
+
+	<select id="findByCardIdFeiBi" resultType="Map">
+		select * from t_member_cardrecord where  cardId=#{cardId}
+		and recordType=3
+		order by id desc limit #{page},10
+	</select>
+
+	<select id="findByCardIdJifen" resultType="Map">
+		select * from t_member_cardrecord where cardId=#{cardId}
+		and recordType=2
+		order by id desc limit #{page},10
+	</select>
+
+	<select id="findByCardIdFlow" resultType="Map">
+		select * from t_member_cardrecord where cardId=#{cardId}
+		and recordType=4
+		order by id desc limit #{page},10
+	</select>
+
+
+	<select id="sumByBusId" resultType="Map">
+		SELECT SUM(amount) as amounts,cardId,busId FROM t_member_cardrecord WHERE recordType=2 and amount&gt;0 and busId IN
+		<foreach close=")" collection="busIds" item="b" open="(" separator=",">
+			#{b}
+		</foreach>
+		and createDate<![CDATA[>=]]> #{startDate}  and createDate<![CDATA[<=]]> #{endDate}
+		GROUP BY cardId
+	</select>
+
+	<select id="sumCurrentByBusId" resultType="Map">
+		SELECT SUM(amount) as amounts,cardId FROM t_member_cardrecord WHERE recordType=2 and amount <![CDATA[<]]> 0 and
+		busId IN
+		<foreach close=")" collection="busIds" item="b" open="(" separator=",">
+			#{b}
+		</foreach>
+		and createDate<![CDATA[>=]]> #{startDate}  and createDate<![CDATA[<=]]> #{endDate}
+		GROUP BY cardId
+	</select>
+</mapper>

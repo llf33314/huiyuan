@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberGiveconsumeDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberGiveconsume">
+		<id column="uc_id" property="ucId" />
+		<result column="gt_id" property="gtId" />
+		<result column="gc_total" property="gcTotal" />
+		<result column="gt_name" property="gtName" />
+		<result column="gt_unit" property="gtUnit" />
+		<result column="sendType" property="sendType" />
+		<result column="sendDate" property="sendDate" />
+		<result column="memberId" property="memberId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        uc_id AS ucId, gt_id AS gtId, gc_total AS gcTotal, gt_name AS gtName, gt_unit AS gtUnit, sendType, sendDate, memberId
+    </sql>
+
+	<select id="findByUcId" resultMap="BaseResultMap">
+		select  <include refid="Base_Column_List" />
+		from t_member_giveconsume
+		where uc_id = #{ucId}
+	</select>
+
+	<delete id="deleteByUcId">
+		delete from  t_member_giveconsume
+		where uc_id = #{ucId}
+	</delete>
+</mapper>

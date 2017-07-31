@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.WxCardDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.WxCard">
+		<id column="id" property="id" />
+		<result column="logo_url" property="logoUrl" />
+		<result column="user_id" property="userId" />
+		<result column="public_id" property="publicId" />
+		<result column="card_id" property="cardId" />
+		<result column="code_type" property="codeType" />
+		<result column="brand_name" property="brandName" />
+		<result column="card_type" property="cardType" />
+		<result column="deal_detail" property="dealDetail" />
+		<result column="cash_least_cost" property="cashLeastCost" />
+		<result column="reduce_cost" property="reduceCost" />
+		<result column="discount" property="discount" />
+		<result column="gift" property="gift" />
+		<result column="default_detail" property="defaultDetail" />
+		<result column="title" property="title" />
+		<result column="sub_title" property="subTitle" />
+		<result column="color" property="color" />
+		<result column="notice" property="notice" />
+		<result column="description" property="description" />
+		<result column="quantity" property="quantity" />
+		<result column="type" property="type" />
+		<result column="begin_timestamp" property="beginTimestamp" />
+		<result column="end_timestamp" property="endTimestamp" />
+		<result column="fixed_term" property="fixedTerm" />
+		<result column="fixed_begin_term" property="fixedBeginTerm" />
+		<result column="use_custom_code" property="useCustomCode" />
+		<result column="bind_openid" property="bindOpenid" />
+		<result column="service_phone" property="servicePhone" />
+		<result column="location_id_list" property="locationIdList" />
+		<result column="source" property="source" />
+		<result column="custom_url_name" property="customUrlName" />
+		<result column="center_title" property="centerTitle" />
+		<result column="center_sub_title" property="centerSubTitle" />
+		<result column="center_url" property="centerUrl" />
+		<result column="custom_url" property="customUrl" />
+		<result column="custom_url_sub_title" property="customUrlSubTitle" />
+		<result column="promotion_url_name" property="promotionUrlName" />
+		<result column="promotion_url" property="promotionUrl" />
+		<result column="promotion_url_sub_title" property="promotionUrlSubTitle" />
+		<result column="get_limit" property="getLimit" />
+		<result column="can_share" property="canShare" />
+		<result column="can_give_friend" property="canGiveFriend" />
+		<result column="accept_category" property="acceptCategory" />
+		<result column="reject_category" property="rejectCategory" />
+		<result column="least_cost" property="leastCost" />
+		<result column="object_use_for" property="objectUseFor" />
+		<result column="can_use_with_other_discount" property="canUseWithOtherDiscount" />
+		<result column="summary" property="summary" />
+		<result column="icon_url_list" property="iconUrlList" />
+		<result column="text_image_list" property="textImageList" />
+		<result column="business_service" property="businessService" />
+		<result column="time_limit" property="timeLimit" />
+		<result column="card_status" property="cardStatus" />
+		<result column="ctime" property="ctime" />
+		<result column="pass_time" property="passTime" />
+		<result column="isCallSMS" property="isCallSMS" />
+		<result column="phone" property="phone" />
+		<result column="image" property="image" />
+		<result column="isDelivery" property="isDelivery" />
+		<result column="timeType" property="timeType" />
+		<result column="iddelete" property="iddelete" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, logo_url AS logoUrl, user_id AS userId, public_id AS publicId, card_id AS cardId, code_type AS codeType, brand_name AS brandName, card_type AS cardType, deal_detail AS dealDetail, cash_least_cost AS cashLeastCost, reduce_cost AS reduceCost, discount, gift, default_detail AS defaultDetail, title, sub_title AS subTitle, color, notice, description, quantity, type, begin_timestamp AS beginTimestamp, end_timestamp AS endTimestamp, fixed_term AS fixedTerm, fixed_begin_term AS fixedBeginTerm, use_custom_code AS useCustomCode, bind_openid AS bindOpenid, service_phone AS servicePhone, location_id_list AS locationIdList, source, custom_url_name AS customUrlName, center_title AS centerTitle, center_sub_title AS centerSubTitle, center_url AS centerUrl, custom_url AS customUrl, custom_url_sub_title AS customUrlSubTitle, promotion_url_name AS promotionUrlName, promotion_url AS promotionUrl, promotion_url_sub_title AS promotionUrlSubTitle, get_limit AS getLimit, can_share AS canShare, can_give_friend AS canGiveFriend, accept_category AS acceptCategory, reject_category AS rejectCategory, least_cost AS leastCost, object_use_for AS objectUseFor, can_use_with_other_discount AS canUseWithOtherDiscount, summary, icon_url_list AS iconUrlList, text_image_list AS textImageList, business_service AS businessService, time_limit AS timeLimit, card_status AS cardStatus, ctime, pass_time AS passTime, isCallSMS, phone, image, isDelivery, timeType, iddelete
+    </sql>
+
+
+
+	<select id="selectByCardId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_wx_card
+		where card_id = #{card_id} and iddelete=0
+	</select>
+
+
+	<select id="findByTitle" resultType="Map">
+		select   <include refid="Base_Column_List" />
+		from t_wx_card where public_id=#{publicId} and iddelete=0
+		<if test="title!=null">
+			and title like '%${title}%'
+		</if>
+		order by id desc
+
+		limit #{firstResult},#{pageSize}
+	</select>
+
+	<select id="countWxCard" resultType="java.lang.Integer">
+		select   count(id) from t_wx_card where public_id=#{publicId} and iddelete=0
+		<if test="title!=null">
+			and title like '%${title}%'
+		</if>
+	</select>
+
+	<select id="findWxCard" resultType="Map">
+		select   <include refid="Base_Column_List" />
+		from t_wx_card  where   public_id=#{publicId} and  iddelete=0 and card_status=2 and  (end_timestamp is null or end_timestamp <![CDATA[>]]>#{endTime}) order by id desc
+	</select>
+
+	<update id="updateCardIsDelivery">
+		update t_wx_card set isDelivery=1 where id in
+		<foreach close=")" collection="cardIds" item="cardId" open="(" separator=",">
+			#{cardId}
+		</foreach>
+	</update>
+
+	<update id="updateCardByCardId">
+		update t_wx_card set isDelivery=1 where  card_id = #{cardId}
+	</update>
+
+
+	<update id="updateCardByCardId1">
+		update t_wx_card set card_status=#{card_status} where  card_id = #{cardId}
+	</update>
+
+	<update id="deleteCardById">
+		update t_wx_card set iddelete=1 where id=#{id}
+	</update>
+</mapper>

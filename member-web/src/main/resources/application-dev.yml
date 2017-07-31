@@ -60,6 +60,12 @@ server:
   session:
     timeout: 30
 
+web:
+ wxmp_home: http://192.168.2.240
+
+cxf:
+ path: /services
+
 
 
 

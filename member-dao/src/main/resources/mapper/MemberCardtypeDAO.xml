@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberCardtypeDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberCardtype">
+		<id column="ct_id" property="ctId" />
+		<result column="ct_cardType" property="ctCardType" />
+		<result column="ct_name" property="ctName" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ct_id AS ctId, ct_cardType AS ctCardType, ct_name AS ctName
+    </sql>
+
+	<select id="findByBusId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_member_cardtype WHERE ct_id NOT IN(SELECT ct_id FROM t_member_gradetype where busId=#{busId})
+	</select>
+</mapper>

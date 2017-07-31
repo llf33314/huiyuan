@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberBossqrDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberBossqr">
+		<id column="id" property="id" />
+		<result column="publicId" property="publicId" />
+		<result column="name" property="name" />
+		<result column="autograph" property="autograph" />
+		<result column="headImage" property="headImage" />
+		<result column="qrcode" property="qrcode" />
+		<result column="remarks" property="remarks" />
+		<result column="busId" property="busId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, publicId, name, autograph, headImage, qrcode, remarks, busId
+    </sql>
+
+	<select id="findBybusId" resultType="Map">
+		select * from t_member_bossqr where busId=#{busId} order by id  DESC limit 0,10
+	</select>
+
+	<select id="findBybusId1" resultType="Map">
+		select * from t_member_bossqr where busId=#{busId} order by id  DESC limit #{page},10
+	</select>
+
+</mapper>
