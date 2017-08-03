@@ -20,7 +20,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, public_id AS publicId, username, openid, friend_user_name AS friendUserName, ctime, card_id AS cardId, is_give_by_friend AS isGiveByFriend, user_card_code AS userCardCode, old_user_card_code AS oldUserCardCode, outer_id AS outerId, status
+        id, public_id , username, openid, friend_user_name ,
+        ctime, card_id , is_give_by_friend, user_card_code , old_user_card_code , outer_id , status
     </sql>
 
 

@@ -1,0 +1,152 @@
+package com.gt.member.controller;
+
+import com.gt.member.base.BaseController;
+import com.gt.member.dto.ServerResponse;
+import com.gt.member.entity.Member;
+import com.gt.member.enums.ResponseEnums;
+import com.gt.member.exception.BusinessException;
+import com.gt.member.exception.ResponseEntityException;
+import com.gt.member.service.memberApi.MemberApiService;
+import com.gt.member.util.CommonUtil;
+import com.gt.member.util.MemberConfig;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Map;
+
+/**
+ * 会员httpservice 接口
+ *
+ * @author Administrator
+ */
+@Controller
+@RequestMapping("/api/memberApi")
+public class MemberApiController extends BaseController {
+
+    private static final Logger LOG = Logger.getLogger(MemberApiController.class);
+
+    @Autowired
+    private MemberConfig memberConfig;
+
+    @Autowired
+    private MemberApiService memberApiService;
+
+    @ApiOperation(value = "获取会员信息", notes = "根据memberId和门店查询会员数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberId", value = "卡号或手机号", paramType = "query", required = true, dataType = "int"),
+            @ApiImplicitParam(name = "shopId", value = "门店id", paramType = "query", required = true, dataType = "int")
+    })
+    @ResponseBody
+    @GetMapping("/79B4DE7C/findMemberCardByMemberId")
+    public ServerResponse findCardByMembeId(HttpServletRequest request,
+                                            HttpServletResponse response, Integer memberId, Integer shopId) {
+        try {
+            Map<String, Object> map = memberApiService.findMemberCardByMemberId(memberId, shopId);
+            return ServerResponse.createBySuccess(map);
+        } catch (BusinessException e) {
+            return ServerResponse.createByError(e.getCode(),e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "获取会员信息", notes = "手机号或卡号查询会员相关信息包括微信多粉优惠券 \n " +
+            "cardNo 卡号或手机号 ,busId 商家id,shopId 门店id")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cardNo", value = "卡号或手机号", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int"),
+            @ApiImplicitParam(name = "shopId", value = "门店id", paramType = "query", required = true, dataType = "int")
+    })
+    @ResponseBody
+    @GetMapping("/79B4DE7C/findMemberCard")
+    public ServerResponse findMemberCard(HttpServletRequest request,
+                                         HttpServletResponse response, String cardNo, Integer busId, Integer shopId) {
+        if (CommonUtil.isEmpty("cardNo") || CommonUtil.isEmpty("busId") || CommonUtil.isEmpty("shopId")) {
+            return ServerResponse.createByError("缺少参数");
+        }
+        String cardNoKey = memberConfig.getCardNoKey();
+        try {
+             Map<String,Object> map=memberApiService.findMemberCard(busId, cardNoKey, cardNo, shopId);
+            return ServerResponse.createBySuccess(map);
+        } catch (BusinessException e){
+            return ServerResponse.createByError(e.getCode(),e.getMessage());
+        }
+    }
+
+
+    @ApiOperation(value = "获取粉丝信息", notes = "获取粉丝信息")
+    @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
+    @ResponseBody
+    @GetMapping("/79B4DE7C/findByMemberId")
+    public ServerResponse findByMemberId(HttpServletRequest request,
+                                         HttpServletResponse response, Integer memberId) {
+       try {
+           Member member = memberApiService.findByMemberId(memberId);
+           return ServerResponse.createBySuccess(member);
+       }catch (BusinessException e){
+           return ServerResponse.createByError(e.getCode(),e.getMessage());
+       }
+    }
+
+    @ApiOperation(value = "退款", notes = "退款包括了储值卡退款")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "orderNo", value = "订单号", paramType = "query", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "ucType", value = "消费类型", paramType = "query", required = true, dataType = "int"),
+            @ApiImplicitParam(name = "refundMoney", value = "退款金额", paramType = "query", required = true, dataType = "double")
+    })
+    @ResponseBody
+    @GetMapping("/79B4DE7C/refundMoney")
+    public ServerResponse chargeBack(HttpServletRequest request,
+                                     HttpServletResponse response, Integer busId, String orderNo, Integer ucType, Double refundMoney) {
+        try {
+            memberApiService.refundMoney(busId, orderNo, ucType, refundMoney);
+            return ServerResponse.createBySuccess();
+        } catch (BusinessException e) {
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+        }
+    }
+
+
+//    @ApiOperation(value = "储值卡退款", notes = "储值卡退款")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int"),
+//            @ApiImplicitParam(name = "refundMoney", value = "退款金额", paramType = "query", required = true, dataType = "double")
+//    })
+//    @ResponseBody
+//    @GetMapping("/79B4DE7C/chargeBack")
+//    public ServerResponse chargeBack(HttpServletRequest request,
+//                                     HttpServletResponse response, Integer memberId, Double refundMoney) {
+//        try {
+//            return ServerResponse.createBySuccess(memberApiService.chargeBack(memberId, refundMoney));
+//        } catch (Exception e) {
+//            return ServerResponse.createByErrorCodeMessage(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+//        }
+//    }
+
+
+    @ApiOperation(value = "统计会员数量", notes = "根据商家id统计会员数量")
+    @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
+    @ResponseBody
+    @GetMapping("/79B4DE7C/countMember")
+    public ServerResponse countMember(HttpServletRequest request,
+                                      HttpServletResponse response, Integer busId){
+        try {
+            Map<String, Object> countMember = memberApiService.countMember(busId);
+            return ServerResponse.createBySuccess(countMember);
+        } catch (Exception e) {
+            logger.error("统计会员异常",e);
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+        }
+    }
+
+
+}

@@ -13,7 +13,7 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
  * @author zhangmz
  * @create 2017/7/8
  */
-@MapperScan( "com.gt.member.dao" )
+
 @ServletComponentScan
 @SpringBootApplication
 public class MemberApplication extends SpringBootServletInitializer {

@@ -26,7 +26,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        gr_id AS grId, public_id AS publicId, gt_id AS gtId, ct_id AS ctId, gr_rechargeMoney AS grRechargeMoney, gr_number AS grNumber, gr_discount AS grDiscount, gr_giveCount AS grGiveCount, gr_giveType AS grGiveType, gr_startDate AS grStartDate, gr_validDate AS grValidDate, gr_upgradeType AS grUpgradeType, gr_upgradeCount AS grUpgradeCount, gr_equities AS grEquities, create_userId AS createUserId, creatDate, delayDay, busId
+        gr_id , public_id , gt_id, ct_id, gr_rechargeMoney, gr_number, gr_discount, gr_giveCount, gr_giveType, gr_startDate, gr_validDate ,
+         gr_upgradeType , gr_upgradeCount , gr_equities , create_userId , creatDate, delayDay, busId
     </sql>
 
 	<select id="findByBusIdAndCtId" resultType="Map">

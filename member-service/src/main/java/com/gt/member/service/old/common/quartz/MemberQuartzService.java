@@ -1,7 +1,5 @@
 package com.gt.member.service.old.common.quartz;
 
-import org.springframework.scheduling.annotation.Scheduled;
-
 public interface MemberQuartzService {
 	
 	 /**

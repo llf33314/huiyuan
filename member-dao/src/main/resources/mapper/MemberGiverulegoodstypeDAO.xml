@@ -14,7 +14,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        gr_id AS grId, gt_id AS gtId, give_type AS giveType, money, number, upperLmit
+        gr_id , gt_id , give_type , money, number, upperLmit
     </sql>
 
 	<select id="findInGrId" resultMap="BaseResultMap">

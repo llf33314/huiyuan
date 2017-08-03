@@ -34,7 +34,9 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        mc_id AS mcId, cardNo, ct_id AS ctId, gt_id AS gtId, public_Id AS publicId, receiveDate, source, isbinding, money, frequency, gr_id AS grId, expireDate, ucId, nominateCode, systemcode, isChecked, applyType, memberId, changeCardType, entityMemberId, cardStatus, busId, oldId, giveMoney, shopId, online
+        mc_id AS mcId, cardNo, ct_id , gt_id , public_Id, receiveDate, source, isbinding, money, frequency, gr_id , expireDate,
+        ucId, nominateCode, systemcode, isChecked, applyType, memberId, changeCardType, entityMemberId,
+        cardStatus, busId, oldId, giveMoney, shopId, online
     </sql>
 
 	<select id="countCardAll" resultType="java.lang.Integer">

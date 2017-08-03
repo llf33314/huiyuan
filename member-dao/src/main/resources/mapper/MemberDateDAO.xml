@@ -18,7 +18,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, publicId, ctId, dateType, dateStr, discount, fans_currency AS fansCurrency, flow, integral, busId
+        id, publicId, ctId, dateType, dateStr, discount, fans_currency , flow, integral, busId
     </sql>
 
 

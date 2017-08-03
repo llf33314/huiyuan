@@ -1,7 +1,7 @@
 package com.gt.member.service.old.personCenter; /**
  * P 2016年7月14日
  *//*
-package com.gt.service.personCenter;
+package com.gt.controller.personCenter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import com.gt.dao.util.DaoUtil;
 import com.gt.entity.personCenter.PersonCenter;
 import com.gt.entity.personCenter.PersonCenterModule;
 import com.gt.entity.user.BusUser;
-import com.gt.service.common.dict.DictService;
+import com.gt.controller.common.dict.DictService;
 import com.gt.util.CommonUtil;
 import com.gt.util.PropertiesUtil;
 

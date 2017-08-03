@@ -1,4 +1,4 @@
-package com.gt.member.service.old.member.impl;/*package com.gt.service.member.impl;
+package com.gt.member.service.old.member.impl;/*package com.gt.controller.member.impl;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,17 +52,17 @@ import com.gt.entity.member.UserConsume;
 import com.gt.entity.set.WxShop;
 import com.gt.entity.user.BusUser;
 import com.gt.entity.user.WxPublicUsers;
-import com.gt.service.common.dict.DictService;
-import com.gt.service.common.wxcard.color.CardState;
-import com.gt.service.common.wxcard.color.CardStatus;
-import com.gt.service.common.wxcard.color.Color;
-import com.gt.service.memberpay.MemberPayService;
+import com.gt.controller.common.dict.DictService;
+import com.gt.controller.common.wxcard.color.CardState;
+import com.gt.controller.common.wxcard.color.CardStatus;
+import com.gt.controller.common.wxcard.color.Color;
+import com.gt.controller.memberpay.MemberPayService;
 import com.gt.util.CommonUtil;
 import com.gt.util.DateTimeKit;
 import com.gt.util.JsonUtil;
 import com.gt.util.Page;
 import com.gt.util.PropertiesUtil;
-import com.gt.wx.service.event.WxCardService;
+import com.gt.wx.controller.event.WxCardService;
 
 *//**
  * 

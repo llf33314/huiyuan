@@ -52,7 +52,18 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, logo_url AS logoUrl, user_id AS userId, public_id AS publicId, card_id AS cardId, brand_name AS brandName, card_type AS cardType, deal_detail AS dealDetail, cash_least_cost AS cashLeastCost, reduce_cost AS reduceCost, discount, gift, default_detail AS defaultDetail, title, sub_title AS subTitle, color, notice, description, quantity, type, begin_timestamp AS beginTimestamp, end_timestamp AS endTimestamp, fixed_term AS fixedTerm, fixed_begin_term AS fixedBeginTerm, service_phone AS servicePhone, location_id_list AS locationIdList, can_share AS canShare, can_give_friend AS canGiveFriend, least_cost AS leastCost, summary, icon_url_list AS iconUrlList, text_image_list AS textImageList, time_limit AS timeLimit, card_status AS cardStatus, ctime, pass_time AS passTime, isCallSMS, phone, image, timeType, iddelete, dateTimeSet, examine_id AS examineId, addUser
+        id, logo_url, user_id ,
+        public_id , card_id ,
+        brand_name , card_type ,
+        deal_detail , cash_least_cost ,
+         reduce_cost , discount, gift, default_detail ,
+         title, sub_title, color, notice, description, quantity,
+         type, begin_timestamp , end_timestamp ,
+          fixed_term , fixed_begin_term , service_phone ,
+           location_id_list , can_share , can_give_friend ,
+           least_cost , summary, icon_url_list , text_image_list ,
+           time_limit , card_status , ctime, pass_time , isCallSMS, phone, image,
+            timeType, iddelete, dateTimeSet, examine_id, addUser
     </sql>
 
 

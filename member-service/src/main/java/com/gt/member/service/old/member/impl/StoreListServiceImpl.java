@@ -1,4 +1,4 @@
-package com.gt.member.service.old.member.impl;/*package com.gt.service.member.impl;
+package com.gt.member.service.old.member.impl;/*package com.gt.controller.member.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,10 +19,10 @@ import com.gt.entity.common.WxCard;
 import com.gt.entity.facial.FacialStoreMain;
 import com.gt.entity.mall.Store;
 import com.gt.entity.tour.TourMain;
-import com.gt.service.facial.FacialStoreMainService;
-import com.gt.service.hotel.HotelMainService;
-import com.gt.service.member.StoreListService;
-import com.gt.service.tour.TourMainService;
+import com.gt.controller.facial.FacialStoreMainService;
+import com.gt.controller.hotel.HotelMainService;
+import com.gt.controller.member.StoreListService;
+import com.gt.controller.tour.TourMainService;
 import com.gt.util.CommonUtil;
 
 *//**

@@ -25,8 +25,8 @@
 //import com.gt.entity.member.GradeType;
 //import com.gt.entity.member.MemberFind;
 //import com.gt.entity.member.PublicParameterSet;
-//import com.gt.service.common.dict.DictService;
-//import com.gt.service.member.GradeTypeService;
+//import com.gt.controller.common.dict.DictService;
+//import com.gt.controller.member.GradeTypeService;
 //import com.gt.util.CommonUtil;
 //import com.gt.util.JsonUtil;
 //

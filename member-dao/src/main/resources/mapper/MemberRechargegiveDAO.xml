@@ -17,7 +17,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, money, giveCount, number, gr_id AS grId, publicId, ctId, isDate, busId
+        id, money, giveCount, number, gr_id, publicId, ctId, isDate, busId
     </sql>
 
 

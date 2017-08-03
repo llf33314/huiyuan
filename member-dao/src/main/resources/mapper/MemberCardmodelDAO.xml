@@ -18,7 +18,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        cm_id AS cmId, cm_url AS cmUrl, cm_type AS cmType, cm_sort AS cmSort, publicId, cm_name AS cmName, creatpeople, creattime, cm_state AS cmState, busId
+        cm_id , cm_url , cm_type , cm_sort, publicId, cm_name , creatpeople, creattime, cm_state, busId
     </sql>
 
 

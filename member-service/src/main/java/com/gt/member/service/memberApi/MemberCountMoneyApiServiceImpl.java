@@ -1,0 +1,968 @@
+package com.gt.member.service.memberApi;
+
+import com.gt.member.dao.*;
+import com.gt.member.entity.*;
+import com.gt.member.service.memberApi.entityBo.MallAllEntity;
+import com.gt.member.service.memberApi.entityBo.MallEntity;
+import com.gt.member.service.memberApi.entityBo.MallShopEntity;
+import com.gt.member.service.memberApi.entityBo.MemberShopEntity;
+import com.gt.member.service.old.common.dict.DictService;
+import com.gt.member.util.BigDecimalUtil;
+import com.gt.member.util.CommonUtil;
+import com.gt.member.util.DateTimeKit;
+import net.sf.json.JSONArray;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.text.DecimalFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Created by Administrator on 2017/8/2 0002.
+ */
+@Service
+public class MemberCountMoneyApiServiceImpl implements  MemberCountMoneyApiService{
+    private static final Logger LOG = Logger
+            .getLogger(MemberCountMoneyApiServiceImpl.class);
+
+    @Autowired
+    private MemberDAO memberMapper;
+
+    @Autowired
+    private MemberCardDAO cardMapper;
+
+    @Autowired
+    private MemberGiveruleDAO giveRuleMapper;
+
+    @Autowired
+    private WxCardReceiveDAO wxCardReceiveMapper;
+
+    @Autowired
+    private WxCardDAO wxCardMapper;
+
+    @Autowired
+    private DuofenCardGetDAO duofenCardGetMapper;
+
+    @Autowired
+    private DuofenCardDAO duofenCardMapper;
+
+    @Autowired
+    private DictService dictService;
+
+    @Autowired
+    private PublicParametersetDAO publicParameterSetMapper;
+
+    @Autowired
+    private MemberGradetypeDAO memberGradetypeDAO;
+
+    @Autowired
+    private MemberDateDAO memberDateMapper;
+
+    /**
+     * 门店下统一算法
+     *
+     * @param ce
+     * @return
+     */
+    @Override
+    public MemberShopEntity publicMemberCountMoney(MemberShopEntity ce) throws  Exception{
+        try {
+            Double pay = ce.getTotalMoney();
+            Member member = memberMapper.selectById(ce.getMemberId());
+
+            WxCardReceive wxCardReceive = null;
+            WxCard wxcard = null;
+            DuofenCardGet dfget = null;
+            DuofenCard dfcard = null;
+
+            // 使用了折扣优惠券 将不会启动折扣卡打折
+            Boolean isUseDisCount = false;
+            if (ce.isUseCoupon()) {
+                if (ce.getCouponType() == 0) {
+                    // 微信优惠券
+                    wxCardReceive = wxCardReceiveMapper.selectById(ce
+                            .getCoupondId());
+                    wxcard = wxCardMapper.selectByCardId(wxCardReceive.getCardId());
+                    if ("DISCOUNT".equals(wxcard.getCardType())) {
+                        isUseDisCount = true;
+                    }
+                } else if (ce.getCouponType() == 1) {
+                    // 多粉优惠券
+                    dfget = duofenCardGetMapper.selectById(ce
+                            .getCoupondId());
+                    dfcard = duofenCardMapper.selectById(dfget.getCardId());
+                    if (dfcard.getCardType() == 0) {
+                        isUseDisCount = true;
+                    }
+                }
+            }
+
+            // 会员查询会员信息
+            MemberCard card = cardMapper.selectById(member.getMcId());
+
+            // 查询会员折扣
+            if (CommonUtil.isNotEmpty(card) && card.getCtId() == 2) {
+                if (!isUseDisCount) {
+                    // 折扣卡
+                    //判断是否是会员日 会员日存在折上折
+                    MemberGiverule gr = giveRuleMapper.selectById(card.getGrId());
+                   MemberDate memberDate= findMemeberDate(card.getBusId(),card.getCtId());
+                   Double discount=1.0;
+                   if(CommonUtil.isNotEmpty(memberDate)){
+                       discount=memberDate.getDiscount().doubleValue();
+                   }
+                    discount=discount*gr.getGrDiscount()/100;
+                    Double discountMemberMoney = formatNumber(pay
+                            * discount);
+                    pay = pay - discountMemberMoney; // 折扣后的金额
+                    ce.setDiscountMemberMoney(discountMemberMoney); // 会员优惠金额
+
+                }
+            }
+
+            // 计算使用优惠券后
+            if (ce.isUseCoupon()) {
+                if (ce.getCouponType() == 0) {
+                    if ("DISCOUNT".equals(wxcard.getCardType())) {
+                        // 折扣券
+                        Double discountConponMoney = formatNumber(pay
+                                * (10 - wxcard.getDiscount()) / 10);
+                        pay = pay - discountConponMoney;
+                        ce.setDiscountConponMoney(discountConponMoney); // 优惠券优惠金额
+                        ce.setCodes(wxCardReceive.getUserCardCode());
+                        ce.setCanUseConpon(true);
+                    } else if ("CASH".equals(wxcard.getCardType())) {
+                        // 减免券
+                        if (pay >= wxcard.getCashLeastCost()) {
+                            pay = pay - wxcard.getReduceCost();
+                            ce.setDiscountConponMoney(wxcard.getReduceCost()); // 优惠券优惠金额
+                            ce.setCodes(wxCardReceive.getUserCardCode());
+                            ce.setCanUseConpon(true);
+                        }
+                    }
+                } else if (ce.getCouponType() == 1) {
+                    // 多粉优惠券
+                    if (dfcard.getCardType() == 0) {
+                        // 折扣券
+                        Double discountConponMoney = formatNumber(pay
+                                * (10 - dfcard.getDiscount()) / 10);
+                        pay = pay - discountConponMoney;
+                        ce.setDiscountConponMoney(discountConponMoney); // 优惠券优惠金额
+                        ce.setCanUseConpon(true);
+                        ce.setCodes(dfget.getCode());
+                    } else if (dfcard.getCardType() == 1) {
+                        // 减免券
+                        if (dfcard.getAddUser() == 0) {
+                            // 不允许叠加使用
+                            if (pay >= dfcard.getCashLeastCost()) {
+                                pay = pay - dfcard.getReduceCost();
+                                ce.setDiscountConponMoney(dfcard.getReduceCost()); // 优惠券优惠金额
+                                ce.setCodes(dfget.getCode());
+                                ce.setCanUseConpon(true);
+                            }
+                        } else {
+                            Integer num = 0;
+                            // 满足使用条件
+                            if (pay >= dfcard.getCashLeastCost()) {
+                                if (dfcard.getCashLeastCost() > 0) {
+                                    num = (int) (pay / dfcard.getCashLeastCost()
+                                            .intValue()); // 能使用优惠券数量
+                                }
+                                // 允许叠加使用
+                                List<Map<String, Object>> dfcg = duofenCardGetMapper
+                                        .findByCardId(dfcard.getId(),
+                                                ce.getMemberId(), num);
+                                if (dfcg.size() > 0) {
+                                    String duofenCode = "";
+                                    for (Map<String, Object> map : dfcg) {
+                                        duofenCode += map.get("code") + ",";
+                                    }
+                                    num = dfcg.size();
+                                    Double discountConponMoney = formatNumber(num
+                                            * dfcard.getReduceCost()); // 优惠券金额
+                                    pay = pay - discountConponMoney;
+                                    ce.setDiscountConponMoney(discountConponMoney);
+                                    ce.setCouponNum(num); // 使用优惠券数量
+                                    ce.setCodes(duofenCode);
+                                    ce.setCanUseConpon(true);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 计算粉币金额 粉币10元启用
+            if (ce.isUseFenbi()) {
+                Double discountfenbiMoney = currencyCount(pay,
+                        member.getFansCurrency()); // 计算粉币抵扣
+                if (discountfenbiMoney > 0) {
+                    Map<String, Object> dict = dictService.getDict("1058");
+                    pay = pay - discountfenbiMoney;
+                    Integer fenbiNum = deductFenbi(dict,discountfenbiMoney).intValue();
+                    ce.setFenbiNum(fenbiNum);
+                    ce.setDiscountfenbiMoney(discountfenbiMoney);
+                    ce.setCanUsefenbi(true);
+                }
+            }
+
+            // 计算积分金额
+            if (ce.isUseFenbi()) {
+                PublicParameterset pps = publicParameterSetMapper.findBybusId(member.getBusId());
+                Double discountjifenMoney = integralCount(pay, member.getIntegral()
+                        .doubleValue(), member.getBusId()); // 计算积分
+                if (discountjifenMoney > 0) {
+                    pay = pay - discountjifenMoney;
+                    Integer jifenNum = deductJifen(pps,discountjifenMoney,
+                            member.getBusId()).intValue();
+                    ce.setJifenNum(jifenNum);
+                    ce.setDiscountjifenMoney(discountjifenMoney);
+                    ce.setCanUseJifen(true);
+                }
+            }
+            ce.setBalanceMoney(pay);
+            return ce;
+        }catch (Exception e){
+            LOG.error("统一门店计算异常",e);
+            throw  new Exception();
+        }
+    }
+
+
+    public MallAllEntity mallSkipShopCount(MallAllEntity mallAllEntity) {
+        Long start=new Date().getTime();
+        boolean isMemberCard=false;  //用来标示该粉丝是会员
+        MemberCard card=null;
+        Member member = memberMapper.selectById(mallAllEntity.getMemberId());
+        Double memberDiscount=1.0;  //会员卡折扣
+        if (CommonUtil.isNotEmpty(member) && CommonUtil.isNotEmpty(member.getMcId())) {
+            card=cardMapper.selectById(member.getMcId());
+            if(card.getCardStatus()==0){  //如果会员卡状态不为0标示该会员卡被禁用了
+                isMemberCard=true;
+                // 折扣卡
+                //判断是否是会员日
+                if(card.getCtId()==2){
+                    MemberDate memberDate= findMemeberDate(card.getBusId(),card.getCtId());
+                    if(CommonUtil.isNotEmpty(memberDate)){
+                        memberDiscount=BigDecimalUtil.div(memberDate.getDiscount().doubleValue(),10.0);  //会员日折扣
+                    }
+                    MemberGiverule gr = giveRuleMapper.selectById(card.getGrId());
+                    memberDiscount= BigDecimalUtil.sub(BigDecimalUtil.div(gr.getGrDiscount(), 100.0),memberDiscount);  //会员折扣
+                }
+            }
+        }
+        //所有门店使用卡券信息
+        Map<Integer,MallShopEntity> mallShopMap=mallAllEntity.getMallShops();
+        Double discountMemberMoneyByAll=0.0; //总订单会员优惠券金额
+        Double discountConponMoneyByAll=0.0;   //优惠券券优惠金额
+        Integer canUsefenbiByAll=0;  //是否能用粉币
+        Integer canUseJifenByAll=0;  //是否能用积分
+        boolean isUseDisCount=false;  //实付使用折扣
+        WxCardReceive wxCardReceive = null;
+        WxCard wxcard = null;
+        DuofenCardGet dfget = null;
+        DuofenCard dfcard = null;
+        List<Map<String, Object>> dfcg =null;
+
+        //计算门店下使用了优惠券商品信息
+        for (MallShopEntity mallShopEntity : mallShopMap.values()) {
+            Double discountMemberMoneyByShopId=0.0; //门店会员优惠券金额
+            String codesByShopId="";  //门店使用优惠券code值 用来核销卡券 不存在set
+            Integer couponNumByShopId=1;  //门店使用优惠券数量
+            Integer canUseConponByShopId=0;  //门店是否能用优惠券
+            Double discountConponMoneyByShopId=0.0;   //门店优惠券优惠券金额
+            Map<Integer,MallEntity> mallList=mallShopEntity.getMalls();  //门店下商品信息
+            Integer useCoupon=mallShopEntity.getUseCoupon(); //是否使用了优惠券
+            Integer couponType=mallShopEntity.getCouponType();  //优惠券类型 0微信 1多粉
+            Integer coupondId=mallShopEntity.getCoupondId();   //优惠券id
+            Double discountLinshi=0.0;  //折扣优惠券的折扣值 0到1
+            Double reduceCose=0.0;
+            if (useCoupon==1) {
+                if (couponType == 0) {
+                    // 微信优惠券
+                    wxCardReceive = wxCardReceiveMapper.selectById(coupondId);
+                    wxcard = wxCardMapper.selectByCardId(wxCardReceive
+                            .getCardId());
+                    if ("DISCOUNT".equals(wxcard.getCardType())) {
+                        isUseDisCount = true;
+                        discountLinshi=wxcard.getDiscount()/10;
+                    }else{
+                        reduceCose=wxcard.getReduceCost();
+                    }
+                    codesByShopId=wxCardReceive.getUserCardCode();
+                } else if (couponType == 1) {
+                    // 多粉优惠券
+                    dfget = duofenCardGetMapper.selectById(coupondId);
+                    dfcard = duofenCardMapper.selectById(dfget
+                            .getCardId());
+                    if (dfcard.getCardType() == 0) {
+                        isUseDisCount = true;
+                        discountLinshi=dfcard.getDiscount()/10;
+                    }
+                    if(dfcard.getAddUser()==1){
+                        // 允许叠加使用
+                        dfcg = duofenCardGetMapper
+                                .findByCardId(dfcard.getId(),
+                                        mallAllEntity.getMemberId(), 0);
+                    }
+                    codesByShopId=dfget.getCode();
+                }
+            }
+
+            //<!-------------------start----------------------------->
+            if(useCoupon==0 && isMemberCard && card.getCtId()==2){
+                //未使用优惠券 是折扣卡会员 计算优惠
+                for (MallEntity mallEntity : mallList.values()) {
+                    if(mallEntity.getUserCard()==1){
+                        //会员卡优惠
+                        Double discountMemberMoneyByOne=formatNumber(BigDecimalUtil.mul(mallEntity.getTotalMoneyOne(),BigDecimalUtil.sub(1, memberDiscount)));
+                        Double unitPrice=formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyOne(), discountMemberMoneyByOne));
+
+                        //商品数据
+                        mallEntity.setUnitPrice(unitPrice);
+                        mallEntity.setDiscountMemberMoney(formatNumber(BigDecimalUtil.mul(discountMemberMoneyByOne,mallEntity.getNumber())));
+                        mallEntity.setBalanceMoney(formatNumber(BigDecimalUtil.mul(unitPrice,mallEntity.getNumber())));  //商品订单总金额
+                        mallEntity.setTotalMoneyAll(formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyAll(),mallEntity.getDiscountMemberMoney())));
+                        mallEntity.setCanUserCard(1);
+                        mallList.put(mallEntity.getMallId(), mallEntity);  //数据处理完归还
+
+                        //门店订单数据
+                        discountMemberMoneyByShopId=formatNumber(BigDecimalUtil.add(discountMemberMoneyByShopId,BigDecimalUtil.mul(discountMemberMoneyByOne,mallEntity.getNumber())));  //该门店商品会员优惠金额
+
+                        //总订单数据
+                        discountMemberMoneyByAll=formatNumber(BigDecimalUtil.add(discountMemberMoneyByAll,BigDecimalUtil.mul(discountMemberMoneyByOne,mallEntity.getNumber())));
+                    }
+                }
+
+            }else if(useCoupon==1){
+                if(isUseDisCount){
+                    //折扣优惠券处理业务
+                    for (MallEntity mallEntity : mallList.values()) {
+                        //挑选出能使用优惠券的商品
+                        if(mallEntity.getUseCoupon()==1){
+                            //单个商品优惠券金额
+                            Double discountConponMoneyByOne=formatNumber(BigDecimalUtil.mul(mallEntity.getTotalMoneyOne(),1-discountLinshi));
+                            Double unitPrice=formatNumber(mallEntity.getTotalMoneyOne()-discountConponMoneyByOne);
+
+                            //商品数据
+                            mallEntity.setUnitPrice(unitPrice);  //当个商品价格
+                            mallEntity.setDiscountConponMoney(formatNumber(BigDecimalUtil.mul(discountConponMoneyByOne,mallEntity.getNumber())));
+                            mallEntity.setBalanceMoney(formatNumber(BigDecimalUtil.mul(unitPrice,mallEntity.getNumber())));
+                            mallEntity.setTotalMoneyAll(formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyAll(),mallEntity.getDiscountConponMoney())));
+                            mallEntity.setCanUseConpon(1); //能使用优惠券
+                            mallList.put(mallEntity.getMallId(), mallEntity); //归还到分离的数据中去
+
+                            //门店订单数据
+                            canUseConponByShopId=1;  //门店商品是否使用优惠券标示
+                            discountConponMoneyByShopId=formatNumber(BigDecimalUtil.add(discountConponMoneyByShopId,mallEntity.getDiscountConponMoney()));
+
+                            //总订单数据
+                            discountConponMoneyByAll=formatNumber(BigDecimalUtil.add(discountConponMoneyByAll,mallEntity.getDiscountConponMoney()));
+                        }
+                    }
+                }else{
+                    //减免券处理方式  1如果存在折扣卡 先处理折扣卡优惠券  2再处理优惠券减免
+                    for (MallEntity mallEntity : mallList.values()) {
+                        //先处理会员卡
+                        if(mallEntity.getUserCard()==1){
+                            if(isMemberCard && card.getCtId()==2){
+                                //商品会员卡优惠券
+                                Double discountMemberMoneyByOne=formatNumber(BigDecimalUtil.mul(mallEntity.getTotalMoneyOne(),(1-memberDiscount)));
+                                Double unitPrice=formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyOne(),discountMemberMoneyByOne));
+
+                                //商品数据
+                                mallEntity.setUnitPrice(unitPrice);
+                                mallEntity.setDiscountMemberMoney(formatNumber(BigDecimalUtil.mul(discountMemberMoneyByOne,mallEntity.getNumber())));
+                                mallEntity.setBalanceMoney(formatNumber(BigDecimalUtil.mul(unitPrice,mallEntity.getNumber())));  //商品订单总金额
+                                mallEntity.setCanUserCard(1);
+                                mallEntity.setTotalMoneyAll(formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyAll(),mallEntity.getDiscountMemberMoney())));
+
+                                //门店订单数据
+                                discountMemberMoneyByShopId=formatNumber(BigDecimalUtil.add(discountMemberMoneyByShopId,mallEntity.getDiscountMemberMoney()));  //该门店商品会员优惠金额
+
+                                //总订单数据
+                                discountMemberMoneyByAll=formatNumber(BigDecimalUtil.add(discountMemberMoneyByAll,+mallEntity.getDiscountMemberMoney()));
+
+                            }
+                            mallList.put(mallEntity.getMallId(), mallEntity);  //数据处理完归还
+                        }
+                    }
+                    //<!-------会员卡优惠券已结束-------->
+
+                    //<!---------减免券start------------>
+                    Double balanceMoneyBili=0.0;//门店订单支付金额
+                    Integer couponCount=0;
+                    Integer couponCount1=0;
+                    Double couponCountFentan=0.0;
+                    for (MallEntity mallEntity : mallList.values()) {  //商品信息
+                        //挑选出能使用优惠券的商品
+                        if(mallEntity.getUseCoupon()==1){
+                            balanceMoneyBili=formatNumber(BigDecimalUtil.add(balanceMoneyBili, mallEntity.getTotalMoneyAll()));
+                            couponCount++;
+                        }
+                    }
+
+                    // 计算微信减免券优惠
+                    Double discountConponMoneyByMall=0.0;
+                    if (useCoupon==1) {
+                        //<!-------start-------->
+                        if (couponType == 0) {
+                            for (MallEntity mallEntity : mallList.values()) {
+                                if(mallEntity.getUseCoupon()==1){
+                                    if(balanceMoneyBili>=wxcard.getCashLeastCost()){
+                                        //商品数据
+                                        //减免金额分摊
+                                        couponCount1++;
+                                        if(couponCount1==couponCount){
+                                            mallEntity.setDiscountConponMoney(BigDecimalUtil.sub(reduceCose, couponCountFentan));
+                                        }else{
+                                            discountConponMoneyByMall=formatNumber(BigDecimalUtil.mul(BigDecimalUtil.div(mallEntity.getTotalMoneyAll(), balanceMoneyBili),reduceCose));  //分摊金额
+                                            mallEntity.setDiscountConponMoney(discountConponMoneyByMall);
+                                        }
+                                        couponCountFentan=couponCountFentan+discountConponMoneyByMall;
+
+                                        mallEntity.setBalanceMoney(formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyAll(),mallEntity.getDiscountConponMoney())));
+                                        mallEntity.setUnitPrice(formatNumber(BigDecimalUtil.div(mallEntity.getBalanceMoney(),mallEntity.getNumber())));
+                                        mallEntity.setCanUseConpon(1); //能使用优惠券
+                                        mallEntity.setTotalMoneyAll(formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyAll(), mallEntity.getDiscountConponMoney())));
+                                        mallList.put(mallEntity.getMallId(), mallEntity);
+
+                                        //门店订单数据
+                                        canUseConponByShopId=1;  //门店商品是否使用优惠券标示
+                                        discountConponMoneyByShopId=formatNumber(BigDecimalUtil.add(discountConponMoneyByShopId, mallEntity.getDiscountConponMoney()));  //该门店商品会员优惠金额
+
+                                        //总订单数据
+                                        discountConponMoneyByAll=formatNumber(BigDecimalUtil.add(discountConponMoneyByAll, mallEntity.getDiscountConponMoney()));
+
+                                    }
+                                }
+                            }
+                            //<!-------end-------->
+
+                        } else if (couponType == 1) {
+                            //计算多粉优惠券减免券优惠
+                            reduceCose=dfcard.getReduceCost();
+                            for (MallEntity mallEntity : mallList.values()) {
+                                if(mallEntity.getUseCoupon()==1){
+                                    // 减免券
+                                    if (dfcard.getAddUser() == 0) {
+                                        // 不允许叠加使用
+                                        if (balanceMoneyBili >= dfcard.getCashLeastCost()) {
+                                            //商品数据
+                                            //减免金额分摊
+                                            couponCount1++;
+                                            if(couponCount1==couponCount){
+                                                discountConponMoneyByMall=BigDecimalUtil.sub(reduceCose, couponCountFentan);
+                                            }else{
+                                                discountConponMoneyByMall=formatNumber(BigDecimalUtil.mul(BigDecimalUtil.div(mallEntity.getTotalMoneyAll(), balanceMoneyBili),reduceCose));  //分摊金额
+                                                mallEntity.setDiscountConponMoney(discountConponMoneyByMall);
+                                            }
+                                            couponCountFentan=couponCountFentan+discountConponMoneyByMall;
+
+                                            mallEntity.setDiscountConponMoney(discountConponMoneyByMall);
+                                            mallEntity.setBalanceMoney(formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyAll(),mallEntity.getDiscountConponMoney())));  //支付金额
+                                            mallEntity.setUnitPrice(formatNumber(BigDecimalUtil.div(mallEntity.getBalanceMoney(),mallEntity.getNumber())));
+                                            mallEntity.setCanUseConpon(1); //能使用优惠券
+                                            mallEntity.setTotalMoneyAll(formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyAll(),mallEntity.getDiscountConponMoney())));
+                                            mallList.put(mallEntity.getMallId(), mallEntity);
+
+                                            //门店订单数据
+                                            canUseConponByShopId=1;  //门店商品是否使用优惠券标示
+                                            discountConponMoneyByShopId=formatNumber(BigDecimalUtil.add(discountConponMoneyByShopId, mallEntity.getDiscountConponMoney()));  //该门店商品会员优惠金额
+
+                                            //总订单数据
+                                            discountConponMoneyByAll=formatNumber(BigDecimalUtil.add(discountConponMoneyByAll,mallEntity.getDiscountConponMoney()));
+                                        }
+                                    } else {
+                                        Integer num = 0;
+                                        Integer shiNum=0;
+                                        // 满足使用条件
+                                        if (balanceMoneyBili >= dfcard.getCashLeastCost()) {
+                                            if (dfcard.getCashLeastCost() > 0) {
+                                                num =BigDecimalUtil.divInteger(balanceMoneyBili, dfcard.getCashLeastCost()); // 能使用优惠券数量
+                                            }
+                                            // 允许叠加使用
+                                            if (dfcg.size() > 0) {
+                                                for (int i = 0; i < dfcg.size(); i++) {
+                                                    if(i<=num){
+                                                        codesByShopId += dfcg.get(i).get("code") + ",";
+                                                        shiNum=i;
+                                                    }
+                                                }
+                                                num = shiNum;
+                                                couponNumByShopId=num;
+                                                mallShopEntity.setCouponNum(num);  //优惠券使用数量
+                                                reduceCose=formatNumber(BigDecimalUtil.mul(dfcard.getReduceCost(),num));
+                                                //减免金额分摊
+                                                couponCount1++;
+                                                if(couponCount1==couponCount){
+                                                    mallEntity.setDiscountConponMoney(BigDecimalUtil.sub(reduceCose, couponCountFentan));
+                                                }else{
+                                                    discountConponMoneyByMall=formatNumber(BigDecimalUtil.mul(BigDecimalUtil.div(mallEntity.getTotalMoneyAll(), balanceMoneyBili),reduceCose));  //分摊金额
+                                                    mallEntity.setDiscountConponMoney(discountConponMoneyByMall);
+                                                }
+                                                couponCountFentan=couponCountFentan+discountConponMoneyByMall;
+
+                                                //商品数据
+                                                mallEntity.setDiscountConponMoney(discountConponMoneyByMall);
+                                                mallEntity.setDiscountConponMoney(discountConponMoneyByMall);
+                                                mallEntity.setBalanceMoney(formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyAll(),mallEntity.getDiscountConponMoney())));  //支付金额
+                                                mallEntity.setUnitPrice(formatNumber(BigDecimalUtil.div(mallEntity.getBalanceMoney(),mallEntity.getNumber())));
+                                                mallEntity.setCanUseConpon(1); //能使用优惠券
+                                                mallEntity.setTotalMoneyAll(formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyAll(), mallEntity.getDiscountConponMoney())));
+                                                mallList.put(mallEntity.getMallId(), mallEntity);
+
+                                                //门店订单数据
+                                                canUseConponByShopId=1;  //门店商品是否使用优惠券标示
+                                                discountConponMoneyByShopId=formatNumber(BigDecimalUtil.add(discountConponMoneyByShopId, mallEntity.getDiscountConponMoney()));  //该门店商品会员优惠金额
+
+                                                //总订单数据
+                                                discountConponMoneyByAll=formatNumber(BigDecimalUtil.add(discountConponMoneyByAll,mallEntity.getDiscountConponMoney()));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //<!-------------------end----------------------------->
+            //保存门店优惠信息
+            mallShopEntity.setDiscountMemberMoney(discountMemberMoneyByShopId); //会员优惠
+            mallShopEntity.setDiscountConponMoney(discountConponMoneyByShopId);  //优惠券优惠金额
+            mallShopEntity.setCodes(codesByShopId);
+            mallShopEntity.setCanUseConpon(canUseConponByShopId);  //门店商品是否使用优惠券标示
+            mallShopEntity.setCouponNum(couponNumByShopId);
+            mallShopMap.put(mallShopEntity.getShopId(), mallShopEntity);
+
+        }
+        //保存总订单优惠信息
+        mallAllEntity.setMallShops(mallShopMap);
+        mallAllEntity.setDiscountMemberMoney(discountMemberMoneyByAll);
+        mallAllEntity.setDiscountConponMoney(discountConponMoneyByAll);
+
+        //<!-----------------粉币计算start---------------------------->
+        if(isMemberCard && mallAllEntity.getUseFenbi()==1){
+            Map<String, Object> dict = dictService.getDict("1058");
+            Integer fcount=0; //能抵扣的粉币商品数量
+            Integer fcount1=0; //能抵扣的粉币商品数量
+            Double fenbiFenTanAll=0.0;
+            double fenbiMoney=currencyCount(0.0, member.getFansCurrency());
+            Double discountfenbiMoneyByShopId=0.0;
+            Double balanceMoneyByShopId=0.0;
+            if(fenbiMoney>0){
+                Double fenbiBanlance=0.0;  //订单金额
+                for (MallShopEntity mallShopEntity : mallShopMap.values()) {
+                    Map<Integer,MallEntity> mallEntityMap=mallShopEntity.getMalls();
+                    for (MallEntity mallEntity : mallEntityMap.values()) {
+                        //判断能使用粉币的商品信息
+                        if(mallEntity.getUseFenbi()==1){
+                            fenbiBanlance=formatNumber(BigDecimalUtil.add(fenbiBanlance,mallEntity.getTotalMoneyAll()));
+                            fcount++;
+                        }
+                    }
+                }
+                if(fenbiBanlance>=10)
+                    //计算粉币分摊结果
+                    for (MallShopEntity mallShopEntity : mallShopMap.values()) {
+                        Map<Integer,MallEntity> mallEntityMap=mallShopEntity.getMalls();
+                        for (MallEntity mallEntity : mallEntityMap.values()) {
+                            if(mallEntity.getUseFenbi()==1){
+                                Double fenbiFenTan=0.0;
+                                //处理误差
+                                if(fcount==fcount1+1){
+                                    if(fenbiBanlance>fenbiMoney){
+                                        fenbiFenTan=formatNumber(BigDecimalUtil.sub(fenbiMoney, fenbiFenTanAll));
+                                    }else{
+                                        fenbiFenTan=formatNumber(BigDecimalUtil.sub(fenbiBanlance,fenbiFenTanAll));
+                                    }
+                                }else{
+                                    if(fenbiBanlance>=fenbiMoney){
+                                        //消费金额大于粉币金额
+                                        fenbiFenTan=formatNumber(BigDecimalUtil.mul(BigDecimalUtil.div(mallEntity.getTotalMoneyAll(), fenbiBanlance), fenbiMoney));
+                                    }else{
+                                        fenbiFenTan=formatNumber(BigDecimalUtil.mul(BigDecimalUtil.div(mallEntity.getTotalMoneyAll(), fenbiBanlance), fenbiBanlance));
+                                    }
+                                    fenbiFenTanAll=formatNumber(BigDecimalUtil.add(fenbiFenTanAll,fenbiFenTan));
+                                }
+                                //商品数据
+                                mallEntity.setDiscountfenbiMoney(fenbiFenTan);
+                                Double fenbiNum = deductFenbi(dict,fenbiFenTan);
+                                mallEntity.setFenbiNum(fenbiNum);
+                                mallEntity.setCanUsefenbi(1);
+                                mallEntity.setBalanceMoney(formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyAll(), fenbiFenTan)));
+                                mallEntity.setTotalMoneyAll(formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyAll(),fenbiFenTan)));
+                                mallEntityMap.put(mallEntity.getMallId(), mallEntity);
+
+                                //门店订单数据
+                                discountfenbiMoneyByShopId=formatNumber(BigDecimalUtil.add(discountfenbiMoneyByShopId, mallEntity.getDiscountfenbiMoney()));
+                                balanceMoneyByShopId=formatNumber(BigDecimalUtil.add(balanceMoneyByShopId,mallEntity.getBalanceMoney()));
+
+                                //总订单数据
+                                canUsefenbiByAll=1;
+
+                                fcount1++;
+                            }else{
+                                balanceMoneyByShopId=formatNumber(BigDecimalUtil.add(balanceMoneyByShopId,mallEntity.getTotalMoneyAll()));
+                            }
+                        }
+                        mallShopEntity.setDiscountfenbiMoney(discountfenbiMoneyByShopId);
+                        mallShopEntity.setBalanceMoney(balanceMoneyByShopId);
+                        mallShopEntity.setMalls(mallEntityMap);
+                        mallShopMap.put(mallShopEntity.getShopId(), mallShopEntity);
+                    }
+                if(fenbiMoney>0){
+                    Double fenbiNumByAll = deductFenbi(dict,discountfenbiMoneyByShopId);
+                    mallAllEntity.setFenbiNum(fenbiNumByAll);
+                    mallAllEntity.setDiscountfenbiMoney(discountfenbiMoneyByShopId);
+                }
+                mallAllEntity.setMallShops(mallShopMap);
+
+                mallAllEntity.setCanUsefenbi(canUsefenbiByAll);
+            }
+        }
+        //<!-----------------粉币计算end---------------------------->
+
+        //<!-----------------积分计算start---------------------------->
+        if(isMemberCard && mallAllEntity.getUserJifen()==1){
+            PublicParameterset pps = publicParameterSetMapper.findBybusId(member.getBusId());
+            Double discountJifenMoneyByShopId=0.0;
+            Double jifenBanlance=0.0;  //订单金额
+            Double balanceMoneyByShopId=0.0;
+            Integer jcount=0; //能抵扣的粉币商品数量
+            Integer jcount1=0; //能抵扣的粉币商品数量
+            Double jifenFenTanAll=0.0;
+
+            for (MallShopEntity mallShopEntity : mallShopMap.values()) {
+                Map<Integer,MallEntity> mallEntityMap=mallShopEntity.getMalls();
+                for (MallEntity mallEntity : mallEntityMap.values()) {
+                    //判断能使用粉币的商品信息
+                    if(mallEntity.getUserJifen()==1){
+                        jifenBanlance=formatNumber(BigDecimalUtil.add(jifenBanlance,mallEntity.getTotalMoneyAll()));
+                        jcount++;
+                    }
+                }
+            }
+            Double jifenMoney=integralCount(jifenBanlance, member.getIntegral().doubleValue(), member.getBusId());
+
+            if(jifenMoney>0){
+                //计算积分分摊结果
+                for (MallShopEntity mallShopEntity : mallShopMap.values()) {
+                    Map<Integer,MallEntity> mallEntityMap=mallShopEntity.getMalls();
+                    for (MallEntity mallEntity : mallEntityMap.values()) {
+                        if(mallEntity.getUserJifen()==1){
+                            Double jifenFenTan=0.0;
+                            if(jcount==jcount1+1){
+                                if(jifenBanlance>=jifenMoney){
+                                    //消费金额大于粉币金额
+                                    jifenFenTan=formatNumber(BigDecimalUtil.sub(jifenMoney, jifenFenTanAll));
+                                }else{
+                                    jifenFenTan=formatNumber(BigDecimalUtil.sub(jifenBanlance,jifenFenTanAll));
+                                }
+                            }else{
+                                if(jifenBanlance>=jifenMoney){
+                                    //消费金额大于粉币金额
+                                    jifenFenTan=formatNumber(BigDecimalUtil.mul(BigDecimalUtil.div(mallEntity.getTotalMoneyAll(), jifenBanlance), jifenMoney));
+                                }else{
+                                    jifenFenTan=formatNumber(BigDecimalUtil.mul(BigDecimalUtil.div(mallEntity.getTotalMoneyAll(), jifenBanlance), jifenBanlance));
+                                }
+                                jifenFenTanAll=formatNumber(BigDecimalUtil.add(jifenFenTanAll,jifenFenTan));
+                            }
+                            //商品数据
+                            mallEntity.setDiscountjifenMoney(jifenFenTan);
+                            Double jifenNum = deductJifen(pps,jifenFenTan, member.getBusId());
+                            mallEntity.setJifenNum(jifenNum);
+                            mallEntity.setCanUseJifen(1);
+                            mallEntity.setBalanceMoney(formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyAll(),jifenFenTan)));
+                            mallEntity.setTotalMoneyAll(formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyAll(), jifenFenTan)));
+                            mallEntityMap.put(mallEntity.getMallId(), mallEntity);
+
+                            //门店订单数据
+                            discountJifenMoneyByShopId=formatNumber(BigDecimalUtil.add(discountJifenMoneyByShopId, mallEntity.getDiscountjifenMoney()));
+                            balanceMoneyByShopId=formatNumber(BigDecimalUtil.add(balanceMoneyByShopId,mallEntity.getBalanceMoney()));
+
+                            //总订单数据
+                            canUseJifenByAll=1;
+                            jcount1++;
+                        }else{
+                            balanceMoneyByShopId=formatNumber(BigDecimalUtil.add(balanceMoneyByShopId,mallEntity.getTotalMoneyAll()));
+                        }
+                    }
+                    mallShopEntity.setDiscountjifenMoney(discountJifenMoneyByShopId);
+                    mallShopEntity.setBalanceMoney(balanceMoneyByShopId);
+                    mallShopEntity.setMalls(mallEntityMap);
+                    mallShopMap.put(mallShopEntity.getShopId(), mallShopEntity);
+                }
+                if(jifenMoney>0){
+                    Integer jifenNumByAll = deductJifen(pps,jifenMoney, member.getBusId()).intValue();
+                    mallAllEntity.setJifenNum(jifenNumByAll);
+                    mallAllEntity.setDiscountjifenMoney(jifenMoney);
+                }
+                mallAllEntity.setMallShops(mallShopMap);
+                mallAllEntity.setCanUseJifen(canUseJifenByAll);
+            }
+        }
+
+        Double balanceMoneyByAll=0.0;
+        for (MallShopEntity mallShopEntity : mallShopMap.values()){
+            Double balanceMoneyByShopId=0.0;
+            Map<Integer,MallEntity> mallEntitys=mallShopEntity.getMalls();
+            for (MallEntity mallEntity : mallEntitys.values()) {
+                //未任何优惠商品支付金额重新赋值一次
+                if(mallEntity.getBalanceMoney()<=0){
+                    mallEntity.setBalanceMoney(mallEntity.getTotalMoneyAll());
+                }
+                balanceMoneyByShopId=formatNumber(BigDecimalUtil.add(balanceMoneyByShopId, mallEntity.getBalanceMoney()));
+            }
+            mallShopEntity.setBalanceMoney(balanceMoneyByShopId);
+            balanceMoneyByAll=formatNumber(BigDecimalUtil.add(balanceMoneyByAll, mallShopEntity.getBalanceMoney()));
+            mallShopMap.put(mallShopEntity.getShopId(), mallShopEntity);
+        }
+        mallAllEntity.setBalanceMoney(balanceMoneyByAll);
+        Long end=new Date().getTime();
+        System.out.println("用时:"+(end-start)+"毫秒");
+        return mallAllEntity;
+    }
+
+    // <!-----------------积分计算end---------------------------->
+
+    /**
+     * 数字处理
+     *
+     * @param number
+     * @return
+     */
+    public Double formatNumber(Double number) {
+        DecimalFormat df = new DecimalFormat("######0.00");
+        return CommonUtil.toDouble(df.format(number));
+    }
+
+    /**
+     * 粉币计算
+     *
+     * @param totalMoney
+     *            能抵抗消费金额
+     * @param fans_currency
+     *            粉币值
+     * @return 返回兑换金额
+     */
+    public Double currencyCount(Double totalMoney, Double fans_currency) {
+        try {
+            Map<String, Object> dict = dictService.getDict("1058");
+            Double ratio = CommonUtil.toDouble(dict.get("1"));
+            if (fans_currency < ratio * 10) {
+                return 0.0;
+            }
+            Integer money = new Double(fans_currency / ratio / 10).intValue();
+            if (CommonUtil.isEmpty(totalMoney) || totalMoney == 0) {
+                return new Double(money * 10);
+            } else {
+                if (totalMoney >= money * 10) {
+                    return new Double(money * 10);
+                } else {
+                    return totalMoney;
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("计算粉币抵扣异常");
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
+    /**
+     * 金额计算使用粉币数量
+     * @return
+     */
+    public Double deductFenbi(Map<String, Object> dict,Double fenbiMoney) {
+        Double ratio = CommonUtil.toDouble(dict.get("1"));
+        Double fenbi = fenbiMoney * ratio;
+        return formatNumber(fenbi);
+    }
+
+    /**
+     * 金额计算使用积分数量
+     *
+     * @param busId
+     * @return
+     */
+    public Double deductJifen(PublicParameterset pps,Double jifenMoney, int busId) {
+        if (CommonUtil.isEmpty(pps)) {
+            return 0.0;
+        }
+        Double jifen = jifenMoney / pps.getChangeMoney()
+                * pps.getIntegralRatio();
+        return formatNumber(jifen);
+    }
+
+    /**
+     * 积分计算
+     *
+     * @param totalMoney
+     *            能抵抗消费金额
+     * @param integral
+     *            积分
+     * @return
+     */
+    public Double integralCount(Double totalMoney, Double integral, int busId) {
+        try {
+            PublicParameterset ps = publicParameterSetMapper.findBybusId(busId);
+            if (CommonUtil.isEmpty(ps)) {
+                return 0.0;
+            }
+            double startMoney = ps.getStartMoney();
+            double integralratio = ps.getIntegralRatio();
+            double changMoney = ps.getChangeMoney();
+            if (integralratio <= 0) {
+                return 0.0;
+            }
+
+            // 积分启兑
+            double integralNum = startMoney * integralratio;
+            if (integral < integralNum) {
+                return 0.0;
+            }
+
+            if (CommonUtil.isNotEmpty(totalMoney)) {
+                // 订单金额小于订单启兑金额
+                if (totalMoney < changMoney) {
+                    return 0.0;
+                }
+                Integer money = new Double(integral / integralratio).intValue();
+                if (totalMoney >= money) {
+                    return new Double(money);
+                } else {
+                    return totalMoney;
+                }
+            } else {
+                Integer money = new Double(integral / integralratio).intValue();
+                return new Double(money);
+            }
+        } catch (Exception e) {
+            LOG.error("计算积分抵扣异常");
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
+    /**
+     * 判断是否是会员日
+     */
+    public MemberDate findMemeberDate(Integer busId, Integer ctId) {
+        try {
+            MemberGradetype gradeType = memberGradetypeDAO.findIsmemberDateByCtId(busId,
+                    ctId);
+            if (CommonUtil.isEmpty(gradeType)
+                    || gradeType.getIsmemberDate() == 1) {
+                return null;
+            }
+            // 未设置会员日
+            MemberDate memberdate = memberDateMapper.findByBusIdAndCtId(busId,
+                    ctId);
+            if (CommonUtil.isEmpty(memberdate)) {
+                return null;
+            }
+            switch (memberdate.getDateType()) {
+                case 0:
+                    int d = DateTimeKit.getNow().getDay();
+                    Integer day = 0;
+                    if (d == 0) {
+                        day = 7;
+                    } else if (d == 1) {
+                        day = 1;
+                    } else if (d == 2) {
+                        day = 2;
+                    } else if (d == 3) {
+                        day = 3;
+                    } else if (d == 4) {
+                        day = 4;
+                    } else if (d == 5) {
+                        day = 5;
+                    } else if (d == 6) {
+                        day = 6;
+                    }
+                    if (day == CommonUtil.toInteger(memberdate.getDateStr())) {
+                        return memberdate;
+                    }
+                    break;
+                case 1:
+                    Integer date = DateTimeKit.getNow().getDate();
+                    if (date == CommonUtil.toInteger(memberdate.getDateStr())) {
+                        return memberdate;
+                    }
+                    break;
+                case 2:
+                    if (DateTimeKit.isSameDay(new Date(),
+                            DateTimeKit.parseDate(memberdate.getDateStr()))) {
+                        return memberdate;
+                    }
+                    break;
+                case 3:
+                    // 区间
+                    String dateStr = memberdate.getDateStr();
+                    List<Map<String, Object>> list = JSONArray.toList(
+                            JSONArray.fromObject(dateStr), Map.class);
+                    Integer year = DateTimeKit.getYear(new Date());
+                    for (Map<String, Object> map : list) {
+                        String time = CommonUtil.toString(map.get("time"));
+                        if (time.length() == 1) {
+                            time = "0" + time;
+                        }
+                        String time1 = CommonUtil.toString(map.get("time1"));
+                        if (time1.length() == 1) {
+                            time1 = "0" + time1;
+                        }
+                        String time2 = CommonUtil.toString(map.get("time2"));
+                        if (time2.length() == 1) {
+                            time2 = "0" + time2;
+                        }
+                        String time3 = CommonUtil.toString(map.get("time3"));
+                        if (time3.length() == 1) {
+                            time3 = "0" + time3;
+                        }
+
+                        String date1 = year + "-" + time + "-" + time1
+                                + " 00:00:00";
+                        String date2 = year + "-" + time2 + "-" + time3
+                                + " 23:59:59";
+                        Date d1 = DateTimeKit.parse(date1, "yyyy-MM-dd HH:mm:ss");
+                        Date d2 = DateTimeKit.parse(date2, "yyyy-MM-dd HH:mm:ss");
+                        if (isBetween(d1, d2)) {
+                            return memberdate;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 比较当前时间是否在两者之间
+     *
+     * @param date1
+     *            开始时间
+     * @param date2
+     *            结束时间
+     * @return
+     */
+    public boolean isBetween(Date date1, Date date2) {
+        Date date = new Date();
+        if (date.getTime() >= date1.getTime()
+                && date.getTime() <= date2.getTime()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+}

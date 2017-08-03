@@ -154,6 +154,25 @@ public class CommonUtil {
 		return null;
 	}
 
+
+	/**
+	 * 转String
+	 *
+	 * @param obj
+	 */
+	public static boolean toBoolean(Object obj) {
+		try {
+			if (!isEmpty(obj)) {
+				return (Boolean) obj;
+			} else {
+				throw new Exception("对象为空，转换失败！");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	/**
 	 * 转Double
 	 * 

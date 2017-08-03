@@ -9,8 +9,12 @@ package com.gt.member.exception;
  */
 public class BusinessException extends SystemException {
 
+    public BusinessException(){
+
+    }
+
     public BusinessException( String message ) {
-	super( message );
+	    super( message );
     }
 
     public BusinessException( int code, String message ) {

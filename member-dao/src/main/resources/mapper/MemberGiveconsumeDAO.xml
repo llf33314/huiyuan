@@ -16,7 +16,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        uc_id AS ucId, gt_id AS gtId, gc_total AS gcTotal, gt_name AS gtName, gt_unit AS gtUnit, sendType, sendDate, memberId
+        uc_id, gt_id, gc_total , gt_name, gt_unit, sendType, sendDate, memberId
     </sql>
 
 	<select id="findByUcId" resultMap="BaseResultMap">

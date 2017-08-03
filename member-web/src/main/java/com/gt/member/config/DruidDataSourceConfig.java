@@ -48,7 +48,7 @@ public class DruidDataSourceConfig {
     //添加排除的规则.
     private static final String   EXCLUSIONS       = "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*";
     //监控规则
-    private static final String[] MONITORING_RULES = { "com.gt.*.dao.*", "com.gt.member.*.service.*" };
+    private static final String[] MONITORING_RULES = { "com.gt.*.dao.*", "com.gt.member.*.controller.*" };
 
     @ConfigurationProperties( prefix = "datasource.druid" )
     @Bean( name = "datasource", initMethod = "init", destroyMethod = "close" )

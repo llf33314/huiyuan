@@ -1,4 +1,4 @@
-package com.gt.member.service.old.member.impl;/*package com.gt.service.member.impl;
+package com.gt.member.service.old.member.impl;/*package com.gt.controller.member.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,11 +32,11 @@ import com.gt.entity.personCenter.PaySuccess;
 import com.gt.entity.personCenter.PaySuccessLog;
 import com.gt.entity.user.BusUser;
 import com.gt.entity.user.WxPublicUsers;
-import com.gt.service.common.sms.SmsSpendingService;
-import com.gt.service.member.DuofenCardService;
-import com.gt.service.member.PaysuccessService;
-import com.gt.service.member.SystemMsgService;
-import com.gt.service.memberpay.MemberPayService;
+import com.gt.controller.common.sms.SmsSpendingService;
+import com.gt.controller.member.DuofenCardService;
+import com.gt.controller.member.PaysuccessService;
+import com.gt.controller.member.SystemMsgService;
+import com.gt.controller.memberpay.MemberPayService;
 import com.gt.util.CommonUtil;
 import com.gt.util.DateTimeKit;
 import com.gt.util.JedisUtil;

@@ -18,10 +18,12 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
 @EnableRedisHttpSession
 public class RedisSessionConfig {
 
-    /** 日志 */
-    private static final Logger LOG                          = LoggerFactory.getLogger( RedisSessionConfig.class );
+    /**
+     * 日志
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(RedisSessionConfig.class);
     //maxInactiveIntervalInSeconds session超时时间,单位秒
-    private              int    maxInactiveIntervalInSeconds = 180;
+    private int maxInactiveIntervalInSeconds = 180;
 
     /**
      * 配置Cookie 作用域
@@ -32,12 +34,10 @@ public class RedisSessionConfig {
     public DefaultCookieSerializer defaultCookieSerializer() {
         DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
 //        cookieSerializer.setDomainName( ".example.com" );
-        cookieSerializer.setCookieName( "JSESSIONID" );
-        cookieSerializer.setCookiePath( "/" );
+        cookieSerializer.setCookieName("JSESSIONID");
+        cookieSerializer.setCookiePath("/");
         return cookieSerializer;
     }
-
-
 
 
 }

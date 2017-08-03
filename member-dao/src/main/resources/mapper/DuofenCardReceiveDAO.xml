@@ -43,7 +43,11 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, publicId, cardsName, cardImage, receiveDate, deliveryAddr, deliveryType, deliveryType1, numlimit, maxNumType, maxNum, cardMessage, buyMoney, ctIds, gtIds, code, state, titleCard, cardIds, backColor, isCallSms, mobilePhone, cardType, lqId, jifen, fenbi, busId, threeMallId, threeNum, classifyId, isrecommend, giveJifen, giveFenbi, giveMoney, giveFlow
+        id, publicId, cardsName, cardImage,
+         receiveDate, deliveryAddr, deliveryType, deliveryType1, numlimit, maxNumType,
+          maxNum, cardMessage, buyMoney, ctIds, gtIds, code, state, titleCard, cardIds,
+           backColor, isCallSms, mobilePhone, cardType, lqId, jifen, fenbi, busId, threeMallId,
+            threeNum, classifyId, isrecommend, giveJifen, giveFenbi, giveMoney, giveFlow
     </sql>
 
 

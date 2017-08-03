@@ -1,4 +1,4 @@
-package com.gt.member.service.old.member.impl;/*package com.gt.service.member.impl;
+package com.gt.member.service.old.member.impl;/*package com.gt.controller.member.impl;
 
 import io.socket.client.socke;
 
@@ -70,12 +70,12 @@ import com.gt.entity.member.MemberParameter;
 import com.gt.entity.member.MemberPickLog;
 import com.gt.entity.member.Recommend;
 import com.gt.entity.member.UserConsume;
-import com.gt.service.common.dict.DictService;
-import com.gt.service.member.MemberService;
-import com.gt.service.member.SystemMsgService;
-import com.gt.service.member.export.ExcelStyle;
-import com.gt.service.memberpay.MemberPayService;
-import com.gt.service.memberpay.MemberTongjiService;
+import com.gt.controller.common.dict.DictService;
+import com.gt.controller.member.MemberService;
+import com.gt.controller.member.SystemMsgService;
+import com.gt.controller.member.export.ExcelStyle;
+import com.gt.controller.memberpay.MemberPayService;
+import com.gt.controller.memberpay.MemberTongjiService;
 import com.gt.util.CommonUtil;
 import com.gt.util.DateTimeKit;
 import com.gt.util.EncryptUtil;

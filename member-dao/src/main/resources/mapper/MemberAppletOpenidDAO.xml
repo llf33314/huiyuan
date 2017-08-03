@@ -13,7 +13,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, openid, member_id AS memberId, style, bus_id AS busId
+        id, openid, member_id, style, bus_id AS busId
     </sql>
 
 	<select id="findByOpenId" resultMap="BaseResultMap" parameterType="java.lang.String">

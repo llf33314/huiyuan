@@ -15,7 +15,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        gt_id AS gtId, gt_name AS gtName, gt_flow AS gtFlow, public_id AS publicId, gt_unit AS gtUnit, gType_id AS gTypeId, busId
+        gt_id , gt_name , gt_flow , public_id , gt_unit , gType_id , busId
     </sql>
 
 

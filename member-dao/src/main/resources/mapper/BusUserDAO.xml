@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gt.member.mapper.BusUserDAO">
+<mapper namespace="com.gt.member.dao.BusUserDAO">
 
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.gt.member.entity.BusUser">
@@ -45,7 +45,10 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, name, email, password, phone, gender, register_ip AS registerIp, recent_ip AS recentIp, ctime, mtime, status, fans_currency AS fansCurrency, flow, city_id AS cityId, level, startTime, endTime, years, statTime, industryid, pid, sms_count AS smsCount, istechnique, advert, busmoney_level AS busmoneyLevel, regionids, isagent, agentid, realname, login_source AS loginSource, is_binding AS isBinding, unbundling_time AS unbundlingTime, fixed_phone AS fixedPhone, customer_id AS customerId, merchant_name AS merchantName, add_source AS addSource, wz_auth AS wzAuth
+        id, name, email, password, phone, gender, register_ip, recent_ip , ctime, mtime, status, fans_currency ,
+        flow, city_id , level, startTime, endTime, years, statTime, industryid, pid, sms_count , istechnique, advert,
+         busmoney_level , regionids, isagent, agentid, realname, login_source , is_binding , unbundling_time ,
+         fixed_phone, customer_id , merchant_name , add_source , wz_auth
     </sql>
 
 </mapper>

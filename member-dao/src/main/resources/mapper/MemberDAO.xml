@@ -48,10 +48,16 @@
 		<result column="openid2" property="openid2" />
 	</resultMap>
 
-    <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
-        id, df_member_id AS dfMemberId, public_id AS publicId, fans_currency AS fansCurrency, flow, integral, level, openid, phone, nickname, sex, province, city, country, headimgurl, operate_type AS operateType, mc_id AS mcId, totalMoney, totalIntegral, address, email, cardId, cardImgback, cardImg, birth, currencyDate, flowDate, integralDate, shareCount, shareDate, remark, cardChecked, name, isBuy, isSubscribe, scence_code AS scenceCode, busId, pwd, loginMode, oldId, subscribeDate, openid2
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+        id, df_member_id , public_id , fans_currency, flow, integral, level, openid, phone, nickname, sex, province, city,
+        country, headimgurl, operate_type , mc_id , totalMoney, totalIntegral, address, email, cardId, cardImgback,
+        cardImg, birth, currencyDate, flowDate, integralDate, shareCount, shareDate, remark, cardChecked, name, isBuy,
+        isSubscribe, scence_code , busId, pwd, loginMode, oldId, subscribeDate, openid2
     </sql>
+
+
+
 
 
 	<select id="totalCountMember" resultType="java.lang.Integer">

@@ -11,7 +11,7 @@
 //import org.springframework.stereotype.Service;
 //
 //import com.gt.dao.member.UserConsumeMapper;
-//import com.gt.service.member.UserConsumeService;
+//import com.gt.controller.member.UserConsumeService;
 //import com.gt.util.CommonUtil;
 //import com.gt.util.Page;
 //

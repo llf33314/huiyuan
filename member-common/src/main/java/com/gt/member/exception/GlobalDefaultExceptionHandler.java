@@ -38,6 +38,6 @@ public class GlobalDefaultExceptionHandler {
     @ResponseBody
     @ExceptionHandler( value = ResponseEntityException.class )
     public ErrorInfo< String > defaultErrorHandler(HttpServletRequest request, ResponseEntityException e ) {
-	return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), e.getMessage(), request.getRequestURL().toString() );
+	return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), null );
     }
 }

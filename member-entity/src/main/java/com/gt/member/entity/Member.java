@@ -1,16 +1,16 @@
 package com.gt.member.entity;
 
+import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
-import java.util.Date;
-import com.baomidou.mybatisplus.enums.IdType;
-import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableName;
-import java.io.Serializable;
-import com.baomidou.mybatisplus.enums.FieldFill;
-
+import com.baomidou.mybatisplus.enums.IdType;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author pengjiangli
- * @since 2017-07-25
+ * @since 2017-08-02
  */
 @Data
 @Accessors(chain = true)

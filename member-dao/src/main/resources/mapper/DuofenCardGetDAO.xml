@@ -23,7 +23,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, cardId, getType, code, state, getDate, cardReceiveId, memberId, publicId, startTime, endTime, friendMemberId, busId, storeId, recommendId
+        id, cardId, getType, code, state, getDate,
+        cardReceiveId, memberId, publicId, startTime, endTime, friendMemberId, busId, storeId, recommendId
     </sql>
 
 

@@ -54,3 +54,11 @@ server:
 
 cxf:
  path: /services
+
+web:
+ wxmp_home: http://yifriend.net/
+ cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6
+ redis_ip: 127.0.0.1
+ redis_port: 6379
+ redis_pwd: gt@123456
+

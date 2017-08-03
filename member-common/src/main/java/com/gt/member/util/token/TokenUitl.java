@@ -8,7 +8,6 @@ import java.util.Map;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.HttpClienUtil;
 import com.gt.member.util.MemberConfig;
-import com.gt.member.util.PropertiesUtil;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +22,6 @@ public class TokenUitl {
 	
 	private static final Logger LOG=Logger.getLogger(TokenUitl.class);
 
-	@Autowired
-	private MemberConfig memberConfig;
 
 	public static Map<String, Object> tokenMap;
 	
@@ -33,7 +30,7 @@ public class TokenUitl {
 
 
 	@SuppressWarnings("unchecked")
-	public static String getToken(){
+	public  static String getToken(){
 		try {
 			Long tokenStart=Long.parseLong(CommonUtil.toString(tokenMap.get("tokenStart")));
 			Long validTime=Long.parseLong(CommonUtil.toString(tokenMap.get("validTime")));
@@ -43,7 +40,7 @@ public class TokenUitl {
 				return CommonUtil.toString(tokenMap.get("token"));
 			}
 			
-			String url= PropertiesUtil.getWxmpWebUrl()+"/tokenController/79B4DE7C/getToken.do";
+			String url= "/tokenController/79B4DE7C/getToken.do";
 			Map<String, Object> map=new HashMap<String, Object>();
 			map.put("userName", userName);
 			map.put("pwd", pwd);
@@ -62,12 +59,11 @@ public class TokenUitl {
 	
 	/**
 	 * 如果其他项目访问当前项目 请远程校验token
-	 * @param token
 	 * @return
 	 */
 	public static boolean checkToken(){
 		try {
-			String url=PropertiesUtil.getWxmpWebUrl()+"/tokenController/79B4DE7C/checkedToken.do";
+			String url="/tokenController/79B4DE7C/checkedToken.do";
 			JSONObject json=HttpClienUtil.httpPost(url, JSONObject.fromObject(tokenMap), false);
 			return json.getBoolean("code");
 		} catch (Exception e) {

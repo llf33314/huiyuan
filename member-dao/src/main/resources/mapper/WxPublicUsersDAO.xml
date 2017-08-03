@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gt.member.mapper.WxPublicUsersDAO">
+<mapper namespace="com.gt.member.dao.WxPublicUsersDAO">
 
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.gt.member.entity.WxPublicUsers">
@@ -47,7 +47,17 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, wx_user_token AS wxUserToken, auth_refresh_token AS authRefreshToken, bus_user_id AS busUserId, authorizer_info AS authorizerInfo, head_img AS headImg, service_type_info AS serviceTypeInfo, verify_type_info AS verifyTypeInfo, user_name AS userName, alias, qrcode_url AS qrcodeUrl, appid, appsecret, func_info AS funcInfo, access_token AS accessToken, token_last_time AS tokenLastTime, token_duration AS tokenDuration, apiticket, api_ticket_duration AS apiTicketDuration, api_ticket_last_time AS apiTicketLastTime, create_time AS createTime, modify_time AS modifyTime, total_voice_count AS totalVoiceCount, total_video_count AS totalVideoCount, total_image_count AS totalImageCount, total_news_count AS totalNewsCount, use_news_count AS useNewsCount, use_voice_count AS useVoiceCount, use_video_count AS useVideoCount, use_image_count AS useImageCount, is_friend_reply_open AS isFriendReplyOpen, is_autoreply_open AS isAutoreplyOpen, is_template_open AS isTemplateOpen, total_bulk AS totalBulk, use_bulk AS useBulk, mch_id AS mchId, api_key AS apiKey, is_power AS isPower, business_info AS businessInfo
+        id, wx_user_token , auth_refresh_token ,
+         bus_user_id , authorizer_info , head_img ,
+          service_type_info , verify_type_info , user_name ,
+          alias, qrcode_url , appid, appsecret, func_info , access_token ,
+          token_last_time , token_duration , apiticket, api_ticket_duration ,
+           api_ticket_last_time , create_time , modify_time ,
+           total_voice_count , total_video_count , total_image_count ,
+           total_news_count , use_news_count , use_voice_count ,
+            use_video_count , use_image_count , is_friend_reply_open ,
+            is_autoreply_open, is_template_open , total_bulk , use_bulk ,
+             mch_id , api_key , is_power , business_info
     </sql>
 
 

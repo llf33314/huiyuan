@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.WxShopDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.WxShop">
+		<id column="id" property="id" />
+		<result column="sid" property="sid" />
+		<result column="poiId" property="poiId" />
+		<result column="public_id" property="publicId" />
+		<result column="business_name" property="businessName" />
+		<result column="branch_name" property="branchName" />
+		<result column="categories" property="categories" />
+		<result column="two_categories" property="twoCategories" />
+		<result column="three_categories" property="threeCategories" />
+		<result column="telephone" property="telephone" />
+		<result column="avg_price" property="avgPrice" />
+		<result column="start_time" property="startTime" />
+		<result column="end_time" property="endTime" />
+		<result column="special" property="special" />
+		<result column="introduction" property="introduction" />
+		<result column="province" property="province" />
+		<result column="city" property="city" />
+		<result column="district" property="district" />
+		<result column="address" property="address" />
+		<result column="detail" property="detail" />
+		<result column="offset_type" property="offsetType" />
+		<result column="longitude" property="longitude" />
+		<result column="latitude" property="latitude" />
+		<result column="available_state" property="availableState" />
+		<result column="update_status" property="updateStatus" />
+		<result column="status" property="status" />
+		<result column="create_time" property="createTime" />
+		<result column="modify_time" property="modifyTime" />
+		<result column="recommend" property="recommend" />
+		<result column="errorMsg" property="errorMsg" />
+		<result column="bus_id" property="busId" />
+		<result column="main_shop" property="mainShop" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, sid, poiId, public_id , business_name , branch_name,
+        categories, two_categories , three_categories ,
+        telephone, avg_price , start_time , end_time ,
+        special, introduction, province, city, district, address, detail, offset_type ,
+         longitude, latitude, available_state , update_status , status,
+         create_time , modify_time , recommend, errorMsg, bus_id,
+         main_shop
+    </sql>
+
+	<select id="selectMainShopByBusId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_wx_shop
+		where bus_id = #{busId,jdbcType=INTEGER} and main_shop=1
+	</select>
+
+</mapper>

@@ -1,4 +1,4 @@
-package com.gt.member.service.old.common.quartz;/*package com.gt.service.common.quartz;
+package com.gt.member.service.old.common.quartz;/*package com.gt.controller.common.quartz;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,7 +30,7 @@ import com.gt.entity.member.MemberBir;
 import com.gt.entity.member.MemberNotice;
 import com.gt.entity.member.PublicParameterSet;
 import com.gt.entity.member.SystemNoticeCall;
-import com.gt.service.memberpay.MemberPayService;
+import com.gt.controller.memberpay.MemberPayService;
 import com.gt.util.CommonUtil;
 import com.gt.util.HttpClienUtil;
 import com.gt.util.PropertiesUtil;

@@ -45,11 +45,15 @@
 		<result column="isend" property="isend" />
 		<result column="ischongzhi" property="ischongzhi" />
 		<result column="isendDate" property="isendDate" />
+		<result column="refundMoney" property="refundMoney" />
 	</resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, public_id AS publicId, busUserId, memberId, mcId, ctId, gt_id AS gtId, recordType, ucType, totalMoney, integral, fenbi, uccount, discount, discountMoney, orderId, giveIntegral, giveFlow, giveFenbi, ucTable, createDate, paymentType, dvId, disCountdepict, balance, payStatus, giveGift, giftCount, orderCode, moduleType, storeId, isParent, freightMoney, offlinePayType, cardType, flowState, dataSource, moduleOrderType, isend, ischongzhi, isendDate
+        id, public_id , busUserId, memberId, mcId, ctId, gt_id , recordType, ucType, totalMoney, integral, fenbi, uccount,
+        discount, discountMoney, orderId, giveIntegral, giveFlow, giveFenbi, ucTable, createDate, paymentType, dvId, disCountdepict,
+         balance, payStatus, giveGift, giftCount, orderCode, moduleType, storeId, isParent, freightMoney, offlinePayType, cardType,
+         flowState, dataSource, moduleOrderType, isend, ischongzhi, isendDate,refundMoney
     </sql>
 
 	<insert id="insertBatchFlowRecord" parameterType="ArrayList">
@@ -372,6 +376,11 @@
 
 	<select id="findBybusIdAndOrderCode" resultMap="BaseResultMap">
 		select id from t_wx_user_consume where busUserId=#{busId} and moduleType=#{moduleType} and orderCode=#{orderCode}
+	</select>
+
+	<select id="findByBusIdAndOrderCodeAnducType" resultMap="BaseResultMap">
+		select id,refundMoney from t_wx_user_consume where busUserId=#{busId} and moduleType=#{moduleType} and orderCode=#{orderCode} and isend=0
+
 	</select>
 
 </mapper>

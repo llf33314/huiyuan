@@ -1,7 +1,7 @@
 package com.gt.member.service.old.member.impl; /**
  * P 2016年3月25日
  *//*
-package com.gt.service.member.impl;
+package com.gt.controller.member.impl;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -24,8 +24,8 @@ import com.gt.entity.member.SystemNotice;
 import com.gt.entity.member.SystemNoticeCall;
 import com.gt.entity.user.BusUser;
 import com.gt.entity.user.WxPublicUsers;
-import com.gt.service.common.sms.SmsSpendingService;
-import com.gt.service.member.NoticeService;
+import com.gt.controller.common.sms.SmsSpendingService;
+import com.gt.controller.member.NoticeService;
 import com.gt.util.CommonUtil;
 import com.gt.util.JsonUtil;
 

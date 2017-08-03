@@ -14,7 +14,7 @@
 //import com.gt.dao.member.MemberParameterMapper;
 //import com.gt.entity.member.Member;
 //import com.gt.entity.member.MemberParameter;
-//import com.gt.service.member.LoginService;
+//import com.gt.controller.member.LoginService;
 //import com.gt.util.CommonUtil;
 //import com.gt.util.JedisUtil;
 //import com.gt.util.PropertiesUtil;

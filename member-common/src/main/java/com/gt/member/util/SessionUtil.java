@@ -10,8 +10,7 @@ import com.gt.member.entity.TCommonStaff;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
-
-
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 /**
@@ -20,6 +19,10 @@ import org.apache.log4j.Logger;
  *
  */
 public class SessionUtil {
+
+	@Autowired
+	private MemberConfig memberConfig;
+
 	private static final Logger log = Logger
 			.getLogger(SessionUtil.class);
 	
@@ -76,7 +79,7 @@ public class SessionUtil {
 	}
 	
 	
-	public static Integer getZhuBusUser(HttpServletRequest request){
+	public  Integer getZhuBusUser(HttpServletRequest request){
 		log.error("开始");
 		Integer LoginStyle=getLoginStyle(request);
 		log.error("开始获取角色"+LoginStyle);
@@ -93,7 +96,7 @@ public class SessionUtil {
 			userId=busUser.getId();
 		}
 		log.error("开始获取商家信息Id"+userId);
-		String url=PropertiesUtil.getWxmpWebUrl()+"ErpMenus/79B4DE7C/getShop.do";
+		String url=memberConfig.getWxmp_home()+"ErpMenus/79B4DE7C/getShop.do";
 		JSONObject obj=new JSONObject();
 		obj.put("style", LoginStyle);
 		obj.put("userId", userId);

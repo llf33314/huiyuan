@@ -1,7 +1,7 @@
 package com.gt.member.service.old.offlinepay; /**
  * P 2016年7月27日
  *//*
-package com.gt.service.offlinepay;
+package com.gt.controller.offlinepay;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,18 +46,18 @@ import com.gt.entity.offlinepay.OfflinepayDetail;
 import com.gt.entity.set.WxShop;
 import com.gt.entity.user.BusUser;
 import com.gt.entity.user.WxPublicUsers;
-import com.gt.service.common.dict.DictService;
-import com.gt.service.common.sms.SmsSpendingService;
-import com.gt.service.common.wxcard.IWxCardService;
-import com.gt.service.member.DuofenCardService;
-import com.gt.service.memberpay.MemberPayService;
-import com.gt.service.personCenter.PaySuccessService;
+import com.gt.controller.common.dict.DictService;
+import com.gt.controller.common.sms.SmsSpendingService;
+import com.gt.controller.common.wxcard.IWxCardService;
+import com.gt.controller.member.DuofenCardService;
+import com.gt.controller.memberpay.MemberPayService;
+import com.gt.controller.personCenter.PaySuccessService;
 import com.gt.util.CommonUtil;
 import com.gt.util.DateTimeKit;
 import com.gt.util.JedisUtil;
 import com.gt.util.PropertiesUtil;
-import com.gt.wx.service.event.WxCardService;
-import com.gt.wx.service.event.WxPayService;
+import com.gt.wx.controller.event.WxCardService;
+import com.gt.wx.controller.event.WxPayService;
 
 *//**
  * @author pengjiangli

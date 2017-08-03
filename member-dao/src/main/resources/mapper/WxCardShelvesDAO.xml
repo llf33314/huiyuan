@@ -21,7 +21,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, banner, page_title AS pageTitle, can_share AS canShare, scene, card_list AS cardList, url, page_id AS pageId, status, publicId, endDate, cardName, state
+        id, banner, page_title , can_share , scene, card_list ,
+         url, page_id , status, publicId, endDate, cardName, state
     </sql>
 
 

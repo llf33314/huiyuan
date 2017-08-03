@@ -1,10 +1,7 @@
 package com.gt.member.service.old.common.dict;
 
-import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 /**

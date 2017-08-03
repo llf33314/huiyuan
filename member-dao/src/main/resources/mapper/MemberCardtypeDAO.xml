@@ -11,7 +11,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        ct_id AS ctId, ct_cardType AS ctCardType, ct_name AS ctName
+        ct_id, ct_cardType, ct_name
     </sql>
 
 	<select id="findByBusId" resultMap="BaseResultMap">

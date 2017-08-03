@@ -11,7 +11,8 @@ public enum ResponseEnums {
     ERROR( 1, "错误" ),
     NEED_LOGIN( 1001, "需要登录" ),
     AUTHENTICATION( 10, "非法认证" ),
-    JWT_TOKEN_EXPIRED( 11, "TOKEN失效" );
+    JWT_TOKEN_EXPIRED( 11, "TOKEN失效" ),
+    SYSTEM_ERROR(9999,"系統異常");
 
     private final int    code;
     private final String desc;

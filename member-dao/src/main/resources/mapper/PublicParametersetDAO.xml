@@ -25,7 +25,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, integralRatio, changeMoney, startMoney, publicId, startType, findImage, isOpenCard, busId, loginImage, isclearJifen, month, memberView, youhuiButton, youhuiText, buttonType, buttonUrl
+        id, integralRatio, changeMoney, startMoney, publicId, startType, findImage, isOpenCard, busId, loginImage, isclearJifen, month,
+        memberView, youhuiButton, youhuiText, buttonType, buttonUrl
     </sql>
 
 

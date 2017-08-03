@@ -14,7 +14,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, duofen_card_id AS duofenCardId, card_status AS cardStatus, ctime, man_user_id AS manUserId, remark
+        id, duofen_card_id , card_status , ctime, man_user_id , remark
     </sql>
 
 </mapper>

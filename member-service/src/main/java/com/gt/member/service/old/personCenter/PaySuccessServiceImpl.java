@@ -1,7 +1,7 @@
 package com.gt.member.service.old.personCenter; /**
  * P 2016年10月11日
  *//*
-package com.gt.service.personCenter;
+package com.gt.controller.personCenter;
 
 import java.util.Date;
 import java.util.HashMap;

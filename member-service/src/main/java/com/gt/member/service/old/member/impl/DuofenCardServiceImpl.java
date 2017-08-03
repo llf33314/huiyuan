@@ -1,4 +1,4 @@
-package com.gt.member.service.old.member.impl;/*package com.gt.service.member.impl;
+package com.gt.member.service.old.member.impl;/*package com.gt.controller.member.impl;
 
 import io.socket.client.socke;
 
@@ -45,11 +45,11 @@ import com.gt.entity.member.card.DuofenCardAuthorization;
 import com.gt.entity.member.card.DuofenCardGet;
 import com.gt.entity.member.card.DuofenCardReceive;
 import com.gt.entity.member.card.DuofenCardReceiveLog;
-import com.gt.service.common.dict.DictService;
-import com.gt.service.member.DuofenCardService;
-import com.gt.service.member.MemberService;
-import com.gt.service.member.StoreListService;
-import com.gt.service.memberpay.MemberPayService;
+import com.gt.controller.common.dict.DictService;
+import com.gt.controller.member.DuofenCardService;
+import com.gt.controller.member.MemberService;
+import com.gt.controller.member.StoreListService;
+import com.gt.controller.memberpay.MemberPayService;
 import com.gt.util.CommonUtil;
 import com.gt.util.DateTimeKit;
 import com.gt.util.JsonUtil;

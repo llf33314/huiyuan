@@ -5,16 +5,16 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import com.gt.member.dao.BusUserDAO;
+import com.gt.member.entity.BusUser;
 import com.gt.member.service.old.common.dict.DictService;
 import com.gt.member.util.HttpClienUtil;
 import com.gt.member.util.JsonUtil;
 import com.gt.member.util.MemberConfig;
-import com.gt.member.util.PropertiesUtil;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 
@@ -27,10 +27,13 @@ public class DictServiceImpl implements DictService {
 	@Autowired
 	private MemberConfig memberConfig;
 
+	@Autowired
+	private BusUserDAO busUserDAO;
+
 	@Override
 	public SortedMap<String, Object> getDict(String type) {
 		// TODO Auto-generated method stub
-		String url= PropertiesUtil.getWxmpWebUrl()+"dict/79B4DE7C/getDict.do";
+		String url= memberConfig.getWxmp_home()+"/dict/79B4DE7C/getDict.do";
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put("dict_type", type);
 		JSONObject obj=JSONObject.fromObject(map);
@@ -53,7 +56,7 @@ public class DictServiceImpl implements DictService {
 	public String dictBusUserNum(Integer userid, Integer level, Integer style,
 			String dictstyle) {
 		// TODO Auto-generated method stub
-		String url=PropertiesUtil.getWxmpWebUrl()+"/dict/79B4DE7C/getBusUserNum.do";
+		String url=memberConfig.getWxmp_home()+"/dict/79B4DE7C/getBusUserNum.do";
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put("userid", userid);
 		map.put("level", level);
@@ -90,19 +93,11 @@ public class DictServiceImpl implements DictService {
 	@Override
 	public Integer pidUserId(Integer user_id) {
 		// TODO Auto-generated method stub
-			String url=PropertiesUtil.getWxmpWebUrl()+"/dict/79B4DE7C/pidUserId.do";
-			Map<String, Object> map=new HashMap<String, Object>();
-			map.put("userid", user_id);
-			JSONObject obj=JSONObject.fromObject(map);
-			try {
-				JSONObject json = HttpClienUtil.httpPost(url, obj, false);
-				if("0".equals(json.getString("error"))){
-					return json.getInt("pidUserId");
-				}
-			} catch (Exception e) {
-				LOG.error("pidUserId 方法http请求异常", e);
-			}
-			return null;
+		BusUser busUser=busUserDAO.selectById(user_id);
+		if(busUser.getPid()>0){
+			pidUserId(busUser.getPid());
+		}
+		return busUser.getId();
 	}
 	
 }

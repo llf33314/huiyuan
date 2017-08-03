@@ -35,7 +35,10 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, nameOption, sexOption, phoneOption, addrOption, addrShow, addrDetailOption, addrDetailShow, mailOption, mailShow, birthOption, birthShow, cardOption, cardShow, uploadCard, publicId, nameShow1, sexShow1, addrShow1, addrDetailShow1, mailShow1, cardShow1, birthShow1, getMoneyOption, getMoneyShow, getMoneyShow1, busId
+        id, nameOption, sexOption, phoneOption,
+        addrOption, addrShow, addrDetailOption, addrDetailShow, mailOption, mailShow, birthOption, birthShow,
+         cardOption, cardShow, uploadCard, publicId, nameShow1, sexShow1, addrShow1, addrDetailShow1,
+         mailShow1, cardShow1, birthShow1, getMoneyOption, getMoneyShow, getMoneyShow1, busId
     </sql>
 
 	<select id="findByBusId" resultMap="BaseResultMap">

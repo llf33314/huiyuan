@@ -38,7 +38,10 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        gt_id AS gtId, gt_grade_name AS gtGradeName, gt_name AS gtName, gt_name_color AS gtNameColor, gt_login_url AS gtLoginUrl, cm_id AS cmId, gt_text_color AS gtTextColor, ct_id AS ctId, public_id AS publicId, is_publish AS isPublish, isCheck, applyType, buyMoney, buyModel, costMoney, balance, giveflow, givefenbi, giveIntegral, url, isView, ismemberDate, isUploadImg, imgExplain, isleft, iseasy, easyApply, busId, giveMoney, pickMoney
+        gt_id , gt_grade_name , gt_name , gt_name_color , gt_login_url , cm_id , gt_text_color , ct_id ,
+         public_id , is_publish , isCheck, applyType, buyMoney, buyModel, costMoney, balance, giveflow,
+         givefenbi, giveIntegral, url, isView, ismemberDate, isUploadImg, imgExplain, isleft, iseasy,
+         easyApply, busId, giveMoney, pickMoney
     </sql>
 
 

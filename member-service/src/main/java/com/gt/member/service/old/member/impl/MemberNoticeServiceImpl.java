@@ -30,7 +30,7 @@
 //import com.gt.entity.member.MemberNotice;
 //import com.gt.entity.member.NoticeUser;
 //import com.gt.entity.member.NoticeUserKey;
-//import com.gt.service.member.MemberNoticeService;
+//import com.gt.controller.member.MemberNoticeService;
 //import com.gt.util.CommonUtil;
 //import com.gt.util.DateTimeKit;
 //import com.gt.util.JsonUtil;

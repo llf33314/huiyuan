@@ -32,9 +32,9 @@
 //import com.gt.entity.member.GradeType;
 //import com.gt.entity.member.Member;
 //import com.gt.entity.member.RechargeGive;
-//import com.gt.service.common.dict.DictService;
-//import com.gt.service.member.GiveRuleService;
-//import com.gt.service.member.SystemMsgService;
+//import com.gt.controller.common.dict.DictService;
+//import com.gt.controller.member.GiveRuleService;
+//import com.gt.controller.member.SystemMsgService;
 //import com.gt.util.CommonUtil;
 //import com.gt.util.DateTimeKit;
 //import com.gt.util.JsonUtil;

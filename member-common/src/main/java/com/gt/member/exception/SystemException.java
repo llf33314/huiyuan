@@ -15,6 +15,9 @@ public class SystemException extends RuntimeException {
 
     private String message;//错误消息
 
+    public SystemException(){
+
+    }
     public SystemException( String message ) {
 	super( message );
 	this.message = message;

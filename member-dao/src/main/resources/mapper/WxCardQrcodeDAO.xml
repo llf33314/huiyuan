@@ -16,7 +16,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, action_name AS actionName, expire_seconds AS expireSeconds, action_info AS actionInfo, ticket, url, show_qrcode_url AS showQrcodeUrl, status
+        id, action_name , expire_seconds , action_info ,
+        ticket, url, show_qrcode_url , status
     </sql>
 
 </mapper>

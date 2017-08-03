@@ -23,7 +23,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, title, img_url AS imgUrl, notice_user AS noticeUser, sendType, sendDate, sendSms, sendMsg, content, createDate, createUser, publicId, sendStuts, noticeMember, busId
+        id, title, img_url , notice_user , sendType, sendDate, sendSms, sendMsg, content,
+        createDate, createUser, publicId, sendStuts, noticeMember, busId
     </sql>
 
 	<select id="findMemberNotice" resultType="Map">

@@ -26,7 +26,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, shopId, title, subheading, eachMoney, reduceMoney, explainText, busId, phone, publicId, createdate, type, rule, timeType, fenbiOpen, jifenOpen, balanceType, holdNum
+        id, shopId, title, subheading, eachMoney, reduceMoney, explainText, busId, phone, publicId, createdate, type, rule,
+         timeType, fenbiOpen, jifenOpen, balanceType, holdNum
     </sql>
 
 
