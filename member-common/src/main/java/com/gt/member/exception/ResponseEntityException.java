@@ -1,5 +1,8 @@
 package com.gt.member.exception;
 
+import com.gt.member.enums.ResponseEnums;
+import com.gt.member.enums.ResponseMemberEnums;
+
 /**
  * Ajax 异常
  * <pre>
@@ -17,5 +20,13 @@ public class ResponseEntityException extends SystemException {
 
     public ResponseEntityException( int code, String message ) {
 	super( code, message );
+    }
+
+    public ResponseEntityException(ResponseEnums responseEnums) {
+        super(responseEnums);
+    }
+
+    public ResponseEntityException(ResponseMemberEnums responseMemberEnums) {
+        super(responseMemberEnums);
     }
 }

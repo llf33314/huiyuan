@@ -3795,12 +3795,12 @@ public class MemberApiServiceImpl  implements MemberApiService {
             if (paySuccessBo.getPayType() == 5) {
                 //储值卡支付
                 if (CommonUtil.isEmpty(member.getMcId())) {
-                    throw  new BusinessException(ResponseMemberEnums.NOT_MEMBER_CAR.getCode(),ResponseMemberEnums.NOT_MEMBER_CAR.getMsg());
+                    throw  new BusinessException(ResponseMemberEnums.NOT_MEMBER_CAR);
                 }
                 if (CommonUtil.isNotEmpty(card)) {
                     if (card.getCtId() == 3) {
                         if (card.getMoney() < totalMoney) {
-                            throw  new BusinessException(ResponseMemberEnums.MEMBER_LESS_MONEY.getCode(),ResponseMemberEnums.MEMBER_LESS_MONEY.getMsg());
+                            throw  new BusinessException(ResponseMemberEnums.MEMBER_LESS_MONEY);
                         }
                         double banlan = card.getMoney() - totalMoney;
                         card.setMoney(banlan);
@@ -3811,7 +3811,7 @@ public class MemberApiServiceImpl  implements MemberApiService {
 
                         uc.setBalance(banlan);
                     } else {
-                        throw  new BusinessException(ResponseMemberEnums.MEMBER_CHUZHI_CARD.getCode(),ResponseMemberEnums.MEMBER_CHUZHI_CARD.getMsg());
+                        throw  new BusinessException(ResponseMemberEnums.MEMBER_CHUZHI_CARD);
                     }
                 }
             }
@@ -3849,7 +3849,7 @@ public class MemberApiServiceImpl  implements MemberApiService {
             throw new BusinessException(e.getCode(),e.getMessage());
         }catch (Exception e) {
             LOG.error("支付成功回调异常", e);
-            throw new BusinessException(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getDesc());
+            throw new BusinessException(ResponseEnums.ERROR);
         }
 
     }

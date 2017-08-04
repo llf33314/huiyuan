@@ -1,5 +1,8 @@
 package com.gt.member.exception;
 
+import com.gt.member.enums.ResponseEnums;
+import com.gt.member.enums.ResponseMemberEnums;
+
 /**
  *
  * @author zhangmz
@@ -19,5 +22,13 @@ public class BusinessException extends SystemException {
 
     public BusinessException( int code, String message ) {
 	super( code, message );
+    }
+
+    public BusinessException(ResponseEnums responseEnums) {
+        super(responseEnums);
+    }
+
+    public BusinessException(ResponseMemberEnums responseMemberEnums) {
+        super(responseMemberEnums);
     }
 }

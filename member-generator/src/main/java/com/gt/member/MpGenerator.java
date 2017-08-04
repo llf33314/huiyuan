@@ -1,4 +1,4 @@
-package com.gt.member.generator;
+package com.gt.member;
 
 import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
@@ -22,15 +22,15 @@ import java.util.*;
 public class MpGenerator {
 
     // 项目的绝对路径
-    public static final  String   outPutBaseDir      = "F:/work/member/member-generator/";
+    public static final  String   outPutBaseDir      = "D:/Users/Administrator/IdeaProjects/Member/member-generator/";
     // 生成*.java 的文件路径
     public static final  String   outPutJavaModel    = outPutBaseDir + "src/main/java";
     // 需要生成的表
     public static final  String[] generatorTableName = new String[] {
-		    "bus_user","t_wx_public_users"
+		    "t_wx_user_consume"
     };
     // 去除表前缀 例如：bus_user 填入bus 生成的 user
-    public static final  String[] tablePrefix        = new String[] { "t_" };
+    public static final  String[] tablePrefix        = new String[] { "t_wx" };
     // 生成的包路径
     public static final  String   packagePath        = "com.gt.member";
     public static final  String   moduleName         = "";
@@ -97,7 +97,7 @@ public class MpGenerator {
 			// 策略配置
 			new StrategyConfig()
 					// .setCapitalMode(true)// 全局大写命名
-					// .setDbColumnUnderline(true)//全局下划线命名
+					.setDbColumnUnderline(true)//全局下划线命名
 					.setTablePrefix( tablePrefix )// 此处可以修改为您的表前缀
 					.setNaming( NamingStrategy.underline_to_camel )// 表名生成策略
 					.setInclude( generatorTableName ) // 需要生成的表
@@ -108,9 +108,9 @@ public class MpGenerator {
 					.setSuperEntityColumns( new String[] {} ).setTableFillList( tableFillList )
 					// 自定义 mapper 父类
 					.setSuperMapperClass( "com.baomidou.mybatisplus.mapper.BaseMapper" )
-					// 自定义 service 父类
+					// 自定义 controller 父类
 					.setSuperServiceClass( "com.gt.member.base.BaseService" )
-					// 自定义 service 实现类父类
+					// 自定义 controller 实现类父类
 					.setSuperServiceImplClass( "com.gt.member.base.BaseServiceImpl" )
 					// 自定义 controller 父类
 					.setSuperControllerClass( "com.gt.member.base.BaseController" )
