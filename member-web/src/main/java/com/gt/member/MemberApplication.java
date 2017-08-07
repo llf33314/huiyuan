@@ -8,7 +8,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 /**
- * 酒店ERP 程序入口
+ * 会员ERP 程序入口
  *
  * @author zhangmz
  * @create 2017/7/8

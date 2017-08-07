@@ -12,6 +12,7 @@
         <module name="member-generator" />
         <module name="member-service" />
         <module name="member-web" />
+        <module name="member-web-api" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -21,6 +22,7 @@
       <module name="member-generator" target="1.7" />
       <module name="member-service" target="1.7" />
       <module name="member-web" target="1.7" />
+      <module name="member-web-api" target="1.7" />
       <module name="parent" target="1.7" />
     </bytecodeTargetLevel>
   </component>

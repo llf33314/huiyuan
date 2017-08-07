@@ -27,8 +27,8 @@ public class MallAllEntity {
     private Integer canUseJifen = 0;  //是否能用积分
 
     private Integer userLeague = 0;  //是否使用联盟卡 not null  0未使用 1使用
-    private Double leagueDiscount = 1.0; //联盟折扣
-    private Integer leagueJifen = 0; //联盟积分  传入最高能使用积分值
+    private Double leagueDiscount = 1.0; //联盟折扣   userLeague=1 not null
+    private Integer leagueJifen = 0; //联盟积分  传入最高能使用积分值   userLeague=1 not null
 
     private Integer leagueJifenNum = 0;  //联盟积分使用数量
     private Double leagueMoney = 0.0;  //联盟卡优惠金额

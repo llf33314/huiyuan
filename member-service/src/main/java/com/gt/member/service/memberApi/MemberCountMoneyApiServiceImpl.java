@@ -233,6 +233,9 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 
 
     public MallAllEntity mallSkipShopCount(MallAllEntity mallAllEntity) {
+        if(mallAllEntity.getUserLeague()==1){
+            return leagueCount(mallAllEntity);
+        }
         Long start = new Date().getTime();
         boolean isMemberCard = false;  //用来标示该粉丝是会员
         MemberCard card = null;
@@ -1011,8 +1014,8 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
             for (MallShopEntity mallShopEntity : mallShopMap.values()) {
                 Map<Integer, MallEntity> mallEntityMap = mallShopEntity.getMalls();
                 for (MallEntity mallEntity : mallEntityMap.values()) {
-                    //判断能使用粉币的商品信息
-                    if (mallEntity.getUserJifen() == 1) {
+                    //判断能使用积分的商品信息
+                    if (mallEntity.getUseLeague() == 1) {
                         jifenBanlance = formatNumber(BigDecimalUtil.add(jifenBanlance, mallEntity.getTotalMoneyAll()));
                         jcount++;
                     }
@@ -1045,42 +1048,31 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
                                 leaguejifenFenTanAll = formatNumber(BigDecimalUtil.add(leaguejifenFenTanAll, jifenFenTan));
                             }
                             //商品数据
-                            mallEntity.setDiscountjifenMoney(jifenFenTan);
-
+                            mallEntity.setLeagueMoney(jifenFenTan);
                             mallEntity.setLeagueJifen(BigDecimalUtil.mul(jifenFenTan,100));
                             mallEntity.setCanUseLeagueJifen(1);
                             mallEntity.setBalanceMoney(formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyAll(), jifenFenTan)));
                             mallEntity.setTotalMoneyAll(formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyAll(), jifenFenTan)));
                             mallEntityMap.put(mallEntity.getMallId(), mallEntity);
 
-                            //门店订单数据
-                            discountJifenMoneyByShopId = formatNumber(BigDecimalUtil.add(discountJifenMoneyByShopId, mallEntity.getDiscountjifenMoney()));
-                            balanceMoneyByShopId = formatNumber(BigDecimalUtil.add(balanceMoneyByShopId, mallEntity.getBalanceMoney()));
-
                             //总订单数据
-                            canUseJifenByAll = 1;
                             jcount1++;
                         } else {
                             balanceMoneyByShopId = formatNumber(BigDecimalUtil.add(balanceMoneyByShopId, mallEntity.getTotalMoneyAll()));
                         }
                     }
-                    mallShopEntity.setDiscountjifenMoney(discountJifenMoneyByShopId);
                     mallShopEntity.setBalanceMoney(balanceMoneyByShopId);
                     mallShopEntity.setMalls(mallEntityMap);
                     mallShopMap.put(mallShopEntity.getShopId(), mallShopEntity);
                 }
-                if (jifenMoney > 0) {
-                    Integer jifenNumByAll = deductJifen(pps, jifenMoney, member.getBusId()).intValue();
-                    mallAllEntity.setJifenNum(jifenNumByAll);
-                    mallAllEntity.setDiscountjifenMoney(jifenMoney);
-                }
                 mallAllEntity.setMallShops(mallShopMap);
-                mallAllEntity.setCanUseJifen(canUseJifenByAll);
             }
             // <!-----------------积分计算end---------------------------->
         }
 
         Double balanceMoneyByAll = 0.0;
+        Double leagueMoneyAll=0.0;
+        Double leagueJifenNumAll=0.0;
         for (MallShopEntity mallShopEntity : mallShopMap.values()) {
             Double balanceMoneyByShopId = 0.0;
             Map<Integer, MallEntity> mallEntitys = mallShopEntity.getMalls();
@@ -1090,12 +1082,16 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
                     mallEntity.setBalanceMoney(mallEntity.getTotalMoneyAll());
                 }
                 balanceMoneyByShopId = formatNumber(BigDecimalUtil.add(balanceMoneyByShopId, mallEntity.getBalanceMoney()));
+                leagueMoneyAll=mallEntity.getLeagueMoney();
+                leagueJifenNumAll=mallEntity.getLeagueJifen();
             }
             mallShopEntity.setBalanceMoney(balanceMoneyByShopId);
             balanceMoneyByAll = formatNumber(BigDecimalUtil.add(balanceMoneyByAll, mallShopEntity.getBalanceMoney()));
             mallShopMap.put(mallShopEntity.getShopId(), mallShopEntity);
         }
         mallAllEntity.setBalanceMoney(balanceMoneyByAll);
+        mallAllEntity.setLeagueJifenNum(leagueJifenNumAll.intValue());
+        mallAllEntity.setLeagueMoney( leagueMoneyAll );
         Long end = new Date().getTime();
         System.out.println("用时:" + (end - start) + "毫秒");
         return mallAllEntity;
