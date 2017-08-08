@@ -44,8 +44,6 @@ server:
   session:
     timeout: 30
 
-cxf:
- path: /services
 
  web:
   wxmp_home: http://yifriend.net/

@@ -67,8 +67,7 @@ web:
  redis_port: 6379
  redis_pwd: gt@123456
 
-cxf:
- path: /services
+
 
 
 

@@ -6,12 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Created by Administrator on 2017/7/27 0027.
  */
 @Controller
-@RequestMapping( "/" )
 public class TestController extends BaseController {
 
     @ResponseBody
@@ -21,8 +21,10 @@ public class TestController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/test",method = RequestMethod.GET)
+    @RequestMapping(value = "/test")
     public String toIndex(){
-	return "/index.jsp";
+	return "/index";
     }
+
+
 }

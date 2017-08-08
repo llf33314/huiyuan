@@ -3,6 +3,7 @@ package com.gt.member.dao;
 import com.gt.member.entity.Member;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Map;
  * @author pengjiangli
  * @since 2017-07-25
  */
+@Component
 public interface MemberDAO extends BaseMapper<Member> {
     Member selectByOpenid(@Param("openid")String openid,@Param("public_id")Integer public_id);
 

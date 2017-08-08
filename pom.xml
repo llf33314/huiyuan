@@ -81,6 +81,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--配置jsp jstl的支持-->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>
+
         <!-- Springboot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -148,7 +154,7 @@
             <version>${dev.lib.swagger2}</version>
         </dependency>
         <!-- Mybatis -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>${dev.lib.mybatis}</version>
@@ -162,7 +168,7 @@
                     <groupId>org.mybatis</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency>-->
 
         <!-- mybatisPlus代码生成模板引擎 -->
         <dependency>
@@ -176,6 +182,12 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus</artifactId>
             <version>${dev.lib.mybatis-plus}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatisplus-spring-boot-starter</artifactId>
+            <version>1.0.4</version>
         </dependency>
 
         <!-- druid阿里巴巴数据库连接池 -->
@@ -290,10 +302,10 @@
         <resources>
             <!-- 导入的资源文件，该目录下的文件会copy到classpath根目录下 -->
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>${basedir}/src/main/resources</directory>
             </resource>
             <resource>
-                <directory>src/main/java</directory>
+                <directory>${basedir}/src/main/java</directory>
                 <includes>
                     <include>*.properties</include>
                     <include>*.xml</include>

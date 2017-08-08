@@ -41,7 +41,7 @@ public class MemberApiController extends BaseController {
     @Autowired
     private MemberApiService memberApiService;
 
-    @ApiOperation(value = "获取会员信息", notes = "根据memberId和门店查询会员数据")
+    @ApiOperation(value = "根据memberId和门店查询会员数据", notes = "根据memberId和门店查询会员数据")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "memberId", value = "卡号或手机号", paramType = "query", required = true, dataType = "int"),
             @ApiImplicitParam(name = "shopId", value = "门店id", paramType = "query", required = true, dataType = "int")
@@ -58,7 +58,7 @@ public class MemberApiController extends BaseController {
         }
     }
 
-    @ApiOperation(value = "获取会员信息", notes = "手机号或卡号查询会员相关信息包括微信多粉优惠券 \n " +
+    @ApiOperation(value = "根据手机号或会员卡号获取会员信息", notes = "手机号或卡号查询会员相关信息包括微信多粉优惠券 \n " +
             "cardNo 卡号或手机号 ,busId 商家id,shopId 门店id")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cardNo", value = "卡号或手机号", paramType = "query", required = true, dataType = "String"),
@@ -82,7 +82,7 @@ public class MemberApiController extends BaseController {
     }
 
 
-    @ApiOperation(value = "获取粉丝信息", notes = "获取粉丝信息")
+    @ApiOperation(value = "根据粉丝id获取粉丝信息", notes = "获取粉丝信息")
     @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
     @GetMapping("/79B4DE7C/findByMemberId")
@@ -96,7 +96,7 @@ public class MemberApiController extends BaseController {
        }
     }
 
-    @ApiOperation(value = "退款", notes = "退款包括了储值卡退款")
+    @ApiOperation(value = "退款包括了储值卡退款", notes = "退款包括了储值卡退款")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "orderNo", value = "订单号", paramType = "query", required = true, dataType = "String"),
