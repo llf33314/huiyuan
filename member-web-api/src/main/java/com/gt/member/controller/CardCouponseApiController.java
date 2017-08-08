@@ -8,10 +8,10 @@ import com.gt.member.entity.WxCard;
 import com.gt.member.enums.ResponseEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.memberApi.CardCouponsApiService;
-import com.gt.member.util.CommonUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -419,4 +419,67 @@ public class CardCouponseApiController {
             return ServerResponse.createByError(e.getCode(), e.getMessage());
         }
     }
+
+    @ApiOperation(value = "美容小程序（根据粉丝id查询卡券包信息）", notes = "美容（根据粉丝id查询卡券包信息）")
+    @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
+    @ResponseBody
+    @GetMapping("/79B4DE7C/findMeiRongDuofenCardByMemberId")
+    public ServerResponse findMeiRongDuofenCardByMemberId(HttpServletRequest request,
+                    HttpServletResponse response,Integer memberId){
+        try {
+            List<Map<String,Object>> list=cardCouponsApiService.findMeiRongDuofenCardByMemberId( memberId );
+            return ServerResponse.createBySuccess(list);
+        }catch ( Exception e ){
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getDesc());
+        }
+    }
+
+    @ApiOperation(value = "美容小程序（根据卡包id和粉丝id查询卡券信息）", notes = "美容小程序（根据卡包id和粉丝id查询卡券信息）")
+    @ApiImplicitParams( {
+                    @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int"),
+                    @ApiImplicitParam(name = "receiceId", value = "卡包id", paramType = "query", required = true, dataType = "int")
+    } )
+    @ResponseBody
+    @GetMapping("/79B4DE7C/findMeiRongDuofenCardGetByReceiveId")
+    public ServerResponse findMeiRongDuofenCardGetByReceiveId(HttpServletRequest request,
+                    HttpServletResponse response,Integer memberId,Integer receiceId){
+        try {
+            List<Map<String,Object>> list=cardCouponsApiService.findMeiRongCardGetByMemberId( memberId,receiceId );
+            return ServerResponse.createBySuccess(list);
+        }catch ( Exception e ){
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getDesc());
+        }
+    }
+
+    @ApiOperation(value = "美容小程序（卡券gId查询卡券信息 门店信息暂时没有）", notes = "美容小程序（卡券gId查询卡券信息）")
+    @ApiImplicitParam(name = "gId", value = "领取的卡券id", paramType = "query", required = true, dataType = "int")
+    @ResponseBody
+    @GetMapping("/79B4DE7C/findMeiRongDuofenCardGetByReceiveId")
+    public ServerResponse findDuofenCardOne(HttpServletRequest request,
+                    HttpServletResponse response,Integer gId){
+        try {
+            Map<String,Object> map=cardCouponsApiService.findDuofenCardOne(gId);
+            return ServerResponse.createBySuccess(map);
+        }catch ( Exception e ){
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getDesc());
+        }
+    }
+
+    @ApiOperation(value = "美容小程序（卡券gId查询卡券详情信息）", notes = "美容小程序（卡券gId查询卡券详情信息）")
+    @ApiImplicitParam(name = "gId", value = "领取的卡券id", paramType = "query", required = true, dataType = "int")
+    @ResponseBody
+    @GetMapping("/79B4DE7C/findMeiRongDuofenCardGetByReceiveId")
+    public ServerResponse findCardDetails(HttpServletRequest request,
+                    HttpServletResponse response,Integer gId){
+        try {
+            Map<String,Object> map=cardCouponsApiService.findCardDetails(gId);
+            return ServerResponse.createBySuccess(map);
+        }catch ( Exception e ){
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getDesc());
+        }
+    }
+
+
+
+
 }

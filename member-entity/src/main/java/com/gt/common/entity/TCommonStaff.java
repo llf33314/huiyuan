@@ -1,4 +1,4 @@
-package com.gt.member.entity;
+package com.gt.common.entity;
 
 import java.io.Serializable;
 

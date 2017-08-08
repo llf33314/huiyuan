@@ -3,7 +3,7 @@
 <mapper namespace="com.gt.member.dao.WxShopDAO">
 
 	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.gt.member.entity.WxShop">
+	<resultMap id="BaseResultMap" type="com.gt.common.entity.WxShop">
 		<id column="id" property="id" />
 		<result column="sid" property="sid" />
 		<result column="poiId" property="poiId" />

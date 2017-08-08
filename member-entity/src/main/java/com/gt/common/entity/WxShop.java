@@ -1,4 +1,4 @@
-package com.gt.member.entity;
+package com.gt.common.entity;
 
 import java.io.Serializable;
 
@@ -8,9 +8,6 @@ import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableName;
-import java.io.Serializable;
-
-import com.baomidou.mybatisplus.annotations.Version;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

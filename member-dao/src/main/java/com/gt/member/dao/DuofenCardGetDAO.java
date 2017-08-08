@@ -2,6 +2,7 @@ package com.gt.member.dao;
 
 import com.gt.member.entity.DuofenCardGet;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
@@ -188,4 +189,6 @@ public interface DuofenCardGetDAO extends BaseMapper<DuofenCardGet> {
     List<Map<String, Object>> findByMemberIdAndCardReceiveId(@Param("memberId")Integer memberId,@Param("cardReceiveId")Integer cardReceiveId);
 
     int deleteByIds(@Param("ids")List<Integer> ids);
+
+    List<Map<String,Object>> findMeiRongCardGetByMemberId(@Param( "memberIds" )List<Integer> memberIds,@Param( "receiceId" )Integer receiceId);
 }

@@ -2,6 +2,8 @@ package com.gt.member.service.memberApi;
 
 import com.gt.member.dao.*;
 import com.gt.member.entity.*;
+import com.gt.member.entity.DuofenCard;
+import com.gt.member.entity.DuofenCardGet;
 import com.gt.member.service.memberApi.entityBo.MallAllEntity;
 import com.gt.member.service.memberApi.entityBo.MallEntity;
 import com.gt.member.service.memberApi.entityBo.MallShopEntity;

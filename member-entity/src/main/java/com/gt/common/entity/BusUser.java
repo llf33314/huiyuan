@@ -1,4 +1,4 @@
-package com.gt.member.entity;
+package com.gt.common.entity;
 
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableField;

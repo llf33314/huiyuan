@@ -1,8 +1,7 @@
 package com.gt.member.dao;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.gt.member.entity.BusUser;
-import org.apache.ibatis.annotations.Select;
+import com.gt.common.entity.BusUser;
 
 /**
  * <p>

@@ -1,6 +1,6 @@
 package com.gt.member.dao;
 
-import com.gt.member.entity.WxShop;
+import com.gt.common.entity.WxShop;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 
 /**

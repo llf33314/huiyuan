@@ -18,16 +18,13 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!--<dependency>
+        <dependency>
             <groupId>com.gt.member</groupId>
             <artifactId>member-web-api</artifactId>
             <version>${project.version}</version>
-        </dependency>-->
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
         </dependency>
+
+
     </dependencies>
 
     <build>

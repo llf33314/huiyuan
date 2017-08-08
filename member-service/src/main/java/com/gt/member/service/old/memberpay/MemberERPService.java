@@ -1,6 +1,6 @@
 package com.gt.member.service.old.memberpay;
 
-import com.gt.member.entity.BusUser;
+import com.gt.common.entity.BusUser;
 
 import java.util.Map;
 

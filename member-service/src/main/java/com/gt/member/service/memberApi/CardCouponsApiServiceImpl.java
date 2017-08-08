@@ -1,7 +1,14 @@
 package com.gt.member.service.memberApi;
 
+
+import com.gt.member.dao.BusUserDAO;
+import com.gt.common.entity.BusUser;
 import com.gt.member.dao.*;
 import com.gt.member.entity.*;
+import com.gt.member.entity.DuofenCard;
+import com.gt.member.entity.DuofenCardGet;
+import com.gt.member.entity.DuofenCardReceive;
+import com.gt.member.entity.DuofenCardReceivelog;
 import com.gt.member.enums.ResponseEnums;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
@@ -59,8 +66,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     @Autowired
     private DuofenCardGetDAO duofenCardGetMapper;
 
-    @Autowired
-    private WxPublicUsersDAO wxPublicUsersMapper;
+
 
     @Autowired
     private DuofenCardReceivelogDAO duofenCardReceiveLogMapper;
@@ -87,7 +93,9 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     private MemberCardrecordDAO cardRecordMapper;
 
     @Autowired
-    private BusUserDAO busUserMapper;
+    private BusUserDAO busUserDAO;
+
+    private MemberApiService memberApiService;
 
     //	@Autowired
     //	private BusUserBranchRelationMapper busUserBranchRelationMapper;
@@ -416,7 +424,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     }
 
     @Override
-    public List<DuofenCardReceive> findReceiveBybusId(Integer busId) {
+    public List<DuofenCardReceive > findReceiveBybusId(Integer busId) {
         List<DuofenCardReceive> receives = duofenCardReceiveMapper.findCardReceiveBybusId(busId);
         return receives;
     }
@@ -435,7 +443,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             }
         }
         if (ids.size() > 0) {
-            List<DuofenCard> duofencards = duofenCardMapper.findInCardIds(ids);
+            List<DuofenCard > duofencards = duofenCardMapper.findInCardIds(ids);
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("receives", receives);
             map.put("duofencards", duofencards);
@@ -589,7 +597,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
             Member member = memberMapper.selectByKey(memberId);
             if (ids.size() > 0) {
-                List<DuofenCardGet> list = new ArrayList<DuofenCardGet>();
+                List<DuofenCardGet > list = new ArrayList<DuofenCardGet>();
                 List<DuofenCard> duofencards = duofenCardMapper.findInCardIds(ids);
                 for (int i = 0; i < num; i++) { // 购买数量
                     for (DuofenCard duofenCard : duofencards) {
@@ -1564,7 +1572,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
         }
         if (recommend.getFenbi() > 0) {
 
-            BusUser busUser = busUserMapper.selectById(tuijianMember.getBusId());
+            BusUser busUser = busUserDAO.selectById(tuijianMember.getBusId());
             if (busUser.getFansCurrency().doubleValue() >= recommend.getFenbi()) {
                 JSONObject json = new JSONObject();
                 json.put("token", TokenUitl.getToken());
@@ -1589,7 +1597,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 b.setId(busUser.getId());
                 Double fansCurrency = busUser.getFansCurrency().doubleValue() - recommend.getFenbi();
                 b.setFansCurrency(BigDecimal.valueOf(fansCurrency));
-                busUserMapper.updateById(b);
+                busUserDAO.updateById(b);
 
                 m1.setFansCurrency(tuijianMember.getFansCurrency() + recommend.getFenbi());
                 //粉币记录
@@ -1630,12 +1638,12 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     private Map<String, Object> returnfansCurrency(Integer busId, Double fans_currency) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            BusUser busUser = busUserMapper.selectById(busId);
+            BusUser busUser = busUserDAO.selectById(busId);
             BusUser busUser1 = new BusUser();
             busUser1.setId(busId);
             Double fansCurrency = busUser.getFansCurrency().doubleValue() + fans_currency;
             busUser1.setFansCurrency(BigDecimal.valueOf(fansCurrency));
-            busUserMapper.updateById(busUser1);
+            busUserDAO.updateById(busUser1);
             map.put("result", true);
             map.put("message", "归还商户粉币成功");
         } catch (Exception e) {
@@ -1646,4 +1654,39 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
         return map;
     }
 
+    public List<Map<String,Object>> findMeiRongDuofenCardByMemberId(Integer memberId){
+      List<Integer> memberIds= memberApiService.findMemberIds( memberId );
+       return  duofenCardReceiveMapper.findMeiRongCardReceviceByMemberId(memberIds);
+    }
+
+    public List<Map<String,Object>> findMeiRongCardGetByMemberId(Integer memberId,Integer receiceId){
+        List<Integer> memberIds= memberApiService.findMemberIds( memberId );
+        return  duofenCardGetMapper.findMeiRongCardGetByMemberId(memberIds,receiceId);
+    }
+
+    public Map<String,Object> findDuofenCardOne(Integer gId){
+        Map<String,Object> map=new HashMap<>(  );
+        DuofenCardGet duofenCardGet = duofenCardGetMapper
+                        .selectById(gId);
+        map.put("duofenCardGet", duofenCardGet);
+        DuofenCard duofenCard = duofenCardMapper
+                        .selectById(duofenCardGet.getCardId());
+        map.put("duofenCard", duofenCard);
+       // String locationIdList = duofenCard.getLocationIdList();
+        return map;
+    }
+
+    public Map<String,Object> findCardDetails(Integer gid){
+        Map<String,Object> map=new HashMap<>(  );
+        DuofenCardGet duofenCardGet = duofenCardGetMapper
+                        .selectById(gid);
+        map.put("duofenCardGet", duofenCardGet);
+        DuofenCard duofenCard = duofenCardMapper
+                        .selectById(duofenCardGet.getCardId());
+        map.put("duofenCard", duofenCard);
+        List<Map<String, Object>> images = JsonUtil.json2List(duofenCard
+                        .getTextImageList());
+        map.put("images", images);
+        return map;
+    }
 }

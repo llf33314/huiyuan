@@ -296,4 +296,25 @@
 			#{id}
 		</foreach>
 	</delete>
+
+
+	<select id="findMeiRongCardGetByMemberId" resultType="Map">
+		select
+		c.id as cId, c.brand_name, c.card_type, deal_detail, c.cash_least_cost,
+		c.reduce_cost, c.discount, c.gift, c.default_detail, c.title, c.sub_title, c.color,
+		c.type, c.begin_timestamp, c.end_timestamp, c.fixed_term, c.fixed_begin_term,
+		c.least_cost,
+		c.card_status, c.image,
+		c.timeType,g.id as gId, g.getType, g.code, g.state, g.getDate, g.cardReceiveId,g.startTime,
+		g.endTime
+		from t_duofen_card_get g inner join t_duofen_card c on c.id=g.cardId
+		where  g.id=#{receiceId} and g.memberId
+		in
+		<foreach close=")" collection="memberIds" item="m" open="(" separator=",">
+			#{m}
+		</foreach>
+		order by gId desc
+	</select>
+
+
 </mapper>

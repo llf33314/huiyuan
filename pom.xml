@@ -68,11 +68,11 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--<dependency>
+        <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-jasper</artifactId>
             <scope>provided</scope>
-        </dependency>-->
+        </dependency>
 
         <!-- servlet 依赖. -->
         <dependency>
@@ -210,7 +210,7 @@
             <version>${dev.lib.commons-lang3}</version>
         </dependency>
         <!-- thymeleaf&Vue 模板 -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
@@ -223,7 +223,7 @@
             <groupId>org.webjars</groupId>
             <artifactId>vue</artifactId>
             <version>${dev.lib.vue}</version>
-        </dependency>
+        </dependency>-->
         <!-- 单元测试 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -302,10 +302,10 @@
         <resources>
             <!-- 导入的资源文件，该目录下的文件会copy到classpath根目录下 -->
             <resource>
-                <directory>${basedir}/src/main/resources</directory>
+                <directory>src/main/resources</directory>
             </resource>
             <resource>
-                <directory>${basedir}/src/main/java</directory>
+                <directory>src/main/java</directory>
                 <includes>
                     <include>*.properties</include>
                     <include>*.xml</include>

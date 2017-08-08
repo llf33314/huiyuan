@@ -1,7 +1,7 @@
 package com.gt.member.dao;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.gt.member.entity.WxPublicUsers;
+import com.gt.common.entity.WxPublicUsers;
 
 /**
  * <p>

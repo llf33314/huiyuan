@@ -96,6 +96,41 @@ public class MemberApiController extends BaseController {
        }
     }
 
+    @ApiOperation(value = "根据粉丝id获取会员折扣", notes = "根据粉丝id获取会员折扣")
+    @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
+    @ResponseBody
+    @GetMapping("/79B4DE7C/findCardTypeReturnDiscount")
+    public ServerResponse findCardTypeReturnDiscount(HttpServletRequest request,
+                    HttpServletResponse response, Integer memberId){
+        try {
+            Double discount = memberApiService.findCardTypeReturnDiscount(memberId);
+            return ServerResponse.createBySuccess(discount);
+        }catch (BusinessException e){
+            return ServerResponse.createByError(e.getCode(),e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "小程序绑定手机号码", notes = "小程序绑定手机号码 返回member对象数据")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int"),
+        @ApiImplicitParam(name = "code", value = "短信校验码", paramType = "query", required = true, dataType = "String"),
+        @ApiImplicitParam(name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String"),
+        @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
+    })
+    @ResponseBody
+    @GetMapping("/79B4DE7C/bingdingPhone")
+    public ServerResponse bingdingPhone(HttpServletRequest request,
+                    HttpServletResponse response,Integer memberId,Integer busId,String phone,String code){
+        try {
+
+            Member member= memberApiService.bingdingPhone(memberId,phone,code,busId);
+            return ServerResponse.createBySuccess(member);
+        }catch (BusinessException e){
+            return ServerResponse.createByError(e.getCode(),e.getMessage());
+        }
+    }
+
+
     @ApiOperation(value = "退款包括了储值卡退款", notes = "退款包括了储值卡退款")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "String"),
@@ -114,23 +149,6 @@ public class MemberApiController extends BaseController {
             return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
         }
     }
-
-
-//    @ApiOperation(value = "储值卡退款", notes = "储值卡退款")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int"),
-//            @ApiImplicitParam(name = "refundMoney", value = "退款金额", paramType = "query", required = true, dataType = "double")
-//    })
-//    @ResponseBody
-//    @GetMapping("/79B4DE7C/chargeBack")
-//    public ServerResponse chargeBack(HttpServletRequest request,
-//                                     HttpServletResponse response, Integer memberId, Double refundMoney) {
-//        try {
-//            return ServerResponse.createBySuccess(memberApiService.chargeBack(memberId, refundMoney));
-//        } catch (Exception e) {
-//            return ServerResponse.createByErrorCodeMessage(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
-//        }
-//    }
 
 
     @ApiOperation(value = "统计会员数量", notes = "根据商家id统计会员数量")

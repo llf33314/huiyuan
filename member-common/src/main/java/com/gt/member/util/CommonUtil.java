@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.gt.member.constant.CommonConst;
-import com.gt.member.entity.BusUser;
+import com.gt.common.entity.BusUser;
 import com.gt.member.entity.Member;
 import net.sf.json.JSONObject;
 

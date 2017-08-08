@@ -5,7 +5,7 @@ import com.gt.member.entity.DuofenCardGet;
 import com.gt.member.entity.DuofenCardReceive;
 import com.gt.member.entity.WxCard;
 import com.gt.member.exception.BusinessException;
-import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Map;
 
@@ -295,6 +295,35 @@ public interface CardCouponsApiService {
      */
     public Map<String,Object> verificationCard_3(Map<String, Object> param)throws BusinessException;
 
+    /**
+     * 美容 查询卡包信息
+     * @param memberId
+     * @return
+     * @throws BusinessException
+     */
+    public List<Map<String,Object>> findMeiRongDuofenCardByMemberId(Integer memberId);
+
+    /**
+     * 美容  查询卡包中卡券信息
+     * @param memberId
+     * @param receiceId
+     * @return
+     */
+    public List<Map<String,Object>> findMeiRongCardGetByMemberId(Integer memberId,Integer receiceId);
+
+    /**
+     * 美容 根据领取的卡券id查询 卡券信息
+     * @param gId
+     * @return
+     */
+    public Map<String,Object> findDuofenCardOne(Integer gId);
+
+    /**
+     * 美容  根据领取的卡券id 查询详情
+     * @param gid
+     * @return
+     */
+    public Map<String,Object> findCardDetails(Integer gid);
     // <!-------------------多粉对外接口end---------------------->
 
 }

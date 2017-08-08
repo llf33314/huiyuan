@@ -1,12 +1,10 @@
 package com.gt.member.service.memberApi;
 
-import com.gt.member.base.BaseService;
-import com.gt.member.dto.ServerResponse;
+import com.gt.common.entity.BusUser;
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.memberApi.entityBo.PaySuccessBo;
 import com.gt.member.util.Page;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -34,13 +32,12 @@ public interface MemberApiService{
     /**
      * 当前立即赠送物品
      *
-     * @param phone
      * @param orderId
      * @param itemName
-     * @param type
+     * @param type  0不赠送 1赠送
      * @throws Exception
      */
-    public void findGiveRule(String phone, String orderId, String itemName, byte type) throws BusinessException;
+    public void findGiveRule(String orderId, String itemName, byte type) throws BusinessException;
 
 
 
@@ -56,7 +53,7 @@ public interface MemberApiService{
      * @param memberId
      * @return
      */
-    public Map<String, Object> findCardType(Integer memberId);
+    public Double findCardTypeReturnDiscount(Integer memberId) throws  BusinessException;
 
 
 	/*
@@ -176,7 +173,7 @@ public interface MemberApiService{
 	 *            手机号码
 	 * @throws Exception
 	 */
-    public void findGiveRuleDelay(String phone, String orderNo)
+    public void findGiveRuleDelay(String orderNo)
             throws Exception;
 
 	/*
@@ -387,7 +384,7 @@ public interface MemberApiService{
 	 * 小程序绑定手机号码
 	 * @return
 	 */
-    public Map<String, Object> bingdingPhone(Map<String, Object> params) throws Exception;
+    public Member bingdingPhone(Integer memberId,String phone,String code,Integer busId) throws BusinessException;
 
 	/*
 	 *

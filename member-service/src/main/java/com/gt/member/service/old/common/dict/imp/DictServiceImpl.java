@@ -6,7 +6,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import com.gt.member.dao.BusUserDAO;
-import com.gt.member.entity.BusUser;
+import com.gt.common.entity.BusUser;
 import com.gt.member.service.old.common.dict.DictService;
 import com.gt.member.util.HttpClienUtil;
 import com.gt.member.util.JsonUtil;
@@ -27,12 +27,11 @@ public class DictServiceImpl implements DictService {
 	@Autowired
 	private MemberConfig memberConfig;
 
-	@Autowired
 	private BusUserDAO busUserDAO;
+
 
 	@Override
 	public SortedMap<String, Object> getDict(String type) {
-		// TODO Auto-generated method stub
 		String url= memberConfig.getWxmp_home()+"/dict/79B4DE7C/getDict.do";
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put("dict_type", type);
@@ -55,7 +54,6 @@ public class DictServiceImpl implements DictService {
 	@Override
 	public String dictBusUserNum(Integer userid, Integer level, Integer style,
 			String dictstyle) {
-		// TODO Auto-generated method stub
 		String url=memberConfig.getWxmp_home()+"/dict/79B4DE7C/getBusUserNum.do";
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put("userid", userid);

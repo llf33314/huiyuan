@@ -7,6 +7,7 @@ public enum ResponseMemberEnums {
     ERROR_QR_CODE(4001, "二维码已超时"),
     NO_DATA(4002, "数据不存在"),
     NULL(4003,"数据空值"),
+    NO_PHONE_CODE(4004,"短信验证码过时或不存在"),
 
 
 

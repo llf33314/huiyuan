@@ -1,12 +1,9 @@
 package com.gt.member.util;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
-import com.gt.member.entity.BusUser;
-import com.gt.member.entity.TCommonStaff;
+import com.gt.common.entity.BusUser;
+import com.gt.common.entity.TCommonStaff;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;

@@ -48,7 +48,6 @@ public class MemberCountApiController {
       }catch (Exception e){
           return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),"计算失败");
       }
-
     }
 
 
