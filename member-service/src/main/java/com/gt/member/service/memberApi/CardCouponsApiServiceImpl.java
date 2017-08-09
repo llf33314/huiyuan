@@ -95,6 +95,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     @Autowired
     private BusUserDAO busUserDAO;
 
+    @Autowired
     private MemberApiService memberApiService;
 
     //	@Autowired

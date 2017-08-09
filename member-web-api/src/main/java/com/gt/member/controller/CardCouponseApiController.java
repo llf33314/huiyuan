@@ -454,7 +454,7 @@ public class CardCouponseApiController {
     @ApiOperation(value = "美容小程序（卡券gId查询卡券信息 门店信息暂时没有）", notes = "美容小程序（卡券gId查询卡券信息）")
     @ApiImplicitParam(name = "gId", value = "领取的卡券id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @GetMapping("/79B4DE7C/findMeiRongDuofenCardGetByReceiveId")
+    @GetMapping("/79B4DE7C/findDuofenCardOne")
     public ServerResponse findDuofenCardOne(HttpServletRequest request,
                     HttpServletResponse response,Integer gId){
         try {
@@ -468,7 +468,7 @@ public class CardCouponseApiController {
     @ApiOperation(value = "美容小程序（卡券gId查询卡券详情信息）", notes = "美容小程序（卡券gId查询卡券详情信息）")
     @ApiImplicitParam(name = "gId", value = "领取的卡券id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @GetMapping("/79B4DE7C/findMeiRongDuofenCardGetByReceiveId")
+    @GetMapping("/79B4DE7C/findCardDetails")
     public ServerResponse findCardDetails(HttpServletRequest request,
                     HttpServletResponse response,Integer gId){
         try {
