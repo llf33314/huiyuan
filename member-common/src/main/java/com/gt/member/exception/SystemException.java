@@ -14,9 +14,9 @@ import com.gt.member.enums.ResponseMemberEnums;
  */
 public class SystemException extends RuntimeException {
 
-    private int code;//状态码
+    private int code=1;//状态码
 
-    private String message;//错误消息
+    private String message="错误";//错误消息
 
     public SystemException() {
 

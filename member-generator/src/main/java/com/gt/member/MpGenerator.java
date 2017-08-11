@@ -22,15 +22,15 @@ import java.util.*;
 public class MpGenerator {
 
     // 项目的绝对路径
-    public static final  String   outPutBaseDir      = "D:/Users/Administrator/IdeaProjects/Member/member-generator/";
+    public static final  String   outPutBaseDir      = "F:/work/member/member-generator/";
     // 生成*.java 的文件路径
     public static final  String   outPutJavaModel    = outPutBaseDir + "src/main/java";
     // 需要生成的表
     public static final  String[] generatorTableName = new String[] {
-		    "t_wx_user_consume"
+		    "t_count_bill_grant","t_count_changeprice_grant"
     };
     // 去除表前缀 例如：bus_user 填入bus 生成的 user
-    public static final  String[] tablePrefix        = new String[] { "t_wx" };
+    public static final  String[] tablePrefix        = new String[] { "t_" };
     // 生成的包路径
     public static final  String   packagePath        = "com.gt.member";
     public static final  String   moduleName         = "";

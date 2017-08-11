@@ -12,6 +12,7 @@
         <module>member-service</module>
         <module>member-entity</module>
         <module>member-generator</module>
+        <module>member-web-api</module>
     </modules>
     <packaging>pom</packaging>
     <name>parent</name>

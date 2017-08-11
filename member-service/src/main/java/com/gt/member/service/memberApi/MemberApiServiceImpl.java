@@ -3,9 +3,9 @@
  */
 package com.gt.member.service.memberApi;
 
-import com.gt.member.dao.BusUserDAO;
-import com.gt.member.dao.WxPublicUsersDAO;
-import com.gt.member.dao.WxShopDAO;
+import com.gt.member.dao.common.BusUserDAO;
+import com.gt.member.dao.common.WxPublicUsersDAO;
+import com.gt.member.dao.common.WxShopDAO;
 import com.gt.common.entity.BusUser;
 import com.gt.common.entity.WxPublicUsers;
 import com.gt.common.entity.WxShop;
@@ -44,15 +44,11 @@ public class MemberApiServiceImpl implements MemberApiService {
     private MemberConfig memberConfig;
 
     private final String getFenbiSurplus   = "/basics/79B4DE7C/getFenbiSurplus.do";
+
     private final String updateFenbiReduce = "/basics/79B4DE7C/updateFenbiReduce.do";
-    //获取门店信息
-    private final String GET_SHOP_URL      = "/basics/79B4DE7C/findShopById.do";
+
     //微信卡券核销
     private final String CODE_CONSUME      = "/basics/79B4DE7C/codeConsume.do";
-    //获取主门店信息
-    private final String MAIN_SHOP         = "/basics/79B4DE7C/selectMainShopByBusId.do";
-    //获取门店集合信息
-    private final String shopsList         = "/dict/79B4DE7C/shopsList.do";
 
     //保存粉币资产记录
     private final String saveFenbiFlowRecord = "/basics/79B4DE7C/saveFenbiFlowRecord.do";
@@ -2131,14 +2127,11 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 
 	    // 获取主账户id
-	    JSONObject json = new JSONObject();
-	    json.put( "userId", member.getBusId() );
-	    JSONObject returnJSON = HttpClienUtil.httpPost( memberConfig.getWxmp_home() + shopsList, json, false );
-	    String shoplist = returnJSON.getString( "shoplist" );
+	    WxShop wxShop= wxShopDAO.selectMainShopByBusId( member.getBusId() );
 
-	    List< Map< String,Object > > shops = (List< Map< String,Object > >) JSONArray.toCollection( JSONArray.fromObject( shoplist ) );
-	    if ( CommonUtil.isNotEmpty( shops ) && shops.size() > 0 ) {
-		uc.setStoreId( CommonUtil.toInteger( shops.get( 0 ).get( "id" ) ) );
+
+	    if ( CommonUtil.isNotEmpty( wxShop )) {
+		uc.setStoreId( wxShop.getId());
 	    }
 
 	    String orderCode = CommonUtil.getMEOrderCode();
@@ -2880,19 +2873,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 	if ( card.getShopId() > 0 ) {
 	    if ( shopId != card.getShopId() && !shopId.equals( card.getShopId() ) ) {
-		map.put( "result", false );
-		map.put( "message", "当前用户会员不是该门店会员" );
-		return map;
-	    }
-	} else {
-	    JSONObject json = new JSONObject();
-	    json.put( "token", TokenUitl.getToken() );
-	    json.put( "shopId", shopId );
-
-	    JSONObject returnJSON = HttpClienUtil.httpPost( memberConfig.getWxmp_home() + GET_SHOP_URL, json, false );
-	    Map< String,Object > reutnMap = (Map< String,Object >) returnJSON.get( "wxshop" );
-
-	    if ( CommonUtil.isNotEmpty( map ) && !reutnMap.get( "id" ).equals( shopId ) ) {
 		map.put( "result", false );
 		map.put( "message", "当前用户会员不是该门店会员" );
 		return map;
@@ -3950,6 +3930,28 @@ public class MemberApiServiceImpl implements MemberApiService {
 	} catch ( Exception e ) {
 	    LOG.error( "退款异常", e );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+    }
+
+    public void isAdequateMoney(Integer memberId,Double money) throws BusinessException{
+	try {
+	    Member member = memberDAO.selectById( memberId );
+	    if ( CommonUtil.isEmpty( member.getMcId() ) ) {
+		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
+	    }
+	    MemberCard card = cardMapper.selectById( member.getMcId() );
+	    if ( CommonUtil.isNotEmpty( card ) ) {
+		if ( card.getCtId() == 3 ) {
+		    if ( card.getMoney() >= money ) {
+			return;
+		    }
+		}
+	    }
+	    throw new BusinessException( ResponseMemberEnums.MEMBER_LESS_MONEY );
+	}catch ( BusinessException e ){
+	    throw new BusinessException( e.getCode(),e.getMessage() );
+	}catch ( Exception e ){
+	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
 

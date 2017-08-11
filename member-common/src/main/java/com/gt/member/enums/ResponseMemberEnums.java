@@ -11,6 +11,7 @@ public enum ResponseMemberEnums {
 
 
 
+
     CARD_STATUS(5001, "会员卡已停用"),
     MEMBER_LESS_JIFEN(5002,"积分不足"),
     MEMBER_LESS_FENBI(5003,"粉币不足"),

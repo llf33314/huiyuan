@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.gt.member.dao.BusUserDAO;
+import com.gt.member.dao.common.BusUserDAO;
 import com.gt.common.entity.BusUser;
 import com.gt.member.service.old.common.dict.DictService;
 import com.gt.member.util.HttpClienUtil;

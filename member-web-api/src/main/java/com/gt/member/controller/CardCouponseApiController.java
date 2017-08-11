@@ -8,6 +8,7 @@ import com.gt.member.entity.WxCard;
 import com.gt.member.enums.ResponseEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.memberApi.CardCouponsApiService;
+import com.gt.member.util.CommonUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -15,9 +16,7 @@ import lombok.Getter;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,9 +39,10 @@ public class CardCouponseApiController {
     @ApiOperation(value = "查询微信优惠券信息", notes = "根据公众号查询微信卡券信息")
     @ApiImplicitParam(name = "publicId", value = "公众号id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @GetMapping("/79B4DE7C/findWxCard")
+    @RequestMapping (value = "/findWxCard",method = RequestMethod.GET)
     public ServerResponse findWxCard(HttpServletRequest request,
-                                     HttpServletResponse response, Integer publicId) {
+                                     HttpServletResponse response,@RequestBody Map<String,Object> requestBody) {
+        Integer publicId= CommonUtil.toInteger(requestBody.get( "publicId" ));
         List<Map<String, Object>> cardList = cardCouponsApiService.findWxCard(publicId);
         return ServerResponse.createBySuccess(cardList);
     }
@@ -53,10 +53,12 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "code", value = "卡券code值", paramType = "query", required = true, dataType = "String")
     })
     @ResponseBody
-    @Update("/79B4DE7C/findWxCard")
+    @RequestMapping (value = "/wxCardReceiveBackName",method = RequestMethod.PUT)
     public ServerResponse wxCardReceiveBackName(HttpServletRequest request,
-                                                HttpServletResponse response, Integer publicId, String code) {
+                                                HttpServletResponse response,@RequestBody Map<String,Object> requestBody) {
         try {
+            Integer publicId= CommonUtil.toInteger(requestBody.get( "publicId" ));
+            String code= CommonUtil.toString(requestBody.get( "code" ));
             Map<String, Object> map = cardCouponsApiService.wxCardReceiveBackName(publicId, code);
             return ServerResponse.createBySuccess(map);
         }catch (BusinessException e){
@@ -69,9 +71,10 @@ public class CardCouponseApiController {
     @ApiOperation(value = "查询卡券信息", notes = "根据id查询微信卡券信息")
     @ApiImplicitParam(name = "cardId", value = "卡券id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @GetMapping("/79B4DE7C/findWxCardById")
+    @RequestMapping (value = "/findWxCardById",method = RequestMethod.GET)
     public ServerResponse findWxCardById(HttpServletRequest request,
-                                         HttpServletResponse response, Integer cardId) {
+                                         HttpServletResponse response, @RequestBody Map<String,Object> requestBody) {
+        Integer cardId= CommonUtil.toInteger(requestBody.get( "cardId" ));
         WxCard wxCard=cardCouponsApiService.findWxCardById(cardId);
         return ServerResponse.createBySuccess(wxCard);
     }
@@ -87,10 +90,13 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "money", value = "消费金额", paramType = "query", required = true, dataType = "double")
     })
     @ResponseBody
-    @GetMapping("/79B4DE7C/findDuofenCardByMemberIdAndMoney")
+    @RequestMapping (value = "/findDuofenCardByMemberIdAndMoney",method = RequestMethod.GET)
     public ServerResponse findDuofenCardByMemberIdAndMoney(HttpServletRequest request,
-                                                           HttpServletResponse response, Integer memberId, Integer wxshopId, Double money){
+                                                           HttpServletResponse response,@RequestBody Map<String,Object> requestBody ){
         try {
+            Integer memberId= CommonUtil.toInteger(requestBody.get( "memberId" ));
+            Integer wxshopId= CommonUtil.toInteger(requestBody.get( "wxshopId" ));
+            Double money= CommonUtil.toDouble(requestBody.get( "money" ));
             List<Map<String, Object>> cardList = cardCouponsApiService.findDuofenCardByMemberIdAndMoney(memberId, wxshopId, money);
             return ServerResponse.createBySuccess(cardList);
         }catch (Exception e){
@@ -102,9 +108,10 @@ public class CardCouponseApiController {
     @ApiOperation(value = "查询商家拥有的卡包信息", notes = "根据商家id查询商家拥有的卡包信息")
     @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @GetMapping("/79B4DE7C/findReceiveByBusUserId")
+    @RequestMapping (value = "/findReceiveByBusUserId",method = RequestMethod.GET)
     public ServerResponse findReceiveByBusUserId(HttpServletRequest request,
-                                                 HttpServletResponse response, Integer busId){
+                                                 HttpServletResponse response,@RequestBody Map<String,Object> requestBody ){
+        Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
         List<Map<String,Object>> cardList=cardCouponsApiService.findReceiveByBusUserId(busId);
         return ServerResponse.createBySuccess(cardList);
     }
@@ -113,9 +120,10 @@ public class CardCouponseApiController {
     @ApiOperation(value = "查询本公众号商场投放的包", notes = "根据商家id查询本公众号商场投放的包")
     @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @GetMapping("/79B4DE7C/findReceiveBybusId")
+    @RequestMapping (value = "/findReceiveBybusId",method = RequestMethod.GET)
     public ServerResponse findReceiveBybusId(HttpServletRequest request,
-                                             HttpServletResponse response, Integer busId){
+                                             HttpServletResponse response, @RequestBody Map<String,Object> requestBody){
+        Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
         List<DuofenCardReceive> duofenCardReceives=cardCouponsApiService.findReceiveBybusId(busId);
         return ServerResponse.createBySuccess(duofenCardReceives);
     }
@@ -124,9 +132,10 @@ public class CardCouponseApiController {
     @ApiOperation(value = "查询卡券信息", notes = "根据卡包查询卡券信息")
     @ApiImplicitParam(name = "receiveId", value = "多粉卡包id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @GetMapping("/79B4DE7C/findCardByReceiveId")
+    @RequestMapping (value = "/findCardByReceiveId",method = RequestMethod.GET)
     public ServerResponse findCardByReceiveId(HttpServletRequest request,
-                                              HttpServletResponse response,Integer receiveId){
+                                              HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+        Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
         Map<String,Object> map=cardCouponsApiService.findCardByReceiveId(receiveId);
         return ServerResponse.createBySuccess(map);
     }
@@ -138,9 +147,11 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "page", value = "页数", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @GetMapping("/79B4DE7C/findByThreeMemberId")
+    @RequestMapping (value = "/findByThreeMemberId",method = RequestMethod.GET)
     public ServerResponse findByThreeMemberId(HttpServletRequest request,
-                                              HttpServletResponse response,Integer threeMemberId, Integer page){
+                                              HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+        Integer threeMemberId=CommonUtil.toInteger( requestBody.get( "threeMemberId" ) );
+        Integer page=CommonUtil.toInteger( requestBody.get( "page" ) );
         Map<String, Object> map=cardCouponsApiService.findByThreeMemberId(threeMemberId,page);
         return ServerResponse.createBySuccess(map);
     }
@@ -152,10 +163,13 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @Update("/79B4DE7C/successPayBack")
+    @RequestMapping (value = "/successPayBack",method = RequestMethod.PUT)
     public ServerResponse successPayBack(HttpServletRequest request,
-                                         HttpServletResponse response,Integer receiveId, Integer num, Integer memberId){
+                                         HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
+            Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
+            Integer num=CommonUtil.toInteger( requestBody.get( "num" ) );
+            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
             cardCouponsApiService.successPayBack(receiveId, num, memberId);
             return ServerResponse.createBySuccess();
         }catch (BusinessException e){
@@ -166,10 +180,11 @@ public class CardCouponseApiController {
     @ApiOperation(value = "查询卡券信息", notes = "根据卡包id查询卡券信息 map中key guoqi=1标示该包或该券过期")
     @ApiImplicitParam(name = "receiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @GetMapping("/79B4DE7C/findDuofenCardByReceiveId")
+    @RequestMapping (value = "/findDuofenCardByReceiveId",method = RequestMethod.GET)
     public ServerResponse findDuofenCardByReceiveId(HttpServletRequest request,
-                                                    HttpServletResponse response,Integer receiveId){
+                                                    HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
+            Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
             Map<String, Object> map = cardCouponsApiService.findDuofenCardByReceiveId(receiveId);
             return ServerResponse.createBySuccess(map);
         }catch (BusinessException e){
@@ -180,10 +195,11 @@ public class CardCouponseApiController {
     @ApiOperation(value = "卡包投放", notes = "根据卡包id卡包投放")
     @ApiImplicitParam(name = "receiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @Update("/79B4DE7C/publishShelve")
+    @RequestMapping (value = "/publishShelve",method = RequestMethod.PUT)
     public ServerResponse publishShelve(HttpServletRequest request,
-                                        HttpServletResponse response,Integer receiveId){
+                                        HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
+            Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
             Map<String, Object> map = cardCouponsApiService.findDuofenCardByReceiveId(receiveId);
             return ServerResponse.createBySuccess(map);
         }catch (BusinessException e){
@@ -199,10 +215,14 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "bagId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @Update("/79B4DE7C/threeShopGetCard")
+    @RequestMapping (value = "/threeShopGetCard",method = RequestMethod.PUT)
     public ServerResponse threeShopGetCard(HttpServletRequest request,
-                                           HttpServletResponse response,Integer threeMemberId, Integer memberId, Integer busId, Integer bagId){
+                                           HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
+            Integer threeMemberId=CommonUtil.toInteger( requestBody.get( "threeMemberId" ) );
+            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
+            Integer bagId=CommonUtil.toInteger( requestBody.get( "bagId" ) );
             cardCouponsApiService.threeShopGetCard(threeMemberId,memberId,busId,bagId);
             return ServerResponse.createBySuccess();
         }catch (BusinessException e){
@@ -216,9 +236,11 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "receiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @GetMapping("/79B4DE7C/findUserCardByReceiveId")
+    @RequestMapping (value = "/findUserCardByReceiveId",method = RequestMethod.GET)
     public ServerResponse findUserCardByReceiveId(HttpServletRequest request,
-                                                  HttpServletResponse response,Integer memberId, Integer receiveId){
+                                                  HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+        Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+        Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
        List<DuofenCardGet> duofenCardGets=cardCouponsApiService.findUserCardByReceiveId(memberId,receiveId);
        return ServerResponse.createBySuccess(duofenCardGets);
     }
@@ -230,9 +252,11 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "receiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @GetMapping("/79B4DE7C/findCardOverTime")
+    @RequestMapping (value = "/findCardOverTime",method = RequestMethod.GET)
     public ServerResponse findCardOverTime(HttpServletRequest request,
-                                           HttpServletResponse response,Integer memberId, Integer receiveId){
+                                           HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+        Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+        Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
         List<DuofenCard> duofenCards=cardCouponsApiService.findCardOverTime(memberId,receiveId);
         return ServerResponse.createBySuccess(duofenCards);
     }
@@ -243,9 +267,12 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "page", value = "页数", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @GetMapping("/79B4DE7C/findCardReceive")
+    @RequestMapping (value = "/findCardReceive",method = RequestMethod.GET)
     public ServerResponse findCardReceive(HttpServletRequest request,
-                                          HttpServletResponse response,Integer busId, Integer memberId, Integer page){
+                                          HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+        Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
+        Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+        Integer page=CommonUtil.toInteger( requestBody.get( "page" ) );
         List<Map<String,Object>> maps=cardCouponsApiService.findCardReceive(busId,memberId,page);
         return ServerResponse.createBySuccess(maps);
     }
@@ -257,9 +284,12 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "page", value = "页数", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @GetMapping("/79B4DE7C/findCardReceiveBuy")
+    @RequestMapping (value = "/findCardReceiveBuy",method = RequestMethod.GET)
     public ServerResponse findCardReceiveBuy(HttpServletRequest request,
-                                             HttpServletResponse response,Integer busId, Integer memberId, Integer page){
+                                             HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+        Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
+        Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+        Integer page=CommonUtil.toInteger( requestBody.get( "page" ) );
         List<Map<String,Object>> maps=cardCouponsApiService.findCardReceive1(busId,memberId,page);
         return ServerResponse.createBySuccess(maps);
     }
@@ -272,10 +302,13 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "cardreceiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @GetMapping("/79B4DE7C/pcBuyReceive")
+    @RequestMapping (value = "/pcBuyReceive",method = RequestMethod.GET)
     public ServerResponse pcBuyReceive(HttpServletRequest request,
-                                       HttpServletResponse response,Integer memberId, Integer busId, Integer cardreceiveId){
+                                       HttpServletResponse response,@RequestBody Map<String,Object> requestBody ){
         try {
+            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
+            Integer cardreceiveId=CommonUtil.toInteger( requestBody.get( "cardreceiveId" ) );
             cardCouponsApiService.pcBuyReceive(memberId, busId, cardreceiveId);
             return ServerResponse.createBySuccess();
         }catch (BusinessException e){
@@ -290,10 +323,13 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @Update("/79B4DE7C/successBuyReceive")
+    @RequestMapping (value = "/successBuyReceive",method = RequestMethod.PUT)
     public ServerResponse successBuyReceive(HttpServletRequest request,
-                                            HttpServletResponse response,Integer receiveId, Integer num, Integer memberId){
+                                            HttpServletResponse response,@RequestBody Map<String,Object> requestBody ){
         try {
+            Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
+            Integer num=CommonUtil.toInteger( requestBody.get( "num" ) );
+            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
             cardCouponsApiService.successBuyReceive(receiveId, num, memberId);
             return ServerResponse.createBySuccess();
         }catch (BusinessException e){
@@ -304,10 +340,11 @@ public class CardCouponseApiController {
     @ApiOperation(value = "卡包信息（购买） 美容", notes = "卡包信息（购买） 美容")
     @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @GetMapping("/79B4DE7C/findReceiveByMeiRong")
+    @RequestMapping (value = "/findReceiveByMeiRong",method = RequestMethod.GET)
     public ServerResponse findReceiveByMeiRong(HttpServletRequest request,
-                                      HttpServletResponse response,Integer busId){
+                                      HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
+            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
             List<Map<String, Object>> mapList=cardCouponsApiService.findReceive(busId);
             return ServerResponse.createBySuccess(mapList);
         }catch (Exception e){
@@ -321,10 +358,12 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "receiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @GetMapping("/79B4DE7C/findDuofenCardByMeiRong")
+    @RequestMapping (value = "/findDuofenCardByMeiRong",method = RequestMethod.GET)
     public ServerResponse findDuofenCardByMeiRong(HttpServletRequest request,
-                                                  HttpServletResponse response,Integer busId,Integer receiveId){
+                                                  HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
+            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
+            Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
             List<Map<String, Object>> mapList=cardCouponsApiService.findDuofenCard(busId,receiveId);
             return ServerResponse.createBySuccess(mapList);
         }catch (Exception e){
@@ -337,10 +376,12 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "receiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @GetMapping("/79B4DE7C/findReceviceAllByMeiRong")
+    @RequestMapping (value = "/findReceviceAllByMeiRong",method = RequestMethod.GET)
     public ServerResponse findReceviceAllByMeiRong(HttpServletRequest request,
-                                          HttpServletResponse response,Integer busId,Integer receiveId){
+                                          HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
+            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
+            Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
             List<Map<String, Object>> mapList=cardCouponsApiService.findReceviceAll(busId,receiveId);
             return ServerResponse.createBySuccess(mapList);
         }catch (BusinessException e){
@@ -356,10 +397,12 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "receiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @Update("/79B4DE7C/backDuofenCardGet")
+    @RequestMapping (value = "/backDuofenCardGet",method = RequestMethod.PUT)
     public ServerResponse backDuofenCardGet(HttpServletRequest request,
-                                            HttpServletResponse response,Integer memberId, Integer receiveId){
+                                            HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
+            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
             cardCouponsApiService.backDuofenCardGet(memberId,receiveId);
             return ServerResponse.createBySuccess();
         }catch (BusinessException e){
@@ -370,10 +413,11 @@ public class CardCouponseApiController {
     @ApiOperation(value = "查询游戏卡包信息", notes = "根据商家id查询游戏卡包信息")
     @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @Update("/79B4DE7C/gameDuofenCardRecevice")
+    @RequestMapping (value = "/gameDuofenCardRecevice",method = RequestMethod.PUT)
     public ServerResponse gameDuofenCardRecevice(HttpServletRequest request,
-                                                 HttpServletResponse response,Integer busId){
+                                                 HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
+            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
             List<Map<String, Object>> map=cardCouponsApiService.gameDuofenCardRecevice(busId);
             return ServerResponse.createBySuccess(map);
         }catch (Exception e){
@@ -388,10 +432,13 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @Update("/79B4DE7C/getDuofenCardByGame")
+    @RequestMapping (value = "/getDuofenCardByGame",method = RequestMethod.PUT)
     public ServerResponse getDuofenCardByGame(HttpServletRequest request,
-                                              HttpServletResponse response,Integer receiveId, Integer num, Integer memberId){
+                                              HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
+            Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
+            Integer num=CommonUtil.toInteger( requestBody.get( "num" ) );
+            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
             cardCouponsApiService.getDuofenCardGame(receiveId,num,memberId);
             return ServerResponse.createBySuccess();
         }catch (BusinessException e){
@@ -406,12 +453,12 @@ public class CardCouponseApiController {
 
     })
     @ResponseBody
-    @Update("/79B4DE7C/verificationCardReturnName")
+    @RequestMapping (value = "/verificationCardReturnName",method = RequestMethod.PUT)
     public ServerResponse verificationCardReturnName(HttpServletRequest request,
-                                             HttpServletResponse response,String codes,Integer storeId){
+                                             HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         Map<String,Object> params=new HashMap<>();
-        params.put("codes",codes);
-        params.put("storeId",storeId);
+        params.put("codes",requestBody.get( "codes" ));
+        params.put("storeId",requestBody.get( "storeId" ));
         try {
             Map<String, Object> map=cardCouponsApiService.verificationCard_3(params);
             return ServerResponse.createBySuccess(map);
@@ -423,10 +470,11 @@ public class CardCouponseApiController {
     @ApiOperation(value = "美容小程序（根据粉丝id查询卡券包信息）", notes = "美容（根据粉丝id查询卡券包信息）")
     @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @GetMapping("/79B4DE7C/findMeiRongDuofenCardByMemberId")
+    @RequestMapping (value = "/findMeiRongDuofenCardByMemberId",method = RequestMethod.GET)
     public ServerResponse findMeiRongDuofenCardByMemberId(HttpServletRequest request,
-                    HttpServletResponse response,Integer memberId){
+                    HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
+            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
             List<Map<String,Object>> list=cardCouponsApiService.findMeiRongDuofenCardByMemberId( memberId );
             return ServerResponse.createBySuccess(list);
         }catch ( Exception e ){
@@ -440,10 +488,12 @@ public class CardCouponseApiController {
                     @ApiImplicitParam(name = "receiceId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     } )
     @ResponseBody
-    @GetMapping("/79B4DE7C/findMeiRongDuofenCardGetByReceiveId")
+    @RequestMapping (value = "/findMeiRongDuofenCardGetByReceiveId",method = RequestMethod.GET)
     public ServerResponse findMeiRongDuofenCardGetByReceiveId(HttpServletRequest request,
-                    HttpServletResponse response,Integer memberId,Integer receiceId){
+                    HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
+            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            Integer receiceId=CommonUtil.toInteger( requestBody.get( "receiceId" ) );
             List<Map<String,Object>> list=cardCouponsApiService.findMeiRongCardGetByMemberId( memberId,receiceId );
             return ServerResponse.createBySuccess(list);
         }catch ( Exception e ){
@@ -454,10 +504,11 @@ public class CardCouponseApiController {
     @ApiOperation(value = "美容小程序（卡券gId查询卡券信息 门店信息暂时没有）", notes = "美容小程序（卡券gId查询卡券信息）")
     @ApiImplicitParam(name = "gId", value = "领取的卡券id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @GetMapping("/79B4DE7C/findDuofenCardOne")
+    @RequestMapping (value = "/findDuofenCardOne",method = RequestMethod.GET)
     public ServerResponse findDuofenCardOne(HttpServletRequest request,
-                    HttpServletResponse response,Integer gId){
+                    HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
+            Integer gId=CommonUtil.toInteger( requestBody.get( "gId" ) );
             Map<String,Object> map=cardCouponsApiService.findDuofenCardOne(gId);
             return ServerResponse.createBySuccess(map);
         }catch ( Exception e ){
@@ -468,10 +519,11 @@ public class CardCouponseApiController {
     @ApiOperation(value = "美容小程序（卡券gId查询卡券详情信息）", notes = "美容小程序（卡券gId查询卡券详情信息）")
     @ApiImplicitParam(name = "gId", value = "领取的卡券id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @GetMapping("/79B4DE7C/findCardDetails")
+    @RequestMapping (value = "/findCardDetails",method = RequestMethod.GET)
     public ServerResponse findCardDetails(HttpServletRequest request,
-                    HttpServletResponse response,Integer gId){
+                    HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
+            Integer gId=CommonUtil.toInteger( requestBody.get( "gId" ) );
             Map<String,Object> map=cardCouponsApiService.findCardDetails(gId);
             return ServerResponse.createBySuccess(map);
         }catch ( Exception e ){

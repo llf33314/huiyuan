@@ -1,9 +1,11 @@
 package com.gt.member.service.memberApi;
 
 
-import com.gt.member.dao.BusUserDAO;
+import com.gt.common.entity.WxShop;
+import com.gt.member.dao.common.BusUserDAO;
 import com.gt.common.entity.BusUser;
 import com.gt.member.dao.*;
+import com.gt.member.dao.common.WxShopDAO;
 import com.gt.member.entity.*;
 import com.gt.member.entity.DuofenCard;
 import com.gt.member.entity.DuofenCardGet;
@@ -40,8 +42,6 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     @Autowired
     private MemberConfig memberConfig;
 
-    //获取门店信息
-    private final String GET_SHOP_URL = "/basics/79B4DE7C/findShopById.do";
     //微信卡券核销
     private final String CODE_CONSUME = "/basics/79B4DE7C/codeConsume.do";
     //发送短信
@@ -49,7 +49,6 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
     //保存粉币资产记录
     private final String saveFenbiFlowRecord = "/basics/79B4DE7C/saveFenbiFlowRecord.do";
-
 
     @Autowired
     private WxCardDAO wxCardMapper;
@@ -113,6 +112,9 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     @Autowired
     private MemberRecommendDAO recommendMapper;
 
+    @Autowired
+    private WxShopDAO wxShopDAO;
+
     //<!-----------卡券对外接口Start------------>
     @Override
     public List<Map<String, Object>> findWxCardByShopId(Integer shopId, Integer wxPublicUsersId, Integer memberId) throws Exception {
@@ -120,13 +122,10 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             return null;
         }
 
-        JSONObject json = new JSONObject();
-        json.put("token", TokenUitl.getToken());
-        json.put("shopId", shopId);
-        JSONObject returnJSON = HttpClienUtil.httpPost(memberConfig.getWxmp_home() + GET_SHOP_URL, json, false);
-        Map<String, Object> map = (Map<String, Object>) returnJSON.get("wxshop");
 
-        if (CommonUtil.isEmpty(map) || CommonUtil.isEmpty(map.get("poiid"))) {
+        WxShop wxShop= wxShopDAO.selectById(  shopId);
+
+        if (CommonUtil.isEmpty(wxShop) || CommonUtil.isEmpty(wxShop.getPoiId())) {
             return null;
         }
 
@@ -167,7 +166,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 if (!map2.get("time_limit").toString().contains(day)) {
                     continue;
                 }
-                if (map2.get("location_id_list").toString().contains(CommonUtil.toString(map.get("poiid")))) {
+                if (map2.get("location_id_list").toString().contains(wxShop.getPoiId())) {
                     list.add(map2);
                 }
             }
@@ -180,12 +179,8 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
         if (CommonUtil.isEmpty(wxPublicUsersId)) {
             return null;
         }
-        JSONObject json = new JSONObject();
-        json.put("token", TokenUitl.getToken());
-        json.put("shopId", shopId);
-        JSONObject returnJSON = HttpClienUtil.httpPost(memberConfig.getWxmp_home() + GET_SHOP_URL, json, false);
-        Map<String, Object> map = (Map<String, Object>) returnJSON.get("wxshop");
-        if (CommonUtil.isEmpty(map) || CommonUtil.isEmpty(map.get("poiid"))) {
+        WxShop wxShop=wxShopDAO.selectById( shopId );
+        if (CommonUtil.isEmpty(wxShop) || CommonUtil.isEmpty(wxShop.getPoiId())) {
             return null;
         }
 
@@ -234,7 +229,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                     }
                 }
 
-                if (map2.get("location_id_list").toString().contains(CommonUtil.toString(map.get("poiid")))) {
+                if (map2.get("location_id_list").toString().contains(wxShop.getPoiId())) {
                     list.add(map2);
                 }
             }

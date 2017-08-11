@@ -604,5 +604,12 @@ public interface MemberApiService{
      */
     public void refundMoney(Integer busId,String orderNo,Integer ucType, double refundMoney) throws BusinessException;
 
+    /**
+     * 判断储值卡金额是否充足
+     * @param memberId
+     * @param money
+     * @throws BusinessException
+     */
+    public void isAdequateMoney(Integer memberId,Double money) throws BusinessException;
 
 }

@@ -24,4 +24,8 @@ public class MemberConfig {
     private String redis_port; //redis端口
 
     private String redis_pwd; //redis  密码
+
+    private String domain;  //获取域名
+
+    private String signKey;  //签名key值
 }

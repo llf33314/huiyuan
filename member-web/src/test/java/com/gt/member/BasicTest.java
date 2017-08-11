@@ -28,6 +28,8 @@ public class BasicTest {
 	this.logger.info( "=======================================  单元测试Start =======================================" );
     }
 
+
+
     @After
     public void end() {
 	this.logger.info( "执行结束，方法执行 {} 毫秒", ( System.currentTimeMillis() - start_time ) );
