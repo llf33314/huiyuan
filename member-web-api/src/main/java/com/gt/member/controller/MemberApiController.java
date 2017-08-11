@@ -93,7 +93,7 @@ public class MemberApiController extends BaseController {
        }
     }
 
-    @ApiOperation(value = "根据粉丝id获取粉丝信息", notes = "获取粉丝信息")
+    @ApiOperation(value = "判断储值卡金额是否充足", notes = "判断储值卡金额是否充足")
     @ApiImplicitParams( {
                     @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
                     @ApiImplicitParam( name = "money", value = "消费金额", paramType = "query", required = true, dataType = "int" ),
