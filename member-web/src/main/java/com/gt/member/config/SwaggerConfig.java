@@ -30,7 +30,7 @@ public class SwaggerConfig {
     //
     private static final String  TERMS_OF_SERVICEURL = "NO terms of controller";
     // 作者信息
-    private static final Contact CONTACT             = new Contact( "zhangmz", "http://www.zhangmz.me", "3001417980@qq.com" );
+    private static final Contact CONTACT             = new Contact( "zhangmz", "会员秘钥:MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM", "" );
     //
     private static final String  LICENSE             = "";
     //
