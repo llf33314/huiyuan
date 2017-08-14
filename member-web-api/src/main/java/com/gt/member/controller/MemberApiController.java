@@ -219,5 +219,21 @@ public class MemberApiController extends BaseController {
         }
     }
 
+    @ApiOperation(value = "根据id查询粉丝信息id集合", notes = "根据id查询粉丝信息id集合")
+    @ApiImplicitParam(name = "memberId", value = "粉丝id字符集合 逗号隔开", paramType = "query", required = true, dataType = "String")
+    @ResponseBody
+    @RequestMapping (value = "/findMemberByids",method = RequestMethod.POST)
+    public ServerResponse findMemberIdsByid(HttpServletRequest request,
+                    HttpServletResponse response,@RequestBody Map requestBody){
+        try {
+            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            List<Integer> mapList = memberApiService.findMemberIds(memberId);
+            return ServerResponse.createBySuccess(mapList);
+        } catch (Exception e) {
+            logger.error("根据id查询粉丝信息id集合异常",e);
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+        }
+    }
+
 
 }
