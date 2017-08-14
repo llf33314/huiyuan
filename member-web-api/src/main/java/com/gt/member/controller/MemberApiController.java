@@ -38,16 +38,18 @@ public class MemberApiController extends BaseController {
     @Autowired
     private MemberApiService memberApiService;
 
-    @ApiOperation(value = "根据memberId和门店查询会员数据", notes = "根据memberId和门店查询会员数据")
+    @ApiOperation(value = "根据memberId和门店查询会员数据 返回数据包含会员信息、微信卡券、多粉卡券", notes = "根据memberId和门店查询会员数据")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "memberId", value = "卡号或手机号", paramType = "query", required = true, dataType = "int"),
             @ApiImplicitParam(name = "shopId", value = "门店id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @GetMapping("/findMemberCardByMemberId")
+    @RequestMapping(value = "/findMemberCardByMemberId",method = RequestMethod.POST)
     public ServerResponse findCardByMembeId(HttpServletRequest request,
-                                            HttpServletResponse response, Integer memberId, Integer shopId) {
+                                            HttpServletResponse response, @RequestBody Map requestBody ) {
         try {
+            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            Integer shopId=CommonUtil.toInteger( requestBody.get( "shopId" ) );
             Map<String, Object> map = memberApiService.findMemberCardByMemberId(memberId, shopId);
             return ServerResponse.createBySuccess(map);
         } catch (BusinessException e) {
