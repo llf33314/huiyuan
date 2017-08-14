@@ -7,18 +7,15 @@ import com.gt.member.exception.BusinessException;
 import com.gt.member.service.memberApi.MemberApiService;
 import com.gt.member.service.memberApi.MemberCountMoneyApiService;
 import com.gt.member.service.memberApi.entityBo.MallAllEntity;
-import com.gt.member.service.memberApi.entityBo.MemberShopEntity;
 import com.gt.member.service.memberApi.entityBo.PaySuccessBo;
-import com.gt.member.util.InvaildParamter;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+
 
 /**
  * 会员计算api
@@ -40,8 +37,7 @@ public class MemberCountApiController {
     @ResponseBody
     @RequestMapping(value = "memberCountMoneyByShop",method = RequestMethod.POST)
     public ServerResponse memberCountMoneyByShop(HttpServletRequest request,
-                                         HttpServletResponse response,@ModelAttribute @Valid MallAllEntity mallAllEntity,BindingResult bindingResult ){
-        InvaildParamter.invaildParmter(bindingResult);
+                                         HttpServletResponse response, MallAllEntity mallAllEntity ){
         try {
           mallAllEntity = memberCountMoneyApiService.mallSkipShopCount(mallAllEntity);
           return ServerResponse.createBySuccess(JSONObject.toJSON(mallAllEntity));
