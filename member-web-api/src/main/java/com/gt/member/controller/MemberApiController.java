@@ -220,7 +220,7 @@ public class MemberApiController extends BaseController {
     }
 
     @ApiOperation(value = "根据id查询粉丝信息id集合", notes = "根据id查询粉丝信息id集合")
-    @ApiImplicitParam(name = "memberId", value = "粉丝id字符集合 逗号隔开", paramType = "query", required = true, dataType = "String")
+    @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
     @RequestMapping (value = "/findMemberByids",method = RequestMethod.POST)
     public ServerResponse findMemberIdsByid(HttpServletRequest request,
@@ -231,6 +231,44 @@ public class MemberApiController extends BaseController {
             return ServerResponse.createBySuccess(mapList);
         } catch (Exception e) {
             logger.error("根据id查询粉丝信息id集合异常",e);
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+        }
+    }
+
+    @ApiOperation(value = "判断粉丝是否是会员", notes = "判断粉丝是否是会员")
+    @ApiImplicitParam(name = "memberId", value = "", paramType = "query", required = true, dataType = "int")
+    @ResponseBody
+    @RequestMapping (value = "/isMember",method = RequestMethod.POST)
+    public ServerResponse isMember(HttpServletRequest request,
+                    HttpServletResponse response,@RequestBody Map requestBody){
+        try {
+            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            memberApiService.isMemember( memberId );
+            return ServerResponse.createBySuccess();
+        }catch ( BusinessException e ){
+            return ServerResponse.createByError(e.getCode(), e.getMessage());
+        }catch (Exception e) {
+            logger.error("判断粉丝是否是会员异常",e);
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+        }
+    }
+
+    @ApiOperation(value = "商场关注赠送积分", notes = "商场关注赠送积分")
+    @ApiImplicitParams( {
+                    @ApiImplicitParam(name = "memberId", value = "", paramType = "query", required = true, dataType = "int"),
+                    @ApiImplicitParam(name = "jifen", value = "", paramType = "query", required = true, dataType = "int"),
+    } )
+    @ResponseBody
+    @RequestMapping (value = "/updateJifen",method = RequestMethod.PUT)
+    public ServerResponse updateJifen(HttpServletRequest request,
+                    HttpServletResponse response,@RequestBody Map requestBody){
+        try {
+            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            Integer jifen=CommonUtil.toInteger( requestBody.get( "jifen" ) );
+            memberApiService.updateJifen( memberId,jifen );
+            return ServerResponse.createBySuccess();
+        }catch (Exception e) {
+            logger.error("商场关注赠送积分异常",e);
             return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
         }
     }

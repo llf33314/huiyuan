@@ -20,6 +20,11 @@ public class MemberShopEntity {
     private boolean canUseConpon = false;  //是否能用优惠券
     private Double discountConponMoney = 0.0;
 
+
+    private Integer userLeague = 0;  //是否使用联盟卡 not null  0未使用 1使用
+    private Double leagueDiscount = 1.0; //联盟折扣   userLeague=1 not null
+    private Integer leagueJifen = 0; //联盟积分  传入最高能使用积分值   userLeague=1 not null
+
     private boolean useFenbi;
     private Integer fenbiNum;  //使用粉币数量 不存在set
     private Double discountfenbiMoney = 0.0; //粉币抵扣金额  不存在set
@@ -183,5 +188,29 @@ public class MemberShopEntity {
 
     public void setBalanceMoney(Double balanceMoney) {
         this.balanceMoney = balanceMoney;
+    }
+
+    public Integer getUserLeague() {
+        return userLeague;
+    }
+
+    public void setUserLeague( Integer userLeague ) {
+        this.userLeague = userLeague;
+    }
+
+    public Double getLeagueDiscount() {
+        return leagueDiscount;
+    }
+
+    public void setLeagueDiscount( Double leagueDiscount ) {
+        this.leagueDiscount = leagueDiscount;
+    }
+
+    public Integer getLeagueJifen() {
+        return leagueJifen;
+    }
+
+    public void setLeagueJifen( Integer leagueJifen ) {
+        this.leagueJifen = leagueJifen;
     }
 }

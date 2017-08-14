@@ -44,6 +44,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
     //微信卡券核销
     private final String CODE_CONSUME = "/basics/79B4DE7C/codeConsume.do";
+
     //发送短信
     private final String SEND_SMS = "/basics/79B4DE7C/sendSMS.do";
 

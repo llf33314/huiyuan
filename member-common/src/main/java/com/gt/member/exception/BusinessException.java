@@ -31,4 +31,5 @@ public class BusinessException extends SystemException {
     public BusinessException(ResponseMemberEnums responseMemberEnums) {
         super(responseMemberEnums);
     }
+
 }

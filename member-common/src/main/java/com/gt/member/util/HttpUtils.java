@@ -54,10 +54,10 @@ public class HttpUtils {
 	    e.printStackTrace();
 	} finally {
 	    try {
+		if ( in != null ) in.close();
 		if ( out != null ) {
 		    out.close();
 		}
-		if ( in != null ) in.close();
 	    } catch ( IOException ex ) {
 		ex.printStackTrace();
 	    }
@@ -77,16 +77,16 @@ public class HttpUtils {
 	} catch ( IOException e ) {
 	    e.printStackTrace();
 	} finally {
-	    if ( inputStream != null ) {
+	    if ( reader != null ) {
 		try {
-		    inputStream.close();
+		    reader.close();
 		} catch ( IOException e ) {
 		    e.printStackTrace();
 		}
 	    }
-	    if ( reader != null ) {
+	    if ( inputStream != null ) {
 		try {
-		    reader.close();
+		    inputStream.close();
 		} catch ( IOException e ) {
 		    e.printStackTrace();
 		}

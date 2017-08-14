@@ -27,7 +27,7 @@ public class MpGenerator {
     public static final  String   outPutJavaModel    = outPutBaseDir + "src/main/java";
     // 需要生成的表
     public static final  String[] generatorTableName = new String[] {
-		    "t_count_bill_grant","t_count_changeprice_grant"
+		    "t_member_log"
     };
     // 去除表前缀 例如：bus_user 填入bus 生成的 user
     public static final  String[] tablePrefix        = new String[] { "t_" };
@@ -49,7 +49,7 @@ public class MpGenerator {
     // 驱动
     public static final  String   driverName         = "com.mysql.jdbc.Driver";
     // url
-    public static final  String   url                = "jdbc:mysql://14.29.79.226:3306/gt_aliyuan?characterEncoding=utf8";
+    public static final  String   url                = "jdbc:mysql://113.106.202.51:3306/gt_aliyuan?characterEncoding=utf8";
     // 数据库用户名
     public static final  String   username           = "root";
     // 密码
