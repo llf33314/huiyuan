@@ -27,7 +27,7 @@ import java.util.Map;
  * @author Administrator
  */
 @Controller
-@RequestMapping("/api/memberApi")
+@RequestMapping("/memberAPI/member")
 public class MemberApiController extends BaseController {
 
     private static final Logger LOG = Logger.getLogger(MemberApiController.class);
@@ -63,18 +63,22 @@ public class MemberApiController extends BaseController {
             @ApiImplicitParam(name = "shopId", value = "门店id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @GetMapping("/findMemberCard")
+    @RequestMapping(value = "/findMemberCard",method = RequestMethod.POST)
     public ServerResponse findMemberCard(HttpServletRequest request,
-                                         HttpServletResponse response, String cardNo, Integer busId, Integer shopId) {
-        if (CommonUtil.isEmpty("cardNo") || CommonUtil.isEmpty("busId") || CommonUtil.isEmpty("shopId")) {
-            return ServerResponse.createByError("缺少参数");
-        }
-        String cardNoKey = memberConfig.getCardNoKey();
+                                         HttpServletResponse response, @RequestBody Map requestBody ) {
+
+
         try {
+            String cardNo=CommonUtil.toString( requestBody.get( "requestBody" ) );
+            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
+            Integer shopId=CommonUtil.toInteger( requestBody.get( "requestBody" ) );
+            String cardNoKey = memberConfig.getCardNoKey();
              Map<String,Object> map=memberApiService.findMemberCard(busId, cardNoKey, cardNo, shopId);
             return ServerResponse.createBySuccess(map);
         } catch (BusinessException e){
             return ServerResponse.createByError(e.getCode(),e.getMessage());
+        }catch ( Exception e ){
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getDesc());
         }
     }
 
@@ -82,7 +86,7 @@ public class MemberApiController extends BaseController {
     @ApiOperation(value = "根据粉丝id获取粉丝信息", notes = "获取粉丝信息")
     @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @RequestMapping (value = "/findByMemberId",method = RequestMethod.GET)
+    @RequestMapping (value = "/findByMemberId",method = RequestMethod.POST)
     public ServerResponse findByMemberId(HttpServletRequest request,
                                          HttpServletResponse response,@RequestBody Map requestBody) {
        try {
@@ -100,7 +104,7 @@ public class MemberApiController extends BaseController {
                     @ApiImplicitParam( name = "money", value = "消费金额", paramType = "query", required = true, dataType = "int" ),
     })
     @ResponseBody
-    @RequestMapping (value = "/isAdequateMoney",method = RequestMethod.GET)
+    @RequestMapping (value = "/isAdequateMoney",method = RequestMethod.POST)
     public ServerResponse isAdequateMoney(HttpServletRequest request,
                     HttpServletResponse response, @RequestBody Map requestBody){
         try {
@@ -118,7 +122,7 @@ public class MemberApiController extends BaseController {
     @ApiOperation(value = "根据粉丝id获取会员折扣", notes = "根据粉丝id获取会员折扣")
     @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @RequestMapping (value = "/findCardTypeReturnDiscount",method = RequestMethod.GET)
+    @RequestMapping (value = "/findCardTypeReturnDiscount",method = RequestMethod.POST)
     public ServerResponse findCardTypeReturnDiscount(HttpServletRequest request,
                     HttpServletResponse response, @RequestBody Map requestBody){
         try {
@@ -138,7 +142,7 @@ public class MemberApiController extends BaseController {
         @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @RequestMapping (value = "/bingdingPhone",method = RequestMethod.GET)
+    @RequestMapping (value = "/bingdingPhone",method = RequestMethod.POST)
     public ServerResponse bingdingPhone(HttpServletRequest request,
                     HttpServletResponse response, @RequestBody Map requestBody){
         try {
@@ -162,7 +166,7 @@ public class MemberApiController extends BaseController {
             @ApiImplicitParam(name = "money", value = "退款金额", paramType = "query", required = true, dataType = "double")
     })
     @ResponseBody
-    @RequestMapping (value = "/refundMoney",method = RequestMethod.GET)
+    @RequestMapping (value = "/refundMoney",method = RequestMethod.POST)
     public ServerResponse refundMoney(HttpServletRequest request,
                                      HttpServletResponse response,@RequestBody Map requestBody) {
         try {
@@ -181,7 +185,7 @@ public class MemberApiController extends BaseController {
     @ApiOperation(value = "统计会员数量", notes = "根据商家id统计会员数量")
     @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @RequestMapping (value = "/countMember",method = RequestMethod.GET)
+    @RequestMapping (value = "/countMember",method = RequestMethod.POST)
     public ServerResponse countMember(HttpServletRequest request,
                                       HttpServletResponse response,@RequestBody Map requestBody){
         try {
@@ -199,7 +203,7 @@ public class MemberApiController extends BaseController {
                     @ApiImplicitParam(name = "ids", value = "粉丝id字符集合 逗号隔开", paramType = "query", required = true, dataType = "String")
     })
     @ResponseBody
-    @RequestMapping (value = "/findMemberByids",method = RequestMethod.GET)
+    @RequestMapping (value = "/findMemberByids",method = RequestMethod.POST)
     public ServerResponse findMemberByids(HttpServletRequest request,
                     HttpServletResponse response,@RequestBody Map requestBody){
         try {

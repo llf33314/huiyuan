@@ -30,7 +30,7 @@ import java.util.Map;
  * Created by Administrator on 2017/8/2 0002.
  */
 @Controller
-@RequestMapping("/api/cardCouponseApi")
+@RequestMapping("/memberAPI/cardCouponseApi")
 public class CardCouponseApiController {
 
     @Autowired
@@ -39,7 +39,7 @@ public class CardCouponseApiController {
     @ApiOperation(value = "查询微信优惠券信息", notes = "根据公众号查询微信卡券信息")
     @ApiImplicitParam(name = "publicId", value = "公众号id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @RequestMapping (value = "/findWxCard",method = RequestMethod.GET)
+    @RequestMapping (value = "/findWxCard",method = RequestMethod.POST)
     public ServerResponse findWxCard(HttpServletRequest request,
                                      HttpServletResponse response,@RequestBody Map<String,Object> requestBody) {
         Integer publicId= CommonUtil.toInteger(requestBody.get( "publicId" ));
@@ -71,7 +71,7 @@ public class CardCouponseApiController {
     @ApiOperation(value = "查询卡券信息", notes = "根据id查询微信卡券信息")
     @ApiImplicitParam(name = "cardId", value = "卡券id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @RequestMapping (value = "/findWxCardById",method = RequestMethod.GET)
+    @RequestMapping (value = "/findWxCardById",method = RequestMethod.POST)
     public ServerResponse findWxCardById(HttpServletRequest request,
                                          HttpServletResponse response, @RequestBody Map<String,Object> requestBody) {
         Integer cardId= CommonUtil.toInteger(requestBody.get( "cardId" ));
@@ -90,7 +90,7 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "money", value = "消费金额", paramType = "query", required = true, dataType = "double")
     })
     @ResponseBody
-    @RequestMapping (value = "/findDuofenCardByMemberIdAndMoney",method = RequestMethod.GET)
+    @RequestMapping (value = "/findDuofenCardByMemberIdAndMoney",method = RequestMethod.POST)
     public ServerResponse findDuofenCardByMemberIdAndMoney(HttpServletRequest request,
                                                            HttpServletResponse response,@RequestBody Map<String,Object> requestBody ){
         try {
@@ -108,7 +108,7 @@ public class CardCouponseApiController {
     @ApiOperation(value = "查询商家拥有的卡包信息", notes = "根据商家id查询商家拥有的卡包信息")
     @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @RequestMapping (value = "/findReceiveByBusUserId",method = RequestMethod.GET)
+    @RequestMapping (value = "/findReceiveByBusUserId",method = RequestMethod.POST)
     public ServerResponse findReceiveByBusUserId(HttpServletRequest request,
                                                  HttpServletResponse response,@RequestBody Map<String,Object> requestBody ){
         Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
@@ -120,7 +120,7 @@ public class CardCouponseApiController {
     @ApiOperation(value = "查询本公众号商场投放的包", notes = "根据商家id查询本公众号商场投放的包")
     @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @RequestMapping (value = "/findReceiveBybusId",method = RequestMethod.GET)
+    @RequestMapping (value = "/findReceiveBybusId",method = RequestMethod.POST)
     public ServerResponse findReceiveBybusId(HttpServletRequest request,
                                              HttpServletResponse response, @RequestBody Map<String,Object> requestBody){
         Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
@@ -132,7 +132,7 @@ public class CardCouponseApiController {
     @ApiOperation(value = "查询卡券信息", notes = "根据卡包查询卡券信息")
     @ApiImplicitParam(name = "receiveId", value = "多粉卡包id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @RequestMapping (value = "/findCardByReceiveId",method = RequestMethod.GET)
+    @RequestMapping (value = "/findCardByReceiveId",method = RequestMethod.POST)
     public ServerResponse findCardByReceiveId(HttpServletRequest request,
                                               HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
@@ -147,7 +147,7 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "page", value = "页数", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @RequestMapping (value = "/findByThreeMemberId",method = RequestMethod.GET)
+    @RequestMapping (value = "/findByThreeMemberId",method = RequestMethod.POST)
     public ServerResponse findByThreeMemberId(HttpServletRequest request,
                                               HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         Integer threeMemberId=CommonUtil.toInteger( requestBody.get( "threeMemberId" ) );
@@ -180,7 +180,7 @@ public class CardCouponseApiController {
     @ApiOperation(value = "查询卡券信息", notes = "根据卡包id查询卡券信息 map中key guoqi=1标示该包或该券过期")
     @ApiImplicitParam(name = "receiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @RequestMapping (value = "/findDuofenCardByReceiveId",method = RequestMethod.GET)
+    @RequestMapping (value = "/findDuofenCardByReceiveId",method = RequestMethod.POST)
     public ServerResponse findDuofenCardByReceiveId(HttpServletRequest request,
                                                     HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
@@ -236,7 +236,7 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "receiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @RequestMapping (value = "/findUserCardByReceiveId",method = RequestMethod.GET)
+    @RequestMapping (value = "/findUserCardByReceiveId",method = RequestMethod.POST)
     public ServerResponse findUserCardByReceiveId(HttpServletRequest request,
                                                   HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
@@ -252,7 +252,7 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "receiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @RequestMapping (value = "/findCardOverTime",method = RequestMethod.GET)
+    @RequestMapping (value = "/findCardOverTime",method = RequestMethod.POST)
     public ServerResponse findCardOverTime(HttpServletRequest request,
                                            HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
@@ -267,7 +267,7 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "page", value = "页数", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @RequestMapping (value = "/findCardReceive",method = RequestMethod.GET)
+    @RequestMapping (value = "/findCardReceive",method = RequestMethod.POST)
     public ServerResponse findCardReceive(HttpServletRequest request,
                                           HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
@@ -284,7 +284,7 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "page", value = "页数", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @RequestMapping (value = "/findCardReceiveBuy",method = RequestMethod.GET)
+    @RequestMapping (value = "/findCardReceiveBuy",method = RequestMethod.POST)
     public ServerResponse findCardReceiveBuy(HttpServletRequest request,
                                              HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
@@ -302,7 +302,7 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "cardreceiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @RequestMapping (value = "/pcBuyReceive",method = RequestMethod.GET)
+    @RequestMapping (value = "/pcBuyReceive",method = RequestMethod.POST)
     public ServerResponse pcBuyReceive(HttpServletRequest request,
                                        HttpServletResponse response,@RequestBody Map<String,Object> requestBody ){
         try {
@@ -340,7 +340,7 @@ public class CardCouponseApiController {
     @ApiOperation(value = "卡包信息（购买） 美容", notes = "卡包信息（购买） 美容")
     @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @RequestMapping (value = "/findReceiveByMeiRong",method = RequestMethod.GET)
+    @RequestMapping (value = "/findReceiveByMeiRong",method = RequestMethod.POST)
     public ServerResponse findReceiveByMeiRong(HttpServletRequest request,
                                       HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
@@ -358,7 +358,7 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "receiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @RequestMapping (value = "/findDuofenCardByMeiRong",method = RequestMethod.GET)
+    @RequestMapping (value = "/findDuofenCardByMeiRong",method = RequestMethod.POST)
     public ServerResponse findDuofenCardByMeiRong(HttpServletRequest request,
                                                   HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
@@ -376,7 +376,7 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "receiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @RequestMapping (value = "/findReceviceAllByMeiRong",method = RequestMethod.GET)
+    @RequestMapping (value = "/findReceviceAllByMeiRong",method = RequestMethod.POST)
     public ServerResponse findReceviceAllByMeiRong(HttpServletRequest request,
                                           HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
@@ -470,7 +470,7 @@ public class CardCouponseApiController {
     @ApiOperation(value = "美容小程序（根据粉丝id查询卡券包信息）", notes = "美容（根据粉丝id查询卡券包信息）")
     @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @RequestMapping (value = "/findMeiRongDuofenCardByMemberId",method = RequestMethod.GET)
+    @RequestMapping (value = "/findMeiRongDuofenCardByMemberId",method = RequestMethod.POST)
     public ServerResponse findMeiRongDuofenCardByMemberId(HttpServletRequest request,
                     HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
@@ -488,7 +488,7 @@ public class CardCouponseApiController {
                     @ApiImplicitParam(name = "receiceId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     } )
     @ResponseBody
-    @RequestMapping (value = "/findMeiRongDuofenCardGetByReceiveId",method = RequestMethod.GET)
+    @RequestMapping (value = "/findMeiRongDuofenCardGetByReceiveId",method = RequestMethod.POST)
     public ServerResponse findMeiRongDuofenCardGetByReceiveId(HttpServletRequest request,
                     HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
@@ -504,7 +504,7 @@ public class CardCouponseApiController {
     @ApiOperation(value = "美容小程序（卡券gId查询卡券信息 门店信息暂时没有）", notes = "美容小程序（卡券gId查询卡券信息）")
     @ApiImplicitParam(name = "gId", value = "领取的卡券id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @RequestMapping (value = "/findDuofenCardOne",method = RequestMethod.GET)
+    @RequestMapping (value = "/findDuofenCardOne",method = RequestMethod.POST)
     public ServerResponse findDuofenCardOne(HttpServletRequest request,
                     HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
@@ -519,7 +519,7 @@ public class CardCouponseApiController {
     @ApiOperation(value = "美容小程序（卡券gId查询卡券详情信息）", notes = "美容小程序（卡券gId查询卡券详情信息）")
     @ApiImplicitParam(name = "gId", value = "领取的卡券id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @RequestMapping (value = "/findCardDetails",method = RequestMethod.GET)
+    @RequestMapping (value = "/findCardDetails",method = RequestMethod.POST)
     public ServerResponse findCardDetails(HttpServletRequest request,
                     HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {

@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  * Created by pengjiangli on 2017/8/2 0002.
  */
 @Controller
-@RequestMapping("/api/memberCountApi")
+@RequestMapping("/memberAPI/memberCountApi")
 public class MemberCountApiController {
 
     @Autowired
@@ -35,7 +35,7 @@ public class MemberCountApiController {
 
     @ApiOperation(value = "门店计算方法", notes = "传入值具体描述请看实体类")
     @ResponseBody
-    @RequestMapping(value = "memberCountMoneyByShop",method = RequestMethod.GET)
+    @RequestMapping(value = "memberCountMoneyByShop",method = RequestMethod.POST)
     public ServerResponse memberCountMoneyByShop(HttpServletRequest request,
                                          HttpServletResponse response,@RequestBody MallAllEntity mallAllEntity ){
       try {
@@ -50,7 +50,7 @@ public class MemberCountApiController {
     @ApiOperation(value = "支付成功回调", notes = "传入值具体描述请看实体类 储值卡支付 直接调用 回调类以处理储值卡扣款")
     @ResponseBody
     @GetMapping("/paySuccess")
-    @RequestMapping(value = "paySuccess",method = RequestMethod.GET)
+    @RequestMapping(value = "paySuccess",method = RequestMethod.POST)
     public ServerResponse paySuccess(HttpServletRequest request,
                                      HttpServletResponse response,@RequestBody PaySuccessBo paySuccessBo){
         try {
