@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -189,6 +190,25 @@ public class MemberApiController extends BaseController {
             return ServerResponse.createBySuccess(countMember);
         } catch (Exception e) {
             logger.error("统计会员异常",e);
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+        }
+    }
+    @ApiOperation(value = "查询根据ids查询粉丝信息", notes = "分页查询根据ids查询粉丝信息")
+    @ApiImplicitParams({
+                    @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int"),
+                    @ApiImplicitParam(name = "ids", value = "粉丝id字符集合 逗号隔开", paramType = "query", required = true, dataType = "String")
+    })
+    @ResponseBody
+    @RequestMapping (value = "/findMemberByids",method = RequestMethod.GET)
+    public ServerResponse findMemberByids(HttpServletRequest request,
+                    HttpServletResponse response,@RequestBody Map requestBody){
+        try {
+            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
+            String ids=CommonUtil.toString( requestBody.get( "ids" ) );
+            List<Map<String, Object>> mapList = memberApiService.findMemberByIds(busId,ids);
+            return ServerResponse.createBySuccess(mapList);
+        } catch (Exception e) {
+            logger.error("查询根据ids查询粉丝信息异常",e);
             return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
         }
     }

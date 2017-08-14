@@ -43,6 +43,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	urls.put( "/user/toregister.do", "/user/toregister.do" );
 	urls.put( "/dxuser/login.do", "/dxuser/login.do" );
 	urls.put( "/dxuser/login_success.do", "/dxuser/login_success.do" );
+	urls.put( "swagger-ui.html", "swagger-ui.html" );
 
 	suffixs.add( "js" );
 	suffixs.add( "css" );
@@ -80,6 +81,9 @@ public class MyInterceptor implements HandlerInterceptor {
 	// 在wrapper中获取新的servletRequest
 	servletRequest = new BodyRequestWrapper( httpServletRequest );
 	String url = servletRequest.getRequestURI();
+	if(passSuffixs(url)||passUrl(url)){
+	    return true;
+	}
  	if(url.equals("api")||url.indexOf("api")>-1) {
 	    String signKey = "MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM"; // 定义到配置文件中
 	    // 获取签名信息

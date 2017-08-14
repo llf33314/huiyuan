@@ -16,7 +16,7 @@ spring:
 # profiles: test
 datasource:
  druid:
-  url: jdbc:mysql://114.29.79.226:3306/gt_aliyuan?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
+  url: jdbc:mysql://113.106.202.51:3306/gt_aliyuan?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
   username: zhangmz
   password: zhangmz123
   driver-class-name: com.mysql.jdbc.Driver
@@ -62,3 +62,7 @@ web:
  redis_pwd: gt@123456
  domain: yifriend.com
 
+redisSession:
+ domainName: .example.com
+ cookiePath: /
+ cookieName: JSESSIONID

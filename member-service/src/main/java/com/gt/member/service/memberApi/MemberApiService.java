@@ -612,4 +612,13 @@ public interface MemberApiService{
      */
     public void isAdequateMoney(Integer memberId,Double money) throws BusinessException;
 
+    /**
+     * 查询粉丝集合
+     * @param busId
+     * @param memberIds
+     * @return
+     * @throws BusinessException
+     */
+    public List<Map<String,Object>> findMemberByIds(Integer busId,String memberIds)throws BusinessException;
+
 }

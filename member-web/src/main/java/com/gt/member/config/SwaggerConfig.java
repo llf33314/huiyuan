@@ -22,15 +22,15 @@ public class SwaggerConfig {
     // 扫描包
     private static final String  BASEPACKAGE         = "com.gt.member.controller";
     // 标题
-    private static final String  TITLE               = "member-API";
+    private static final String  TITLE               = "member API 签名key:(MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM)";
     // 描述
-    private static final String  DESC                = "会员中心";
+    private static final String  DESC                = "会员管理";
     // 版本
     private static final String  VERSION             = "1.0.0";
     //
-    private static final String  TERMS_OF_SERVICEURL = "NO terms of controller";
+    private static final String  TERMS_OF_SERVICEURL = "NO terms of service";
     // 作者信息
-    private static final Contact CONTACT             = new Contact( "zhangmz", "会员秘钥:MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM", "" );
+    private static final Contact CONTACT             = new Contact( "彭江丽", "http://www.zhangmz.me", "3001417980@qq.com" );
     //
     private static final String  LICENSE             = "";
     //

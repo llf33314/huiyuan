@@ -19,6 +19,7 @@ import java.util.Map;
  */
 @Component
 public interface MemberDAO extends BaseMapper<Member> {
+
     Member selectByOpenid(@Param("openid")String openid,@Param("public_id")Integer public_id);
 
     Member selectByPublicIdAndPhone(@Param("public_id")Integer public_id,@Param("phone")String phone);
@@ -58,7 +59,7 @@ public interface MemberDAO extends BaseMapper<Member> {
     /**
      * 根据id集合查询
      */
-    List<Map<String, Object>> findByMemberIds(@Param("memberIds")List<Integer> memberIds);
+    List<Map<String, Object>> findByMemberIds(@Param("busId")Integer busId,@Param("memberIds")List<Integer> memberIds);
 
     /**
      * 查询所有会员

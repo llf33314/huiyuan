@@ -3955,4 +3955,20 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}
     }
 
+    public List<Map<String,Object>> findMemberByIds(Integer busId,String memberIds)throws BusinessException{
+      try {
+	  String[] str = memberIds.split( "," );
+	  List< Integer > ids = new ArrayList<>();
+	  for ( int i = 0; i < str.length; i++ ) {
+	      if ( CommonUtil.isNotEmpty( str[i] ) ) {
+		  ids.add( CommonUtil.toInteger( str[i] ) );
+	      }
+	  }
+	  return memberDAO.findByMemberIds( busId, ids );
+      }catch ( Exception e ){
+          throw new BusinessException( ResponseEnums.ERROR );
+      }
+    }
+
+
 }

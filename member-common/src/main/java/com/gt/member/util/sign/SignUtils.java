@@ -1,6 +1,7 @@
 package com.gt.member.util.sign;
 
 import com.gt.member.enums.SignEnum;
+import com.gt.member.util.CommonUtil;
 import com.gt.member.util.MD5Utils;
 
 public class SignUtils
@@ -16,6 +17,9 @@ public class SignUtils
 
     public static String decSign(String signKey, SignBean signBean, String param)
     {
+        if( CommonUtil.isEmpty( signBean )){
+	    return SignEnum.SIGN_ERROR.getCode();
+	}
 	String reqTime = signBean.getTimeStamp();
 
 	boolean timeOut = contrastTimeNow(Long.valueOf(Long.parseLong(reqTime))) > 10L;

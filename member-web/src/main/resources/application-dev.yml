@@ -15,16 +15,18 @@ spring:
    cache: false
   #redis配置
  redis:
-  host: 14.29.79.226
+  host: 113.106.202.51
   port: 6379
   password: gt@123456
+  database: 5
+
  session:
   store-type: redis
 
 
 datasource:
  druid:
-  url: jdbc:mysql://14.29.79.226:3306/gt_aliyuan?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
+  url: jdbc:mysql://113.106.202.51:3306/gt_aliyuan?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
   username: root
   password: gt123456
   driver-class-name: com.mysql.jdbc.Driver
@@ -63,10 +65,13 @@ server:
 web:
  wxmp_home: http://yifriend.net/
  cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6
- redis_ip: 127.0.0.1
- redis_port: 6379
- redis_pwd: gt@123456
  domain: yifriend.com
+
+
+redisSession:
+ domainName: .example.com
+ cookiePath: /
+ cookieName: JSESSIONID
 
 
 
