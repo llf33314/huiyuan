@@ -44,7 +44,7 @@ public class MemberApiController extends BaseController {
             @ApiImplicitParam(name = "shopId", value = "门店id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @RequestMapping(value = "/findMemberCardByMemberId",method = RequestMethod.POST)
+    @RequestMapping(value = "/findCardByMembeId",method = RequestMethod.POST)
     public ServerResponse findCardByMembeId(HttpServletRequest request,
                                             HttpServletResponse response, @RequestBody Map requestBody ) {
         try {
