@@ -222,7 +222,7 @@ public class MemberApiController extends BaseController {
     @ApiOperation(value = "根据id查询粉丝信息id集合", notes = "根据id查询粉丝信息id集合")
     @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @RequestMapping (value = "/findMemberByids",method = RequestMethod.POST)
+    @RequestMapping (value = "/findMemberIdsByid",method = RequestMethod.POST)
     public ServerResponse findMemberIdsByid(HttpServletRequest request,
                     HttpServletResponse response,@RequestBody Map requestBody){
         try {
@@ -272,6 +272,5 @@ public class MemberApiController extends BaseController {
             return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
         }
     }
-
 
 }
