@@ -3818,7 +3818,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	        //会员立即送 和 延迟送
 		if(paySuccessBo.getDelay()==0){
 		    findGiveRuleDelay(paySuccessBo.getOrderCode());  //延迟送
-		}else{
+		}else if(paySuccessBo.getDelay()==1){
 		    findGiveRule(paySuccessBo.getOrderCode(),"消费会员赠送",(byte)1);
 		}
 	    }
