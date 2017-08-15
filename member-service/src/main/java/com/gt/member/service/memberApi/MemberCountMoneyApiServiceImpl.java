@@ -202,9 +202,9 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
                 Double discountfenbiMoney = currencyCount(pay,
                         member.getFansCurrency()); // 计算粉币抵扣
                 if (discountfenbiMoney > 0) {
-                    Map<String, Object> dict = dictService.getDict("1058");
+                    List<Map< String,Object >> dict = dictService.getDict("1058");
                     pay = pay - discountfenbiMoney;
-                    Integer fenbiNum = deductFenbi(dict, discountfenbiMoney).intValue();
+                    Integer fenbiNum = deductFenbi(dict.get( 0 ), discountfenbiMoney).intValue();
                     ce.setFenbiNum(fenbiNum);
                     ce.setDiscountfenbiMoney(discountfenbiMoney);
                     ce.setCanUsefenbi(true);
@@ -552,7 +552,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 
         //<!-----------------粉币计算start---------------------------->
         if (isMemberCard && mallAllEntity.getUseFenbi() == 1) {
-            Map<String, Object> dict = dictService.getDict("1058");
+            List<Map< String,Object >> dict = dictService.getDict("1058");
             Integer fcount = 0; //能抵扣的粉币商品数量
             Integer fcount1 = 0; //能抵扣的粉币商品数量
             Double fenbiFenTanAll = 0.0;
@@ -596,7 +596,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
                                 }
                                 //商品数据
                                 mallEntity.setDiscountfenbiMoney(fenbiFenTan);
-                                Double fenbiNum = deductFenbi(dict, fenbiFenTan);
+                                Double fenbiNum = deductFenbi(dict.get( 0 ), fenbiFenTan);
                                 mallEntity.setFenbiNum(fenbiNum);
                                 mallEntity.setCanUsefenbi(1);
                                 mallEntity.setBalanceMoney(formatNumber(BigDecimalUtil.sub(mallEntity.getTotalMoneyAll(), fenbiFenTan)));
@@ -621,7 +621,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
                         mallShopMap.put(mallShopEntity.getShopId(), mallShopEntity);
                     }
                 if (fenbiMoney > 0) {
-                    Double fenbiNumByAll = deductFenbi(dict, discountfenbiMoneyByShopId);
+                    Double fenbiNumByAll = deductFenbi(dict.get( 0 ), discountfenbiMoneyByShopId);
                     mallAllEntity.setFenbiNum(fenbiNumByAll);
                     mallAllEntity.setDiscountfenbiMoney(discountfenbiMoneyByShopId);
                 }
@@ -1120,8 +1120,8 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
      */
     public Double currencyCount(Double totalMoney, Double fans_currency) {
         try {
-            Map<String, Object> dict = dictService.getDict("1058");
-            Double ratio = CommonUtil.toDouble(dict.get("1"));
+            List<Map< String,Object >> dict = dictService.getDict("1058");
+            Double ratio = CommonUtil.toDouble(dict.get( 0 ).get("1"));
             if (fans_currency < ratio * 10) {
                 return 0.0;
             }

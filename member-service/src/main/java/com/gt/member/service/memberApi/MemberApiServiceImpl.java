@@ -1864,8 +1864,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 	try {
 	    int fenbi = 0;
 	    if ( fenbimoney > 0 ) {
-		Map< String,Object > dict = dictService.getDict( "1058" );
-		fenbi = new Double( fenbimoney * CommonUtil.toDouble( dict.get( "1" ) ) ).intValue();
+		List<Map< String,Object >> dict = dictService.getDict( "1058" );
+		fenbi = new Double( fenbimoney * CommonUtil.toDouble( dict.get( 0 ).get( "1" ) ) ).intValue();
 	    } else {
 		map.put( "code", "-1" );
 		map.put( "message", "未存在粉币扣除" );
@@ -1986,8 +1986,8 @@ public class MemberApiServiceImpl implements MemberApiService {
     @Override
     public Double currencyCount( Double totalMoney, Double fans_currency ) {
 	try {
-	    Map< String,Object > dict = dictService.getDict( "1058" );
-	    Double ratio = CommonUtil.toDouble( dict.get( "1" ) );
+	    List<Map< String,Object >> dict= dictService.getDict( "1058" );
+	    Double ratio = CommonUtil.toDouble( dict.get( 0 ).get( "1" ) );
 	    if ( fans_currency < ratio * 10 ) {
 		return 0.0;
 	    }
@@ -2010,8 +2010,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 
     @Override
     public Double deductFenbi( Double jifenMoney, int busId ) {
-	Map< String,Object > dict = dictService.getDict( "1058" );
-	Double ratio = CommonUtil.toDouble( dict.get( "1" ) );
+	List<Map< String,Object >> dict= dictService.getDict( "1058" );
+	Double ratio = CommonUtil.toDouble( dict.get( 0 ).get( "1" ) );
 	Double fenbi = jifenMoney * ratio;
 	return fenbi;
     }
@@ -2244,8 +2244,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    // 粉币
 	    if ( fenbiMoney > 0 ) {
 		// 粉币抵消
-		Map< String,Object > dict = dictService.getDict( "1058" );
-		Double fenbi = CommonUtil.toDouble( dict.get( "1" ) ) * fenbiMoney;
+		List<Map< String,Object >> dict = dictService.getDict( "1058" );
+		Double fenbi = CommonUtil.toDouble( dict.get( 0 ).get( "1" ) ) * fenbiMoney;
 		uc.setFenbi( fenbi );
 		if ( fenbiMoney >= pay ) {
 		    pay = 0.0;
@@ -2755,8 +2755,8 @@ public class MemberApiServiceImpl implements MemberApiService {
     @Override
     public Map< String,Object > fenbiRule( Integer busId ) {
 	Map< String,Object > map = new HashMap< String,Object >();
-	Map< String,Object > dict = dictService.getDict( "1058" );
-	Double ratio = CommonUtil.toDouble( dict.get( "1" ) );
+	List<Map< String,Object >> dict = dictService.getDict( "1058" );
+	Double ratio = CommonUtil.toDouble( dict.get( 0 ).get( "1" ) );
 	map.put( "ratio", ratio );
 	map.put( "startMoney", 10 );
 	return map;
