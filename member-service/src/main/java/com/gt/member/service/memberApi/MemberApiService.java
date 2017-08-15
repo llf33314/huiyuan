@@ -604,4 +604,5 @@ public interface MemberApiService {
      * @throws BusinessException
      */
     public List<Map<String,Object>> findBuyGradeType(Integer busId);
+
 }

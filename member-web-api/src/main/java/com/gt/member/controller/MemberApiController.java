@@ -3,6 +3,7 @@ package com.gt.member.controller;
 import com.gt.member.base.BaseController;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.entity.Member;
+import com.gt.member.entity.MemberGradetype;
 import com.gt.member.enums.ResponseEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.memberApi.MemberApiService;
@@ -270,6 +271,21 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createBySuccess( maplist );
 	}catch ( Exception e ) {
 	    logger.error( "查询购买的会员卡模板异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+    }
+
+    @ApiOperation( value = "查询会员卡片名称", notes = "查询会员卡片名称" )
+    @ApiImplicitParam( name = "memberId", value = "", paramType = "query", required = true, dataType = "int" )
+    @ResponseBody
+    @RequestMapping( value = "/findGradeType", method = RequestMethod.POST )
+    public ServerResponse findGradeType(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ){
+	try {
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	   MemberGradetype gradeType = memberApiService.findGradeType( memberId );
+	    return ServerResponse.createBySuccess( gradeType );
+	}catch ( Exception e ) {
+	    logger.error( "查询会员卡片名称异常", e );
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
     }

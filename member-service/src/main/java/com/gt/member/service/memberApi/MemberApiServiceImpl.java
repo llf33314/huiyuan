@@ -1930,7 +1930,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}
     }
 
-    @Transactional( rollbackFor = Exception.class )
     @Override
     public MemberGradetype findGradeType( Integer memberId ) {
 	Member member = memberDAO.selectById( memberId );
@@ -4014,6 +4013,5 @@ public class MemberApiServiceImpl implements MemberApiService {
 	return memberGradetypeDAO.findBuyGradeType( busId );
 
     }
-
 
 }
