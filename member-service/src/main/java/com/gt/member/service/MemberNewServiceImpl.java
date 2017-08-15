@@ -4,7 +4,7 @@ import com.gt.member.dao.MemberCardrecordDAO;
 import com.gt.member.dao.MemberDAO;
 import com.gt.member.entity.Member;
 import com.gt.member.entity.MemberCardrecord;
-import com.gt.member.service.old.member.SystemMsgService;
+import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.CommonUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

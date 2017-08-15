@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.mapper.BusUserNumDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.BusUserNum">
+		<id column="id" property="id" />
+		<result column="bus_user_id" property="busUserId" />
+		<result column="style" property="style" />
+		<result column="usernum" property="usernum" />
+		<result column="createperson" property="createperson" />
+		<result column="createtime" property="createtime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, bus_user_id, style, usernum, createperson, createtime
+    </sql>
+
+	<select id="findBusUserNum" resultType="Map">
+		SELECT usernum FROM bus_user_num WHERE bus_user_id=#{userId} and style=#{style}
+	</select>
+
+</mapper>

@@ -14,6 +14,8 @@
 		<result column="openid" property="openid" />
 		<result column="phone" property="phone" />
 		<result column="nickname" property="nickname" />
+		<result column="nickname" property="nickname"
+				typeHandler="com.gt.member.entity.ConvertBlobTypeHandler" />
 		<result column="sex" property="sex" />
 		<result column="province" property="province" />
 		<result column="city" property="city" />

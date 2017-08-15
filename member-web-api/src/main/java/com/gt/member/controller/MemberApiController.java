@@ -27,250 +27,236 @@ import java.util.Map;
  * @author Administrator
  */
 @Controller
-@RequestMapping("/memberAPI/member")
+@RequestMapping( "/memberAPI/member" )
 public class MemberApiController extends BaseController {
 
-    private static final Logger LOG = Logger.getLogger(MemberApiController.class);
+    private static final Logger LOG = Logger.getLogger( MemberApiController.class );
 
     @Autowired
     private MemberConfig memberConfig;
 
     @Autowired
     private MemberApiService memberApiService;
+    private Integer          ctId;
 
-    @ApiOperation(value = "根据memberId和门店查询会员数据 返回数据包含会员信息、微信卡券、多粉卡券", notes = "根据memberId和门店查询会员数据")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "memberId", value = "卡号或手机号", paramType = "query", required = true, dataType = "int"),
-            @ApiImplicitParam(name = "shopId", value = "门店id", paramType = "query", required = true, dataType = "int")
-    })
+    @ApiOperation( value = "根据memberId和门店查询会员数据 返回数据包含会员信息、微信卡券、多粉卡券", notes = "根据memberId和门店查询会员数据" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "卡号或手机号", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "shopId", value = "门店id", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
-    @RequestMapping(value = "/findCardByMembeId",method = RequestMethod.POST)
-    public ServerResponse findCardByMembeId(HttpServletRequest request,
-                                            HttpServletResponse response, @RequestBody Map requestBody ) {
-        try {
-            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
-            Integer shopId=CommonUtil.toInteger( requestBody.get( "shopId" ) );
-            Map<String, Object> map = memberApiService.findMemberCardByMemberId(memberId, shopId);
-            return ServerResponse.createBySuccess(map);
-        } catch (BusinessException e) {
-            return ServerResponse.createByError(e.getCode(),e.getMessage());
-        }
+    @RequestMapping( value = "/findCardByMembeId", method = RequestMethod.POST )
+    public ServerResponse findCardByMembeId( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    Integer shopId = CommonUtil.toInteger( requestBody.get( "shopId" ) );
+	    Map< String,Object > map = memberApiService.findMemberCardByMemberId( memberId, shopId );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
     }
 
-    @ApiOperation(value = "根据手机号或会员卡号获取会员信息", notes = "手机号或卡号查询会员相关信息包括微信多粉优惠券 \n " +
-            "cardNo 卡号或手机号 ,busId 商家id,shopId 门店id")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "cardNo", value = "卡号或手机号", paramType = "query", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int"),
-            @ApiImplicitParam(name = "shopId", value = "门店id", paramType = "query", required = true, dataType = "int")
-    })
+    @ApiOperation( value = "根据手机号或会员卡号获取会员信息", notes = "手机号或卡号查询会员相关信息包括微信多粉优惠券 \n " + "cardNo 卡号或手机号 ,busId 商家id,shopId 门店id" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "cardNo", value = "卡号或手机号", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "shopId", value = "门店id", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
-    @RequestMapping(value = "/findMemberCard",method = RequestMethod.POST)
-    public ServerResponse findMemberCard(HttpServletRequest request,
-                                         HttpServletResponse response, @RequestBody Map requestBody ) {
+    @RequestMapping( value = "/findMemberCard", method = RequestMethod.POST )
+    public ServerResponse findMemberCard( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
 
-
-        try {
-            String cardNo=CommonUtil.toString( requestBody.get( "requestBody" ) );
-            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
-            Integer shopId=CommonUtil.toInteger( requestBody.get( "requestBody" ) );
-            String cardNoKey = memberConfig.getCardNoKey();
-             Map<String,Object> map=memberApiService.findMemberCard(busId, cardNoKey, cardNo, shopId);
-            return ServerResponse.createBySuccess(map);
-        } catch (BusinessException e){
-            return ServerResponse.createByError(e.getCode(),e.getMessage());
-        }catch ( Exception e ){
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getDesc());
-        }
+	try {
+	    String cardNo = CommonUtil.toString( requestBody.get( "requestBody" ) );
+	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
+	    Integer shopId = CommonUtil.toInteger( requestBody.get( "requestBody" ) );
+	    String cardNoKey = memberConfig.getCardNoKey();
+	    Map< String,Object > map = memberApiService.findMemberCard( busId, cardNoKey, cardNo, shopId );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
     }
 
-
-    @ApiOperation(value = "根据粉丝id获取粉丝信息", notes = "获取粉丝信息")
-    @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
+    @ApiOperation( value = "根据粉丝id获取粉丝信息", notes = "获取粉丝信息" )
+    @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
     @ResponseBody
-    @RequestMapping (value = "/findByMemberId",method = RequestMethod.POST)
-    public ServerResponse findByMemberId(HttpServletRequest request,
-                                         HttpServletResponse response,@RequestBody Map requestBody) {
-       try {
-           Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ));
-           Member member = memberApiService.findByMemberId(memberId);
-           return ServerResponse.createBySuccess(member);
-       }catch (BusinessException e){
-           return ServerResponse.createByError(e.getCode(),e.getMessage());
-       }
+    @RequestMapping( value = "/findByMemberId", method = RequestMethod.POST )
+    public ServerResponse findByMemberId( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    Member member = memberApiService.findByMemberId( memberId );
+	    return ServerResponse.createBySuccess( member );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
     }
 
-    @ApiOperation(value = "判断储值卡金额是否充足", notes = "判断储值卡金额是否充足")
-    @ApiImplicitParams( {
-                    @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
-                    @ApiImplicitParam( name = "money", value = "消费金额", paramType = "query", required = true, dataType = "int" ),
-    })
+    @ApiOperation( value = "判断储值卡金额是否充足", notes = "判断储值卡金额是否充足" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "money", value = "消费金额", paramType = "query", required = true, dataType = "int" ), } )
     @ResponseBody
-    @RequestMapping (value = "/isAdequateMoney",method = RequestMethod.POST)
-    public ServerResponse isAdequateMoney(HttpServletRequest request,
-                    HttpServletResponse response, @RequestBody Map requestBody){
-        try {
-            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ));
-            Double money=CommonUtil.toDouble( requestBody.get( "money" ));
-            memberApiService.isAdequateMoney(memberId,money);
-            return ServerResponse.createBySuccess();
-        }catch (BusinessException e){
-            return ServerResponse.createByError(e.getCode(),e.getMessage());
-        }
+    @RequestMapping( value = "/isAdequateMoney", method = RequestMethod.POST )
+    public ServerResponse isAdequateMoney( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    Double money = CommonUtil.toDouble( requestBody.get( "money" ) );
+	    memberApiService.isAdequateMoney( memberId, money );
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
     }
 
-
-
-    @ApiOperation(value = "根据粉丝id获取会员折扣", notes = "根据粉丝id获取会员折扣")
-    @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
+    @ApiOperation( value = "根据粉丝id获取会员折扣", notes = "根据粉丝id获取会员折扣" )
+    @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
     @ResponseBody
-    @RequestMapping (value = "/findCardTypeReturnDiscount",method = RequestMethod.POST)
-    public ServerResponse findCardTypeReturnDiscount(HttpServletRequest request,
-                    HttpServletResponse response, @RequestBody Map requestBody){
-        try {
-            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ));
-            Double discount = memberApiService.findCardTypeReturnDiscount(memberId);
-            return ServerResponse.createBySuccess(discount);
-        }catch (BusinessException e){
-            return ServerResponse.createByError(e.getCode(),e.getMessage());
-        }
+    @RequestMapping( value = "/findCardTypeReturnDiscount", method = RequestMethod.POST )
+    public ServerResponse findCardTypeReturnDiscount( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    Double discount = memberApiService.findCardTypeReturnDiscount( memberId );
+	    return ServerResponse.createBySuccess( discount );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
     }
 
-    @ApiOperation(value = "小程序绑定手机号码", notes = "小程序绑定手机号码 返回member对象数据")
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int"),
-        @ApiImplicitParam(name = "code", value = "短信校验码", paramType = "query", required = true, dataType = "String"),
-        @ApiImplicitParam(name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String"),
-        @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
-    })
+    @ApiOperation( value = "小程序绑定手机号码", notes = "小程序绑定手机号码 返回member对象数据" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "code", value = "短信校验码", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
-    @RequestMapping (value = "/bingdingPhone",method = RequestMethod.POST)
-    public ServerResponse bingdingPhone(HttpServletRequest request,
-                    HttpServletResponse response, @RequestBody Map requestBody){
-        try {
-            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ));
-            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ));
-            String phone=CommonUtil.toString( requestBody.get( "phone" ));
-            String code=CommonUtil.toString( requestBody.get( "code" ));
-            Member member= memberApiService.bingdingPhone(memberId,phone,code,busId);
-            return ServerResponse.createBySuccess(member);
-        }catch (BusinessException e){
-            return ServerResponse.createByError(e.getCode(),e.getMessage());
-        }
+    @RequestMapping( value = "/bingdingPhone", method = RequestMethod.POST )
+    public ServerResponse bingdingPhone( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
+	    String phone = CommonUtil.toString( requestBody.get( "phone" ) );
+	    String code = CommonUtil.toString( requestBody.get( "code" ) );
+	    Member member = memberApiService.bingdingPhone( memberId, phone, code, busId );
+	    return ServerResponse.createBySuccess( member );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
     }
 
-
-    @ApiOperation(value = "退款包括了储值卡退款", notes = "退款包括了储值卡退款")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "orderNo", value = "订单号", paramType = "query", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "ucType", value = "消费类型", paramType = "query", required = true, dataType = "int"),
-            @ApiImplicitParam(name = "money", value = "退款金额", paramType = "query", required = true, dataType = "double")
-    })
+    @ApiOperation( value = "退款包括了储值卡退款", notes = "退款包括了储值卡退款" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "ucType", value = "消费类型", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "money", value = "退款金额", paramType = "query", required = true, dataType = "double" ) } )
     @ResponseBody
-    @RequestMapping (value = "/refundMoney",method = RequestMethod.POST)
-    public ServerResponse refundMoney(HttpServletRequest request,
-                                     HttpServletResponse response,@RequestBody Map requestBody) {
-        try {
-            Integer ucType=CommonUtil.toInteger( requestBody.get( "ucType" ));
-            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ));
-            String orderNo=CommonUtil.toString( requestBody.get( "orderNo" ));
-            Double money=CommonUtil.toDouble( requestBody.get( "money" ));
-            memberApiService.refundMoney(busId, orderNo, ucType, money);
-            return ServerResponse.createBySuccess();
-        } catch (BusinessException e) {
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
-        }
+    @RequestMapping( value = "/refundMoney", method = RequestMethod.POST )
+    public ServerResponse refundMoney( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    Integer ucType = CommonUtil.toInteger( requestBody.get( "ucType" ) );
+	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
+	    String orderNo = CommonUtil.toString( requestBody.get( "orderNo" ) );
+	    Double money = CommonUtil.toDouble( requestBody.get( "money" ) );
+	    memberApiService.refundMoney( busId, orderNo, ucType, money );
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
     }
 
-
-    @ApiOperation(value = "统计会员数量", notes = "根据商家id统计会员数量")
-    @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
+    @ApiOperation( value = "统计会员数量", notes = "根据商家id统计会员数量" )
+    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
     @ResponseBody
-    @RequestMapping (value = "/countMember",method = RequestMethod.POST)
-    public ServerResponse countMember(HttpServletRequest request,
-                                      HttpServletResponse response,@RequestBody Map requestBody){
-        try {
-            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
-            Map<String, Object> countMember = memberApiService.countMember(busId);
-            return ServerResponse.createBySuccess(countMember);
-        } catch (Exception e) {
-            logger.error("统计会员异常",e);
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
-        }
-    }
-    @ApiOperation(value = "查询根据ids查询粉丝信息", notes = "分页查询根据ids查询粉丝信息")
-    @ApiImplicitParams({
-                    @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int"),
-                    @ApiImplicitParam(name = "ids", value = "粉丝id字符集合 逗号隔开", paramType = "query", required = true, dataType = "String")
-    })
-    @ResponseBody
-    @RequestMapping (value = "/findMemberByids",method = RequestMethod.POST)
-    public ServerResponse findMemberByids(HttpServletRequest request,
-                    HttpServletResponse response,@RequestBody Map requestBody){
-        try {
-            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
-            String ids=CommonUtil.toString( requestBody.get( "ids" ) );
-            List<Map<String, Object>> mapList = memberApiService.findMemberByIds(busId,ids);
-            return ServerResponse.createBySuccess(mapList);
-        } catch (Exception e) {
-            logger.error("查询根据ids查询粉丝信息异常",e);
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
-        }
+    @RequestMapping( value = "/countMember", method = RequestMethod.POST )
+    public ServerResponse countMember( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
+	    Map< String,Object > countMember = memberApiService.countMember( busId );
+	    return ServerResponse.createBySuccess( countMember );
+	} catch ( Exception e ) {
+	    logger.error( "统计会员异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
     }
 
-    @ApiOperation(value = "根据id查询粉丝信息id集合", notes = "根据id查询粉丝信息id集合")
-    @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
+    @ApiOperation( value = "查询根据ids查询粉丝信息", notes = "分页查询根据ids查询粉丝信息" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "ids", value = "粉丝id字符集合 逗号隔开", paramType = "query", required = true, dataType = "String" ) } )
     @ResponseBody
-    @RequestMapping (value = "/findMemberIdsByid",method = RequestMethod.POST)
-    public ServerResponse findMemberIdsByid(HttpServletRequest request,
-                    HttpServletResponse response,@RequestBody Map requestBody){
-        try {
-            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
-            List<Integer> mapList = memberApiService.findMemberIds(memberId);
-            return ServerResponse.createBySuccess(mapList);
-        } catch (Exception e) {
-            logger.error("根据id查询粉丝信息id集合异常",e);
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
-        }
+    @RequestMapping( value = "/findMemberByids", method = RequestMethod.POST )
+    public ServerResponse findMemberByids( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
+	    String ids = CommonUtil.toString( requestBody.get( "ids" ) );
+	    List< Map< String,Object > > mapList = memberApiService.findMemberByIds( busId, ids );
+	    return ServerResponse.createBySuccess( mapList );
+	} catch ( Exception e ) {
+	    logger.error( "查询根据ids查询粉丝信息异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
     }
 
-    @ApiOperation(value = "判断粉丝是否是会员", notes = "判断粉丝是否是会员")
-    @ApiImplicitParam(name = "memberId", value = "", paramType = "query", required = true, dataType = "int")
+    @ApiOperation( value = "根据id查询粉丝信息id集合", notes = "根据id查询粉丝信息id集合" )
+    @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
     @ResponseBody
-    @RequestMapping (value = "/isMember",method = RequestMethod.POST)
-    public ServerResponse isMember(HttpServletRequest request,
-                    HttpServletResponse response,@RequestBody Map requestBody){
-        try {
-            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
-            memberApiService.isMemember( memberId );
-            return ServerResponse.createBySuccess();
-        }catch ( BusinessException e ){
-            return ServerResponse.createByError(e.getCode(), e.getMessage());
-        }catch (Exception e) {
-            logger.error("判断粉丝是否是会员异常",e);
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
-        }
+    @RequestMapping( value = "/findMemberIdsByid", method = RequestMethod.POST )
+    public ServerResponse findMemberIdsByid( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    List< Integer > mapList = memberApiService.findMemberIds( memberId );
+	    return ServerResponse.createBySuccess( mapList );
+	} catch ( Exception e ) {
+	    logger.error( "根据id查询粉丝信息id集合异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
     }
 
-    @ApiOperation(value = "商场关注赠送积分", notes = "商场关注赠送积分")
-    @ApiImplicitParams( {
-                    @ApiImplicitParam(name = "memberId", value = "", paramType = "query", required = true, dataType = "int"),
-                    @ApiImplicitParam(name = "jifen", value = "", paramType = "query", required = true, dataType = "int"),
-    } )
+    @ApiOperation( value = "判断粉丝是否是会员", notes = "判断粉丝是否是会员" )
+    @ApiImplicitParam( name = "memberId", value = "", paramType = "query", required = true, dataType = "int" )
     @ResponseBody
-    @RequestMapping (value = "/updateJifen",method = RequestMethod.PUT)
-    public ServerResponse updateJifen(HttpServletRequest request,
-                    HttpServletResponse response,@RequestBody Map requestBody){
-        try {
-            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
-            Integer jifen=CommonUtil.toInteger( requestBody.get( "jifen" ) );
-            memberApiService.updateJifen( memberId,jifen );
-            return ServerResponse.createBySuccess();
-        }catch (Exception e) {
-            logger.error("商场关注赠送积分异常",e);
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
-        }
+    @RequestMapping( value = "/isMember", method = RequestMethod.POST )
+    public ServerResponse isMember( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    memberApiService.isMemember( memberId );
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "判断粉丝是否是会员异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+    }
+
+    @ApiOperation( value = "商场关注赠送积分", notes = "商场关注赠送积分" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "jifen", value = "", paramType = "query", required = true, dataType = "int" ), } )
+    @ResponseBody
+    @RequestMapping( value = "/updateJifen", method = RequestMethod.PUT )
+    public ServerResponse updateJifen( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    Integer jifen = CommonUtil.toInteger( requestBody.get( "jifen" ) );
+	    memberApiService.updateJifen( memberId, jifen );
+	    return ServerResponse.createBySuccess();
+	} catch ( Exception e ) {
+	    logger.error( "商场关注赠送积分异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+    }
+
+    @ApiOperation( value = "会员卡类型", notes = "会员卡类型" )
+    @ApiImplicitParam( name = "memberId", value = "", paramType = "query", required = true, dataType = "int" )
+    @ResponseBody
+    @RequestMapping( value = "/isCardType", method = RequestMethod.POST )
+    public ServerResponse isCardType( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    Integer ctId = memberApiService.isCardType( memberId );
+	    return ServerResponse.createBySuccess( ctId );
+	}catch ( BusinessException e ){
+	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	}catch ( Exception e ) {
+	    logger.error( "会员卡类型异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
     }
 
 }

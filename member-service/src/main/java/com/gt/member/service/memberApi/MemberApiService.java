@@ -77,7 +77,7 @@ public interface MemberApiService {
      * @param memberId
      * @return
      */
-    public Integer isCardType( Integer memberId );
+    public Integer isCardType( Integer memberId )throws  BusinessException;
 
     /*
      * 获取card信息

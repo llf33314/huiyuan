@@ -8,7 +8,7 @@ import com.gt.member.service.memberApi.entityBo.MallAllEntity;
 import com.gt.member.service.memberApi.entityBo.MallEntity;
 import com.gt.member.service.memberApi.entityBo.MallShopEntity;
 import com.gt.member.service.memberApi.entityBo.MemberShopEntity;
-import com.gt.member.service.old.common.dict.DictService;
+import com.gt.member.service.common.dict.DictService;
 import com.gt.member.util.BigDecimalUtil;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.DateTimeKit;

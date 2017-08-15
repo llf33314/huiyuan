@@ -27,7 +27,11 @@
             <artifactId>member-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.gt.member</groupId>
+            <artifactId>member-generator</artifactId>
+            <version>1.1-SNAPSHOT</version>
+        </dependency>
 
 
     </dependencies>

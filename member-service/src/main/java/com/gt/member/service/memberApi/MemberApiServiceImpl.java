@@ -15,15 +15,13 @@ import com.gt.member.enums.ResponseEnums;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.memberApi.entityBo.PaySuccessBo;
-import com.gt.member.service.old.common.dict.DictService;
-import com.gt.member.service.old.member.MemberCardService;
-import com.gt.member.service.old.member.SystemMsgService;
+import com.gt.member.service.common.dict.DictService;
+import com.gt.member.service.member.MemberCardService;
+import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.*;
 import com.gt.member.util.token.TokenUitl;
-import com.sun.xml.bind.v2.TODO;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.ibatis.builder.BuilderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -890,17 +888,17 @@ public class MemberApiServiceImpl implements MemberApiService {
      *
      * @return
      */
-    public Integer isCardType( Integer memberId ) {
+    public Integer isCardType( Integer memberId ) throws  BusinessException{
 	if ( CommonUtil.isEmpty( memberId ) ) {
-	    return -1;
+	    throw  new BusinessException( ResponseMemberEnums.NULL );
 	}
 	Member member = memberDAO.selectById( memberId );
 	if ( CommonUtil.isEmpty( memberId ) || CommonUtil.isEmpty( member.getMcId() ) ) {
-	    return -1;
+	    throw  new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
 	}
 	MemberCard card = cardMapper.selectById( member.getMcId() );
 	if ( CommonUtil.isEmpty( card ) ) {
-	    return -1;
+	    throw  new BusinessException( ResponseMemberEnums.CARD_STATUS );
 	}
 	return card.getCtId();
     }
@@ -3117,7 +3115,7 @@ public class MemberApiServiceImpl implements MemberApiService {
      * @throws Exception
      */
     public Map< String,Object > findMemberCardByMemberId( Integer memberId, Integer shopId ) throws BusinessException {
-	Map< String,Object > map = new HashMap< String,Object >();
+        Map< String,Object > map = new HashMap< String,Object >();
 	// 查询卡号是否存在
 	try {
 	    Member member = memberDAO.selectById( memberId );
@@ -3135,7 +3133,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    } else {
 		List< Map< String,Object > > cards = cardMapper.findCardById( card.getMcId() );
 		MemberGiverule giveRule = giveRuleMapper.selectById( card.getGrId() );
-		map.put( "result", true );
 		map.put( "nickName", member.getNickname() );
 		map.put( "phone", member.getPhone() );
 		map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
@@ -3213,6 +3210,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    map.put( "memberDate", true );
 		}
 	    }
+
 	    return map;
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
