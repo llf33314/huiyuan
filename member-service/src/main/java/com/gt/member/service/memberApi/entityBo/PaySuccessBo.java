@@ -29,7 +29,7 @@ public class PaySuccessBo implements Serializable {
     private boolean userJifen = false;  //是否使用积分
     private Integer jifenNum;  //积分数量
 
-    private Integer delay      = 0;   //会员赠送物品 0延迟送 1立即送
+    private Integer delay      = 0;   //会员赠送物品 -1不送 0延迟送 1立即送
     private Integer dataSource = 0;  //数据来源 0:pc端 1:微信 2:uc端 3:小程序
     private String ucTable;   //订单表
 
