@@ -134,6 +134,9 @@ public class MemberApiServiceImpl implements MemberApiService {
     @Autowired
     private MemberLogDAO memberLogDAO;
 
+    @Autowired
+    private MemberGradetypeDAO memberGradetypeDAO;
+
     /**
      * 查询粉丝信息
      *
@@ -3946,7 +3949,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
     }
-
+    @Override
     public void isAdequateMoney(Integer memberId,Double money) throws BusinessException{
 	try {
 	    Member member = memberDAO.selectById( memberId );
@@ -3969,6 +3972,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}
     }
 
+    @Override
     public List<Map<String,Object>> findMemberByIds(Integer busId,String memberIds)throws BusinessException{
       try {
 	  String[] str = memberIds.split( "," );
@@ -3989,6 +3993,7 @@ public class MemberApiServiceImpl implements MemberApiService {
      * @param memberId
      * @param jifen
      */
+    @Override
     public void updateJifen(Integer memberId,Integer jifen)throws BusinessException{
 	Member member = memberDAO.selectById(memberId);
 	Integer mIntergral = member.getIntegral();
@@ -4001,6 +4006,12 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    saveCardRecordNew(member.getMcId(), (byte) 2, jifen + "积分",
 			    "积分", member.getBusId(), "", null, jifen);
 	}
+
+    }
+
+    @Override
+    public List<Map<String,Object>> findBuyGradeType(Integer busId){
+	return memberGradetypeDAO.findBuyGradeType( busId );
 
     }
 

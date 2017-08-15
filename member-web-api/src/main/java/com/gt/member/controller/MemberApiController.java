@@ -259,4 +259,19 @@ public class MemberApiController extends BaseController {
 	}
     }
 
+    @ApiOperation( value = "查询购买的会员卡模板", notes = "查询购买的会员卡模板" )
+    @ApiImplicitParam( name = "busId", value = "", paramType = "query", required = true, dataType = "int" )
+    @ResponseBody
+    @RequestMapping( value = "/findBuyGradeType", method = RequestMethod.POST )
+    public ServerResponse findBuyGradeType(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ){
+	try {
+	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
+	    List<Map<String,Object>> maplist = memberApiService.findBuyGradeType( busId );
+	    return ServerResponse.createBySuccess( maplist );
+	}catch ( Exception e ) {
+	    logger.error( "查询购买的会员卡模板异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+    }
+
 }

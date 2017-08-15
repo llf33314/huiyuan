@@ -596,4 +596,12 @@ public interface MemberApiService {
      * @param jifen
      */
     public void updateJifen( Integer memberId, Integer jifen ) throws BusinessException;
+
+    /**
+     * 查询购买的会员卡面信息
+     * @param busId
+     * @return
+     * @throws BusinessException
+     */
+    public List<Map<String,Object>> findBuyGradeType(Integer busId);
 }
