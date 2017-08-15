@@ -2,8 +2,8 @@ package com.gt.member.service.common.dict;
 
 import com.gt.member.exception.BusinessException;
 
+import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 
 
 /**
@@ -21,7 +21,7 @@ public interface DictService {
      * @param type
      * @return
      */
-    public SortedMap<String, Object> getDict(String type) throws BusinessException;
+    public List<Map< String,Object >> getDict(String type) throws BusinessException;
 
 
     /**

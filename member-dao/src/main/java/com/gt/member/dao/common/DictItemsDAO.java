@@ -22,7 +22,7 @@ public interface DictItemsDAO extends BaseMapper<DictItems > {
      * 查询字典 键值对
      * @return
      */
-    SortedMap<String,Object> getDictReturnKeyAndValue(@Param( "dictType" )String dictType);
+    List<Map<String,Object>> getDictReturnKeyAndValue(@Param( "dictType" )String dictType);
 
     /**
      * 查询字典 返回value 值

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gt.member.mapper.DictItemsDAO">
+<mapper namespace="com.gt.member.dao.common.DictItemsDAO">
 
 	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.gt.member.entity.DictItems">
+	<resultMap id="BaseResultMap" type="com.gt.common.entity.DictItems">
 		<id column="id" property="id" />
 		<result column="dict_id" property="dictId" />
 		<result column="item_key" property="itemKey" />
@@ -19,7 +19,7 @@
         id, dict_id, item_key, item_value, item_sort, item_remark, item_ctime, item_status
     </sql>
 
-	<select id="getDictReturnKeyAndValue" resultType="SortedMap">
+	<select id="getDictReturnKeyAndValue" resultType="Map">
 		SELECT item_key,item_value,item_remark
 		FROM t_man_dict_items WHERE dict_id=(SELECT id FROM t_man_dict WHERE dict_type=#{dictType}) and item_status=1
 	</select>

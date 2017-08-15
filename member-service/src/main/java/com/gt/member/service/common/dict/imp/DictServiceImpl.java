@@ -9,8 +9,6 @@ import com.gt.member.dao.common.DictItemsDAO;
 import com.gt.member.enums.ResponseEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.dict.DictService;
-import com.gt.member.util.HttpClienUtil;
-import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +29,10 @@ public class DictServiceImpl implements DictService {
     private BusUserNumDAO busUserNumDAO;
 
     @Override
-    public SortedMap< String,Object > getDict( String type ) throws BusinessException {
+    public List<Map< String,Object >> getDict( String type ) throws BusinessException {
 	try {
-	    SortedMap< String,Object > list = dictItemsDAO.getDictReturnKeyAndValue( type );
-	    return list;
+
+	    return dictItemsDAO.getDictReturnKeyAndValue( type );
 	} catch ( Exception e ) {
 	    LOG.error( "查询字典异常", e );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );

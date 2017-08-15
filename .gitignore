@@ -18,3 +18,4 @@
 /member-common/target/
 /member-web-api/target/
 /member-web-api/member-web-api.iml
+/.gitignore
