@@ -49,7 +49,7 @@ public class DictApiController extends BaseController {
     public ServerResponse getdict( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
 	try {
 	    String dictType = CommonUtil.toString( requestBody.get( "dictType" ) );
-	    SortedMap<String, Object> map= dictService.getDict( dictType );
+	    List<Map<String, Object>> map= dictService.getDict( dictType );
 	    return ServerResponse.createBySuccess(map);
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
