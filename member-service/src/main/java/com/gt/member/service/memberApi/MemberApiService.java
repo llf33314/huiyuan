@@ -560,13 +560,12 @@ public interface MemberApiService {
      * 订单退款
      *
      * @param orderNo     订单号
-     * @param ucType      消费类型
      * @param refundMoney 退款金额
      *
      * @return
      * @throws Exception
      */
-    public void refundMoney( Integer busId, String orderNo, Integer ucType, double refundMoney ) throws BusinessException;
+    public void refundMoney( Integer busId, String orderNo, double refundMoney ) throws BusinessException;
 
     /**
      * 判断储值卡金额是否充足
@@ -605,4 +604,23 @@ public interface MemberApiService {
      */
     public List<Map<String,Object>> findBuyGradeType(Integer busId);
 
+    /**
+     * 商场修改订单状态
+     * @param orderNo
+     * @param payType
+     * @param payStatus
+     */
+    public void updateUserConsume(String orderNo,Integer payType,Integer payStatus)throws BusinessException;
+
+
+    public void refundMoneyAndJifenAndFenbi(Map<String,Object> map) throws BusinessException;
+
+    /**
+     * 商场积分记录查询
+     * @param mcId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    public List<Map<String,Object>> findCardrecord(Integer mcId,Integer page,Integer pageSize);
 }

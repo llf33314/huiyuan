@@ -12,12 +12,12 @@ public class PaySuccessBo implements Serializable {
     private Integer memberId; //粉丝id
     private Integer storeId;  //门店id
     private String  orderCode;  //订单号
-    private Double  totalMoney;  //订单金额
-    private Double  discountMoney;  //折扣金额
-    private Integer payType = 0;  //支付方式 0支付宝 1微信 2银联 3线下充值 4货到付款 5储值卡支付 6积分支付 7粉币支付 8到店支付 9找人代付  10现金支付 11分期支付
-    private Double  pay     = 0.0; //支付金额
+    private Double  totalMoney;  //原价
+    private Double  discountMoney;  //折扣后金额
+    private Integer payType = 0;  //支付方式 查询看字典1198
+    private Double  pay     = 0.0; //实际支付金额
 
-    private Integer ucType; //消费类型 字典1197加模块消费类型 5积分兑换商品 7会员卡充值 13购买会员卡 14线下核销 18优惠买单  19粉币兑换物品 20流量充值 21微预约
+    private Integer ucType; //消费类型 字典1197
 
     private boolean useCoupon = false;  //是否使用优惠券
     private Integer couponType; //优惠券类型 0微信 1多粉优惠券

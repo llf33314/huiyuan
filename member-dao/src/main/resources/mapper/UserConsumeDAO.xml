@@ -378,8 +378,8 @@
 		select id from t_wx_user_consume where busUserId=#{busId} and moduleType=#{moduleType} and orderCode=#{orderCode}
 	</select>
 
-	<select id="findByBusIdAndOrderCodeAnducType" resultMap="BaseResultMap">
-		select id,refundMoney from t_wx_user_consume where busUserId=#{busId} and moduleType=#{moduleType} and orderCode=#{orderCode} and isend=0
+	<select id="findUserConsumeByBusIdAndOrderCode" resultMap="BaseResultMap">
+		select id,refundMoney from t_wx_user_consume where busUserId=#{busId}  and orderCode=#{orderCode} and isend=0
 
 	</select>
 

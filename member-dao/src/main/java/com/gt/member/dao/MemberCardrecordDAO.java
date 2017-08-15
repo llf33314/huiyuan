@@ -35,4 +35,5 @@ public interface MemberCardrecordDAO extends BaseMapper<MemberCardrecord> {
 
     List<Map<String, Object>> sumCurrentByBusId(@Param("busIds")List<Integer> busIds,@Param("startDate")Date startDate,@Param("endDate")Date endDate);
 
+    List<Map<String,Object>> findCardrecordByMcId(@Param( "mcId" )Integer mcId,@Param( "page" )Integer page,@Param( "pageSize" )Integer pageSize);
 }

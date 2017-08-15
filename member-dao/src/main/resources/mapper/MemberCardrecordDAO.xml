@@ -65,4 +65,11 @@
 		and createDate<![CDATA[>=]]> #{startDate}  and createDate<![CDATA[<=]]> #{endDate}
 		GROUP BY cardId
 	</select>
+
+
+	<select id="findCardrecordByMcId" resultType="Map">
+		SELECT itemName,number,date_format(createDate, '%Y-%c-%d %h:%i:%s') as createDate FROM t_member_cardrecord WHERE recordType = 2 AND cardId= #{mcId}
+		order by id desc limit #{page},#{pageSize}
+
+	</select>
 </mapper>

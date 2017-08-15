@@ -160,5 +160,5 @@ public interface UserConsumeDAO extends BaseMapper<UserConsume> {
     UserConsume findBybusIdAndOrderCode(@Param("busId")Integer busId,@Param("moduleType")Integer moduleType,@Param("orderCode")String orderCode);
 
 
-    UserConsume findByBusIdAndOrderCodeAnducType(@Param("busId")Integer busId,@Param("ucType")Integer ucType,@Param("orderCode")String orderCode);
+    UserConsume findUserConsumeByBusIdAndOrderCode(@Param("busId")Integer busId,@Param("orderCode")String orderCode);
 }

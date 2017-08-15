@@ -63,7 +63,6 @@ public class MemberApiController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/findMemberCard", method = RequestMethod.POST )
     public ServerResponse findMemberCard( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
-
 	try {
 	    String cardNo = CommonUtil.toString( requestBody.get( "requestBody" ) );
 	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
@@ -142,25 +141,7 @@ public class MemberApiController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "退款包括了储值卡退款", notes = "退款包括了储值卡退款" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "String" ),
-		    @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = true, dataType = "String" ),
-		    @ApiImplicitParam( name = "ucType", value = "消费类型", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "money", value = "退款金额", paramType = "query", required = true, dataType = "double" ) } )
-    @ResponseBody
-    @RequestMapping( value = "/refundMoney", method = RequestMethod.POST )
-    public ServerResponse refundMoney( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
-	try {
-	    Integer ucType = CommonUtil.toInteger( requestBody.get( "ucType" ) );
-	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
-	    String orderNo = CommonUtil.toString( requestBody.get( "orderNo" ) );
-	    Double money = CommonUtil.toDouble( requestBody.get( "money" ) );
-	    memberApiService.refundMoney( busId, orderNo, ucType, money );
-	    return ServerResponse.createBySuccess();
-	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-    }
+
 
     @ApiOperation( value = "统计会员数量", notes = "根据商家id统计会员数量" )
     @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
@@ -282,12 +263,101 @@ public class MemberApiController extends BaseController {
     public ServerResponse findGradeType(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ){
 	try {
 	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
-	   MemberGradetype gradeType = memberApiService.findGradeType( memberId );
+	    MemberGradetype gradeType = memberApiService.findGradeType( memberId );
 	    return ServerResponse.createBySuccess( gradeType );
 	}catch ( Exception e ) {
 	    logger.error( "查询会员卡片名称异常", e );
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
     }
+
+    @ApiOperation( value = "商场修改订单状态", notes = "商场修改订单状态" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = true, dataType = "Striing" ),
+		    @ApiImplicitParam( name = "payType", value = "支付方式", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "payStatus", value = "支付状态", paramType = "query", required = true, dataType = "int" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/updateUserConsume", method = RequestMethod.POST )
+    public ServerResponse updateUserConsume(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody){
+	try {
+	    String orderNo = CommonUtil.toString( requestBody.get( "orderNo" ) );
+	    Integer payType = CommonUtil.toInteger( requestBody.get( "payType" ) );
+	    Integer payStatus = CommonUtil.toInteger( requestBody.get( "payStatus" ) );
+	    memberApiService.updateUserConsume(orderNo,payType,payStatus);
+	    return ServerResponse.createBySuccess( );
+	}catch ( BusinessException e ){
+	    return ServerResponse.createByError( e.getCode(),e.getMessage() );
+	}catch ( Exception e ) {
+	    logger.error( "查询会员卡片名称异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+    }
+
+
+    @ApiOperation( value = "退款包括了储值卡退款(不包括积分和粉币)", notes = "退款包括了储值卡退款" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "money", value = "退款金额", paramType = "query", required = true, dataType = "double" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/refundMoney", method = RequestMethod.PUT )
+    public ServerResponse refundMoney( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
+	    String orderNo = CommonUtil.toString( requestBody.get( "orderNo" ) );
+	    Double money = CommonUtil.toDouble( requestBody.get( "money" ) );
+	    memberApiService.refundMoney( busId, orderNo, money );
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+    }
+
+
+    @ApiOperation( value = "退款包括了储值卡退款(包括积分和粉币)", notes = "退款包括了储值卡退款" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "money", value = "退款金额", paramType = "query", required = true, dataType = "double" ),
+		    @ApiImplicitParam( name = "fenbi", value = "粉币", paramType = "query", required = true, dataType = "double" ),
+		    @ApiImplicitParam( name = "jifen", value = "积分", paramType = "query", required = true, dataType = "int" ),
+    } )
+    @ResponseBody
+    @RequestMapping( value = "/refundMoneyAndJifenAndFenbi", method = RequestMethod.PUT )
+    public ServerResponse refundMoneyAndJifenAndFenbi(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ){
+	try {
+	    memberApiService.refundMoneyAndJifenAndFenbi( requestBody );
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+    @ApiOperation( value = "（商城）查询会员积分记录", notes = "（商城）查询会员积分记录" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "mcId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "page", value = "页数", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "pageSize", value = "条数", paramType = "query", required = true, dataType = "int" )
+    })
+
+    @ResponseBody
+    @RequestMapping( value = "/findCardrecord", method = RequestMethod.POST )
+    public ServerResponse findCardrecord(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ){
+	try {
+	    Integer mcId=CommonUtil.toInteger( requestBody.get( "mcId" ) );
+	    Integer page=CommonUtil.toInteger( requestBody.get( "page" ) );
+	    Integer pageSize=CommonUtil.toInteger( requestBody.get( "pageSize" ) );
+	    List<Map<String,Object>> listMap=  memberApiService.findCardrecord( mcId,page,pageSize );
+	    return ServerResponse.createBySuccess(listMap);
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}catch ( Exception e ) {
+	    logger.error( "商城）查询会员积分记录异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+    }
+
+
+
+
 
 }

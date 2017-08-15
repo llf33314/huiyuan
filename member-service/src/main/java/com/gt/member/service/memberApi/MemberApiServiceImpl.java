@@ -137,6 +137,9 @@ public class MemberApiServiceImpl implements MemberApiService {
     @Autowired
     private MemberGradetypeDAO memberGradetypeDAO;
 
+    @Autowired
+    private MemberCardrecordDAO memberCardrecordDAO;
+
     /**
      * 查询粉丝信息
      *
@@ -1216,7 +1219,7 @@ public class MemberApiServiceImpl implements MemberApiService {
      * @param memberId    订单号
      * @param refundMoney 退款金额
      */
-    @Transactional( rollbackFor = Exception.class )
+    @Transactional
     @Override
     public void chargeBack( Integer memberId, double refundMoney ) throws BusinessException {
 	Map< String,Object > map = new HashMap< String,Object >();
@@ -3915,9 +3918,9 @@ public class MemberApiServiceImpl implements MemberApiService {
     }
 
     @Transactional
-    public void refundMoney( Integer busId, String orderNo, Integer ucType, double refundMoney ) throws BusinessException {
+    public void refundMoney( Integer busId, String orderNo,double refundMoney ) throws BusinessException {
 	try {
-	    UserConsume uc = userConsumeMapper.findByBusIdAndOrderCodeAnducType( busId, ucType, orderNo );
+	    UserConsume uc = userConsumeMapper.findUserConsumeByBusIdAndOrderCode( busId, orderNo );
 	    if ( CommonUtil.isEmpty( uc ) ) {
 		throw new BusinessException( ResponseMemberEnums.NO_DATA.getCode(), ResponseMemberEnums.NO_DATA.getMsg() );
 	    }
@@ -3941,9 +3944,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
 	    MemberLog m=new MemberLog();
-	    m.setLogtxt( "方法refundMoney退款异常,请求参数商家："+busId +"订单号:"+orderNo +"消费类型：" +ucType+"退款金额:"+refundMoney );
+	    m.setLogtxt( "方法refundMoney退款异常,请求参数商家："+busId +"订单号:"+orderNo +"退款金额:"+refundMoney );
 	    memberLogDAO.insert( m );
-
 	    LOG.error( "退款异常", e );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
@@ -4011,7 +4013,90 @@ public class MemberApiServiceImpl implements MemberApiService {
     @Override
     public List<Map<String,Object>> findBuyGradeType(Integer busId){
 	return memberGradetypeDAO.findBuyGradeType( busId );
+    }
 
+    /**
+     * 商场修改订单状态
+     * @param orderNo
+     * @param payType
+     * @param payStatus
+     */
+    public void updateUserConsume(String orderNo,Integer payType,Integer payStatus)throws BusinessException{
+	UserConsume userConsume = userConsumeMapper
+			.findByOrderCode1(orderNo);
+	if(CommonUtil.isEmpty( userConsume )){
+	    throw new BusinessException( ResponseMemberEnums.NOT_ORDER_DATA );
+	}
+	// 修改订单状态
+	UserConsume uc = new UserConsume();
+	uc.setId(userConsume.getId());
+	uc.setPayStatus( 1);
+	uc.setPaymentType(payType);
+	userConsumeMapper.updateById(uc);
+    }
+
+
+    @Transactional
+    public void refundMoneyAndJifenAndFenbi(Map<String,Object> map) throws BusinessException {
+	try {
+	    Integer busId=CommonUtil.toInteger( map.get("busId") );
+	    String orderNo=CommonUtil.toString( map.get("orderNo") );
+	    Double refundMoney=CommonUtil.toDouble( map.get("money") );
+	    Double fenbi=CommonUtil.toDouble( map.get("fenbi") );
+	    Integer jifen=CommonUtil.toInteger( map.get("jifen") );
+
+	    UserConsume uc = userConsumeMapper.findUserConsumeByBusIdAndOrderCode( busId, orderNo );
+	    if ( CommonUtil.isEmpty( uc ) ) {
+		throw new BusinessException( ResponseMemberEnums.NO_DATA.getCode(), ResponseMemberEnums.NO_DATA.getMsg() );
+	    }
+	    Member member = memberDAO.selectById( uc.getMemberId() );
+
+	    //储值卡付款
+	    MemberCard card = cardMapper.selectById( uc.getMcId() );
+	    if ( uc.getPaymentType() == 5 ) {
+		MemberCard card1 = new MemberCard();
+		// 储值卡
+		card1.setMcId( uc.getMcId() );
+		card1.setMoney( card.getMoney() + refundMoney );
+		cardMapper.updateById( card1 );
+
+		saveCardRecordNew( card.getMcId(), (byte) 1, refundMoney + "元", "储值卡退款", card.getBusId(), null, 0, 0 );
+		systemMsgService.sendChuzhiTuikuan( member, refundMoney );
+	    }
+	    //添加退款金额
+	    uc.setRefundMoney( uc.getRefundMoney() + refundMoney );
+	    userConsumeMapper.updateById( uc );
+
+	    Boolean flag=false;
+	    Member m1=new Member();
+	    m1.setId( member.getId() );
+	    if(jifen>0){
+	        //退积分
+		m1.setIntegral( member.getIntegral()+jifen );
+		saveCardRecordNew( card.getMcId(), (byte) 2, jifen + "积分", "订单退款", busId, null, 0, jifen );
+		flag=true;
+	    }
+	    if(fenbi>0.0){
+		m1.setFansCurrency( member.getFansCurrency()+fenbi );
+		saveCardRecordNew( card.getMcId(), (byte) 3, fenbi + "粉币", "订单退款", busId, null, 0, 0 );
+		flag=true;
+	    }
+	    if(flag){
+	        memberDAO.updateById( m1 );
+	    }
+	} catch ( BusinessException e ) {
+	    throw new BusinessException( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    MemberLog m=new MemberLog();
+	    m.setLogtxt( "方法refundMoneyAndJifenAndFenbi退款异常,请求参数商家："+map );
+	    memberLogDAO.insert( m );
+	    LOG.error( "退款异常", e );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+    }
+
+    public List<Map<String,Object>> findCardrecord(Integer mcId,Integer page,Integer pageSize){
+	return memberCardrecordDAO.findCardrecordByMcId(mcId,page*pageSize,pageSize  );
     }
 
 }

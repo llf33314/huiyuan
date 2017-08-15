@@ -19,6 +19,7 @@ public enum ResponseMemberEnums {
     NOT_MEMBER_CAR(5005,"非会员"),
     MEMBER_LESS_MONEY(5006,"余额不足"),
     MEMBER_CHUZHI_CARD(5007,"非储值会员卡"),
+    NOT_ORDER_DATA(5008,"订单数据不存在"),
 
 
 
