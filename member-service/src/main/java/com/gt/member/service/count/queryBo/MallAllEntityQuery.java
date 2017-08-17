@@ -1,4 +1,4 @@
-package com.gt.member.controller.queryBo;
+package com.gt.member.service.count.queryBo;
 
 import java.util.Map;
 
@@ -12,9 +12,9 @@ public class MallAllEntityQuery {
     private Double totalMoney = 0.0; //订单总金额
     private Map<Integer,MallEntityQuery > malls;  //商品订单详情
 
-    private Integer ucType;   //消费类型  请查看A003消费类型  没有请添加
+    private Integer ucType;   //消费类型  请查看1197消费类型  没有请添加
     private Integer busId;  //商家主账户id
-    private Integer shopId;  //门店订单
+    private Integer shopId;  //门店
 
     private String returnUrl;  //支付成功 通知地址
 

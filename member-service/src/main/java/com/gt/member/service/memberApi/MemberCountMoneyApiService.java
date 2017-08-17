@@ -1,6 +1,7 @@
 package com.gt.member.service.memberApi;
 
 import com.gt.member.service.memberApi.entityBo.MallAllEntity;
+import com.gt.member.service.memberApi.entityBo.MallNotShopEntity;
 import com.gt.member.service.memberApi.entityBo.MemberShopEntity;
 
 /**
@@ -10,12 +11,15 @@ import com.gt.member.service.memberApi.entityBo.MemberShopEntity;
 public interface MemberCountMoneyApiService {
 
     /**
-     * 统一门店计算
+     * 统一门店计算 不包括商品详情
      * @param ce
      * @return
      * @throws Exception
      */
     public MemberShopEntity publicMemberCountMoney(MemberShopEntity ce) throws Exception;
+
+
+
 
     /**
      * 跨门店购买
@@ -24,4 +28,13 @@ public interface MemberCountMoneyApiService {
      * @throws Exception
      */
     public MallAllEntity mallSkipShopCount(MallAllEntity mallAllEntity) throws Exception;
+
+
+    /**
+     * 不跨门店购买 包括商品详情
+     * @param mallNotShopEntity
+     * @return
+     * @throws Exception
+     */
+    public MallNotShopEntity mallSkipNotShopCount(MallNotShopEntity mallNotShopEntity) throws Exception;
 }

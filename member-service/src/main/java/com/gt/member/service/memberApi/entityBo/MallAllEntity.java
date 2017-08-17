@@ -10,7 +10,6 @@ import java.util.Map;
  */
 public class MallAllEntity {
 
-    @Null
     private Integer memberId;  //粉丝信息  not null
     private Double totalMoney = 0.0; //订单总金额 not null
     private Map<Integer, MallShopEntity> mallShops;  //门店商品信息  key为门店id not null

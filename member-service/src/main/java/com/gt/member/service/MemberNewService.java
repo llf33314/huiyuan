@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
  *
  * Created by Administrator on 2017/7/28 0028.
  */
-@Service
 public interface MemberNewService {
     /**
      * 添加会员卡记录((新数据接口))

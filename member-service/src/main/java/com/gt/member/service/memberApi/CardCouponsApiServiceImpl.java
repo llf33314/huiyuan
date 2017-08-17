@@ -239,7 +239,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     }
 
     @Override
-    public Map<String, Object> wxCardReceive(Integer wxPublicUsersId, String code)throws  BusinessException {
+    public void wxCardReceive(Integer wxPublicUsersId, String code)throws  BusinessException {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             if (CommonUtil.isEmpty(wxPublicUsersId)) {
@@ -262,7 +262,6 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             if ("-2".equals(returnJSON.get("code").toString())) {
                 throw new BusinessException(ResponseEnums.JWT_TOKEN_EXPIRED.getCode(), ResponseEnums.JWT_TOKEN_EXPIRED.getDesc());
             }
-            return map;
         }catch (BusinessException e){
             throw  new BusinessException(e.getCode(),e.getMessage());
         }catch (Exception e) {
@@ -745,7 +744,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     }
 
     @Override
-    public Map<String, Object> verificationCard_2(Map<String, Object> params) throws  BusinessException{
+    public void verificationCard_2(Map<String, Object> params) throws  BusinessException{
         Map<String, Object> map = new HashMap<String, Object>();
         try {
             if (CommonUtil.isEmpty(params.get("codes"))) {
@@ -764,15 +763,11 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
             List<Map<String, Object>> stateMap = duofenCardGetMapper.findByCodes(codeList);
             if (CommonUtil.isEmpty(stateMap) || stateMap.size() == 0) {
-                map.put("result", false);
-                map.put("message", "卡券不存在");
-                return map;
+                throw  new BusinessException(ResponseMemberEnums.COUPONSE_NO_EXIST.getCode(),ResponseMemberEnums.COUPONSE_NO_EXIST.getMsg());
             }
             for (Map<String, Object> map2 : stateMap) {
                 if ("1".equals(map2.get("state")) || "2".equals(map2.get("state"))) {
-                    map.put("result", false);
-                    map.put("message", "卡券过期或已核销,不能执行卡券核销操作");
-                    return map;
+                    throw  new BusinessException(ResponseMemberEnums.COUPONSE_NO_GUOQI.getCode(),ResponseMemberEnums.COUPONSE_NO_GUOQI.getMsg());
                 }
             }
 
@@ -790,14 +785,11 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                     tuijianGive(recommend);
                 }
             }
-
-            map.put("result", true);
-            map.put("message", "核销成功");
-        } catch (Exception e) {
-            map.put("result", false);
-            map.put("message", "核销失败");
+        } catch (BusinessException e) {
+            throw  new BusinessException(e.getCode(),e.getMessage());
+        }catch ( Exception e ){
+            throw  new BusinessException(ResponseEnums.ERROR);
         }
-        return map;
     }
 
     @Override

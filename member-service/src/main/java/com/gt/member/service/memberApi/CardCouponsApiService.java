@@ -38,7 +38,7 @@ public interface CardCouponsApiService {
      * @return
      * @throws Exception
      */
-    public Map<String, Object> wxCardReceive(Integer wxPublicUsersId, String code)throws  BusinessException;
+    public void wxCardReceive(Integer wxPublicUsersId, String code)throws  BusinessException;
 
     /**
      * 微信卡券核销返回卡券id和name -1 核销失败 1核销成功
@@ -162,7 +162,7 @@ public interface CardCouponsApiService {
      * @param params 包含codes 多粉卡券code ,storeId 门店id
      * @return
      */
-    public Map<String, Object> verificationCard_2(Map<String, Object> params)throws  BusinessException;
+    public void verificationCard_2(Map<String, Object> params)throws  BusinessException;
 
     /**
      * 卡包投放
