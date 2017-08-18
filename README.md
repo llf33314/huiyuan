@@ -33,7 +33,7 @@ eclipse 请使用**doc/java-code-style-eclipse.xml**
 
 多模块细分各模块职责。
 
-### 酒店ERP 系统
+### 会员 系统
 模块分析
 - member  基础 提供jar包依赖管理并管理各子模块
 - member-common 提供基础设施
@@ -42,9 +42,6 @@ eclipse 请使用**doc/java-code-style-eclipse.xml**
 - member-generator 项目代码生成，一键生成DAO Xml Service
 - member-service 业务层 依赖dao
 - member-web  程序入口，并依赖service 统一集成单元测试，所有测试代码写入
-- member-web-front-management 前台管理
-- member-web-back-management 后台管理
-- member-web-mobile 移动端(包含微信页面)
 - member-web-api 接口层 依赖service
 
 多模块 多web 端构建项目基建。
