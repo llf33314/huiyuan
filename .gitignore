@@ -19,3 +19,5 @@
 /member-web-api/target/
 /member-web-api/member-web-api.iml
 /.gitignore
+/doc/
+/member-web/src/test/
