@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.PaySuccesslogDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.PaySuccesslog">
+		<id column="id" property="id" />
+		<result column="totalMoney" property="totalMoney" />
+		<result column="memberId" property="memberId" />
+		<result column="model" property="model" />
+		<result column="date" property="date" />
+		<result column="state" property="state" />
+		<result column="orderNo" property="orderNo" />
+		<result column="successId" property="successId" />
+		<result column="jifen" property="jifen" />
+		<result column="fenbi" property="fenbi" />
+		<result column="oneGet" property="oneGet" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, totalMoney, memberId, model, date, state, orderNo, successId, jifen, fenbi, oneGet
+    </sql>
+
+	<select id="findByOrderNo" resultMap="BaseResultMap">
+		select * from t_pay_successlog where memberId=#{memberId} and orderNo=#{orderNo}
+	</select>
+
+	<select id="findByModelAndMemberId" resultMap="BaseResultMap">
+		select * from t_pay_successlog where memberId=#{memberId} and model=#{model} order by id desc limit 1
+	</select>
+
+	<update id="updateByModelAndMemberId">
+		update t_pay_successlog set successId=#{successId} where memberId=#{memberId} and model=#{model}
+	</update>
+
+	<select id="countByModelAndMemberId" resultType="java.lang.Integer">
+		select count(id) from t_pay_successlog where memberId=#{memberId} and model=#{model}
+	</select>
+
+
+	<select id="countByModelAndMemberIdAndWeek" resultType="java.lang.Integer">
+		select count(id) from t_pay_successlog where memberId=#{memberId} and model=#{model} and date <![CDATA[>=]]> #{date}
+	</select>
+
+</mapper>

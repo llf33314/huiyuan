@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.OfflinepayDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.Offlinepay">
+		<id column="id" property="id" />
+		<result column="shopId" property="shopId" />
+		<result column="title" property="title" />
+		<result column="subheading" property="subheading" />
+		<result column="eachMoney" property="eachMoney" />
+		<result column="reduceMoney" property="reduceMoney" />
+		<result column="explainText" property="explainText" />
+		<result column="busId" property="busId" />
+		<result column="phone" property="phone" />
+		<result column="publicId" property="publicId" />
+		<result column="createdate" property="createdate" />
+		<result column="type" property="type" />
+		<result column="rule" property="rule" />
+		<result column="timeType" property="timeType" />
+		<result column="fenbiOpen" property="fenbiOpen" />
+		<result column="jifenOpen" property="jifenOpen" />
+		<result column="balanceType" property="balanceType" />
+		<result column="holdNum" property="holdNum" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, shopId, title, subheading, eachMoney, reduceMoney, explainText, busId, phone, publicId, createdate, type, rule,
+         timeType, fenbiOpen, jifenOpen, balanceType, holdNum
+    </sql>
+
+
+	<select id="findAll" resultType="Map">
+		select o.id as id, shopId, title, eachMoney, reduceMoney, busId, phone,createdate,s.business_name from t_offlinepay o inner join t_wx_shop s on s.id=o.shopId where o.busId=#{busId}
+	</select>
+
+	<select id="findByShopIds" resultType="Map">
+		select o.id as id, shopId, title, eachMoney, reduceMoney, busId, phone,createdate,s.business_name from t_offlinepay o inner join t_wx_shop s on s.id=o.shopId where o.busId=#{busId} and
+		shopId in
+		<foreach close=")" collection="shopIds" item="shopId" open="(" separator=",">
+			#{shopId}
+		</foreach>
+	</select>
+
+	<select id="findShop" resultType="Map">
+		select s.id,s.business_name  from t_wx_shop s  where s.id  not in(select shopId from t_offlinepay o where o.busId=#{busId}) AND s.bus_id=#{busId} and s.status !=-1
+	</select>
+
+
+	<select id="findShopByBusId" resultType="Map">
+		select s.id,s.business_name  from t_wx_shop s where s.id  in
+		<foreach close=")" collection="shopIds" item="shopId" open="(" separator=",">
+			#{shopId}
+		</foreach>
+	</select>
+
+	<select id="findByshopId" resultMap="BaseResultMap">
+		select * from t_offlinepay where busId=#{busId} and shopId=#{shopId}
+	</select>
+
+
+	<select id="findByPublicId" resultMap="BaseResultMap">
+		select * from t_offlinepay where publicId=#{publicId} and shopId=#{shopId}
+	</select>
+
+</mapper>

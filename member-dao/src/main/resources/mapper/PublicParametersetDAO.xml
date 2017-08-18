@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.PublicParametersetDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.PublicParameterset">
+		<id column="id" property="id" />
+		<result column="integralRatio" property="integralRatio" />
+		<result column="changeMoney" property="changeMoney" />
+		<result column="startMoney" property="startMoney" />
+		<result column="publicId" property="publicId" />
+		<result column="startType" property="startType" />
+		<result column="findImage" property="findImage" />
+		<result column="isOpenCard" property="isOpenCard" />
+		<result column="busId" property="busId" />
+		<result column="loginImage" property="loginImage" />
+		<result column="isclearJifen" property="isclearJifen" />
+		<result column="month" property="month" />
+		<result column="memberView" property="memberView" />
+		<result column="youhuiButton" property="youhuiButton" />
+		<result column="youhuiText" property="youhuiText" />
+		<result column="buttonType" property="buttonType" />
+		<result column="buttonUrl" property="buttonUrl" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, integralRatio, changeMoney, startMoney, publicId, startType, findImage, isOpenCard, busId, loginImage, isclearJifen, month,
+        memberView, youhuiButton, youhuiText, buttonType, buttonUrl
+    </sql>
+
+
+	<select id="findBybusId" resultMap="BaseResultMap">
+		select * from t_public_parameterset where busId=#{busId}
+	</select>
+
+	<select id="findBybusId_1" resultMap="BaseResultMap">
+		select * from t_public_parameterset where busId=#{busId} and
+		integralRatio&gt;0
+	</select>
+
+	<select id="findByPublicId" resultMap="BaseResultMap">
+		select * from t_public_parameterset where publicId=#{publicId}
+	</select>
+
+	<select id="findByPublicId_1" resultMap="BaseResultMap">
+		select * from t_public_parameterset where publicId=#{publicId} and
+		integralRatio&gt;0
+	</select>
+
+	<select id="findMonth" resultMap="BaseResultMap">
+		select busId,month from t_public_parameterset where isclearJifen=1
+	</select>
+
+</mapper>

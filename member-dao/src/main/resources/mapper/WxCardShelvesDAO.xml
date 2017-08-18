@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.WxCardShelvesDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.WxCardShelves">
+		<id column="id" property="id" />
+		<result column="banner" property="banner" />
+		<result column="page_title" property="pageTitle" />
+		<result column="can_share" property="canShare" />
+		<result column="scene" property="scene" />
+		<result column="card_list" property="cardList" />
+		<result column="url" property="url" />
+		<result column="page_id" property="pageId" />
+		<result column="status" property="status" />
+		<result column="publicId" property="publicId" />
+		<result column="endDate" property="endDate" />
+		<result column="cardName" property="cardName" />
+		<result column="state" property="state" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, banner, page_title , can_share , scene, card_list ,
+         url, page_id , status, publicId, endDate, cardName, state
+    </sql>
+
+
+	<select id="findAll" resultType="Map">
+		select  id, banner, page_title, can_share, scene, card_list, url, page_id, status from t_wx_card_shelves
+		where publicId=#{publicId} and state=1 and endDate <![CDATA[>]]> #{endDate}
+	</select>
+
+	<select id="findOne" resultType="Map">
+		select  id, banner, page_title, can_share, scene, card_list, url, page_id, status from t_wx_card_shelves
+		where id=#{id}
+	</select>
+
+	<select id="countWxCardShelves" resultType="java.lang.Integer">
+		select count(id) from t_wx_card_shelves where publicId=#{publicId} order by id desc
+	</select>
+
+	<select id="findWxCardShelves" resultType="Map">
+		select  id, banner, page_title, can_share, scene, card_list, url, page_id, status,state,cardName,endDate from t_wx_card_shelves
+		where publicId=#{publicId} order by id desc
+		limit #{firstResult},#{pageSize}
+	</select>
+</mapper>

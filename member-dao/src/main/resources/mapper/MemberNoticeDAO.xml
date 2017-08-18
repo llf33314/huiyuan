@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberNoticeDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberNotice">
+		<id column="id" property="id" />
+		<result column="title" property="title" />
+		<result column="img_url" property="imgUrl" />
+		<result column="notice_user" property="noticeUser" />
+		<result column="sendType" property="sendType" />
+		<result column="sendDate" property="sendDate" />
+		<result column="sendSms" property="sendSms" />
+		<result column="sendMsg" property="sendMsg" />
+		<result column="content" property="content" />
+		<result column="createDate" property="createDate" />
+		<result column="createUser" property="createUser" />
+		<result column="publicId" property="publicId" />
+		<result column="sendStuts" property="sendStuts" />
+		<result column="noticeMember" property="noticeMember" />
+		<result column="busId" property="busId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, title, img_url , notice_user , sendType, sendDate, sendSms, sendMsg, content,
+        createDate, createUser, publicId, sendStuts, noticeMember, busId
+    </sql>
+
+	<select id="findMemberNotice" resultType="Map">
+		select   <include refid="Base_Column_List" />
+		from t_member_notice where busId=#{busId} ORDER BY id DESC LIMIT #{fristpage},#{pagesize}
+	</select>
+
+	<select id="countMemberNotice" resultType="java.lang.Integer">
+		SELECT COUNT(id) FROM t_member_notice  WHERE busId=#{busId}
+	</select>
+
+	<select id="findBySendStruts" resultType="Map">
+		SELECT * FROM t_member_notice WHERE busId=#{busId} and sendType in(0,2) AND sendStuts in(0,1)
+	</select>
+
+	<select id="findAllNotSend" resultType="Map">
+		select <include refid="Base_Column_List" /> from t_member_notice where sendStuts=0 and sendSms=1 and sendDate<![CDATA[ <= ]]> #{sendDate}
+	</select>
+
+	<update id="updateNotice" >
+		update t_member_notice set sendStuts=1 where sendStuts=0 and sendType=1 and sendDate<![CDATA[ <= ]]> #{sendDate}
+	</update>
+
+</mapper>

@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.DuofenCardGetDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.DuofenCardGet">
+		<id column="id" property="id" />
+		<result column="cardId" property="cardId" />
+		<result column="getType" property="getType" />
+		<result column="code" property="code" />
+		<result column="state" property="state" />
+		<result column="getDate" property="getDate" />
+		<result column="cardReceiveId" property="cardReceiveId" />
+		<result column="memberId" property="memberId" />
+		<result column="publicId" property="publicId" />
+		<result column="startTime" property="startTime" />
+		<result column="endTime" property="endTime" />
+		<result column="friendMemberId" property="friendMemberId" />
+		<result column="busId" property="busId" />
+		<result column="storeId" property="storeId" />
+		<result column="recommendId" property="recommendId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, cardId, getType, code, state, getDate,
+        cardReceiveId, memberId, publicId, startTime, endTime, friendMemberId, busId, storeId, recommendId
+    </sql>
+
+
+
+	<select id="countCardGet" resultType="java.lang.Integer">
+		select count(id) from t_duofen_card_get where cardReceiveId=#{cardReceiveId} and memberId=#{memberId}
+		<if test="getDate!=null">
+			and getDate&gt;#{getDate}
+		</if>
+	</select>
+
+	<select id="countCardGetByCardcardId" resultType="java.lang.Integer">
+		select count(id) from t_duofen_card_get where cardId=#{cardId}
+	</select>
+
+
+	<select id="findCardGetBycardId" resultType="Map">
+		select g.*,m.phone,m.nickname from t_duofen_card_get g inner join t_wx_bus_member m on m.id=g.memberId where g.cardId=#{cardId}
+		order by g.id desc limit #{firstResult},#{pageSize}
+	</select>
+
+	<select id="findCardGetByMemberId" resultType="Map">
+		select
+		c.id as cId, c.brand_name, c.card_type, deal_detail, c.cash_least_cost,
+		c.reduce_cost, c.discount, c.gift, c.default_detail, c.title, c.sub_title, c.color,
+		c.type, c.begin_timestamp, c.end_timestamp, c.fixed_term, c.fixed_begin_term,
+		c.least_cost,
+		c.card_status, c.image,
+		c.timeType,g.id as gId, g.getType, g.code, g.state, g.getDate, g.cardReceiveId,g.startTime,
+		g.endTime
+		from t_duofen_card_get g inner join t_duofen_card c on c.id=g.cardId
+		where g.memberId
+		in
+		<foreach close=")" collection="memberIds" item="m" open="(" separator=",">
+			#{m}
+		</foreach>
+		order by gId desc
+	</select>
+
+
+	<select id="findByCode" resultType="Map">
+		select
+		c.id as cId, c.brand_name, c.card_type, deal_detail, c.cash_least_cost,
+		c.reduce_cost, c.discount, c.gift, c.default_detail, c.title, c.sub_title, c.color,
+		c.type, c.begin_timestamp, c.end_timestamp, c.fixed_term, c.fixed_begin_term,
+		c.least_cost, c.location_id_list,
+		c.card_status, c.image, c.time_limit,
+		c.timeType,g.id as gId, g.getType, g.code, g.state, g.getDate, g.cardReceiveId,g.startTime,
+		g.endTime,g.cardId,g.memberId,g.recommendId
+		from t_duofen_card_get g inner join t_duofen_card c on c.id=g.cardId
+		where  g.busId=#{busId} and g.code=#{code}
+	</select>
+
+	<select id="findByFriendMemberId" resultType="Map">
+		select
+		c.id as cId, c.brand_name, c.card_type, deal_detail, c.cash_least_cost,
+		c.reduce_cost, c.discount, c.gift, c.default_detail, c.title, c.sub_title, c.color,
+		c.type, c.begin_timestamp, c.end_timestamp, c.fixed_term, c.fixed_begin_term,
+		c.least_cost, c.location_id_list,
+		c.card_status, c.image, c.time_limit,
+		c.timeType,g.id as gId, g.getType, g.code, g.state, g.getDate, g.cardReceiveId,g.startTime,
+		g.endTime,g.cardId,g.memberId
+		from t_duofen_card_get g inner join t_duofen_card c on c.id=g.cardId
+		where  g.busId=#{busId} and g.state=0 and g.friendMemberId like '%${memberId}%'
+	</select>
+
+
+
+	<select id="findCardByMemberId" resultType="Map">
+		select
+		COUNT(c.id) as countId,c.id as cId, c.brand_name, c.card_type,  c.cash_least_cost,
+		c.reduce_cost, c.discount,  c.color,  c.time_limit,
+		c.type,
+		c.least_cost, c.addUser,
+		c.card_status, c.image,c.location_id_list,
+		c.timeType,g.id as gId, g.code,c.title
+		from t_duofen_card_get g inner join t_duofen_card c on c.id=g.cardId
+		where   g.state=0 and (g.memberId=#{memberId} or g.friendMemberId like '%${memberId}%') GROUP BY c.id
+	</select>
+
+
+	<select id="findByCardId" resultType="Map">
+		select cardId,code from t_duofen_card_get where cardId=#{cardId} and memberId=#{memberId} and state=0 order by endTime ASC limit #{cardNum}
+	</select>
+
+
+	<update id="updateByCodes">
+		update t_duofen_card_get set state=1 where state=0 and  code in
+		<foreach close=")" collection="codes" item="code" open="(" separator=",">
+			#{code}
+		</foreach>
+	</update>
+
+
+
+	<update id="updateStoreIdByCodes">
+		update t_duofen_card_get set state=1,storeId=#{storeId} where state=0 and  code in
+		<foreach close=")" collection="codes" item="code" open="(" separator=",">
+			#{code}
+		</foreach>
+	</update>
+
+
+	<insert id="insertList" parameterType="java.util.List">
+		insert into t_duofen_card_get (cardId, getType,
+		code, state, getDate,
+		cardReceiveId, memberId, publicId,
+		startTime, endTime, friendMemberId,busId
+		)
+		values
+		<foreach collection="duofencardGets" item="c" separator=",">
+			(#{c.cardid,jdbcType=INTEGER}, #{c.gettype,jdbcType=TINYINT},
+			#{c.code,jdbcType=VARCHAR}, #{c.state,jdbcType=TINYINT}, #{c.getdate},
+			#{c.cardreceiveid,jdbcType=INTEGER}, #{c.memberid,jdbcType=INTEGER}, #{c.publicid,jdbcType=INTEGER},
+			#{c.starttime}, #{c.endtime}, #{c.friendmemberid,jdbcType=VARCHAR},
+			#{c.busid,jdbcType=INTEGER})
+		</foreach>
+	</insert>
+
+	<select id="findUserCardByReceiveId" resultMap="BaseResultMap">
+		select  <include refid="Base_Column_List" />
+		from t_duofen_card_get
+		where cardReceiveId=#{cardReceiveId} and memberId=#{memberId}
+	</select>
+
+	<select id="findThreeByOverTime" resultMap="BaseResultMap">
+		select  cardId
+		from t_duofen_card_get where state=2 and getType=3 and memberId=#{memberId} and cardReceiveId=#{cardReceiveId}
+	</select>
+
+	<select id="findUserCardByState" resultType="Map">
+		select
+		c.id as cId, c.brand_name, c.card_type, deal_detail, c.cash_least_cost,
+		c.reduce_cost, c.discount, c.gift, c.default_detail, c.title, c.sub_title, c.color,
+		c.type, c.begin_timestamp, c.end_timestamp, c.fixed_term, c.fixed_begin_term,
+		c.least_cost, c.time_limit,
+		c.card_status, c.image,c.description,
+		c.timeType,g.id as gId, g.getType, g.code, g.state, g.getDate, g.cardReceiveId,g.startTime,
+		g.endTime
+		from t_duofen_card_get g inner join t_duofen_card c on c.id=g.cardId
+
+		where g.cardReceiveId=#{cardReceiveId} and g.state=#{state} and g.memberId
+		in
+		<foreach close=")" collection="memberIds" item="m" open="(" separator=",">
+			#{m}
+		</foreach>
+	</select>
+
+	<select id="countGroupbyGetType" resultType="Map">
+		SELECT COUNT(id) as countId,getType FROM t_duofen_card_get WHERE busId=#{busId}
+		<if test="cardId!=null">
+			and  cardId=#{cardId}
+		</if>
+		<if test="getType!=null">
+			AND getType=#{getType}
+		</if>
+		and getDate <![CDATA[>=]]> #{startTime} and getDate <![CDATA[<=]]> #{endTime}
+		GROUP BY getType
+	</select>
+
+	<select id="countDuofenCard" resultType="java.lang.Integer">
+		SELECT COUNT(id) as countId,getType FROM t_duofen_card_get WHERE busId=#{busId}
+		<if test="cardId!=null">
+			and  cardId=#{cardId}
+		</if>
+		<if test="getType!=null">
+			AND getType=#{getType}
+		</if>
+		and getDate <![CDATA[>=]]> #{startTime} and getDate <![CDATA[<=]]> #{endTime}
+	</select>
+
+
+	<select id="countByUserGroupbyGetType" resultType="Map">
+		SELECT COUNT(id) as countId,getType FROM t_duofen_card_get WHERE busId=#{busId}
+		<if test="cardId!=null">
+			and  cardId=#{cardId}
+		</if>
+		<if test="getType!=null">
+			AND getType=#{getType}
+		</if>
+		<if test="storeId!=0">
+			AND storeId=#{storeId}
+		</if>
+		and state=1
+		and getDate <![CDATA[>=]]> #{startTime} and getDate <![CDATA[<=]]> #{endTime}
+		GROUP BY getType
+	</select>
+
+	<select id="countDuofenCardByUser" resultType="java.lang.Integer">
+		SELECT COUNT(id) as countId,getType FROM t_duofen_card_get WHERE busId=#{busId}
+		<if test="cardId!=null">
+			and  cardId=#{cardId}
+		</if>
+		<if test="getType!=null">
+			AND getType=#{getType}
+		</if>
+		<if test="storeId!=0">
+			AND storeId=#{storeId}
+		</if>
+
+		and state=1
+		and getDate <![CDATA[>=]]> #{startTime} and getDate <![CDATA[<=]]> #{endTime}
+	</select>
+
+
+	<select id="select7Day" resultType="Map">
+		SELECT DATE_FORMAT(getDate, '%Y-%m-%d') AS a1,COUNT(id) AS a2 FROM t_duofen_card_get
+		where busId=#{busId}
+		GROUP BY DATE_FORMAT(getDate, '%Y-%m-%d')
+		ORDER BY a1 DESC  LIMIT 7
+	</select>
+
+	<select id="selectUser7Day" resultType="Map">
+		SELECT DATE_FORMAT(getDate, '%Y-%m-%d') AS a3,COUNT(id) AS a4 FROM t_duofen_card_get
+		where busId=#{busId} and state=1
+		<if test="storeId!=0">
+			AND storeId=#{storeId}
+		</if>
+
+		GROUP BY DATE_FORMAT(getDate, '%Y-%m-%d')
+		ORDER BY a3 DESC  LIMIT 7
+	</select>
+
+
+	<select id="select7Month" resultType="Map">
+		SELECT DATE_FORMAT(getDate, '%Y-%m') AS a1,COUNT(id) AS a2 FROM t_duofen_card_get
+		where busId=#{busId}
+		GROUP BY DATE_FORMAT(getDate, '%Y-%m')
+		ORDER BY a1 DESC  LIMIT 7
+	</select>
+
+	<select id="selectUser7Month" resultType="Map">
+		SELECT DATE_FORMAT(getDate, '%Y-%m') AS a3,COUNT(id) AS a4 FROM t_duofen_card_get
+		where busId=#{busId} and state=1
+		<if test="storeId!=0">
+			AND storeId=#{storeId}
+		</if>
+		GROUP BY DATE_FORMAT(getDate, '%Y-%m')
+		ORDER BY a3 DESC  LIMIT 7
+	</select>
+
+
+	<select id="findByCodes" resultType="Map">
+		select state,cardId,recommendId from t_duofen_card_get where  code in
+
+		<foreach close=")" collection="codes" item="code" open="(" separator=",">
+			#{code}
+		</foreach>
+
+	</select>
+
+	<select id="countCode" resultType="Map">
+		SELECT COUNT(g.id) as countId,s.business_name FROM t_duofen_card_get g INNER JOIN t_wx_shop  s ON s.id=g.storeId
+		where g.busId=#{busId} and storeId in
+		<foreach close=")" collection="storeIds" item="storeId" open="(" separator=",">
+			#{storeId}
+		</foreach>
+		GROUP BY g.storeId
+	</select>
+
+	<select id="findByMemberIdAndCardReceiveId" resultType="Map">
+		SELECT id FROM t_duofen_card_get WHERE memberId=#{memberId} AND cardReceiveId=#{cardReceiveId}   AND state=0  GROUP BY cardId
+	</select>
+
+
+	<delete id="deleteByIds">
+		delete from t_duofen_card_get where id in
+		<foreach close=")" collection="ids" item="id" open="(" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+
+
+	<select id="findMeiRongCardGetByMemberId" resultType="Map">
+		select
+		c.id as cId, c.brand_name, c.card_type, deal_detail, c.cash_least_cost,
+		c.reduce_cost, c.discount, c.gift, c.default_detail, c.title, c.sub_title, c.color,
+		c.type, c.begin_timestamp, c.end_timestamp, c.fixed_term, c.fixed_begin_term,
+		c.least_cost,
+		c.card_status, c.image,
+		c.timeType,g.id as gId, g.getType, g.code, g.state, g.getDate, g.cardReceiveId,g.startTime,
+		g.endTime
+		from t_duofen_card_get g inner join t_duofen_card c on c.id=g.cardId
+		where  g.id=#{receiceId} and g.memberId
+		in
+		<foreach close=")" collection="memberIds" item="m" open="(" separator=",">
+			#{m}
+		</foreach>
+		order by gId desc
+	</select>
+
+
+</mapper>

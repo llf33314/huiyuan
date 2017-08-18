@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberOptionDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberOption">
+		<id column="id" property="id" />
+		<result column="nameOption" property="nameOption" />
+		<result column="sexOption" property="sexOption" />
+		<result column="phoneOption" property="phoneOption" />
+		<result column="addrOption" property="addrOption" />
+		<result column="addrShow" property="addrShow" />
+		<result column="addrDetailOption" property="addrDetailOption" />
+		<result column="addrDetailShow" property="addrDetailShow" />
+		<result column="mailOption" property="mailOption" />
+		<result column="mailShow" property="mailShow" />
+		<result column="birthOption" property="birthOption" />
+		<result column="birthShow" property="birthShow" />
+		<result column="cardOption" property="cardOption" />
+		<result column="cardShow" property="cardShow" />
+		<result column="uploadCard" property="uploadCard" />
+		<result column="publicId" property="publicId" />
+		<result column="nameShow1" property="nameShow1" />
+		<result column="sexShow1" property="sexShow1" />
+		<result column="addrShow1" property="addrShow1" />
+		<result column="addrDetailShow1" property="addrDetailShow1" />
+		<result column="mailShow1" property="mailShow1" />
+		<result column="cardShow1" property="cardShow1" />
+		<result column="birthShow1" property="birthShow1" />
+		<result column="getMoneyOption" property="getMoneyOption" />
+		<result column="getMoneyShow" property="getMoneyShow" />
+		<result column="getMoneyShow1" property="getMoneyShow1" />
+		<result column="busId" property="busId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, nameOption, sexOption, phoneOption,
+        addrOption, addrShow, addrDetailOption, addrDetailShow, mailOption, mailShow, birthOption, birthShow,
+         cardOption, cardShow, uploadCard, publicId, nameShow1, sexShow1, addrShow1, addrDetailShow1,
+         mailShow1, cardShow1, birthShow1, getMoneyOption, getMoneyShow, getMoneyShow1, busId
+    </sql>
+
+	<select id="findByBusId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_member_option
+		where busId=#{busId}  limit 1
+	</select>
+
+</mapper>

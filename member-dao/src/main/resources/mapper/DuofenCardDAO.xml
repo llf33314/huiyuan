@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.DuofenCardDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.DuofenCard">
+		<id column="id" property="id" />
+		<result column="logo_url" property="logoUrl" />
+		<result column="user_id" property="userId" />
+		<result column="public_id" property="publicId" />
+		<result column="card_id" property="cardId" />
+		<result column="brand_name" property="brandName" />
+		<result column="card_type" property="cardType" />
+		<result column="deal_detail" property="dealDetail" />
+		<result column="cash_least_cost" property="cashLeastCost" />
+		<result column="reduce_cost" property="reduceCost" />
+		<result column="discount" property="discount" />
+		<result column="gift" property="gift" />
+		<result column="default_detail" property="defaultDetail" />
+		<result column="title" property="title" />
+		<result column="sub_title" property="subTitle" />
+		<result column="color" property="color" />
+		<result column="notice" property="notice" />
+		<result column="description" property="description" />
+		<result column="quantity" property="quantity" />
+		<result column="type" property="type" />
+		<result column="begin_timestamp" property="beginTimestamp" />
+		<result column="end_timestamp" property="endTimestamp" />
+		<result column="fixed_term" property="fixedTerm" />
+		<result column="fixed_begin_term" property="fixedBeginTerm" />
+		<result column="service_phone" property="servicePhone" />
+		<result column="location_id_list" property="locationIdList" />
+		<result column="can_share" property="canShare" />
+		<result column="can_give_friend" property="canGiveFriend" />
+		<result column="least_cost" property="leastCost" />
+		<result column="summary" property="summary" />
+		<result column="icon_url_list" property="iconUrlList" />
+		<result column="text_image_list" property="textImageList" />
+		<result column="time_limit" property="timeLimit" />
+		<result column="card_status" property="cardStatus" />
+		<result column="ctime" property="ctime" />
+		<result column="pass_time" property="passTime" />
+		<result column="isCallSMS" property="isCallSMS" />
+		<result column="phone" property="phone" />
+		<result column="image" property="image" />
+		<result column="timeType" property="timeType" />
+		<result column="iddelete" property="iddelete" />
+		<result column="dateTimeSet" property="dateTimeSet" />
+		<result column="examine_id" property="examineId" />
+		<result column="addUser" property="addUser" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, logo_url, user_id ,
+        public_id , card_id ,
+        brand_name , card_type ,
+        deal_detail , cash_least_cost ,
+         reduce_cost , discount, gift, default_detail ,
+         title, sub_title, color, notice, description, quantity,
+         type, begin_timestamp , end_timestamp ,
+          fixed_term , fixed_begin_term , service_phone ,
+           location_id_list , can_share , can_give_friend ,
+           least_cost , summary, icon_url_list , text_image_list ,
+           time_limit , card_status , ctime, pass_time , isCallSMS, phone, image,
+            timeType, iddelete, dateTimeSet, examine_id, addUser
+    </sql>
+
+
+
+	<select id="findDuofenCard" resultType="Map">
+		select
+		<include refid="Base_Column_List" />
+		from t_duofen_card where user_id=#{busId} and iddelete=0
+		<if test="title!=null">
+			and title like '%${title}%'
+		</if>
+		order by id desc
+		limit #{firstResult},#{pageSize}
+	</select>
+
+	<select id="countDuofenCard" resultType="java.lang.Integer">
+		select count(id) from t_duofen_card where user_id=#{busId} and
+		iddelete=0
+		<if test="title!=null">
+			and title like '%${title}%'
+		</if>
+	</select>
+
+	<select id="findByCardIds" resultType="Map">
+		select
+		<include refid="Base_Column_List" />
+		from t_duofen_card where user_id=#{busId} and id in
+		<foreach close=")" collection="cardIds" item="cardId" open="("
+				 separator=",">
+			#{cardId}
+		</foreach>
+	</select>
+
+	<select id="findInCardIds" parameterType="map" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" />
+		from t_duofen_card where  id in
+		<foreach close=")" collection="cardIds" item="cardId" open="("
+				 separator=",">
+			#{cardId}
+		</foreach>
+	</select>
+
+
+	<select id="findByBusId" parameterType="map" resultMap="BaseResultMap">
+		select id,title from t_duofen_card where user_id=#{busId} and card_status=2 order by id desc
+	</select>
+
+</mapper>

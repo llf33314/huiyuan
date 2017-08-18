@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.DuofenCardReceiveDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.DuofenCardReceive">
+		<id column="id" property="id" />
+		<result column="publicId" property="publicId" />
+		<result column="cardsName" property="cardsName" />
+		<result column="cardImage" property="cardImage" />
+		<result column="receiveDate" property="receiveDate" />
+		<result column="deliveryAddr" property="deliveryAddr" />
+		<result column="deliveryType" property="deliveryType" />
+		<result column="deliveryType1" property="deliveryType1" />
+		<result column="numlimit" property="numlimit" />
+		<result column="maxNumType" property="maxNumType" />
+		<result column="maxNum" property="maxNum" />
+		<result column="cardMessage" property="cardMessage" />
+		<result column="buyMoney" property="buyMoney" />
+		<result column="ctIds" property="ctIds" />
+		<result column="gtIds" property="gtIds" />
+		<result column="code" property="code" />
+		<result column="state" property="state" />
+		<result column="titleCard" property="titleCard" />
+		<result column="cardIds" property="cardIds" />
+		<result column="backColor" property="backColor" />
+		<result column="isCallSms" property="isCallSms" />
+		<result column="mobilePhone" property="mobilePhone" />
+		<result column="cardType" property="cardType" />
+		<result column="lqId" property="lqId" />
+		<result column="jifen" property="jifen" />
+		<result column="fenbi" property="fenbi" />
+		<result column="busId" property="busId" />
+		<result column="threeMallId" property="threeMallId" />
+		<result column="threeNum" property="threeNum" />
+		<result column="classifyId" property="classifyId" />
+		<result column="isrecommend" property="isrecommend" />
+		<result column="giveJifen" property="giveJifen" />
+		<result column="giveFenbi" property="giveFenbi" />
+		<result column="giveMoney" property="giveMoney" />
+		<result column="giveFlow" property="giveFlow" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, publicId, cardsName, cardImage,
+         receiveDate, deliveryAddr, deliveryType, deliveryType1, numlimit, maxNumType,
+          maxNum, cardMessage, buyMoney, ctIds, gtIds, code, state, titleCard, cardIds,
+           backColor, isCallSms, mobilePhone, cardType, lqId, jifen, fenbi, busId, threeMallId,
+            threeNum, classifyId, isrecommend, giveJifen, giveFenbi, giveMoney, giveFlow
+    </sql>
+
+
+	<select id="countCardReceive" resultType="java.lang.Integer">
+		select count(id) from t_duofen_card_receive where busId=#{busId}
+	</select>
+
+	<select id="findCardReceive" resultType="Map">
+		select * from t_duofen_card_receive where busId=#{busId} order by id desc  limit #{first},#{pageSize}
+	</select>
+
+	<select id="findByCode" resultMap="BaseResultMap">
+		select * from t_duofen_card_receive where busId=#{busId} and code=#{code}
+	</select>
+
+	<select id="findByGtId" resultType="Map">
+		select * from t_duofen_card_receive where busId=#{busId} and deliveryType=2 and state=1 and (receiveDate&gt;=#{receiveDate} or receiveDate is null) and  gtIds like '%${gtId}%' order by id desc
+	</select>
+
+	<select id="findByMemberId" resultType="Map">
+		select * from t_duofen_card_receive where id in(select cardReceiveId from t_duofen_card_get where memberId=#{memberId})
+	</select>
+
+	<select id="findInIds" resultType="Map">
+		select * from t_duofen_card_receive where id in
+		<foreach close=")" collection="ids" item="id" open="(" separator=",">
+			#{id}
+		</foreach>
+	</select>
+
+
+	<select id="findById" resultType="Map">
+		select * from t_duofen_card_receive where id=#{id} and state=1 and (receiveDate&gt;=#{receiveDate} or receiveDate is null)  order by id desc
+	</select>
+
+
+
+	<select id="countThreeCardReceive" resultType="java.lang.Integer">
+		select count(id) from t_duofen_card_receive where busId=#{busId} and deliveryAddr=1 and state=1
+	</select>
+
+	<select id="findThreeCardReceive" resultType="Map">
+		SELECT cr.*,pu.authorizer_info FROM t_duofen_card_receive cr  INNER JOIN t_wx_public_users pu ON pu.id=cr.publicId WHERE cr.publicId=#{publicId} AND cr.deliveryAddr=1 AND cr.state=1 ORDER BY cr.id DESC limit #{first},#{pageSize}
+	</select>
+
+
+	<select id="findCardReceiveBybusId" parameterType="map" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" /> from t_duofen_card_receive where busId=#{busId} and deliveryType=3 and state=1
+	</select>
+
+
+	<select id="findCardReceiveByPublicId" parameterType="map" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" /> from t_duofen_card_receive where publicId=#{publicId} and deliveryType=3 and state=1
+	</select>
+
+
+
+	<select id="findCardReceiveBybusId1" resultType="Map">
+		select id,cardsName,receiveDate from t_duofen_card_receive where busId=#{busId} and deliveryType=1 and numlimit=0 and state=1
+	</select>
+
+
+	<select id="findByBusUserId" resultType="Map">
+		select <include refid="Base_Column_List" />  from t_duofen_card_receive
+		where busId=#{busUserId} and deliveryType=3 and state=1 and (receiveDate&gt;=#{date} or receiveDate is null)
+	</select>
+
+	<select id="findGtIds" resultType="Map">
+		SELECT cr.gtIds FROM t_duofen_card_receive cr WHERE busId=#{busId} and state=1 AND deliveryType=2 AND (receiveDate <![CDATA[>=]]> #{receiveDate} or receiveDate is null)  AND  cr.id NOT IN (SELECT crId FROM t_duofen_card_receivelog WHERE memberId=#{memberId} GROUP BY crId)
+	</select>
+
+
+	<select id="findCardReceiveBydeliveryType1" resultType="Map">
+		select <include refid="Base_Column_List" />  from t_duofen_card_receive where busId=#{busId} and state=1 and deliveryAddr=2 and deliveryType1=#{deliveryType1} and (receiveDate <![CDATA[>=]]> #{receiveDate} or receiveDate is null) order by id desc  limit #{first},#{pageSize}
+	</select>
+
+	<select id="findByBusUserIdAndTime" resultType="Map">
+		select <include refid="Base_Column_List" />  from t_duofen_card_receive where busId=#{busUserId} and deliveryType=3 and state=1 and (receiveDate <![CDATA[>=]]> #{receiveDate} or receiveDate is null)
+	</select>
+
+	<select id="findCardReceiveById" resultType="Map">
+		select <include refid="Base_Column_List" />  from t_duofen_card_receive where id=#{id}
+	</select>
+
+
+
+	<select id="findCardReceivesBydeliveryType1" resultType="Map">
+		select <include refid="Base_Column_List" />  from t_duofen_card_receive where busId=#{busId} and state=1 and deliveryAddr=2 and deliveryType1=#{deliveryType1} and (receiveDate <![CDATA[>=]]> #{receiveDate} or receiveDate is null) order by id desc
+	</select>
+
+
+	<select id="findCardReceivesBydeliveryTypeAll" resultType="Map">
+		select <include refid="Base_Column_List" />  from t_duofen_card_receive where busId=#{busId} and state=1 and deliveryAddr=2  and (receiveDate <![CDATA[>=]]> #{receiveDate} or receiveDate is null) order by id desc
+	</select>
+
+
+	<select id="findFreeCardReceive" resultType="Map">
+		select id,cardsName,titleCard,receiveDate from t_duofen_card_receive where busId=#{busId} and deliveryType=1 and numlimit=0 and state=1 and jifen=0 and fenbi=0 and (receiveDate <![CDATA[>=]]> #{receiveDate} or receiveDate is null) order by id desc
+	</select>
+
+	<select id="findCardRecevice" resultType="Map">
+		select id,cardsName from t_duofen_card_receive where busId=#{busId} and deliveryType=5 and numlimit=0 and state=1  and (receiveDate <![CDATA[>=]]> #{receiveDate} or receiveDate is null) order by id desc
+	</select>
+
+	<select id="findMeiRongCardReceviceByMemberId" resultType="Map">
+		select * from t_duofen_card_receive where id in (
+		SELECT
+		cardReceiveId
+		FROM t_duofen_card_get g
+		WHERE g.getType=4 AND g.state=0 and g.memberId in
+		<foreach close=")" collection="memberIds" item="m" open="(" separator=",">
+			#{m}
+		</foreach>
+		GROUP BY cardReceiveId
+		)
+
+	</select>
+
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberQcodeWxDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberQcodeWx">
+		<id column="id" property="id" />
+		<result column="codeUrl" property="codeUrl" />
+		<result column="busId" property="busId" />
+		<result column="busType" property="busType" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, codeUrl, busId, busType
+    </sql>
+
+	<select id="findByBusId" resultMap="BaseResultMap">
+		select * from t_member_qcodeWx where busId=#{busId} and busType=#{busType} limit 1
+	</select>
+
+</mapper>

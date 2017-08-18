@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.PersonCentermoduleDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.PersonCentermodule">
+		<id column="id" property="id" />
+		<result column="moduleImage" property="moduleImage" />
+		<result column="moduleName" property="moduleName" />
+		<result column="url" property="url" />
+		<result column="publicId" property="publicId" />
+		<result column="sort" property="sort" />
+		<result column="busId" property="busId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, moduleImage, moduleName, url, publicId, sort, busId
+    </sql>
+
+	<select id="findBybusId" resultType="Map">
+		select * from t_person_centermodule where busId=#{busId} order by sort desc
+	</select>
+
+</mapper>

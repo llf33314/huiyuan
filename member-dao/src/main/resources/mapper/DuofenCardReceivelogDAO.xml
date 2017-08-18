@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.DuofenCardReceivelogDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.DuofenCardReceivelog">
+		<id column="id" property="id" />
+		<result column="crId" property="crId" />
+		<result column="memberId" property="memberId" />
+		<result column="createDate" property="createDate" />
+		<result column="threeMemberId" property="threeMemberId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, crId, memberId, createDate, threeMemberId
+    </sql>
+
+
+	<select id="countByCrId" resultType="Map">
+		SELECT crId,COUNT(id) as cId FROM `t_duofen_card_receivelog` WHERE memberId=#{memberId} and  crId
+		IN
+		<foreach close=")" collection="crIds" item="crId" open="(" separator=",">
+			#{crId}
+		</foreach>
+		GROUP BY crId
+	</select>
+
+	<select id="countByCrIdAndDate" resultType="Map">
+		SELECT crId,COUNT(id) as cId FROM `t_duofen_card_receivelog` WHERE memberId=#{memberId} and crId=#{crId} and createDate <![CDATA[>=]]> #{beginDate}
+		GROUP BY crId
+	</select>
+
+	<select id="findByThreeMemberId" resultType="Map">
+		select crId from t_duofen_card_receivelog where threeMemberId=#{threeMemberId} limit #{firstResult},#{pageSize}
+	</select>
+
+	<select id="countByCrIdAndMemberId" resultType="Map">
+		SELECT crId,COUNT(id) as cId FROM `t_duofen_card_receivelog` WHERE memberId=#{memberId} and  crId=#{crId}
+	</select>
+</mapper>

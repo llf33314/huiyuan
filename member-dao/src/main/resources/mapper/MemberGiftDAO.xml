@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberGiftDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberGift">
+		<id column="id" property="id" />
+		<result column="modelCode" property="modelCode" />
+		<result column="jifen" property="jifen" />
+		<result column="fenbi" property="fenbi" />
+		<result column="flow" property="flow" />
+		<result column="cardUrl" property="cardUrl" />
+		<result column="publicId" property="publicId" />
+		<result column="title" property="title" />
+		<result column="busId" property="busId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, modelCode, jifen, fenbi, flow, cardUrl, publicId, title, busId
+    </sql>
+
+
+	<select id="findBybusId" resultType="Map">
+		select * from t_member_gift where busId = #{busId}
+	</select>
+
+	<select id="findBybusIdAndmodelCode" resultMap="BaseResultMap">
+		select * from t_member_gift where busId = #{busId} and modelCode=#{modelCode} limit 1
+	</select>
+</mapper>

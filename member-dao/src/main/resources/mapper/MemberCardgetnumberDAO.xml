@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberCardgetnumberDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberCardgetnumber">
+		<id column="id" property="id" />
+		<result column="ctId" property="ctId" />
+		<result column="publicId" property="publicId" />
+		<result column="nominateCode" property="nominateCode" />
+		<result column="number" property="number" />
+		<result column="createDate" property="createDate" />
+		<result column="createUser" property="createUser" />
+		<result column="busId" property="busId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, ctId, publicId, nominateCode, number, createDate, createUser, busId
+    </sql>
+
+	<select id="findBybusIdAndNominateCode" resultType="java.lang.Integer">
+		select number from t_member_cardgetnumber where busId=#{busId} and nominateCode=#{nominateCode} limit 1
+	</select>
+
+
+	<select id="findByNominateCode" resultMap="BaseResultMap">
+		select * from t_member_cardgetnumber where busId=#{busId} and nominateCode=#{nominateCode} limit 1
+	</select>
+
+
+</mapper>

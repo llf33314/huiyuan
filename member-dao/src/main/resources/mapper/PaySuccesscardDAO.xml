@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.PaySuccesscardDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.PaySuccesscard">
+		<id column="id" property="id" />
+		<result column="payMoney" property="payMoney" />
+		<result column="cardId" property="cardId" />
+		<result column="cardShelveId" property="cardShelveId" />
+		<result column="cardShelveUrl" property="cardShelveUrl" />
+		<result column="paySuccessId" property="paySuccessId" />
+		<result column="jifenCount" property="jifenCount" />
+		<result column="fenbiCount" property="fenbiCount" />
+		<result column="rId" property="rId" />
+		<result column="num" property="num" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, payMoney, cardId, cardShelveId, cardShelveUrl, paySuccessId, jifenCount, fenbiCount, rId, num
+    </sql>
+
+	<select id="findBySuccessId" resultType="Map">
+		select * from t_pay_successcard where paySuccessId=#{successId} order by payMoney asc
+	</select>
+
+	<delete id="deleteBySuccessId">
+		delete from t_pay_successcard where paySuccessId=#{successId}
+	</delete>
+
+</mapper>

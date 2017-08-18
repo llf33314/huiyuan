@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.PersonCenterDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.PersonCenter">
+		<id column="id" property="id" />
+		<result column="publicId" property="publicId" />
+		<result column="backimage" property="backimage" />
+		<result column="format" property="format" />
+		<result column="busId" property="busId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, publicId, backimage, format, busId
+    </sql>
+
+	<select id="findBybusId" resultMap="BaseResultMap">
+		select * from t_person_center where busId=#{busId} limit 1
+	</select>
+</mapper>

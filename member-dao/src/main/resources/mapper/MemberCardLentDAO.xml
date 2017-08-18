@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberCardLentDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberCardLent">
+		<id column="id" property="id" />
+		<result column="mcId" property="mcId" />
+		<result column="code" property="code" />
+		<result column="usestate" property="usestate" />
+		<result column="createDate" property="createDate" />
+		<result column="lentMoney" property="lentMoney" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, mcId, code, usestate, createDate, lentMoney
+    </sql>
+
+
+	<select id="findByCode" resultMap="BaseResultMap">
+		select * from t_member_card_lent where usestate=0 and code=#{code}
+	</select>
+</mapper>

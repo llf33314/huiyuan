@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.DuofenCardExamineDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.DuofenCardExamine">
+		<id column="id" property="id" />
+		<result column="duofen_card_id" property="duofenCardId" />
+		<result column="card_status" property="cardStatus" />
+		<result column="ctime" property="ctime" />
+		<result column="man_user_id" property="manUserId" />
+		<result column="remark" property="remark" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, duofen_card_id , card_status , ctime, man_user_id , remark
+    </sql>
+
+</mapper>

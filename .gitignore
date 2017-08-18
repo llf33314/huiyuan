@@ -1,0 +1,12 @@
+
+/.idea/
+/member-common/target/
+/member-dao/target/
+/member-entity/target/
+/member-generator/target/
+/member-service/target/
+/member-web/target/
+/member-web-api/member-web-api.iml
+/member-web-api/target/
+/parent.iml
+/member.iml

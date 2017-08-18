@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberRecommendDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberRecommend">
+		<id column="id" property="id" />
+		<result column="memberId" property="memberId" />
+		<result column="name" property="name" />
+		<result column="phone" property="phone" />
+		<result column="ischeck" property="ischeck" />
+		<result column="code" property="code" />
+		<result column="ctId" property="ctId" />
+		<result column="image" property="image" />
+		<result column="isUser" property="isUser" />
+		<result column="integral" property="integral" />
+		<result column="fenbi" property="fenbi" />
+		<result column="flow" property="flow" />
+		<result column="datetime" property="datetime" />
+		<result column="retext" property="retext" />
+		<result column="money" property="money" />
+		<result column="reType" property="reType" />
+		<result column="cardId" property="cardId" />
+		<result column="recommendType" property="recommendType" />
+		<result column="lingquNum" property="lingquNum" />
+		<result column="userNum" property="userNum" />
+		<result column="cardName" property="cardName" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, memberId, name, phone, ischeck, code, ctId, image, isUser, integral, fenbi, flow, datetime, retext, money, reType,
+         cardId, recommendType, lingquNum, userNum, cardName
+    </sql>
+
+
+	<select id="findByMemberId" resultType="Map">
+		select * from t_member_recommend
+		<where>
+			<foreach collection="memberIds" item="memberId"  separator="or">
+				memberId=#{memberId}
+			</foreach>
+		</where>
+
+		order by id desc
+	</select>
+
+	<select id="findBycode" resultMap="BaseResultMap">
+		select * from t_member_recommend where ischeck=1 and isUser=0  and code=#{code} and ctId=#{ctId}
+		limit 1
+	</select>
+
+	<select id="countTuiJian" resultType="java.lang.Integer">
+		select count(t.id) from t_member_recommend t inner join
+		t_wx_bus_member m on
+		m.id=t.memberId
+		where m.busId=#{busId} and t.ctId=#{ctId} and
+		t.isUser=1
+	</select>
+
+	<select id="selectIsNotUserCode" parameterType="com.gt.member.entity.MemberRecommend" resultType="Map">
+		select * from t_member_recommend where memberId=#{memberid} and isUser=0 and reType=#{retype}
+		order by id desc
+	</select>
+
+
+	<select id="findRecommendByCode" resultMap="BaseResultMap">
+		select * from t_member_recommend where ischeck=1 and isUser=0 and code=#{code}
+	</select>
+
+
+	<select id="countRecommendByCardId" resultType="java.lang.Integer">
+		select count(id) from t_member_recommend where cardId=#{cardId} and memberId=#{memberId}
+	</select>
+
+	<select id="findRecommendByCardId" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" /> from t_member_recommend where cardId=#{cardId} and memberId=#{memberId}
+	</select>
+
+	<select id="findRecommendByphone" resultType="java.lang.Integer">
+		select count(id) from t_member_recommend where memberId=#{memberId} and phone=#{phone}
+	</select>
+
+</mapper>
