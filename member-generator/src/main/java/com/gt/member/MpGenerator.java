@@ -27,10 +27,10 @@ public class MpGenerator {
     public static final  String   outPutJavaModel    = outPutBaseDir + "src/main/java";
     // 需要生成的表
     public static final  String[] generatorTableName = new String[] {
-		    "bus_user_num"
+		    "t_wx_fenbi_flow_record"
     };
     // 去除表前缀 例如：bus_user 填入bus 生成的 user
-    public static final  String[] tablePrefix        = new String[] { "" };
+    public static final  String[] tablePrefix        = new String[] { "t_wx" };
     // 生成的包路径
     public static final  String   packagePath        = "com.gt.member";
     public static final  String   moduleName         = "";

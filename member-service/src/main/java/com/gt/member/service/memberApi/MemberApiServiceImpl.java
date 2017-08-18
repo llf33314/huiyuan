@@ -138,6 +138,9 @@ public class MemberApiServiceImpl implements MemberApiService {
     @Autowired
     private FenbiFlowRecordDAO fenbiFlowRecordDAO;
 
+    @Autowired
+    private MemberCardDAO memberCardDAO;
+
     /**
      * 查询粉丝信息
      *
@@ -3781,6 +3784,126 @@ public class MemberApiServiceImpl implements MemberApiService {
 
     public List< Map< String,Object > > findCardrecord( Integer mcId, Integer page, Integer pageSize ) {
 	return memberCardrecordDAO.findCardrecordByMcId( mcId, page * pageSize, pageSize );
+    }
+
+
+    public MemberCard findMemberCardByMcId( Integer mcId ) {
+	return memberCardDAO.selectById( mcId );
+    }
+
+    public Map< String,Object > findMemberCardByMemberIdAndshopIds( Integer memberId, String shopIds ) throws BusinessException {
+	Map< String,Object > map = new HashMap< String,Object >();
+	// 查询卡号是否存在
+	try {
+	    Member member = memberDAO.selectById( memberId );
+	    MemberCard card = null;
+	    // 查询卡号是否存在
+	    if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
+		card = cardMapper.selectById( member.getMcId() );
+	    }
+
+	    if ( CommonUtil.isEmpty( card ) ) {
+		throw new BusinessException( ResponseMemberEnums.MEMBER_NOT_CARD.getCode(), ResponseMemberEnums.MEMBER_NOT_CARD.getMsg() );
+
+	    } else if ( card.getCardStatus() == 1 ) {
+		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
+	    } else {
+		List< Map< String,Object > > cards = cardMapper.findCardById( card.getMcId() );
+		MemberGiverule giveRule = giveRuleMapper.selectById( card.getGrId() );
+		map.put( "nickName", member.getNickname() );
+		map.put( "phone", member.getPhone() );
+		map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
+		map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
+		map.put( "cardNo", card.getCardNo() );
+		map.put( "ctId", card.getCtId() );
+		map.put( "discount", giveRule.getGrDiscount() / 10.0 );
+		map.put( "money", card.getMoney() );
+		map.put( "frequency", card.getFrequency() );
+		map.put( "fans_currency", member.getFansCurrency() );
+		map.put( "integral", member.getIntegral() );
+		map.put( "memberId", member.getId() );
+		map.put( "cardId", card.getMcId() );
+
+		Double fenbiMoeny = memberCommonService.currencyCount( null, member.getFansCurrency() );
+		map.put( "fenbiMoeny", fenbiMoeny );
+
+		Double jifenMoeny = memberCommonService.integralCount( null, new Double( member.getIntegral() ), member.getBusId() );
+		map.put( "jifenMoeny", jifenMoeny );
+
+		WxPublicUsers wxPublicUsers = wxPublicUsersMapper.selectByUserId( member.getBusId() );
+
+		String[] str = shopIds.split( "," );
+		for ( int i = 0; i < str.length; i++ ) {
+		    if(CommonUtil.isEmpty( str[i] ))continue;
+		    Integer shopId=CommonUtil.toInteger( str[i] );
+		    WxShop wxShop = wxShopDAO.selectById( shopId );
+		    if ( CommonUtil.isNotEmpty( wxPublicUsers ) && CommonUtil.isNotEmpty( member.getOpenid() ) && wxShop.getStatus() == 2 ) {
+			// 查询优惠券信息
+			List< Map< String,Object > > cardList = wxCardReceiveMapper.findByOpenId1( wxPublicUsers.getId(), member.getOpenid() );
+			List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
+			if ( CommonUtil.isNotEmpty( cardList ) && cardList.size() > 0 ) {
+			    for ( Map< String,Object > map2 : cardList ) {
+				// 时间判断
+				if ( CommonUtil.isNotEmpty( map2.get( "begin_timestamp" ) ) && CommonUtil.isNotEmpty( map2.get( "end_timestamp" ) ) ) {
+				    if ( DateTimeKit.laterThanNow( DateTimeKit.parse( map2.get( "begin_timestamp" ).toString(), "yyyy-MM-dd hh:mm:ss" ) ) ) {
+					continue;
+				    }
+				    if ( !DateTimeKit.laterThanNow( DateTimeKit.parse( map2.get( "end_timestamp" ).toString(), "yyyy-MM-dd hh:mm:ss" ) ) ) {
+					continue;
+				    }
+				} else {
+				    if ( DateTimeKit.laterThanNow( DateTimeKit.addDays( DateTimeKit.parse( map2.get( "ctime" ).toString(), "yyyy-MM-dd hh:mm:ss" ),
+						    CommonUtil.toInteger( map2.get( "fixed_begin_term" ) ) ) ) ) {
+					continue;
+				    }
+				    if ( !DateTimeKit.laterThanNow( DateTimeKit.addDays( DateTimeKit.parse( map2.get( "ctime" ).toString(), "yyyy-MM-dd hh:mm:ss" ),
+						    CommonUtil.toInteger( map2.get( "fixed_term" ) ) ) ) ) {
+					continue;
+				    }
+				}
+
+				String day = DateTimeKit.getDayToEnglish();
+				if ( !map2.get( "time_limit" ).toString().contains( day ) ) {
+				    continue;
+				}
+
+				if ( map2.get( "location_id_list" ).toString().contains( CommonUtil.toString( wxShop.getPoiId() ) ) ) {
+				    list.add( map2 );
+				}
+			    }
+			}
+			if ( list.size() > 0 ) {
+			    map.put( "code", 1 );
+			    map.put( "cardList"+shopId, JSONArray.fromObject( list ) );
+			}
+		    }
+		}
+	    }
+
+	    String[] str = shopIds.split( "," );
+	    for ( int i = 0; i < str.length; i++ ) {
+		if ( CommonUtil.isEmpty( str[i] ) ) continue;
+		Integer shopId = CommonUtil.toInteger( str[i] );
+		// 查询能使用的多粉优惠券
+		List< Map< String,Object > > duofenCards = findDuofenCardByMemberId( member.getId(), shopId );
+		map.put( "duofenCards"+shopId, duofenCards );
+	    }
+
+	    MemberDate memberDate = memberCommonService.findMemeberDate( member.getBusId(), card.getCtId() );
+	    if ( card.getCtId() == 2 ) {
+		if ( CommonUtil.isNotEmpty( memberDate ) ) {
+		    map.put( "memberDiscount", memberDate.getDiscount() );
+		    map.put( "memberDate", true );
+		}
+	    }
+
+	    return map;
+	} catch ( BusinessException e ) {
+	    throw new BusinessException( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    LOG.error( "ERP查询会员信息异常", e );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
     }
 
 }

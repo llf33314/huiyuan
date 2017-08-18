@@ -3,6 +3,7 @@ package com.gt.member.controller;
 import com.gt.member.base.BaseController;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.entity.Member;
+import com.gt.member.entity.MemberCard;
 import com.gt.member.entity.MemberGradetype;
 import com.gt.member.enums.ResponseEnums;
 import com.gt.member.exception.BusinessException;
@@ -353,6 +354,40 @@ public class MemberApiController extends BaseController {
 	}catch ( Exception e ) {
 	    logger.error( "商城）查询会员积分记录异常", e );
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+    }
+
+    @ApiOperation( value = "查询会员卡信息", notes = "查询会员卡信息" )
+    @ApiImplicitParam( name = "mcId", value = "会员卡id", paramType = "query", required = true, dataType = "int" )
+    @ResponseBody
+    @RequestMapping( value = "/findMemberCardByMcId", method = RequestMethod.POST )
+    public ServerResponse findMemberCardByMcId( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    Integer mcId = CommonUtil.toInteger( requestBody.get( "mcId" ) );
+	    MemberCard card = memberApiService.findMemberCardByMcId( mcId );
+	    return ServerResponse.createBySuccess( card );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "查询会员卡信息异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+    }
+
+
+    @ApiOperation( value = "跨门店 根据memberId和门店集合查询会员数据 返回数据包含会员信息、微信卡券、多粉卡券", notes = "根据memberId和门店集合查询会员数据" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "卡号或手机号", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "shopIds", value = "门店id集合逗号隔开", paramType = "query", required = true, dataType = "int" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/findCardAndShopIdsByMembeId", method = RequestMethod.POST )
+    public ServerResponse findCardAndShopIdsByMembeId( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    String shopIds = CommonUtil.toString( requestBody.get( "shopIds" ) );
+	    Map< String,Object > map = memberApiService.findMemberCardByMemberIdAndshopIds( memberId, shopIds );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
 

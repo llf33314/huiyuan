@@ -584,4 +584,23 @@ public interface MemberApiService {
      * @return
      */
     public List< Map< String,Object > > findCardrecord( Integer mcId, Integer page, Integer pageSize );
+
+    /**
+     * 查询会员卡信息
+     * @param mcId
+     * @return
+     */
+    public MemberCard findMemberCardByMcId(Integer mcId);
+
+
+    /**
+     * 跨门店 多个门店根据粉丝id获取优惠券信息
+     *
+     * @param memberId
+     * @param shopIds
+     *
+     * @return
+     * @throws Exception
+     */
+    public Map< String,Object > findMemberCardByMemberIdAndshopIds( Integer memberId, String shopIds ) throws BusinessException;
 }
