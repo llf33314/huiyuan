@@ -36,4 +36,13 @@ public interface ERPCountService {
      * @return
      */
     public void erpChuzhiPayMent(String mallAllEntityQuery, String param )throws BusinessException;
+
+
+    /**
+     * erp 扫码支付支付
+     * @param mallAllEntityQuery
+     * @param param
+     * @return
+     */
+    public Map<String,Object> saomaPayMent(String mallAllEntityQuery, String param )throws BusinessException;
 }

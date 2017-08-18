@@ -3,7 +3,9 @@
  */
 package com.gt.member.service.memberApi;
 
+import com.gt.common.entity.FenbiFlowRecord;
 import com.gt.member.dao.common.BusUserDAO;
+import com.gt.member.dao.common.FenbiFlowRecordDAO;
 import com.gt.member.dao.common.WxPublicUsersDAO;
 import com.gt.member.dao.common.WxShopDAO;
 import com.gt.common.entity.BusUser;
@@ -20,7 +22,6 @@ import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.*;
-import com.gt.member.util.token.TokenUitl;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -43,16 +44,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 
     @Autowired
     private MemberConfig memberConfig;
-
-    private final String getFenbiSurplus = "/basics/79B4DE7C/getFenbiSurplus.do";
-
-    private final String updateFenbiReduce = "/basics/79B4DE7C/updateFenbiReduce.do";
-
-    //微信卡券核销
-    private final String CODE_CONSUME = "/basics/79B4DE7C/codeConsume.do";
-
-    //保存粉币资产记录
-    private final String saveFenbiFlowRecord = "/basics/79B4DE7C/saveFenbiFlowRecord.do";
 
     @Autowired
     private MemberCardDAO cardMapper;
@@ -144,6 +135,9 @@ public class MemberApiServiceImpl implements MemberApiService {
     @Autowired
     private MemberCommonService memberCommonService;
 
+    @Autowired
+    private FenbiFlowRecordDAO fenbiFlowRecordDAO;
+
     /**
      * 查询粉丝信息
      *
@@ -218,19 +212,11 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    break;
 	    }
 
-	    JSONObject json = new JSONObject();
-	    json.put( "token", TokenUitl.getToken() );
-	    json.put( "busId", busUserId );
-	    json.put( "rec_type", 1 );
-	    json.put( "fre_type", recFreezeType );
-	    json.put( "fkId", ctId );
+
 
 	    // 查询粉笔数量
-	    Integer fenbi = 0;
-	    JSONObject returnJSON = HttpClienUtil.httpPost( memberConfig.getWxmp_home() + getFenbiSurplus, json, false );
-	    if ( "1".equals( returnJSON.get( "code" ) ) ) {
-		fenbi = returnJSON.getInt( "data" );
-	    }
+	    Integer fenbi = fenbiFlowRecordDAO.getFenbiSurplus(busUserId,1,recFreezeType,ctId  );
+
 
 	    // 如果是折扣卡 金额用折后金额
 	    if ( ctId == 2 ) {
@@ -321,15 +307,10 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 				    giveConsume.setGcTotal( count );
 
-				    JSONObject requestJson = new JSONObject();
-				    requestJson.put( "token", TokenUitl.getToken() );
-				    requestJson.put( "busId", busUserId );
-				    requestJson.put( "rec_type", count );
-				    requestJson.put( "fre_type", recFreezeType );
-				    requestJson.put( "fkId", ctId );
-				    // 查询粉笔数量
-				    HttpClienUtil.httpPost( memberConfig.getWxmp_home() + updateFenbiReduce, requestJson, false );
-				    fans_currency = (double) count;
+
+				    // 修改粉笔数量
+				    fenbiFlowRecordDAO.updateFenbiReduce(busUserId, count, ctId,recFreezeType);
+				        fans_currency = (double) count;
 				} else if ( "2".equals( map.get( "gId" ).toString() ) ) {
 				    Integer flowCount = Integer.parseInt( map.get( "number" ).toString() );
 				    // 会员日赠送流量
@@ -1036,19 +1017,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    break;
 	    }
 
-	    JSONObject json = new JSONObject();
-	    json.put( "token", TokenUitl.getToken() );
-	    json.put( "busId", busUserId );
-	    json.put( "rec_type", 1 );
-	    json.put( "fre_type", recFreezeType );
-	    json.put( "fkId", ctId );
-
 	    // 查询粉笔数量
-	    Integer fenbi = 0;
-	    JSONObject returnJSON = HttpClienUtil.httpPost( memberConfig.getWxmp_home() + getFenbiSurplus, json, false );
-	    if ( "1".equals( returnJSON.get( "code" ) ) ) {
-		fenbi = returnJSON.getInt( "data" );
-	    }
+	    Integer fenbi = fenbiFlowRecordDAO.getFenbiSurplus(busUserId,1,recFreezeType,ctId  );
+
 	    // 如果是折扣卡 金额用折后金额
 	    if ( ctId == 2 ) {
 		price = Double.parseDouble( ucs.get( 0 ).get( "discountMoney" ).toString() );
@@ -1129,15 +1100,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 				    }
 				    giveConsume.setGcTotal( count );
 				    // 冻结商家粉笔数量
-				    JSONObject requestJson = new JSONObject();
-				    requestJson.put( "token", TokenUitl.getToken() );
-				    requestJson.put( "busId", busUserId );
-				    requestJson.put( "rec_type", count );
-				    requestJson.put( "fre_type", recFreezeType );
-				    requestJson.put( "fkId", ctId );
-				    // 查询粉笔数量
-				    HttpClienUtil.httpPost( memberConfig.getWxmp_home() + updateFenbiReduce, requestJson, false );
-
+				    fenbiFlowRecordDAO.updateFenbiReduce(busUserId, count, ctId,recFreezeType);
 				} else if ( "2".equals( map.get( "gId" ).toString() ) ) {
 
 				    Integer flowCount = Integer.parseInt( map.get( "number" ).toString() );
@@ -1610,19 +1573,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 
 	    // 查询粉笔数量
-	    JSONObject json = new JSONObject();
-	    json.put( "token", TokenUitl.getToken() );
-	    json.put( "busId", busUserId );
-	    json.put( "rec_type", 1 );
-	    json.put( "fre_type", recFreezeType );
-	    json.put( "fkId", ctId );
+	    Integer fenbi = fenbiFlowRecordDAO.getFenbiSurplus(busUserId,1,recFreezeType,ctId  );
 
-	    // 查询粉笔数量
-	    Integer fenbi = 0;
-	    JSONObject returnJSON = HttpClienUtil.httpPost( memberConfig.getWxmp_home() + getFenbiSurplus, json, false );
-	    if ( "1".equals( returnJSON.get( "code" ) ) ) {
-		fenbi = returnJSON.getInt( "data" );
-	    }
 
 	    // 如果是折扣卡 金额用折后金额
 	    if ( ctId == 2 ) {
@@ -1701,15 +1653,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 				    giveConsume.setGcTotal( count );
 				    // 冻结商家粉笔数量
-				    JSONObject requestJson = new JSONObject();
-				    requestJson.put( "token", TokenUitl.getToken() );
-				    requestJson.put( "busId", busUserId );
-				    requestJson.put( "rec_type", count );
-				    requestJson.put( "fre_type", recFreezeType );
-				    requestJson.put( "fkId", ctId );
-				    // 查询粉笔数量
-				    HttpClienUtil.httpPost( memberConfig.getWxmp_home() + updateFenbiReduce, requestJson, false );
-
+				    fenbiFlowRecordDAO.updateFenbiReduce(busUserId, count, ctId,recFreezeType);
 				} else if ( "2".equals( map.get( "gId" ).toString() ) ) {
 				    Integer flowCount = Integer.parseInt( map.get( "number" ).toString() );
 
@@ -3192,10 +3136,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 		Integer cardType = jsonObject.getInt( "cardType" );
 		if ( cardType == 0 ) {
 		    Integer publicId = jsonObject.getInt( "publicId" );
-		    WxPublicUsers wxPublicUsers = wxPublicUsersMapper.selectById( publicId );
 		    // 微信卡券
-		    wxCardReceive( wxPublicUsers, codes );
-
+		    cardCouponsApiService.wxCardReceive(publicId,codes);
 		} else {
 		    Map< String,Object > params = new HashMap< String,Object >();
 		    params.put( "storeId", jsonObject.get( "storeId" ) );
@@ -3328,51 +3270,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 	return duofencards;
     }
 
-    @Transactional( rollbackFor = Exception.class )
-    public Map< String,Object > wxCardReceive( WxPublicUsers wxPublicUsers, String code ) {
-	Map< String,Object > map = new HashMap< String,Object >();
-	try {
-	    if ( CommonUtil.isEmpty( wxPublicUsers ) ) {
-		map.put( "result", -1 );
-		map.put( "message", "核销失败" );
-		return map;
-	    }
-	    WxCardReceive wcr = wxCardReceiveMapper.findByCode1( wxPublicUsers.getId(), code );
-	    if ( CommonUtil.isEmpty( wcr ) ) {
-		map.put( "result", -1 );
-		map.put( "message", "核销失败" );
-		return map;
-	    }
-	    map.put( "card_id", wcr.getCardId() );
-	    map.put( "code", code );
-	    map.put( "card_id", wcr.getCardId() );
-	    map.put( "code", code );
-	    map.put( "token", TokenUitl.getToken() );
-	    map.put( "wxPublicUsersId", wxPublicUsers.getId() );
-
-	    JSONObject returnJSON = HttpClienUtil.httpPost( memberConfig.getWxmp_home() + CODE_CONSUME, JSONObject.fromObject( map ), false );
-
-	    if ( "-1".equals( returnJSON.get( "code" ).toString() ) ) {
-		map.put( "result", -1 );
-		map.put( "message", "微信核销失败" );
-		return map;
-	    }
-
-	    if ( "-2".equals( returnJSON.get( "code" ).toString() ) ) {
-		map.put( "result", -1 );
-		map.put( "message", "token已失效" );
-		return map;
-	    }
-	    map.put( "result", 1 );
-	    map.put( "message", "核销成功" );
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	    LOG.error( "线下核销失败", e );
-	    map.put( "result", -1 );
-	    map.put( "message", "核销失败" );
-	}
-	return map;
-    }
 
     public Map< String,Object > verificationCard_2( Map< String,Object > params ) {
 	Map< String,Object > map = new HashMap< String,Object >();
@@ -3456,24 +3353,19 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 	    BusUser busUser = busUserMapper.selectById( tuijianMember.getBusId() );
 	    if ( busUser.getFansCurrency().doubleValue() >= recommend.getFenbi() ) {
-		JSONObject json = new JSONObject();
-		json.put( "token", TokenUitl.getToken() );
-		json.put( "busId", busUser.getId() );
-		json.put( "fenbi", recommend.getFenbi() );
 
-		HttpClienUtil.httpPost( memberConfig.getWxmp_home() + saveFenbiFlowRecord, json, false );
 		// 新增粉笔和流量分配表
-		//				FenbiFlowRecord fenbi = new FenbiFlowRecord();
-		//				fenbi.setBusUserId(busUser.getId());
-		//				fenbi.setRecType(1);
-		//				fenbi.setRecCount(Double.valueOf(recommend.getFenbi()));
-		//				fenbi.setRecUseCount(Double.valueOf(recommend.getFenbi()));
-		//				fenbi.setRecDesc("推荐优惠券赠送粉币");
-		//				fenbi.setRecFreezeType(102);
-		//				fenbi.setRollStatus(2);
-		//				fenbi.setFlowType(0);
-		//				fenbi.setFlowId(0);
-		//				fenbiFlowRecordMapper.insertSelective(fenbi);
+		FenbiFlowRecord fenbi = new FenbiFlowRecord();
+		fenbi.setBusUserId(busUser.getId());
+		fenbi.setRecType(1);
+		fenbi.setRecCount(new BigDecimal(recommend.getFenbi()));
+		fenbi.setRecUseCount(new BigDecimal(recommend.getFenbi()));
+		fenbi.setRecDesc("推荐优惠券赠送粉币");
+		fenbi.setRecFreezeType(102);
+		fenbi.setRollStatus(2);
+		fenbi.setFlowType(0);
+		fenbi.setFlowId(0);
+		fenbiFlowRecordDAO.insert(fenbi);
 
 		BusUser b = new BusUser();
 		b.setId( busUser.getId() );

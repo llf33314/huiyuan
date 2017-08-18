@@ -1,10 +1,15 @@
 package com.gt.member.service.memberApi;
 
 
+import com.alibaba.fastjson.JSONObject;
+import com.gt.common.entity.FenbiFlowRecord;
+import com.gt.common.entity.WxPublicUsers;
 import com.gt.common.entity.WxShop;
 import com.gt.member.dao.common.BusUserDAO;
 import com.gt.common.entity.BusUser;
 import com.gt.member.dao.*;
+import com.gt.member.dao.common.FenbiFlowRecordDAO;
+import com.gt.member.dao.common.WxPublicUsersDAO;
 import com.gt.member.dao.common.WxShopDAO;
 import com.gt.member.entity.*;
 import com.gt.member.entity.DuofenCard;
@@ -17,9 +22,8 @@ import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.util.*;
-import com.gt.member.util.token.TokenUitl;
+import com.gt.member.util.sign.SignHttpUtils;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,13 +47,10 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     private MemberConfig memberConfig;
 
     //微信卡券核销
-    private final String CODE_CONSUME = "/basics/79B4DE7C/codeConsume.do";
+    private final String CODE_CONSUME = "/8A5DA52E/wxcardapi/79B4DE7C/codeConsume.do";
 
     //发送短信
-    private final String SEND_SMS = "/basics/79B4DE7C/sendSMS.do";
-
-    //保存粉币资产记录
-    private final String saveFenbiFlowRecord = "/basics/79B4DE7C/saveFenbiFlowRecord.do";
+    private final String SEND_SMS = "/8A5DA52E/smsapi/79B4DE7C/sendSmsOld.do";
 
     @Autowired
     private WxCardDAO wxCardMapper;
@@ -65,8 +66,6 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
     @Autowired
     private DuofenCardGetDAO duofenCardGetMapper;
-
-
 
     @Autowired
     private DuofenCardReceivelogDAO duofenCardReceiveLogMapper;
@@ -97,6 +96,12 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
     @Autowired
     private MemberApiService memberApiService;
+
+    @Autowired
+    private WxPublicUsersDAO wxPublicUsersDAO;
+
+    @Autowired
+    private FenbiFlowRecordDAO fenbiFlowRecordDAO;
 
     //	@Autowired
     //	private BusUserBranchRelationMapper busUserBranchRelationMapper;
@@ -249,24 +254,24 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             if (CommonUtil.isEmpty(wcr)) {
                 throw new BusinessException(ResponseMemberEnums.NO_DATA.getCode(), ResponseMemberEnums.NO_DATA.getMsg());
             }
-            map.put("card_id", wcr.getCardId());
-            map.put("code", code);
-            map.put("token", TokenUitl.getToken());
-            map.put("wxPublicUsersId", wxPublicUsersId);
 
-            JSONObject returnJSON = HttpClienUtil.httpPost(memberConfig.getWxmp_home() + CODE_CONSUME, JSONObject.fromObject(map), false);
+            WxPublicUsers wxPublicUsers= wxPublicUsersDAO.selectById( wxPublicUsersId );
+            String url= memberConfig.getWxmp_home()+CODE_CONSUME;
+            String api_signKey=memberConfig.getApi_signKey();
+            map.put( "card_id", wcr.getCardId());
+            map.put( "code",code );
+            map.put( "busId",wxPublicUsers.getBusUserId() );
+            String result=SignHttpUtils.postByHttp(url,map,api_signKey);
 
-            if ("-1".equals(returnJSON.get("code").toString())) {
+            JSONObject returnJSON =JSONObject.parseObject( result);
+            if (!"0".equals(returnJSON.get("code").toString())) {
                 throw new BusinessException(ResponseMemberEnums.COUPONSE_VERIFICATION.getCode(), ResponseMemberEnums.COUPONSE_VERIFICATION.getMsg());
-            }
-            if ("-2".equals(returnJSON.get("code").toString())) {
-                throw new BusinessException(ResponseEnums.JWT_TOKEN_EXPIRED.getCode(), ResponseEnums.JWT_TOKEN_EXPIRED.getDesc());
             }
         }catch (BusinessException e){
             throw  new BusinessException(e.getCode(),e.getMessage());
         }catch (Exception e) {
             e.printStackTrace();
-            LOG.error("线下核销失败", e);
+            LOG.error("卡券核销失败", e);
             throw new BusinessException(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getDesc());
         }
 
@@ -285,23 +290,20 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 throw new BusinessException(ResponseMemberEnums.NO_DATA.getCode(), ResponseMemberEnums.COUPONSE_VERIFICATION.getMsg());
             }
             Map<String, Object> map = new HashMap<>();
-            map.put("card_id", wcr.getCardId());
-            map.put("code", code);
-            map.put("token", TokenUitl.getToken());
-            map.put("wxPublicUsersId", wxPublicUsersId);
+            WxPublicUsers wxPublicUsers= wxPublicUsersDAO.selectById( wxPublicUsersId );
+            String url= memberConfig.getWxmp_home()+CODE_CONSUME;
+            String api_signKey=memberConfig.getApi_signKey();
+            map.put( "card_id", wcr.getCardId());
+            map.put( "code",code );
+            map.put( "busId",wxPublicUsers.getBusUserId() );
+            String result=SignHttpUtils.postByHttp(url,map,api_signKey);
 
-            JSONObject returnJSON = HttpClienUtil.httpPost(memberConfig.getWxmp_home() + CODE_CONSUME, JSONObject.fromObject(map), false);
-
-            if ("-1".equals(returnJSON.get("code").toString())) {
+            JSONObject returnJSON =JSONObject.parseObject( result);
+            if (!"0".equals(returnJSON.get("code").toString())) {
                 throw new BusinessException(ResponseMemberEnums.COUPONSE_VERIFICATION.getCode(), ResponseMemberEnums.COUPONSE_VERIFICATION.getMsg());
             }
 
-            if ("-2".equals(returnJSON.get("code").toString())) {
-                throw new BusinessException(ResponseEnums.JWT_TOKEN_EXPIRED.getCode(), ResponseEnums.JWT_TOKEN_EXPIRED.getDesc());
-            }
-
             WxCard wxcard = wxCardMapper.selectByCardId(wcr.getCardId());
-
             Map<String, Object> returnMap = new HashMap<>();
             returnMap.put("cardId", wxcard.getId());
             returnMap.put("cardName", wxcard.getTitle());
@@ -630,16 +632,18 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
                 // 短信通知
                 if (receives.getIsCallSms() == 1) {
-                    Map<String, Object> params = new HashMap<String, Object>();
-                    params.put("busId", member.getBusId());
-                    params.put("model", 12);
-                    params.put("phone", receives.getMobilePhone());
-                    params.put("content", "用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券");
                     try {
-                        HttpClienUtil.httpPost(memberConfig.getWxmp_home() + SEND_SMS, JSONObject.fromObject(params), true);
-                    } catch (Exception e) {
-                        LOG.error("短信发送失败", e);
-                    }
+			Map< String,Object > params = new HashMap< String,Object >();
+			params.put( "busId", member.getBusId() );
+			params.put( "model", 12 );
+			params.put( "mobiles", receives.getMobilePhone() );
+			params.put( "content", "用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券" );
+			params.put( "company", memberConfig.getSms_name() );
+			String url = memberConfig.getWxmp_home() + SEND_SMS;
+			SignHttpUtils.postByHttp( url, params, memberConfig.getSignKey() );
+		    }catch ( Exception e ){
+                        LOG.error( "短信发送失败",e );
+		    }
                 }
             }
         } catch (Exception e) {
@@ -682,7 +686,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             }
             if (ids.size() > 0) {
                 Map<String, Object> map = new HashMap<String, Object>();
-                Map<String, Object> recevieMap = JsonUtil.json2Map(JSONObject.fromObject(receives).toString());
+                Map<String, Object> recevieMap = JsonUtil.json2Map( net.sf.json.JSONObject.fromObject(receives).toString());
                 if (!DateTimeKit.laterThanNow(receives.getReceiveDate())) {
                     recevieMap.put("guoqi", 1);
                 } else {
@@ -696,7 +700,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 for (Map<String, Object> map2 : duofencardList) {
                     // 礼券包
                     if ("DATE_TYPE_FIX_TIME_RANGE".equals(CommonUtil.toString(map2.get("type")))) {
-                        JSONObject jsonObject = JSONObject.fromObject(map2.get("endTimestamp"));
+			net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(map2.get("endTimestamp"));
                         Date date = new Date(jsonObject.getLong("time"));
                         if (!DateTimeKit.laterThanNow(date)) {
                             map2.put("guoqi", 1);
@@ -963,16 +967,18 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
             // 短信通知
             if (dfcr.getIsCallSms() == 1) {
-                Map<String, Object> params = new HashMap<String, Object>();
-                params.put("busId", member.getBusId());
-                params.put("model", 12);
-                params.put("phone", dfcr.getMobilePhone());
-                params.put("content", "用户领取一个包,包名：" + dfcr.getCardsName());
                 try {
-                    HttpClienUtil.httpPost(memberConfig.getWxmp_home() + SEND_SMS, JSONObject.fromObject(params), true);
-                } catch (Exception e) {
-                    LOG.error("短信发送失败", e);
-                }
+		    Map< String,Object > params = new HashMap< String,Object >();
+		    params.put( "busId", member.getBusId() );
+		    params.put( "model", 12 );
+		    params.put( "mobiles", dfcr.getMobilePhone() );
+		    params.put( "content", "用户领取一个包,包名：" + dfcr.getCardsName() );
+		    params.put( "company", memberConfig.getSms_name() );
+		    String url = memberConfig.getWxmp_home() + SEND_SMS;
+		    SignHttpUtils.postByHttp( url, params, memberConfig.getSignKey() );
+		}catch ( Exception e ){
+                    LOG.error( "短信过期",e );
+		}
             }
 
             int type = 0;
@@ -1207,16 +1213,18 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
             // 短信通知
             if (dfcr.getIsCallSms() == 1) {
-                Map<String, Object> params = new HashMap<String, Object>();
-                params.put("busId", busId);
-                params.put("model", 12);
-                params.put("phone", dfcr.getMobilePhone());
-                params.put("content", "用户领取一个包,包名：" + dfcr.getCardsName());
                 try {
-                    HttpClienUtil.httpPost(memberConfig.getWxmp_home() + SEND_SMS, JSONObject.fromObject(params), true);
-                } catch (Exception e) {
-                    LOG.error("短信发送失败", e);
-                }
+		    Map< String,Object > params = new HashMap< String,Object >();
+		    params.put( "busId", busId );
+		    params.put( "model", 12 );
+		    params.put( "mobiles", dfcr.getMobilePhone() );
+		    params.put( "content", "用户领取一个包,包名：" + dfcr.getCardsName() );
+		    params.put( "company", memberConfig.getSms_name() );
+		    String url = memberConfig.getWxmp_home() + SEND_SMS;
+		    SignHttpUtils.postByHttp( url, params, memberConfig.getSignKey() );
+		}catch ( Exception e ){
+                    LOG.error( "短信发送失败",e );
+		}
             }
         } catch (BusinessException e) {
             throw new BusinessException(e.getCode(), e.getMessage());
@@ -1285,16 +1293,19 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
                 // 短信通知
                 if (receives.getIsCallSms() == 1) {
-                    Map<String, Object> params = new HashMap<String, Object>();
-                    params.put("busId", member.getBusId());
-                    params.put("model", 12);
-                    params.put("phone", receives.getMobilePhone());
-                    params.put("content", "用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券");
-                    try {
-                        HttpClienUtil.httpPost(memberConfig.getWxmp_home() + SEND_SMS, JSONObject.fromObject(params), true);
-                    } catch (Exception e) {
-                        LOG.error("短信发送失败", e);
-                    }
+		    try {
+			Map< String,Object > params = new HashMap< String,Object >();
+			params.put( "busId", member.getBusId() );
+			params.put( "model", 12 );
+			params.put( "mobiles", receives.getMobilePhone() );
+			params.put( "content", "用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券");
+			params.put( "company", memberConfig.getSms_name() );
+			String url = memberConfig.getWxmp_home() + SEND_SMS;
+			SignHttpUtils.postByHttp( url, params, memberConfig.getSignKey() );
+		    }catch ( Exception e ){
+			LOG.error( "短信发送失败",e );
+		    }
+
                 }
             }
         } catch (Exception e) {
@@ -1463,16 +1474,18 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
                 // 短信通知
                 if (receives.getIsCallSms() == 1) {
-                    Map<String, Object> params = new HashMap<String, Object>();
-                    params.put("busId", member.getBusId());
-                    params.put("model", 12);
-                    params.put("phone", receives.getMobilePhone());
-                    params.put("content", "用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券");
-                    try {
-                        HttpClienUtil.httpPost(memberConfig.getWxmp_home() + SEND_SMS, JSONObject.fromObject(params), true);
-                    } catch (Exception e) {
-                        LOG.error("短信发送失败", e);
-                    }
+		    try {
+			Map< String,Object > params = new HashMap< String,Object >();
+			params.put( "busId", member.getBusId() );
+			params.put( "model", 12 );
+			params.put( "mobiles", receives.getMobilePhone() );
+			params.put( "content","用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券");
+			params.put( "company", memberConfig.getSms_name() );
+			String url = memberConfig.getWxmp_home() + SEND_SMS;
+			SignHttpUtils.postByHttp( url, params, memberConfig.getSignKey() );
+		    }catch ( Exception e ){
+			LOG.error( "短信发送失败",e );
+		    }
                 }
             }
         } catch (Exception e) {
@@ -1563,24 +1576,19 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
             BusUser busUser = busUserDAO.selectById(tuijianMember.getBusId());
             if (busUser.getFansCurrency().doubleValue() >= recommend.getFenbi()) {
-                JSONObject json = new JSONObject();
-                json.put("token", TokenUitl.getToken());
-                json.put("busId", busUser.getId());
-                json.put("fenbi", recommend.getFenbi());
 
-                HttpClienUtil.httpPost(memberConfig.getWxmp_home() + saveFenbiFlowRecord, json, false);
-                // 新增粉笔和流量分配表
-                //				FenbiFlowRecord fenbi = new FenbiFlowRecord();
-                //				fenbi.setBusUserId(busUser.getId());
-                //				fenbi.setRecType(1);
-                //				fenbi.setRecCount(Double.valueOf(recommend.getFenbi()));
-                //				fenbi.setRecUseCount(Double.valueOf(recommend.getFenbi()));
-                //				fenbi.setRecDesc("推荐优惠券赠送粉币");
-                //				fenbi.setRecFreezeType(102);
-                //				fenbi.setRollStatus(2);
-                //				fenbi.setFlowType(0);
-                //				fenbi.setFlowId(0);
-                //				fenbiFlowRecordMapper.insertSelective(fenbi);
+               // 新增粉笔和流量分配表
+                FenbiFlowRecord fenbi = new FenbiFlowRecord();
+                fenbi.setBusUserId( busUser.getId() );
+                fenbi.setRecType( 1 );
+                fenbi.setRecCount( new BigDecimal( recommend.getFenbi() ) );
+                fenbi.setRecUseCount(new BigDecimal( recommend.getFenbi() ) );
+                fenbi.setRecDesc( "推荐优惠券赠送粉币" );
+                fenbi.setRecFreezeType( 102 );
+                fenbi.setRollStatus( 2 );
+                fenbi.setFlowType( 0 );
+                fenbi.setFlowId( 0 );
+                fenbiFlowRecordDAO.insert( fenbi );
 
                 BusUser b = new BusUser();
                 b.setId(busUser.getId());

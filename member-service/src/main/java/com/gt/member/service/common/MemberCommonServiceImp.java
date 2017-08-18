@@ -1,11 +1,15 @@
 package com.gt.member.service.common;
 
+import com.gt.common.entity.BusUser;
 import com.gt.member.dao.MemberDateDAO;
 import com.gt.member.dao.MemberGradetypeDAO;
 import com.gt.member.dao.PublicParametersetDAO;
+import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.entity.MemberDate;
 import com.gt.member.entity.MemberGradetype;
 import com.gt.member.entity.PublicParameterset;
+import com.gt.member.enums.ResponseEnums;
+import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.MemberCommonService;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.util.CommonUtil;
@@ -16,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +45,9 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
     @Autowired
     private MemberDateDAO memberDateMapper;
+
+    @Autowired
+    private  BusUserDAO busUserDAO;
 
 
 
@@ -264,5 +272,20 @@ public class MemberCommonServiceImp implements MemberCommonService {
     public Double formatNumber(Double number) {
 	DecimalFormat df = new DecimalFormat("######0.00");
 	return CommonUtil.toDouble(df.format(number));
+    }
+
+    public void guihuiBusUserFenbi(Integer busId,Double fenbi)throws BusinessException{
+	try {
+	    BusUser busUser = busUserDAO.selectById( busId );
+	    // 归还到商家账户
+	    BigDecimal b1 = new BigDecimal( fenbi );
+	    BusUser b = new BusUser();
+	    b.setId( busUser.getId() );
+	    b.setFansCurrency( busUser.getFansCurrency().add( b1 ) );
+	    busUserDAO.updateById( b );
+	}catch ( Exception e ){
+	    LOG.error( "归还商家粉币异常参数商家id",e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
     }
 }

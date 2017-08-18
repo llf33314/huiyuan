@@ -17,6 +17,10 @@ import org.springframework.stereotype.Component;
 public class MemberConfig {
     private String wxmp_home;  //wxmp
 
+    private String api_signKey;  //wxmp 秘钥
+
+    private String sms_name;  //短信发送名称
+
     private String cardNoKey;  //会员卡秘钥
 
     private String redis_ip;  //redis ip

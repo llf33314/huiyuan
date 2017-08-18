@@ -2,6 +2,7 @@ package com.gt.member.service.common;
 
 import com.gt.member.entity.MemberDate;
 import com.gt.member.entity.PublicParameterset;
+import com.gt.member.exception.BusinessException;
 
 import java.util.Map;
 
@@ -65,4 +66,11 @@ public interface MemberCommonService {
      * @return
      */
     public Double deductFenbi(Map<String, Object> dict, Double fenbiMoney);
+
+    /**
+     * 归还商家粉币
+     * @param busId
+     * @param fenbi
+     */
+    public void guihuiBusUserFenbi(Integer busId,Double fenbi)throws BusinessException;
 }

@@ -64,8 +64,10 @@ server:
 
 web:
  wxmp_home: http://yifriend.net/
+ api_signKey: WXMP2017
  cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6
  domain: yifriend.com
+ sms_name:多粉平台
 
 
 redisSession:

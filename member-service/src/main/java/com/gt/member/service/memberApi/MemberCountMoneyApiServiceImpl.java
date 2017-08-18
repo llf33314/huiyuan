@@ -25,6 +25,7 @@ import java.util.Map;
  */
 @Service
 public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiService {
+
     private static final Logger LOG = Logger.getLogger( MemberCountMoneyApiServiceImpl.class );
 
     @Autowired

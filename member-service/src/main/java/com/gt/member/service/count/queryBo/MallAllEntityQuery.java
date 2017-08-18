@@ -16,7 +16,8 @@ public class MallAllEntityQuery {
     private Integer busId;  //商家主账户id
     private Integer shopId;  //门店
 
-    private String returnUrl;  //支付成功 通知地址
+    private String successNoticeUrl;  //支付成功 通知地址
+    private String jumpUrl;  //支付成功跳转地址
 
     public String getOrderCode() {
         return orderCode;
@@ -66,12 +67,20 @@ public class MallAllEntityQuery {
         this.shopId = shopId;
     }
 
-    public String getReturnUrl() {
-        return returnUrl;
+    public String getSuccessNoticeUrl() {
+        return successNoticeUrl;
     }
 
-    public void setReturnUrl( String returnUrl ) {
-        this.returnUrl = returnUrl;
+    public void setSuccessNoticeUrl( String successNoticeUrl ) {
+        this.successNoticeUrl = successNoticeUrl;
+    }
+
+    public String getJumpUrl() {
+        return jumpUrl;
+    }
+
+    public void setJumpUrl( String jumpUrl ) {
+        this.jumpUrl = jumpUrl;
     }
 }
 
