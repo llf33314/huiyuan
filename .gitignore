@@ -21,3 +21,8 @@
 /.gitignore
 /doc/
 /member-web/src/test/
+!/member.iml
+member-dao/src/main/java/com/gt/member/dao/count/
+member-dao/src/main/resources/mapper/count/
+member-entity/src/main/java/com/gt/count/
+member-generator/src/main/java/com/gt/member/generator/
