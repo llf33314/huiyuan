@@ -77,7 +77,7 @@ public interface MemberApiService {
      * @param memberId
      * @return
      */
-    public Integer isCardType( Integer memberId )throws  BusinessException;
+    public Integer isCardType( Integer memberId ) throws BusinessException;
 
     /*
      * 获取card信息
@@ -219,13 +219,6 @@ public interface MemberApiService {
      */
     public void saveGiveConsume( String phone, String orderId ) throws Exception;
 
-    /*
-     * 会员日
-     * @param busId
-     * @param ctId
-     * @return
-     */
-    public MemberDate findMemeberDate( Integer busId, Integer ctId );
 
     /*
      * 粉币抵扣
@@ -264,42 +257,6 @@ public interface MemberApiService {
      * @throws Exception
      */
     public Map< String,Object > updateMemberFansCurrency( Integer memberId, Integer busId, Double fenbi ) throws Exception;
-
-    /*
-	 * 粉币计算
-	 *
-	 * @param totalMoney
-	 *            能抵抗消费金额
-	 * @param fans_currency
-	 *            粉币值
-	 * @return 返回兑换金额
-	 */
-    public Double currencyCount( Double totalMoney, Double fans_currency );
-
-    /*
-     * 计算抵扣粉币
-     * @param fenbiMoney 粉币抵扣金额
-     * @param busId 商家id
-     * @return 消耗粉币值
-     */
-    public Double deductFenbi( Double fenbiMoney, int busId );
-
-    /*
-     * 积分兑换返回兑换金额
-     * @param totalMoney
-     * @param integral
-     * @param busId
-     * @return
-     */
-    public Double integralCount( Double totalMoney, Double integral, int busId );
-
-    /*
-     * 计算抵扣积分
-     * @param money 积分抵扣金额
-     * @param busId 商家id
-     * @return
-     */
-    public Integer deductJifen( Double jifenMoney, int busId );
 
     /*
      * 会员卡充值
@@ -598,31 +555,35 @@ public interface MemberApiService {
 
     /**
      * 查询购买的会员卡面信息
+     *
      * @param busId
+     *
      * @return
      * @throws BusinessException
      */
-    public List<Map<String,Object>> findBuyGradeType(Integer busId);
+    public List< Map< String,Object > > findBuyGradeType( Integer busId );
 
     /**
      * 商场修改订单状态
+     *
      * @param orderNo
      * @param payType
      * @param payStatus
      */
-    public void updateUserConsume(String orderNo,Integer payType,Integer payStatus)throws BusinessException;
+    public void updateUserConsume( String orderNo, Integer payType, Integer payStatus ) throws BusinessException;
 
-
-    public void refundMoneyAndJifenAndFenbi(Map<String,Object> map) throws BusinessException;
+    public void refundMoneyAndJifenAndFenbi( Map< String,Object > map ) throws BusinessException;
 
     /**
      * 商场积分记录查询
+     *
      * @param mcId
      * @param page
      * @param pageSize
+     *
      * @return
      */
-    public List<Map<String,Object>> findCardrecord(Integer mcId,Integer page,Integer pageSize);
+    public List< Map< String,Object > > findCardrecord( Integer mcId, Integer page, Integer pageSize );
 
     /**
      * 查询会员卡信息
@@ -630,4 +591,16 @@ public interface MemberApiService {
      * @return
      */
     public MemberCard findMemberCardByMcId(Integer mcId);
+
+
+    /**
+     * 跨门店 多个门店根据粉丝id获取优惠券信息
+     *
+     * @param memberId
+     * @param shopIds
+     *
+     * @return
+     * @throws Exception
+     */
+    public Map< String,Object > findMemberCardByMemberIdAndshopIds( Integer memberId, String shopIds ) throws BusinessException;
 }

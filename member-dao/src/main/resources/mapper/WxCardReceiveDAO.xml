@@ -60,7 +60,7 @@
 
 	<select id="findByOpenId1" resultType="Map">
 		select r.id, r.public_id, r.username, r.openid, r.friend_user_name, r.ctime, r.card_id, r.is_give_by_friend,
-		r.user_card_code, r.old_user_card_code, r.outer_id, r.status,
+		r.user_card_code, r.old_user_card_code, r.outer_id, r.status,c.title,
 		c.code_type,c.deal_detail,c.cash_least_cost,c.reduce_cost,c.discount,c.gift,c.default_detail,c.begin_timestamp,c.end_timestamp,c.custom_url,
 		c.fixed_term,c.fixed_begin_term,c.image,c.card_type,c.type,c.location_id_list,c.time_limit FROM t_wx_card_receive r INNER JOIN t_wx_card c ON r.`card_id`=c.card_id
 		where r.public_id=#{publicId} and r.openid=#{openid} and r.status=0 group by r.card_id

@@ -25,6 +25,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
 import com.gt.member.constant.CommonConst;
 import com.gt.common.entity.BusUser;
 import com.gt.member.entity.Member;
@@ -895,5 +896,21 @@ public class CommonUtil {
 		response.getWriter().flush();
 		response.getWriter().close();
 	}
+
+
+    /**
+     * 返回json数据到客户端
+     *
+     * @param response
+     * @param obj
+     * @throws IOException
+     */
+    public static void writeToAilibaba(HttpServletResponse response, Object obj)
+		    throws IOException {
+	response.setContentType("application/json;charset=UTF-8");//防止数据传递乱码
+	 response.getWriter().print( JSON.parseObject(JSON.toJSONString( obj )));
+	response.getWriter().flush();
+	response.getWriter().close();
+    }
 	
 }

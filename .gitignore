@@ -10,3 +10,5 @@
 /member-web-api/target/
 /parent.iml
 /member.iml
+/member-web/logs/
+/member-web/src/test/

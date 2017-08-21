@@ -8,6 +8,7 @@ import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.CommonUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
@@ -15,6 +16,7 @@ import java.util.Date;
  * 会员公用数据存储、业务操作接口
  * Created by Administrator on 2017/7/28 0028.
  */
+@Service
 public class MemberNewServiceImpl implements  MemberNewService {
 
     private static final Logger LOG=Logger.getLogger( MemberNewServiceImpl.class );
