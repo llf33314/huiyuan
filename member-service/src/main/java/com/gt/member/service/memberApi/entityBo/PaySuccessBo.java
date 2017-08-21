@@ -31,7 +31,6 @@ public class PaySuccessBo implements Serializable {
 
     private Integer delay      = 0;   //会员赠送物品 -1不送 0延迟送 1立即送
     private Integer dataSource = 0;  //数据来源 0:pc端 1:微信 2:uc端 3:小程序
-    private String ucTable;   //订单表
 
     public Integer getMemberId() {
 	return memberId;
@@ -161,13 +160,6 @@ public class PaySuccessBo implements Serializable {
 	this.payType = payType;
     }
 
-    public String getUcTable() {
-	return ucTable;
-    }
-
-    public void setUcTable( String ucTable ) {
-	this.ucTable = ucTable;
-    }
 
     public Integer getDelay() {
 	return delay;

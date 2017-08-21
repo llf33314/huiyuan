@@ -3434,7 +3434,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    uc.setOrderCode( paySuccessBo.getOrderCode() );
 	    uc.setStoreId( paySuccessBo.getStoreId() );
 	    uc.setDataSource( paySuccessBo.getDataSource() );
-	    uc.setUcTable( paySuccessBo.getUcTable() );
 	    uc.setIsend( 0 );
 
 	    MemberCard card = null;

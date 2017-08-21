@@ -153,7 +153,7 @@
 
                     </div>
 
-                    <li @click="xinjinPayMent($event)" class="item erp-billing-bg-color erp-billing-border" payType="10">
+                    <li @click="xinjinPayMent($event)" class="item erp-billing-bg-color erp-billing-border xianjinItem" payType="10">
                         <p class="icon-p"><i class="iconfont">&#xe62b;</i></p>
                         <p>现金支付</p>
                     </li>
@@ -245,7 +245,7 @@
         <div class="smzf-dialogs-box">
             <div class="left">
                 <p class="title">方式1：顾客扫码支付</p>
-                <img src="../imgs/floor2-3.jpg"/>
+                <img src="/images/floor2-3.jpg"/>
             </div>
             <div class="right">
                 <p class="title">方式2：营业员输入</p>
@@ -628,7 +628,12 @@
 
                 }else{
                     $("#totalMoney").val(data.mallNotShopEntity.balanceMoney);
-                    $("#balanceMoney").html(data.mallNotShopEntity.balanceMoney);
+                   var balanceMoney= data.mallNotShopEntity.balanceMoney;
+                    if(balanceMoney==0){
+                        $(".item").removeClass("erp-billing-bg-color");
+                        $(".xianjinItem").addClass("erp-billing-bg-color");
+                    }
+                    $("#balanceMoney").html(balanceMoney);
                     var canUseConpon=data.mallNotShopEntity.canUseConpon;
                     var couponNum=data.mallNotShopEntity.couponNum;
                     if(canUseConpon==0){
@@ -684,13 +689,13 @@
         })
     }
 
-
+    //储值卡或现金支付
     function chuzhiPay(payType,obj){
         var param={};
         param["payType"]=payType;
         param["visitor"]= $("#visitor").val();
-        param["payMoney"]=$("#payMoney").val();
-
+        var payMoney  =$("#payMoney").val();
+        param["payMoney"]=payMoney;
         param["memberId"]=$("#memberId").val();
         if($(".boxfenbi ").hasClass("erp-billing-bg-color")){
             param["useFenbi"]=1;

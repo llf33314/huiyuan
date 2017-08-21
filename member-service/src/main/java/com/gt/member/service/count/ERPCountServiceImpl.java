@@ -89,7 +89,8 @@ public class ERPCountServiceImpl implements ERPCountService {
     private MemberNewService memberNewService;
 
     @Autowired
-    private MemberConsumeLogDAO memberConsumeLogDAO;
+    private UserConsumeDAO userConsumeDAO;
+
 
     @Override
     public Map< String,Object > findMemberByERP( Integer busId, Integer shopId, String cardNo ) {
@@ -347,6 +348,13 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    mallNotShopEntity.setBalanceMoney( mallQuery.getTotalMoney() );
 	    if ( visitor == 1 ) {
 		//游客 直接通知
+		Double payMoney=CommonUtil.toDouble( jsonObject.get( "payMoney" ) );
+		if(CommonUtil.isEmpty( payMoney )){
+		    throw new BusinessException( ResponseMemberEnums.LESS_THAN_CASH );
+		}
+		if(payMoney<mallQuery.getTotalMoney()){
+		    throw new BusinessException( ResponseMemberEnums.LESS_THAN_CASH );
+		}
 		//todo
 		return;
 	    }
@@ -392,15 +400,14 @@ public class ERPCountServiceImpl implements ERPCountService {
 
 	    //增加会员交易记录
 	    Member member = memberDAO.selectById( mallNotShopEntity.getMemberId() );
-
-	    MemberConsumeLog uc = new MemberConsumeLog();
+	    UserConsume uc = new UserConsume();
 	    uc.setBusUserId( member.getBusId() );
 	    uc.setMemberId( member.getId() );
 	    if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
 		uc.setMcId( member.getMcId() );
 		MemberCard card = memberCardDAO.selectById( member.getMcId() );
 		uc.setCtId( card.getCtId() );
-		uc.setGtid( card.getGtId() );
+		uc.setGtId( card.getGtId() );
 
 		if ( payType == 5 ) {
 		    //储值卡支付
@@ -477,7 +484,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
 		memberNewService.saveCardRecordNew( member.getMcId(), 1, mallNotShopEntity.getBalanceMoney() + "元", "消费", member.getBusId(), uc.getBalance() + "", 0, 0 );
 	    }
-	    memberConsumeLogDAO.insert( uc );
+	    userConsumeDAO.insert( uc );
 
 
 	    //赠送
@@ -542,14 +549,14 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    //增加会员交易记录
 	    Member member = memberDAO.selectById( mallNotShopEntity.getMemberId() );
 
-	    MemberConsumeLog uc = new MemberConsumeLog();
+	    UserConsume uc = new UserConsume();
 	    uc.setBusUserId( member.getBusId() );
 	    uc.setMemberId( member.getId() );
 	    if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
 		uc.setMcId( member.getMcId() );
 		MemberCard card = memberCardDAO.selectById( member.getMcId() );
 		uc.setCtId( card.getCtId() );
-		uc.setGtid( card.getGtId() );
+		uc.setGtId( card.getGtId() );
 	    }
 
 	    uc.setRecordType( 2 );
@@ -606,7 +613,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
 		memberNewService.saveCardRecordNew( member.getMcId(), 1, mallNotShopEntity.getBalanceMoney() + "元", "消费", member.getBusId(), uc.getBalance() + "", 0, 0 );
 	    }
-	    memberConsumeLogDAO.insert( uc );
+	    userConsumeDAO.insert( uc );
 
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
