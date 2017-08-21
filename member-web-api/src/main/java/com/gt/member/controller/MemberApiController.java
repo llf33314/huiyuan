@@ -65,9 +65,9 @@ public class MemberApiController extends BaseController {
     @RequestMapping( value = "/findMemberCard", method = RequestMethod.POST )
     public ServerResponse findMemberCard( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
 	try {
-	    String cardNo = CommonUtil.toString( requestBody.get( "requestBody" ) );
+	    String cardNo = CommonUtil.toString( requestBody.get( "cardNo" ) );
 	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
-	    Integer shopId = CommonUtil.toInteger( requestBody.get( "requestBody" ) );
+	    Integer shopId = CommonUtil.toInteger( requestBody.get( "shopId" ) );
 	    String cardNoKey = memberConfig.getCardNoKey();
 	    Map< String,Object > map = memberApiService.findMemberCard( busId, cardNoKey, cardNo, shopId );
 	    return ServerResponse.createBySuccess( map );
