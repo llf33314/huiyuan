@@ -20,6 +20,9 @@ public class MallAllEntityQuery {
 
     private String jumpUrl;  //支付成功跳转地址
 
+    private String sign;  //支付成功回调秘钥
+
+
     public String getOrderCode() {
         return orderCode;
     }
@@ -82,6 +85,13 @@ public class MallAllEntityQuery {
 
     public void setJumpUrl( String jumpUrl ) {
         this.jumpUrl = jumpUrl;
+    }
+    public String getSign() {
+        return sign;
+    }
+
+    public void setSign( String sign ) {
+        this.sign = sign;
     }
 }
 

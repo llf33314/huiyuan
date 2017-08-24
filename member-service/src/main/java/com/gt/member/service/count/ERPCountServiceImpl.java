@@ -360,7 +360,8 @@ public class ERPCountServiceImpl implements ERPCountService {
 		if ( payMoney < mallQuery.getTotalMoney() ) {
 		    throw new BusinessException( ResponseMemberEnums.LESS_THAN_CASH );
 		}
-		//todo
+		//通知
+		SignHttpUtils.postByHttp( mallQuery.getSuccessNoticeUrl(),mallQuery.getOrderCode(),mallQuery.getSign() );
 		return;
 	    }
 
@@ -393,9 +394,8 @@ public class ERPCountServiceImpl implements ERPCountService {
 		mallMap.put( mall.getMallId(), mall );
 	    }
 	    mallNotShopEntity.setMalls( mallMap );
-	    if(visitor==0) {
-		mallNotShopEntity = memberCountMoneyApiService.mallSkipNotShopCount( mallNotShopEntity );
-	    }
+	    mallNotShopEntity = memberCountMoneyApiService.mallSkipNotShopCount( mallNotShopEntity );
+
 
 	    if ( payType == 10 ) {
 		//现金支付
@@ -473,7 +473,6 @@ public class ERPCountServiceImpl implements ERPCountService {
 
 		//归还商家粉币
 		memberCommonService.guihuiBusUserFenbi( member.getBusId(), mallNotShopEntity.getFenbiNum() );
-
 	    }
 	    //积分
 	    if ( mallNotShopEntity.getCanUseJifen() == 1 ) {
@@ -495,6 +494,9 @@ public class ERPCountServiceImpl implements ERPCountService {
 
 	    //赠送
 	    //TODO
+
+	    //通知
+	    SignHttpUtils.postByHttp( mallQuery.getSuccessNoticeUrl(),mallQuery.getOrderCode(),mallQuery.getSign() );
 
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
@@ -590,8 +592,12 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    }
 	    redisCacheUtil.set( "ERP_" + mallNotShopEntity.getOrderCode(), JSON.toJSONString( mallNotShopEntity ), 600L );
 
-	    String notityUrl=memberConfig.getWebHome()+"/erpCount/79B4DE7C/successPay.do";
+	    Map<String,Object> noticeMap=new HashMap<>(  );
+	    noticeMap.put( "successNoticeUrl",mallQuery.getSuccessNoticeUrl() );
+	    noticeMap.put( "sign",mallQuery.getSign() );
+	    redisCacheUtil.set("Memeber_ERP_"+mallNotShopEntity.getOrderCode(), JSON.toJSONString( noticeMap ),600L );
 
+	    String notityUrl=memberConfig.getWebHome()+"/erpCount/79B4DE7C/successPay.do";
 	    String url="";
 	    if(visitor==1){
 		url = memberConfig.getWxmp_home() + "/pay/B02A45A5/79B4DE7C/createPayQR.do"
@@ -602,7 +608,6 @@ public class ERPCountServiceImpl implements ERPCountService {
 				+ "?totalFee=" +mallNotShopEntity.getBalanceMoney()+"&model=51&busId="+mallQuery.getBusId()+"&orderNum="+mallNotShopEntity.getOrderCode()
 				+"&memberId="+mallNotShopEntity.getMemberId()+"&desc=支付&notifyUrl="+notityUrl;
 	    }
-
 	    map.put( "saomaoPayUrl", url );
 	    map.put( "code", 0);
 	    return map;
@@ -614,6 +619,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 	}
     }
 
+    @Transactional
     public Map<String,Object> saomaQianBaoPay(String mallAllEntityQuery,
 		    String param){
         Map<String,Object> map=new HashMap<>(  );
@@ -670,38 +676,75 @@ public class ERPCountServiceImpl implements ERPCountService {
 		uc.setRecordType( 2 );
 		uc.setUcType( mallQuery.getUcType() );
 		uc.setTotalMoney( mallNotShopEntity.getTotalMoney() );
-		uc.setIntegral( mallNotShopEntity.getJifenNum() );
-		uc.setFenbi( mallNotShopEntity.getFenbiNum() );
-		uc.setDiscountMoney( mallNotShopEntity.getBalanceMoney() );
 
-		uc.setOrderCode( mallQuery.getOrderCode() );
-		uc.setStoreId( mallNotShopEntity.getShopId() );
 		if ( mallNotShopEntity.getUseCoupon() == 1 ) {
 		    uc.setCardType( mallNotShopEntity.getCouponType() );
 		    uc.setDisCountdepict( mallNotShopEntity.getCodes() );
+		    //优惠券核销
+		    if ( mallNotShopEntity.getCouponType() == 0 ) {
+			//微信优惠券
+			WxPublicUsers wxPublicUsers = wxPublicUsersMapper.selectByUserId( member.getBusId() );
+			cardCouponsApiService.wxCardReceive( wxPublicUsers.getId(), mallNotShopEntity.getCodes() );
+		    } else {
+			//多粉优惠券
+			Map< String,Object > params = new HashMap<>();
+			params.put( "codes", mallNotShopEntity.getCodes() );
+			params.put( "storeId", mallNotShopEntity.getShopId() );
+			cardCouponsApiService.verificationCard_2( params );
+		    }
 		}
+		uc.setRecordType( 2 );
+		uc.setUcType( mallQuery.getUcType() );
+		uc.setTotalMoney( mallNotShopEntity.getTotalMoney() );
+		uc.setDiscountMoney( mallNotShopEntity.getBalanceMoney() );
+		uc.setPaymentType( 1 );
+		uc.setPayStatus( 1 );
+		uc.setIsend( 1 );
+		uc.setIsendDate( new Date() );
+		boolean flag = false;
+		Member m1 = new Member();
+		m1.setId( member.getId() );
+		//粉币
+		if ( mallNotShopEntity.getCanUsefenbi() == 1 ) {
+		    uc.setFenbi( mallNotShopEntity.getFenbiNum() );
+		    Double fansCurrency = member.getFansCurrency() - mallNotShopEntity.getFenbiNum();
+		    m1.setFansCurrency( fansCurrency );
+		    memberNewService.saveCardRecordNew( member.getMcId(), 3, mallNotShopEntity.getFenbiNum() + "粉币", "消费抵扣粉币", member.getBusId(), fansCurrency + "", 0, 0 );
+		    flag = true;
+
+		    //归还商家粉币
+		    memberCommonService.guihuiBusUserFenbi( member.getBusId(), mallNotShopEntity.getFenbiNum() );
+		}
+		//积分
+		if ( mallNotShopEntity.getCanUseJifen() == 1 ) {
+		    uc.setIntegral(mallNotShopEntity.getJifenNum() );
+		    Integer jifen = member.getIntegral() - mallNotShopEntity.getJifenNum();
+		    m1.setIntegral( jifen );
+		    memberNewService.saveCardRecordNew( member.getMcId(), 2, mallNotShopEntity.getJifenNum() + "积分", "消费抵扣积分", member.getBusId(), jifen + "", 0,
+				    mallNotShopEntity.getJifenNum() );
+		    flag = true;
+		}
+		if ( flag ) {
+		    memberDAO.updateById( m1 );
+		}
+
+		//添加会员交易记录
+		if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
+		    memberNewService.saveCardRecordNew( member.getMcId(), 1, mallNotShopEntity.getBalanceMoney() + "元", "消费", member.getBusId(), uc.getBalance() + "", 0, 0 );
+		}
+		uc.setOrderCode( mallQuery.getOrderCode() );
+		uc.setStoreId( mallNotShopEntity.getShopId() );
 		uc.setDataSource( 0 );
 		userConsumeDAO.insert( uc );
 	    }
+
 	    Object obj=redisCacheUtil.get( "ERP_" + mallNotShopEntity.getOrderCode() );
 	    if(CommonUtil.isNotEmpty(  obj)){
 		redisCacheUtil.remove( "ERP_" + mallNotShopEntity.getOrderCode()  );
 	    }
 	    redisCacheUtil.set( "ERP_" + mallNotShopEntity.getOrderCode(), JSON.toJSONString( mallNotShopEntity ), 600L );
 
-
-	  //  String url = memberConfig.getWxmp_home() + SAOMA_QIANBAO_PAY;
-//	    Map<String,Object> queryMap=new HashMap<>(  );
-
-//	    queryMap.put( "auth_code", auth_code);
-//	    queryMap.put( "body", "支付");
-//	    queryMap.put( "model", 51);
-//	    queryMap.put( "out_trade_no", mallNotShopEntity.getOrderCode() );
-//	    queryMap.put( "total_fee", mallNotShopEntity.getBalanceMoney() );
-//	    queryMap.put( "notityUrl", "");
-
 	    String notityUrl=memberConfig.getWebHome()+"/erpCount/79B4DE7C/successPay.do";
-
 	    String auth_code=jsonObject.getString( "auth_code" );
 	    String url = memberConfig.getWxmp_home() + SAOMA_QIANBAO_PAY+"?auth_code="+auth_code+"&body=支付&model=51&out_trade_no="+mallNotShopEntity.getOrderCode()
 			    +"&total_fee="+ mallNotShopEntity.getBalanceMoney()+"&is_calculate=1&notityUrl="+notityUrl;
@@ -711,8 +754,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 		map.put( "code",0 );
 		map.put( "msg","支付成功" );
 	    }else{
-		map.put( "code",json.get( "code" ) );
-		map.put( "msg",json.get( "msg" )  );
+	        throw new BusinessException(CommonUtil.toInteger(json.get( "code" )),CommonUtil.toString(json.get( "msg" )));
 	    }
 	    return map;
 	} catch ( BusinessException e ) {
@@ -728,6 +770,65 @@ public class ERPCountServiceImpl implements ERPCountService {
      * @param params
      */
     public void successPay(Map<String,Object> params){
+        String orderCode=CommonUtil.toString( params.get( "out_trade_no" ) );
+	UserConsume uc= userConsumeDAO.findByOrderCode1(  orderCode);
+	if(CommonUtil.isNotEmpty( uc )){
+	    //通知地址
+	    Member member=memberDAO.selectById( uc.getMemberId() );
+	    boolean flag=false;
+	    Member m1 = new Member();
+	    m1.setId( member.getId() );
+	    //粉币
+	    if (uc.getFenbi()>0 ) {
+		Double fansCurrency = member.getFansCurrency() - uc.getFenbi();
+		m1.setFansCurrency( fansCurrency );
+		memberNewService.saveCardRecordNew( member.getMcId(), 3, uc.getFenbi() + "粉币", "消费抵扣粉币", member.getBusId(), fansCurrency + "", 0, 0 );
+		flag = true;
+
+		//归还商家粉币
+		memberCommonService.guihuiBusUserFenbi( member.getBusId(), uc.getFenbi() );
+	    }
+	    //积分
+	    if ( uc.getIntegral()  >0 ) {
+		Integer jifen = member.getIntegral() - uc.getIntegral();
+		m1.setIntegral( jifen );
+		memberNewService.saveCardRecordNew( member.getMcId(), 2, uc.getIntegral() + "积分", "消费抵扣积分", member.getBusId(), jifen + "", 0,
+				-uc.getIntegral() );
+		flag = true;
+	    }
+	    if ( flag ) {
+		memberDAO.updateById( m1 );
+	    }
+	    if ( uc.getCardType() == -1 ) {
+		//卡券类型 -1未使用优惠券 0微信卡券 1多粉卡券
+	        if(uc.getCardType()==0){
+		    //微信优惠券
+		    WxPublicUsers wxPublicUsers = wxPublicUsersMapper.selectByUserId( member.getBusId() );
+		    cardCouponsApiService.wxCardReceive( wxPublicUsers.getId(), uc.getDisCountdepict() );
+		}else{
+		    //多粉优惠券
+		    Map< String,Object > p = new HashMap<>();
+		    p.put( "codes",  uc.getDisCountdepict()  );
+		    p.put( "storeId", uc.getStoreId() );
+		    cardCouponsApiService.verificationCard_2( p );
+	   	 }
+	    }
+	    //添加会员交易记录
+	    if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
+		memberNewService.saveCardRecordNew( member.getMcId(), 1, uc.getDiscountMoney() + "元", "消费", member.getBusId(), uc.getBalance() + "", 0, 0 );
+	    }
+
+	    //非游客
+	    Object obj=redisCacheUtil.get( "Memeber_ERP_" + orderCode );
+	    JSONObject json=JSON.parseObject( obj.toString() );
+	    String successNoticeUrl=CommonUtil.toString( json.get(  "successNoticeUrl") );
+	    String sign=CommonUtil.toString( json.get(  "sign")  );
+	    SignHttpUtils.postByHttp( successNoticeUrl,orderCode,sign );  //通知
+	    redisCacheUtil.remove("Memeber_ERP_"+orderCode);
+
+
+
+	}
 	System.out.println(params);
     }
 

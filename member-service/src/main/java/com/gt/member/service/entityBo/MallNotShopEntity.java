@@ -46,6 +46,7 @@ public class MallNotShopEntity {
     private Integer payType=0;  //支付方式   字典1198
     private Double balanceMoney = 0.0;  //支付金额
 
+
     public Integer getShopId() {
         return shopId;
     }
@@ -277,4 +278,5 @@ public class MallNotShopEntity {
     public void setOrderCode( String orderCode ) {
         this.orderCode = orderCode;
     }
+
 }

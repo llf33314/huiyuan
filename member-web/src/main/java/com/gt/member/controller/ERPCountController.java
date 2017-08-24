@@ -49,9 +49,7 @@ public class ERPCountController extends BaseController {
 	MallAllEntityQuery m = new MallAllEntityQuery();
 	m.setOrderCode( "ME123456789" );  //订单号
 	m.setTotalMoney( 0.01 ); //订单总金额
-
 	List< MallEntityQuery > list = new ArrayList<>();
-
 	MallEntityQuery m1 = new MallEntityQuery();
 	m1.setMallId( 1 );  //商品id or 生成序列号
 	m1.setNumber( 1 );  // 商品数量
