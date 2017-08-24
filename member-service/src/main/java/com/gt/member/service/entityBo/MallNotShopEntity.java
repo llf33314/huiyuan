@@ -1,4 +1,4 @@
-package com.gt.member.service.memberApi.entityBo;
+package com.gt.member.service.entityBo;
 
 import java.util.Map;
 
@@ -8,6 +8,7 @@ import java.util.Map;
  */
 public class MallNotShopEntity {
 
+    private String orderCode; //订单号
     private Integer visitor=0;  //1为游客 以下数据不做业务任何处理 就返回支付方式 支付金额
 
     private Integer shopId;  //门店id  not null
@@ -267,5 +268,13 @@ public class MallNotShopEntity {
 
     public void setVisitor( Integer visitor ) {
         this.visitor = visitor;
+    }
+
+    public String getOrderCode() {
+        return orderCode;
+    }
+
+    public void setOrderCode( String orderCode ) {
+        this.orderCode = orderCode;
     }
 }

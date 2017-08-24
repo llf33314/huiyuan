@@ -55,11 +55,10 @@ server:
 
 
 web:
+ webHome: http://192.168.2.240
  wxmp_home: http://yifriend.net/
+ wxmpsignKey: WXMP2017
  cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6
- redis_ip: 127.0.0.1
- redis_port: 6379
- redis_pwd: gt@123456
  domain: yifriend.com
  sms_name: 多粉平台
 

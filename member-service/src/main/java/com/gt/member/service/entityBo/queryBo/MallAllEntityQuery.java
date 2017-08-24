@@ -1,6 +1,6 @@
-package com.gt.member.service.count.queryBo;
+package com.gt.member.service.entityBo.queryBo;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * 总订单请求参数  包含非业务参数
@@ -10,13 +10,14 @@ import java.util.Map;
 public class MallAllEntityQuery {
     private String orderCode;  //订单号
     private Double totalMoney = 0.0; //订单总金额
-    private Map<Integer,MallEntityQuery > malls;  //商品订单详情
+    private List<MallEntityQuery> malls;  //商品订单详情
 
     private Integer ucType;   //消费类型  请查看1197消费类型  没有请添加
     private Integer busId;  //商家主账户id
     private Integer shopId;  //门店
 
     private String successNoticeUrl;  //支付成功 通知地址
+
     private String jumpUrl;  //支付成功跳转地址
 
     public String getOrderCode() {
@@ -35,11 +36,11 @@ public class MallAllEntityQuery {
         this.totalMoney = totalMoney;
     }
 
-    public Map< Integer,MallEntityQuery > getMalls() {
+    public List< MallEntityQuery > getMalls() {
         return malls;
     }
 
-    public void setMalls( Map< Integer,MallEntityQuery > malls ) {
+    public void setMalls( List< MallEntityQuery > malls ) {
         this.malls = malls;
     }
 

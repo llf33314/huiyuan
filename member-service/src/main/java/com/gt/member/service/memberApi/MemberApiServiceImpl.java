@@ -17,7 +17,7 @@ import com.gt.member.enums.ResponseEnums;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.MemberCommonService;
-import com.gt.member.service.memberApi.entityBo.PaySuccessBo;
+import com.gt.member.service.entityBo.PaySuccessBo;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.service.member.SystemMsgService;

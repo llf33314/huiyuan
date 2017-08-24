@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.gt.common.entity.BusUser;
 import com.gt.common.entity.TCommonStaff;
+import com.gt.common.entity.WxPublicUsers;
+import com.gt.member.constant.CommonConst;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
@@ -101,4 +103,34 @@ public class SessionUtil {
 	}
 	return userId;
     }
+
+
+    //存入 用户bus_user  的值
+    @SuppressWarnings("unchecked")
+    public static void setLoginUser(HttpServletRequest request, BusUser busUser) {
+	try {
+	    request.getSession().setAttribute(
+			    CommonConst.SESSION_BUSINESS_KEY, com.alibaba.fastjson.JSONObject.toJSONString(busUser));
+	} catch (Exception e) {
+	    log.info(e.getLocalizedMessage());
+	    e.printStackTrace();
+	}
+    };
+
+    /**
+     * 设置session中的t_wx_public_user微信信息
+     *
+     * @param request
+     * @return
+     */
+    public static void setLoginPbUser(HttpServletRequest request,
+		    WxPublicUsers wxPublicUsers) {
+	try {
+	    request.getSession().setAttribute(
+			    CommonConst.SESSION_WXPUBLICUSERS_KEY, com.alibaba.fastjson.JSONObject.toJSONString(wxPublicUsers));
+	} catch (Exception e) {
+	    log.info(e.getLocalizedMessage());
+	    e.printStackTrace();
+	}
+    };
 }

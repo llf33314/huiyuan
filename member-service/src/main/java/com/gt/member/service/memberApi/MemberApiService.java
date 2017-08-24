@@ -3,7 +3,7 @@ package com.gt.member.service.memberApi;
 import com.gt.common.entity.BusUser;
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
-import com.gt.member.service.memberApi.entityBo.PaySuccessBo;
+import com.gt.member.service.entityBo.PaySuccessBo;
 import com.gt.member.util.Page;
 
 import java.util.List;

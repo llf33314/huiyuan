@@ -16,23 +16,22 @@ import com.gt.member.exception.BusinessException;
 import com.gt.member.service.MemberNewService;
 import com.gt.member.service.common.MemberCommonService;
 import com.gt.member.service.common.dict.DictService;
-import com.gt.member.service.count.queryBo.MallAllEntityQuery;
-import com.gt.member.service.count.queryBo.MallEntityQuery;
+import com.gt.member.service.entityBo.QrPayParams;
+import com.gt.member.service.entityBo.queryBo.MallAllEntityQuery;
+import com.gt.member.service.entityBo.queryBo.MallEntityQuery;
 import com.gt.member.service.memberApi.CardCouponsApiService;
-import com.gt.member.service.memberApi.MemberApiService;
 import com.gt.member.service.memberApi.MemberCountMoneyApiService;
-import com.gt.member.service.memberApi.entityBo.MallEntity;
-import com.gt.member.service.memberApi.entityBo.MallNotShopEntity;
-import com.gt.member.util.CommonUtil;
-import com.gt.member.util.DateTimeKit;
-import com.gt.member.util.EncryptUtil;
-import com.gt.member.util.MemberConfig;
+import com.gt.member.service.entityBo.MallEntity;
+import com.gt.member.service.entityBo.MallNotShopEntity;
+import com.gt.member.util.*;
+import com.gt.member.util.sign.SignHttpUtils;
 import net.sf.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 
@@ -45,6 +44,8 @@ import java.util.*;
 public class ERPCountServiceImpl implements ERPCountService {
 
     private static final Logger LOG = LoggerFactory.getLogger( ERPCountServiceImpl.class );
+
+    private static final String SAOMA_QIANBAO_PAY="/wxMicropay/79B4DE7C/payMicropayVer2_0.do";
 
     @Autowired
     private MemberConfig      memberConfig;
@@ -91,6 +92,8 @@ public class ERPCountServiceImpl implements ERPCountService {
     @Autowired
     private UserConsumeDAO userConsumeDAO;
 
+    @Autowired
+    private RedisCacheUtil redisCacheUtil;
 
     @Override
     public Map< String,Object > findMemberByERP( Integer busId, Integer shopId, String cardNo ) {
@@ -286,6 +289,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 	Map< String,Object > map = new HashMap<>();
 	try {
 	    MallAllEntityQuery mallQuery = JSON.toJavaObject( JSON.parseObject( mallAllEntityQuery ), MallAllEntityQuery.class );
+
 	    JSONObject jsonObject = JSONObject.parseObject( param );
 
 	    MallNotShopEntity mallNotShopEntity = new MallNotShopEntity();
@@ -301,7 +305,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 
 	    Map< Integer,MallEntity > mallMap = new HashMap<>();
 	    MallEntity mall = null;
-	    for ( MallEntityQuery m : mallQuery.getMalls().values() ) {
+	    for ( MallEntityQuery m : mallQuery.getMalls() ) {
 		mall = new MallEntity();
 		mall.setMallId( m.getMallId() );
 		mall.setNumber( m.getNumber() );
@@ -343,16 +347,17 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    Integer payType = CommonUtil.toInteger( jsonObject.get( "payType" ) );
 	    Integer visitor = CommonUtil.toInteger( jsonObject.get( "visitor" ) );
 	    MallNotShopEntity mallNotShopEntity = new MallNotShopEntity();
+	    mallNotShopEntity.setOrderCode( mallQuery.getOrderCode() );
 	    mallNotShopEntity.setVisitor( visitor );
 	    mallNotShopEntity.setPayType( payType );
 	    mallNotShopEntity.setBalanceMoney( mallQuery.getTotalMoney() );
 	    if ( visitor == 1 ) {
 		//游客 直接通知
-		Double payMoney=CommonUtil.toDouble( jsonObject.get( "payMoney" ) );
-		if(CommonUtil.isEmpty( payMoney )){
+		Double payMoney = CommonUtil.toDouble( jsonObject.get( "payMoney" ) );
+		if ( CommonUtil.isEmpty( payMoney ) ) {
 		    throw new BusinessException( ResponseMemberEnums.LESS_THAN_CASH );
 		}
-		if(payMoney<mallQuery.getTotalMoney()){
+		if ( payMoney < mallQuery.getTotalMoney() ) {
 		    throw new BusinessException( ResponseMemberEnums.LESS_THAN_CASH );
 		}
 		//todo
@@ -374,7 +379,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 
 	    Map< Integer,MallEntity > mallMap = new HashMap<>();
 	    MallEntity mall = null;
-	    for ( MallEntityQuery m : mallQuery.getMalls().values() ) {
+	    for ( MallEntityQuery m : mallQuery.getMalls() ) {
 		mall = new MallEntity();
 		mall.setMallId( m.getMallId() );
 		mall.setNumber( m.getNumber() );
@@ -388,7 +393,9 @@ public class ERPCountServiceImpl implements ERPCountService {
 		mallMap.put( mall.getMallId(), mall );
 	    }
 	    mallNotShopEntity.setMalls( mallMap );
-	    mallNotShopEntity = memberCountMoneyApiService.mallSkipNotShopCount( mallNotShopEntity );
+	    if(visitor==0) {
+		mallNotShopEntity = memberCountMoneyApiService.mallSkipNotShopCount( mallNotShopEntity );
+	    }
 
 	    if ( payType == 10 ) {
 		//现金支付
@@ -465,7 +472,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 		flag = true;
 
 		//归还商家粉币
-		memberCommonService.guihuiBusUserFenbi(member.getBusId(),mallNotShopEntity.getFenbiNum());
+		memberCommonService.guihuiBusUserFenbi( member.getBusId(), mallNotShopEntity.getFenbiNum() );
 
 	    }
 	    //积分
@@ -486,9 +493,8 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    }
 	    userConsumeDAO.insert( uc );
 
-
 	    //赠送
-
+	    //TODO
 
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
@@ -508,29 +514,132 @@ public class ERPCountServiceImpl implements ERPCountService {
      */
     @Transactional
     public Map< String,Object > saomaPayMent( String mallAllEntityQuery, String param ) throws BusinessException {
-	Map<String,Object> map=new HashMap<>(  );
-        try {
+	Map< String,Object > map = new HashMap<>();
+	try {
 	    MallAllEntityQuery mallQuery = JSON.toJavaObject( JSON.parseObject( mallAllEntityQuery ), MallAllEntityQuery.class );
 	    JSONObject jsonObject = JSONObject.parseObject( param );
-	    Integer payType = CommonUtil.toInteger( jsonObject.get( "payType" ) );
 	    Integer visitor = CommonUtil.toInteger( jsonObject.get( "visitor" ) );
-	    MallNotShopEntity mallNotShopEntity = new MallNotShopEntity();
-	    mallNotShopEntity.setVisitor( visitor );
-	    mallNotShopEntity.setPayType( payType );
-	    mallNotShopEntity.setBalanceMoney( mallQuery.getTotalMoney() );
 
-	    mallNotShopEntity.setUseCoupon( CommonUtil.toInteger( jsonObject.get( "useCoupon" ) ) );
-	    mallNotShopEntity.setCouponType( CommonUtil.toInteger( jsonObject.get( "couponType" ) ) );
-	    mallNotShopEntity.setCoupondId( CommonUtil.toInteger( jsonObject.get( "coupondId" ) ) );
+	    MallNotShopEntity mallNotShopEntity = new MallNotShopEntity();
+	    mallNotShopEntity.setOrderCode( mallQuery.getOrderCode() );
+	    mallNotShopEntity.setVisitor( visitor );
+	    mallNotShopEntity.setBalanceMoney( mallQuery.getTotalMoney() );
 	    mallNotShopEntity.setShopId( mallQuery.getShopId() );
 	    mallNotShopEntity.setTotalMoney( mallQuery.getTotalMoney() );
-	    mallNotShopEntity.setMemberId( CommonUtil.toInteger( jsonObject.get( "memberId" ) ) );
-	    mallNotShopEntity.setUseFenbi( CommonUtil.toInteger( jsonObject.get( "useFenbi" ) ) );
-	    mallNotShopEntity.setUserJifen( CommonUtil.toInteger( jsonObject.get( "userJifen" ) ) );
+
+	    if(visitor==0) {
+		mallNotShopEntity.setUseCoupon( CommonUtil.toInteger( jsonObject.get( "useCoupon" ) ) );
+		mallNotShopEntity.setCouponType( CommonUtil.toInteger( jsonObject.get( "couponType" ) ) );
+		mallNotShopEntity.setCoupondId( CommonUtil.toInteger( jsonObject.get( "coupondId" ) ) );
+		mallNotShopEntity.setMemberId( CommonUtil.toInteger( jsonObject.get( "memberId" ) ) );
+		mallNotShopEntity.setUseFenbi( CommonUtil.toInteger( jsonObject.get( "useFenbi" ) ) );
+		mallNotShopEntity.setUserJifen( CommonUtil.toInteger( jsonObject.get( "userJifen" ) ) );
+	    }
 
 	    Map< Integer,MallEntity > mallMap = new HashMap<>();
 	    MallEntity mall = null;
-	    for ( MallEntityQuery m : mallQuery.getMalls().values() ) {
+	    for ( MallEntityQuery m : mallQuery.getMalls() ) {
+		mall = new MallEntity();
+		mall.setMallId( m.getMallId() );
+		mall.setNumber( m.getNumber() );
+		mall.setTotalMoneyOne( m.getTotalMoneyOne() );
+		mall.setTotalMoneyAll( m.getTotalMoneyAll() );
+		mall.setUserCard( m.getUserCard() );
+		mall.setUseCoupon( m.getUseCoupon() );
+		mall.setUseFenbi( m.getUseFenbi() );
+		mall.setUserJifen( m.getUserJifen() );
+		mall.setUseLeague( m.getUseLeague() );
+		mallMap.put( mall.getMallId(), mall );
+	    }
+	    mallNotShopEntity.setMalls( mallMap );
+	    if(visitor==0) {
+		mallNotShopEntity = memberCountMoneyApiService.mallSkipNotShopCount( mallNotShopEntity );
+	    }
+
+	    if(visitor==0) {
+		//增加会员交易记录
+		Member member = memberDAO.selectById( mallNotShopEntity.getMemberId() );
+		UserConsume uc = new UserConsume();
+		uc.setBusUserId( member.getBusId() );
+		uc.setMemberId( member.getId() );
+		if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
+		    uc.setMcId( member.getMcId() );
+		    MemberCard card = memberCardDAO.selectById( member.getMcId() );
+		    uc.setCtId( card.getCtId() );
+		    uc.setGtId( card.getGtId() );
+		}
+		uc.setRecordType( 2 );
+		uc.setUcType( mallQuery.getUcType() );
+		uc.setTotalMoney( mallNotShopEntity.getTotalMoney() );
+		uc.setIntegral( mallNotShopEntity.getJifenNum() );
+		uc.setFenbi( mallNotShopEntity.getFenbiNum() );
+		uc.setDiscountMoney( mallNotShopEntity.getBalanceMoney() );
+
+		uc.setOrderCode( mallQuery.getOrderCode() );
+		uc.setStoreId( mallNotShopEntity.getShopId() );
+		if ( mallNotShopEntity.getUseCoupon() == 1 ) {
+		    uc.setCardType( mallNotShopEntity.getCouponType() );
+		    uc.setDisCountdepict( mallNotShopEntity.getCodes() );
+		}
+		uc.setDataSource( 0 );
+		userConsumeDAO.insert( uc );
+	    }
+	    Object obj=redisCacheUtil.get( "ERP_" + mallNotShopEntity.getOrderCode() );
+	    if(CommonUtil.isNotEmpty(  obj)){
+		redisCacheUtil.remove( "ERP_" + mallNotShopEntity.getOrderCode()  );
+	    }
+	    redisCacheUtil.set( "ERP_" + mallNotShopEntity.getOrderCode(), JSON.toJSONString( mallNotShopEntity ), 600L );
+
+	    String notityUrl=memberConfig.getWebHome()+"/erpCount/79B4DE7C/successPay.do";
+
+	    String url="";
+	    if(visitor==1){
+		url = memberConfig.getWxmp_home() + "/pay/B02A45A5/79B4DE7C/createPayQR.do"
+				+ "?totalFee=" +mallNotShopEntity.getBalanceMoney()+"&model=51&busId="+mallQuery.getBusId()+"&orderNum="+mallNotShopEntity.getOrderCode()
+				+"&desc=支付&notifyUrl="+notityUrl;
+	    }else{
+		url = memberConfig.getWxmp_home() + "/pay/B02A45A5/79B4DE7C/createPayQR.do"
+				+ "?totalFee=" +mallNotShopEntity.getBalanceMoney()+"&model=51&busId="+mallQuery.getBusId()+"&orderNum="+mallNotShopEntity.getOrderCode()
+				+"&memberId="+mallNotShopEntity.getMemberId()+"&desc=支付&notifyUrl="+notityUrl;
+	    }
+
+	    map.put( "saomaoPayUrl", url );
+	    map.put( "code", 0);
+	    return map;
+	} catch ( BusinessException e ) {
+	    throw new BusinessException( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    LOG.error( "ERP计算失败", e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+    public Map<String,Object> saomaQianBaoPay(String mallAllEntityQuery,
+		    String param){
+        Map<String,Object> map=new HashMap<>(  );
+	try {
+	    MallAllEntityQuery mallQuery = JSON.toJavaObject( JSON.parseObject( mallAllEntityQuery ), MallAllEntityQuery.class );
+	    JSONObject jsonObject = JSONObject.parseObject( param );
+	    Integer visitor = CommonUtil.toInteger( jsonObject.get( "visitor" ) );
+
+	    MallNotShopEntity mallNotShopEntity = new MallNotShopEntity();
+	    mallNotShopEntity.setOrderCode( mallQuery.getOrderCode() );
+	    mallNotShopEntity.setVisitor( visitor );
+	    mallNotShopEntity.setBalanceMoney( mallQuery.getTotalMoney() );
+	    mallNotShopEntity.setShopId( mallQuery.getShopId() );
+	    mallNotShopEntity.setTotalMoney( mallQuery.getTotalMoney() );
+	    if(visitor==0) {
+		mallNotShopEntity.setUseCoupon( CommonUtil.toInteger( jsonObject.get( "useCoupon" ) ) );
+		mallNotShopEntity.setCouponType( CommonUtil.toInteger( jsonObject.get( "couponType" ) ) );
+		mallNotShopEntity.setCoupondId( CommonUtil.toInteger( jsonObject.get( "coupondId" ) ) );
+		mallNotShopEntity.setMemberId( CommonUtil.toInteger( jsonObject.get( "memberId" ) ) );
+		mallNotShopEntity.setUseFenbi( CommonUtil.toInteger( jsonObject.get( "useFenbi" ) ) );
+		mallNotShopEntity.setUserJifen( CommonUtil.toInteger( jsonObject.get( "userJifen" ) ) );
+	    }
+
+	    Map< Integer,MallEntity > mallMap = new HashMap<>();
+	    MallEntity mall = null;
+	    for ( MallEntityQuery m : mallQuery.getMalls() ) {
 		mall = new MallEntity();
 		mall.setMallId( m.getMallId() );
 		mall.setNumber( m.getNumber() );
@@ -546,82 +655,80 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    mallNotShopEntity.setMalls( mallMap );
 	    mallNotShopEntity = memberCountMoneyApiService.mallSkipNotShopCount( mallNotShopEntity );
 
-	    //增加会员交易记录
-	    Member member = memberDAO.selectById( mallNotShopEntity.getMemberId() );
-
-	    UserConsume uc = new UserConsume();
-	    uc.setBusUserId( member.getBusId() );
-	    uc.setMemberId( member.getId() );
-	    if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
-		uc.setMcId( member.getMcId() );
-		MemberCard card = memberCardDAO.selectById( member.getMcId() );
-		uc.setCtId( card.getCtId() );
-		uc.setGtId( card.getGtId() );
-	    }
-
-	    uc.setRecordType( 2 );
-	    uc.setUcType( mallQuery.getUcType() );
-	    uc.setTotalMoney( mallNotShopEntity.getTotalMoney() );
-	    uc.setIntegral( mallNotShopEntity.getJifenNum() );
-	    uc.setFenbi( mallNotShopEntity.getFenbiNum() );
-	    uc.setDiscountMoney( mallNotShopEntity.getBalanceMoney() );
-	    uc.setPaymentType( payType );
-
-	    uc.setOrderCode( mallQuery.getOrderCode() );
-	    uc.setStoreId( mallNotShopEntity.getShopId() );
-	    if ( mallNotShopEntity.getUseCoupon() == 1 ) {
-		uc.setCardType( mallNotShopEntity.getCouponType() );
-		uc.setDisCountdepict( mallNotShopEntity.getCodes() );
-		//优惠券核销
-		if ( mallNotShopEntity.getCouponType() == 0 ) {
-		    //微信优惠券
-		    WxPublicUsers wxPublicUsers = wxPublicUsersMapper.selectByUserId( member.getBusId() );
-		    cardCouponsApiService.wxCardReceive( wxPublicUsers.getId(), mallNotShopEntity.getCodes() );
-		} else {
-		    //多粉优惠券
-		    Map< String,Object > params = new HashMap<>();
-		    params.put( "codes", mallNotShopEntity.getCodes() );
-		    params.put( "storeId", mallNotShopEntity.getShopId() );
-		    cardCouponsApiService.verificationCard_2( params );
+	    if(visitor==0) {
+		//增加会员交易记录
+		Member member = memberDAO.selectById( mallNotShopEntity.getMemberId() );
+		UserConsume uc = new UserConsume();
+		uc.setBusUserId( member.getBusId() );
+		uc.setMemberId( member.getId() );
+		if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
+		    uc.setMcId( member.getMcId() );
+		    MemberCard card = memberCardDAO.selectById( member.getMcId() );
+		    uc.setCtId( card.getCtId() );
+		    uc.setGtId( card.getGtId() );
 		}
-	    }
-	    uc.setDataSource( 0 );
+		uc.setRecordType( 2 );
+		uc.setUcType( mallQuery.getUcType() );
+		uc.setTotalMoney( mallNotShopEntity.getTotalMoney() );
+		uc.setIntegral( mallNotShopEntity.getJifenNum() );
+		uc.setFenbi( mallNotShopEntity.getFenbiNum() );
+		uc.setDiscountMoney( mallNotShopEntity.getBalanceMoney() );
 
-	    boolean flag = false;
-	    Member m1 = new Member();
-	    m1.setMcId( member.getId() );
-	    //粉币
-	    if ( mallNotShopEntity.getCanUsefenbi() == 1 ) {
-		Double fansCurrency = member.getFansCurrency() - mallNotShopEntity.getFenbiNum();
-		m1.setFansCurrency( fansCurrency );
-		memberNewService.saveCardRecordNew( member.getMcId(), 3, mallNotShopEntity.getFenbiNum() + "粉币", "消费抵扣粉币", member.getBusId(), fansCurrency + "", 0, 0 );
-		flag = true;
+		uc.setOrderCode( mallQuery.getOrderCode() );
+		uc.setStoreId( mallNotShopEntity.getShopId() );
+		if ( mallNotShopEntity.getUseCoupon() == 1 ) {
+		    uc.setCardType( mallNotShopEntity.getCouponType() );
+		    uc.setDisCountdepict( mallNotShopEntity.getCodes() );
+		}
+		uc.setDataSource( 0 );
+		userConsumeDAO.insert( uc );
 	    }
-	    //积分
-	    if ( mallNotShopEntity.getCanUseJifen() == 1 ) {
-		Integer jifen = member.getIntegral() - mallNotShopEntity.getJifenNum();
-		m1.setIntegral( jifen );
-		memberNewService.saveCardRecordNew( member.getMcId(), 2, mallNotShopEntity.getJifenNum() + "积分", "消费抵扣积分", member.getBusId(), jifen + "", 0,
-				mallNotShopEntity.getJifenNum() );
-		flag = true;
+	    Object obj=redisCacheUtil.get( "ERP_" + mallNotShopEntity.getOrderCode() );
+	    if(CommonUtil.isNotEmpty(  obj)){
+		redisCacheUtil.remove( "ERP_" + mallNotShopEntity.getOrderCode()  );
 	    }
-	    if ( flag ) {
-		memberDAO.updateById( m1 );
-	    }
+	    redisCacheUtil.set( "ERP_" + mallNotShopEntity.getOrderCode(), JSON.toJSONString( mallNotShopEntity ), 600L );
 
-	    //添加会员交易记录
-	    if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
-		memberNewService.saveCardRecordNew( member.getMcId(), 1, mallNotShopEntity.getBalanceMoney() + "元", "消费", member.getBusId(), uc.getBalance() + "", 0, 0 );
-	    }
-	    userConsumeDAO.insert( uc );
 
+	  //  String url = memberConfig.getWxmp_home() + SAOMA_QIANBAO_PAY;
+//	    Map<String,Object> queryMap=new HashMap<>(  );
+
+//	    queryMap.put( "auth_code", auth_code);
+//	    queryMap.put( "body", "支付");
+//	    queryMap.put( "model", 51);
+//	    queryMap.put( "out_trade_no", mallNotShopEntity.getOrderCode() );
+//	    queryMap.put( "total_fee", mallNotShopEntity.getBalanceMoney() );
+//	    queryMap.put( "notityUrl", "");
+
+	    String notityUrl=memberConfig.getWebHome()+"/erpCount/79B4DE7C/successPay.do";
+
+	    String auth_code=jsonObject.getString( "auth_code" );
+	    String url = memberConfig.getWxmp_home() + SAOMA_QIANBAO_PAY+"?auth_code="+auth_code+"&body=支付&model=51&out_trade_no="+mallNotShopEntity.getOrderCode()
+			    +"&total_fee="+ mallNotShopEntity.getBalanceMoney()+"&is_calculate=1&notityUrl="+notityUrl;
+
+	    net.sf.json.JSONObject json=HttpClienUtil.httpPost( url, null, false );
+	    if("1".equals( CommonUtil.toString( json.get( "code" ) ) )){
+		map.put( "code",0 );
+		map.put( "msg","支付成功" );
+	    }else{
+		map.put( "code",json.get( "code" ) );
+		map.put( "msg",json.get( "msg" )  );
+	    }
+	    return map;
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
 	    LOG.error( "ERP计算失败", e );
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
-	return  null;
+    }
+
+    /**
+     * 支付成功回调
+     * @param params
+     */
+    public void successPay(Map<String,Object> params){
+	System.out.println(params);
     }
 
 }

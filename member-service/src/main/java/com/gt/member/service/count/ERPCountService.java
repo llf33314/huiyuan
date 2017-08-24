@@ -1,8 +1,7 @@
 package com.gt.member.service.count;
 
 import com.gt.member.exception.BusinessException;
-import com.gt.member.service.memberApi.entityBo.MallAllEntity;
-import com.gt.member.service.memberApi.entityBo.MallNotShopEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
@@ -45,4 +44,17 @@ public interface ERPCountService {
      * @return
      */
     public Map<String,Object> saomaPayMent(String mallAllEntityQuery, String param )throws BusinessException;
+
+    /**
+     * erp 钱包支付
+     * @return
+     */
+    public Map<String,Object> saomaQianBaoPay(String mallAllEntityQuery,
+                    String param);
+
+    /**
+     * 支付成功回调
+     * @param params
+     */
+    public void successPay(Map<String,Object> params);
 }

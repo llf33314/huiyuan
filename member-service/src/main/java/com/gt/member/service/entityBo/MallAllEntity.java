@@ -1,6 +1,5 @@
-package com.gt.member.service.memberApi.entityBo;
+package com.gt.member.service.entityBo;
 
-import javax.validation.constraints.Null;
 import java.util.Map;
 
 /**

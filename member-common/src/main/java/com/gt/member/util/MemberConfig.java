@@ -15,21 +15,14 @@ import org.springframework.stereotype.Component;
 @Getter
 @Data
 public class MemberConfig {
+    private String webHome;  //本项目域名
+
     private String wxmp_home;  //wxmp
 
-    private String api_signKey;  //wxmp 秘钥
+    private String wxmpsignKey;  //wxmp 秘钥
 
     private String sms_name;  //短信发送名称
 
     private String cardNoKey;  //会员卡秘钥
 
-    private String redis_ip;  //redis ip
-
-    private String redis_port; //redis端口
-
-    private String redis_pwd; //redis  密码
-
-    private String domain;  //获取域名
-
-    private String signKey;  //签名key值
 }

@@ -1,4 +1,4 @@
-package com.gt.member.service.memberApi.entityBo;
+package com.gt.member.service.entityBo;
 
 /**
  * Created by Administrator on 2017/8/2 0002.

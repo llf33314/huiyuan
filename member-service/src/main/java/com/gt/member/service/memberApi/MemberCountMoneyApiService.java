@@ -1,8 +1,8 @@
 package com.gt.member.service.memberApi;
 
-import com.gt.member.service.memberApi.entityBo.MallAllEntity;
-import com.gt.member.service.memberApi.entityBo.MallNotShopEntity;
-import com.gt.member.service.memberApi.entityBo.MemberShopEntity;
+import com.gt.member.service.entityBo.MallAllEntity;
+import com.gt.member.service.entityBo.MallNotShopEntity;
+import com.gt.member.service.entityBo.MemberShopEntity;
 
 /**
  * 会员计算统一api

@@ -1,4 +1,4 @@
-package com.gt.member.service.memberApi.entityBo;
+package com.gt.member.service.entityBo;
 
 /**
  * 统一门店计算

@@ -1,4 +1,4 @@
-package com.gt.member.service.count.queryBo;
+package com.gt.member.service.entityBo.queryBo;
 
 /**
  * erp 统一请求订单详情参数

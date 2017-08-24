@@ -47,10 +47,10 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     private MemberConfig memberConfig;
 
     //微信卡券核销
-    private final String CODE_CONSUME = "/8A5DA52E/wxcardapi/79B4DE7C/codeConsume.do";
+    private final String CODE_CONSUME = "/8A5DA52E/wxcardapi/6F6D9AD2/79B4DE7C/codeConsume.do";
 
     //发送短信
-    private final String SEND_SMS = "/8A5DA52E/smsapi/79B4DE7C/sendSmsOld.do";
+    private final String SEND_SMS = "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do";
 
     @Autowired
     private WxCardDAO wxCardMapper;
@@ -257,11 +257,11 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
             WxPublicUsers wxPublicUsers= wxPublicUsersDAO.selectById( wxPublicUsersId );
             String url= memberConfig.getWxmp_home()+CODE_CONSUME;
-            String api_signKey=memberConfig.getApi_signKey();
+            String getWxmpsignKey=memberConfig.getWxmpsignKey();
             map.put( "card_id", wcr.getCardId());
             map.put( "code",code );
             map.put( "busId",wxPublicUsers.getBusUserId() );
-            String result=SignHttpUtils.postByHttp(url,map,api_signKey);
+            String result=SignHttpUtils.postByHttp(url,map,getWxmpsignKey);
 
             JSONObject returnJSON =JSONObject.parseObject( result);
             if (!"0".equals(returnJSON.get("code").toString())) {
@@ -292,11 +292,11 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             Map<String, Object> map = new HashMap<>();
             WxPublicUsers wxPublicUsers= wxPublicUsersDAO.selectById( wxPublicUsersId );
             String url= memberConfig.getWxmp_home()+CODE_CONSUME;
-            String api_signKey=memberConfig.getApi_signKey();
+            String getWxmpsignKey=memberConfig.getWxmpsignKey();
             map.put( "card_id", wcr.getCardId());
             map.put( "code",code );
             map.put( "busId",wxPublicUsers.getBusUserId() );
-            String result=SignHttpUtils.postByHttp(url,map,api_signKey);
+            String result=SignHttpUtils.postByHttp(url,map,getWxmpsignKey);
 
             JSONObject returnJSON =JSONObject.parseObject( result);
             if (!"0".equals(returnJSON.get("code").toString())) {
@@ -640,7 +640,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 			params.put( "content", "用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券" );
 			params.put( "company", memberConfig.getSms_name() );
 			String url = memberConfig.getWxmp_home() + SEND_SMS;
-			SignHttpUtils.postByHttp( url, params, memberConfig.getSignKey() );
+			SignHttpUtils.postByHttp( url, params, memberConfig.getWxmpsignKey() );
 		    }catch ( Exception e ){
                         LOG.error( "短信发送失败",e );
 		    }
@@ -975,7 +975,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 		    params.put( "content", "用户领取一个包,包名：" + dfcr.getCardsName() );
 		    params.put( "company", memberConfig.getSms_name() );
 		    String url = memberConfig.getWxmp_home() + SEND_SMS;
-		    SignHttpUtils.postByHttp( url, params, memberConfig.getSignKey() );
+		    SignHttpUtils.postByHttp( url, params, memberConfig.getWxmpsignKey() );
 		}catch ( Exception e ){
                     LOG.error( "短信过期",e );
 		}
@@ -1221,7 +1221,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 		    params.put( "content", "用户领取一个包,包名：" + dfcr.getCardsName() );
 		    params.put( "company", memberConfig.getSms_name() );
 		    String url = memberConfig.getWxmp_home() + SEND_SMS;
-		    SignHttpUtils.postByHttp( url, params, memberConfig.getSignKey() );
+		    SignHttpUtils.postByHttp( url, params, memberConfig.getWxmpsignKey() );
 		}catch ( Exception e ){
                     LOG.error( "短信发送失败",e );
 		}
@@ -1301,7 +1301,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 			params.put( "content", "用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券");
 			params.put( "company", memberConfig.getSms_name() );
 			String url = memberConfig.getWxmp_home() + SEND_SMS;
-			SignHttpUtils.postByHttp( url, params, memberConfig.getSignKey() );
+			SignHttpUtils.postByHttp( url, params, memberConfig.getWxmpsignKey() );
 		    }catch ( Exception e ){
 			LOG.error( "短信发送失败",e );
 		    }
@@ -1482,7 +1482,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 			params.put( "content","用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券");
 			params.put( "company", memberConfig.getSms_name() );
 			String url = memberConfig.getWxmp_home() + SEND_SMS;
-			SignHttpUtils.postByHttp( url, params, memberConfig.getSignKey() );
+			SignHttpUtils.postByHttp( url, params, memberConfig.getWxmpsignKey() );
 		    }catch ( Exception e ){
 			LOG.error( "短信发送失败",e );
 		    }

@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="/css/count/erp_billing.css">
     <link rel="stylesheet" href="/css/iconfont/iconfont.css">
 </head>
-</head>
 <body>
 <section id="erpBilling">
     <div class="erp-billing-title">
@@ -54,52 +53,52 @@
              </section>
          </div>--%>
         <!-- 选择抵扣优惠 -->
-    <%--    <div class="select-discount-type erp-billing-border-margin">
-            <div class="erp-billing-item-title">选择抵扣优惠</div>
-            <div class="discount-box-nomsg">
-                <div class="icon"><i class="el-icon-warning"></i></div>
-                <p>您当前还未有会员优惠信息，请先领取优惠券、粉币，或直接消费以获得会员积分。</p>
-            </div>
-            <div class="discount-box">
-                <div class="coupon-box">
-                    <ul>
-                        <li class="coupon-item">
-                            <i class="arrow erp-billing-border" style="left: -8px;"></i>
-                            <i class="arrow erp-billing-border" style="right: -8px;"></i>
-                            <section class="content erp-billing-bg-color">
-                                <p class="title">9折</p>
-                                <p class="dps">多粉折扣券<span style="margin-left: 20px;">x1</span></p>
-                            </section>
-                            <section class="erp-billing-color">已选择 ×5</section>
+        <%--    <div class="select-discount-type erp-billing-border-margin">
+                <div class="erp-billing-item-title">选择抵扣优惠</div>
+                <div class="discount-box-nomsg">
+                    <div class="icon"><i class="el-icon-warning"></i></div>
+                    <p>您当前还未有会员优惠信息，请先领取优惠券、粉币，或直接消费以获得会员积分。</p>
+                </div>
+                <div class="discount-box">
+                    <div class="coupon-box">
+                        <ul>
+                            <li class="coupon-item">
+                                <i class="arrow erp-billing-border" style="left: -8px;"></i>
+                                <i class="arrow erp-billing-border" style="right: -8px;"></i>
+                                <section class="content erp-billing-bg-color">
+                                    <p class="title">9折</p>
+                                    <p class="dps">多粉折扣券<span style="margin-left: 20px;">x1</span></p>
+                                </section>
+                                <section class="erp-billing-color">已选择 ×5</section>
+                            </li>
+                            <li class="coupon-item">
+                                <i class="arrow erp-billing-border" style="left: -8px;"></i>
+                                <i class="arrow erp-billing-border" style="right: -8px;"></i>
+                                <section class="content erp-billing-border erp-billing-color">
+                                    <p class="title">9折</p>
+                                    <p class="dps">多粉折扣券<span style="margin-left: 20px;">x1</span></p>
+                                </section>
+                            </li>
+                        </ul>
+                    </div>
+                    <ul class="jf-and-fb">
+                        <li class="erp-billing-color">
+                            <div class="box erp-billing-bg-color">
+                                <p class="title">31粉币</p>
+                                <p>（2111元）</p>
+                            </div>
+                            <p>已抵扣2111元</p>
                         </li>
-                        <li class="coupon-item">
-                            <i class="arrow erp-billing-border" style="left: -8px;"></i>
-                            <i class="arrow erp-billing-border" style="right: -8px;"></i>
-                            <section class="content erp-billing-border erp-billing-color">
-                                <p class="title">9折</p>
-                                <p class="dps">多粉折扣券<span style="margin-left: 20px;">x1</span></p>
-                            </section>
+                        <li class=" erp-billing-color">
+                            <div class="box  erp-billing-border">
+                                <p class="title">31粉币</p>
+                                <p>（2111元）</p>
+                            </div>
+                            <p>已抵扣21111元</p>
                         </li>
                     </ul>
                 </div>
-                <ul class="jf-and-fb">
-                    <li class="erp-billing-color">
-                        <div class="box erp-billing-bg-color">
-                            <p class="title">31粉币</p>
-                            <p>（2111元）</p>
-                        </div>
-                        <p>已抵扣2111元</p>
-                    </li>
-                    <li class=" erp-billing-color">
-                        <div class="box  erp-billing-border">
-                            <p class="title">31粉币</p>
-                            <p>（2111元）</p>
-                        </div>
-                        <p>已抵扣21111元</p>
-                    </li>
-                </ul>
-            </div>
-        </div>--%>
+            </div>--%>
         <!-- 请选择联盟 -->
         <%-- <div class="select-union erp-billing-border-margin">
              <div class="erp-billing-item-title">请选择联盟</div>
@@ -188,7 +187,7 @@
                         </div>--%>
                         <div class="item-title">
                             <span>输入收取金额：</span>
-                            <input class="input" type="number" id="payMoney" min="0"  onblur="fnchangePayMoney()" onkeyup="fnchangePayMoney()"/>
+                            <input class="input" type="number" id="payMoney" min="0" onblur="fnchangePayMoney()" onkeyup="fnchangePayMoney()"/>
                             <p style="display: inline">
                                 <span style="margin-left: 25px;">找零：</span>
                                 <span class="erp-billing-red balaceHtml" style="font-size: 23px;vertical-align: baseline;">￥0</span>
@@ -245,13 +244,13 @@
         <div class="smzf-dialogs-box">
             <div class="left">
                 <p class="title">方式1：顾客扫码支付</p>
-                <img src="/images/floor2-3.jpg"/>
+                <img src="" id="saomaImage"/>
             </div>
             <div class="right">
                 <p class="title">方式2：营业员输入</p>
-                <p><input type="text" class="input" placeholder="请使用扫码枪扫描或键盘输入付款码"/></p>
+                <p><input type="text" class="input" id="auth_code" placeholder="请使用扫码枪扫描或键盘输入付款码"/></p>
                 <p style="text-align: right">
-                    <button class="btn erp-billing-bg-color">确认</button>
+                    <button class="btn erp-billing-bg-color" onclick="saomaQianBaoPay()">确认</button>
                 </p>
             </div>
         </div>
@@ -316,7 +315,6 @@
     </el-dialog>
 
 
-
     <!--错误提示-->
     <el-dialog title="提示" :visible.sync="errorsubmitOrderMsg" size="530px" top="20%" :close-on-click-modal="false">
         <div class="smzf-dialogs-box" style="text-align: center;padding-bottom: 0">
@@ -336,7 +334,7 @@
 <script src="/js/elementui/elementui.js"></script>
 <script src="/js/jquery-2.2.2.js"></script>
 <script>
-    new Vue({
+    var vue = new Vue({
         el: '#erpBilling',
         data: {
             dialogChangePriceVisible: false,
@@ -348,15 +346,15 @@
             dialogmoBoxPayVisible: false,
             moBoxPayType: 1,
             submitOrderMsgSuccess: false,
-            errorsubmitOrderMsg:false,
+            errorsubmitOrderMsg: false,
             dialogDiscountTypeVisible: false,
             discountType: 1
         },
         methods: {
-            xinjinPayMent:function (e) {
+            xinjinPayMent: function (e) {
                 console.log('现金支付')
-                var _obj = $(e.target).parents('.item')|| $(e.target);
-                if($(e.target).hasClass('item'))  _obj = $(e.target);
+                var _obj = $(e.target).parents('.item') || $(e.target);
+                if ($(e.target).hasClass('item')) _obj = $(e.target);
                 $(".item").removeClass("erp-billing-bg-color erp-billing-color");
                 _obj.addClass("erp-billing-bg-color");
             },
@@ -379,12 +377,11 @@
             },
             scanCodePayMent: function (e) {
                 console.log('扫码支付')
-                var _obj =$(e.target).parents('.item');
-                if($(e.target).hasClass('item'))  _obj = $(e.target);
+                var _obj = $(e.target).parents('.item');
+                if ($(e.target).hasClass('item')) _obj = $(e.target);
                 $(".item").removeClass("erp-billing-bg-color erp-billing-color");
                 _obj.addClass("erp-billing-bg-color");
-                this.dialogScanCodePayMentVisible = true
-
+                saomaPayMent(this);
             },
             moBoxPay: function () {
                 console.log('魔盒支付')
@@ -399,41 +396,41 @@
             },
             submitOrderMsg: function () {
 
-                var payType= $(".pay-icon").find(".erp-billing-bg-color").attr("paytype");
-                if(payType==5 || payType==10){
-                    if(payType==10){
-                       var payMoney=$("#payMoney").val();
+                var payType = $(".pay-icon").find(".erp-billing-bg-color").attr("paytype");
+                if (payType == 5 || payType == 10) {
+                    if (payType == 10) {
+                        var payMoney = $("#payMoney").val();
                     }
-                   chuzhiPay(payType,this);
+                    chuzhiPay(payType, this);
 
                 }
                 console.log('支付成功提示')
-           //
+                //
 
             },
-            returnFirstView:function () {
-                window.location.href=$("#jumpUrl").val();
+            returnFirstView: function () {
+                window.location.href = $("#jumpUrl").val();
             },
-            zhifuQuxiao:function(){
+            zhifuQuxiao: function () {
                 this.submitOrderMsgSuccess = false;
                 fnMember();
             }
         }
     })
-    
+
     function fnchangePayMoney() {
-        var payMoney=$("#payMoney").val();
-        var totalMoney=$("#totalMoney").val();
-        var balaceHtml=parseFloat(totalMoney)-parseFloat(payMoney);
-        if(balaceHtml<0){
-            $(".balaceHtml").html("￥"+balaceHtml);
-        }else{
+        var payMoney = $("#payMoney").val();
+        var totalMoney = $("#totalMoney").val();
+        var balaceHtml = parseFloat(totalMoney) - parseFloat(payMoney);
+        if (balaceHtml < 0) {
+            $(".balaceHtml").html("￥" + balaceHtml);
+        } else {
             $(".balaceHtml").html("￥0");
         }
 
     }
 
-    function chuzhiPapMent(obj){
+    function chuzhiPapMent(obj) {
         console.log('储值卡支付')
         $(".item").removeClass("erp-billing-bg-color erp-billing-color");
         $(obj).addClass("erp-billing-bg-color");
@@ -461,7 +458,7 @@
 
                     $("#memberId").val(data.memberId);
                     $("#ctId").val(data.ctId);
-                    if(data.ctId==2){
+                    if (data.ctId == 2) {
                         fnErpCountMoney();
                     }
                     var memberHtml = "";
@@ -478,10 +475,10 @@
                     } else if (data.ctId == 3) {
                         memberHtml += "<section class='balance text'>余额：" + data.money + "元</section>";
                         $(".item").removeClass("erp-billing-bg-color");
-                        var chuzhiPayHtml=" <li  onclick='chuzhiPapMent(this)' class='item erp-billing-bg-color erp-billing-border' payType='5'>";
-                        chuzhiPayHtml+="<p class='icon-p'><i class='iconfont'>&#xe62b;</i></p>";
-                        chuzhiPayHtml+="<p>储值卡</p>";
-                        chuzhiPayHtml+="</li>";
+                        var chuzhiPayHtml = " <li  onclick='chuzhiPapMent(this)' class='item erp-billing-bg-color erp-billing-border' payType='5'>";
+                        chuzhiPayHtml += "<p class='icon-p'><i class='iconfont'>&#xe62b;</i></p>";
+                        chuzhiPayHtml += "<p>储值卡</p>";
+                        chuzhiPayHtml += "</li>";
                         $(".chuzhiPayHtml").html(chuzhiPayHtml);
                     }
                     memberHtml += "<section class='integral text'>积分：" + data.integral + "</section>";
@@ -489,101 +486,101 @@
                     memberHtml += "</div>";
                     $(".memberHtml").html(memberHtml);
 
-                    var youhuiHtml="<div class='select-discount-type erp-billing-border-margin'>";
-                    if(data.duofenCards.length==0 && (data.cardList==null || data.cardList=="")){
-                        youhuiHtml+=" <div class='erp-billing-item-title'>选择抵扣优惠</div>";
-                        youhuiHtml+="<div class='discount-box-nomsg'>";
-                        youhuiHtml+=" <div class='icon'><i class='el-icon-warning'></i></div>";
-                        youhuiHtml+=" <p>您当前还未有会员优惠信息，请先领取优惠券。</p>";
-                        youhuiHtml+="</div>";
-                    }else{
-                         youhuiHtml+="<div class='discount-box'>";
-                         youhuiHtml+="<div class='coupon-box'>";
-                         youhuiHtml+= "<ul>";
-                         var duofenCard=data.duofenCards;
-                        for(var i=0;i<duofenCard.length;i++){
-                            youhuiHtml+="<li class='coupon-item' onclick='fnChange(this)'>";
-                            youhuiHtml+="<i class='arrow erp-billing-border' style='left: -8px;'></i>";
-                            youhuiHtml+=" <i class='arrow erp-billing-border' style='right: -8px;'></i>";
-                            youhuiHtml+="  <section class='content erp-billing-border erp-billing-color' couponType='1' coupondId='"+duofenCard[i].gId+"'>";
-                            if(duofenCard[i].card_type==0){
-                                youhuiHtml+="   <p class='title'>"+duofenCard[i].discount+"折</p>";
-                            }else if(duofenCard[i].card_type==1){
-                                if(duofenCard[i].cash_least_cost>0){
-                                    youhuiHtml+="   <p class='title'>满"+duofenCard[i].cash_least_cost+"元减"+duofenCard[i].reduce_cost+"元</p>";
-                                }else{
-                                    youhuiHtml+="   <p class='title'>减"+duofenCard[i].reduce_cost+"元</p>";
+                    var youhuiHtml = "<div class='select-discount-type erp-billing-border-margin'>";
+                    if (data.duofenCards.length == 0 && (data.cardList == null || data.cardList == "")) {
+                        youhuiHtml += " <div class='erp-billing-item-title'>选择抵扣优惠</div>";
+                        youhuiHtml += "<div class='discount-box-nomsg'>";
+                        youhuiHtml += " <div class='icon'><i class='el-icon-warning'></i></div>";
+                        youhuiHtml += " <p>您当前还未有会员优惠信息，请先领取优惠券。</p>";
+                        youhuiHtml += "</div>";
+                    } else {
+                        youhuiHtml += "<div class='discount-box'>";
+                        youhuiHtml += "<div class='coupon-box'>";
+                        youhuiHtml += "<ul>";
+                        var duofenCard = data.duofenCards;
+                        for (var i = 0; i < duofenCard.length; i++) {
+                            youhuiHtml += "<li class='coupon-item' onclick='fnChange(this)'>";
+                            youhuiHtml += "<i class='arrow erp-billing-border' style='left: -8px;'></i>";
+                            youhuiHtml += " <i class='arrow erp-billing-border' style='right: -8px;'></i>";
+                            youhuiHtml += "  <section class='content erp-billing-border erp-billing-color' couponType='1' coupondId='" + duofenCard[i].gId + "'>";
+                            if (duofenCard[i].card_type == 0) {
+                                youhuiHtml += "   <p class='title'>" + duofenCard[i].discount + "折</p>";
+                            } else if (duofenCard[i].card_type == 1) {
+                                if (duofenCard[i].cash_least_cost > 0) {
+                                    youhuiHtml += "   <p class='title'>满" + duofenCard[i].cash_least_cost + "元减" + duofenCard[i].reduce_cost + "元</p>";
+                                } else {
+                                    youhuiHtml += "   <p class='title'>减" + duofenCard[i].reduce_cost + "元</p>";
                                 }
                             }
-                            youhuiHtml+=" <p class='dps'>"+duofenCard[i].title+"<span style='margin-left: 20px;'>x"+duofenCard[i].countId+"</span></p>";
-                            youhuiHtml+="  </section>";
-                            youhuiHtml+="<div class='youhuiNum'></div>";
-                            youhuiHtml+=" </li>";
+                            youhuiHtml += " <p class='dps'>" + duofenCard[i].title + "<span style='margin-left: 20px;'>x" + duofenCard[i].countId + "</span></p>";
+                            youhuiHtml += "  </section>";
+                            youhuiHtml += "<div class='youhuiNum'></div>";
+                            youhuiHtml += " </li>";
 
                         }
-                        var wxcard=data.cardList;
-                        if(wxcard!=null && wxcard!=""){
-                            for(var i=0;i<wxcard.length;i++){
-                                youhuiHtml+="<li class='coupon-item' onclick='fnChange(this)'>";
-                                youhuiHtml+="<i class='arrow erp-billing-border' style='left: -8px;'></i>";
-                                youhuiHtml+=" <i class='arrow erp-billing-border' style='right: -8px;'></i>";
-                                youhuiHtml+="  <section class='content erp-billing-border erp-billing-color' couponType='0'  coupondId='"+wxcard[i].id+"'>";
-                                if(wxcard[i].card_type=="DISCOUNT"){
-                                    youhuiHtml+="   <p class='title'>"+wxcard[i].discount+"折</p>";
-                                }else if(wxcard[i].card_type=="CASH"){
-                                    if(wxcard[i].cash_least_cost>0){
-                                        youhuiHtml+="   <p class='title'>满"+wxcard[i].cash_least_cost+"元减"+wxcard[i].reduce_cost+"元</p>";
-                                    }else{
-                                        youhuiHtml+="   <p class='title'>减"+wxcard[i].reduce_cost+"元</p>";
+                        var wxcard = data.cardList;
+                        if (wxcard != null && wxcard != "") {
+                            for (var i = 0; i < wxcard.length; i++) {
+                                youhuiHtml += "<li class='coupon-item' onclick='fnChange(this)'>";
+                                youhuiHtml += "<i class='arrow erp-billing-border' style='left: -8px;'></i>";
+                                youhuiHtml += " <i class='arrow erp-billing-border' style='right: -8px;'></i>";
+                                youhuiHtml += "  <section class='content erp-billing-border erp-billing-color' couponType='0'  coupondId='" + wxcard[i].id + "'>";
+                                if (wxcard[i].card_type == "DISCOUNT") {
+                                    youhuiHtml += "   <p class='title'>" + wxcard[i].discount + "折</p>";
+                                } else if (wxcard[i].card_type == "CASH") {
+                                    if (wxcard[i].cash_least_cost > 0) {
+                                        youhuiHtml += "   <p class='title'>满" + wxcard[i].cash_least_cost + "元减" + wxcard[i].reduce_cost + "元</p>";
+                                    } else {
+                                        youhuiHtml += "   <p class='title'>减" + wxcard[i].reduce_cost + "元</p>";
                                     }
                                 }
 
-                                youhuiHtml+=" <p class='dps'>"+wxcard[i].title+"<span style='margin-left: 20px;'>x1</span></p>";
-                                youhuiHtml+="  </section>";
-                                youhuiHtml+="<div class='youhuiNum'></div>";
-                                youhuiHtml+=" </li>";
+                                youhuiHtml += " <p class='dps'>" + wxcard[i].title + "<span style='margin-left: 20px;'>x1</span></p>";
+                                youhuiHtml += "  </section>";
+                                youhuiHtml += "<div class='youhuiNum'></div>";
+                                youhuiHtml += " </li>";
 
                             }
                         }
 
-                        youhuiHtml+=" </ul>";
-                        youhuiHtml+="  </div>";
+                        youhuiHtml += " </ul>";
+                        youhuiHtml += "  </div>";
                     }
-                    youhuiHtml+=" <ul class='jf-and-fb'>";
-                    if(data.fenbiMoeny>0){
-                        youhuiHtml+="  <li class='erp-billing-color' onclick='fnFenbiChange(this)'>";
-                        youhuiHtml+="     <div class='box boxfenbi erp-billing-border'>";
-                        youhuiHtml+="    <p class='title'>"+data.fans_currency+"粉币</p>";
-                        youhuiHtml+="  <p>（"+data.fenbiMoeny+"元）</p>";
-                        youhuiHtml+="  </div>";
-                       youhuiHtml+="<p class='fenbiUserHtml'></p>";
-                        youhuiHtml+="  </li>";
+                    youhuiHtml += " <ul class='jf-and-fb'>";
+                    if (data.fenbiMoeny > 0) {
+                        youhuiHtml += "  <li class='erp-billing-color' onclick='fnFenbiChange(this)'>";
+                        youhuiHtml += "     <div class='box boxfenbi erp-billing-border'>";
+                        youhuiHtml += "    <p class='title'>" + data.fans_currency + "粉币</p>";
+                        youhuiHtml += "  <p>（" + data.fenbiMoeny + "元）</p>";
+                        youhuiHtml += "  </div>";
+                        youhuiHtml += "<p class='fenbiUserHtml'></p>";
+                        youhuiHtml += "  </li>";
                     }
 
-                    if(data.jifenMoeny>0){
-                        youhuiHtml+="  <li class='erp-billing-color' onclick='fnjifenChange(this)'>";
-                        youhuiHtml+="     <div class='box boxjifen erp-billing-border'>";
-                        youhuiHtml+="    <p class='title'>"+data.integral+"积分</p>";
-                        youhuiHtml+="  <p>（"+data.jifenMoeny+"元）</p>";
-                        youhuiHtml+="  </div>";
-                        youhuiHtml+="<p class='jifenUserHtml'></p>";
-                        youhuiHtml+="  </li>";
+                    if (data.jifenMoeny > 0) {
+                        youhuiHtml += "  <li class='erp-billing-color' onclick='fnjifenChange(this)'>";
+                        youhuiHtml += "     <div class='box boxjifen erp-billing-border'>";
+                        youhuiHtml += "    <p class='title'>" + data.integral + "积分</p>";
+                        youhuiHtml += "  <p>（" + data.jifenMoeny + "元）</p>";
+                        youhuiHtml += "  </div>";
+                        youhuiHtml += "<p class='jifenUserHtml'></p>";
+                        youhuiHtml += "  </li>";
                     }
-                    youhuiHtml+="  </ul>";
-                    youhuiHtml+="  </div>";
-                    youhuiHtml+="  </div>";
+                    youhuiHtml += "  </ul>";
+                    youhuiHtml += "  </div>";
+                    youhuiHtml += "  </div>";
                     $(".youhuiHtml").html(youhuiHtml);
                 }
             }
         });
     }
 
-    function fnChange(obj){
+    function fnChange(obj) {
         $(".content").removeClass("erp-billing-color erp-billing-bg-color");
         $(obj).find(".content").addClass("erp-billing-bg-color");
         fnErpCountMoney();
     }
-    
+
     function fnFenbiChange(obj) {
         $(obj).find(".boxfenbi").toggleClass("erp-billing-bg-color");
         fnErpCountMoney();
@@ -594,93 +591,93 @@
         fnErpCountMoney();
     }
 
-    var mallAllEntityQueryStr='${mallAllEntityQueryStr}';
+    var mallAllEntityQueryStr = '${mallAllEntityQueryStr}';
 
-    function fnErpCountMoney(){
-        var param={};
-        param["memberId"]=$("#memberId").val();
-        if($(".boxfenbi ").hasClass("erp-billing-bg-color")){
-            param["useFenbi"]=1;
-        }else{
-            param["useFenbi"]=0;
+    function fnErpCountMoney() {
+        var param = {};
+        param["memberId"] = $("#memberId").val();
+        if ($(".boxfenbi ").hasClass("erp-billing-bg-color")) {
+            param["useFenbi"] = 1;
+        } else {
+            param["useFenbi"] = 0;
         }
 
-        if($(".boxjifen ").hasClass("erp-billing-bg-color")){
-            param["userJifen"]=1;
-        }else{
-            param["userJifen"]=0;
+        if ($(".boxjifen ").hasClass("erp-billing-bg-color")) {
+            param["userJifen"] = 1;
+        } else {
+            param["userJifen"] = 0;
         }
 
-        if($(".content").hasClass("erp-billing-bg-color")){
-            param["useCoupon"]=1;
-            param["couponType"]=$(".coupon-item").find(".erp-billing-bg-color").attr("couponType");
-            param["coupondId"]=$(".coupon-item").find(".erp-billing-bg-color").attr("coupondId");
-        }else{
-            param["useCoupon"]=0;
+        if ($(".content").hasClass("erp-billing-bg-color")) {
+            param["useCoupon"] = 1;
+            param["couponType"] = $(".coupon-item").find(".erp-billing-bg-color").attr("couponType");
+            param["coupondId"] = $(".coupon-item").find(".erp-billing-bg-color").attr("coupondId");
+        } else {
+            param["useCoupon"] = 0;
         }
         $.ajax({
-            url:"/erpCount/erpCountMoney",
-            data:{"mallAllEntityQuery":mallAllEntityQueryStr,"param":JSON.stringify(param)},
+            url: "/erpCount/erpCountMoney",
+            data: {"mallAllEntityQuery": mallAllEntityQueryStr, "param": JSON.stringify(param)},
             type: "GET",
             dataType: "json",
-            success:function (data) {
-                if(data.result==false){
+            success: function (data) {
+                if (data.result == false) {
 
-                }else{
+                } else {
                     $("#totalMoney").val(data.mallNotShopEntity.balanceMoney);
-                   var balanceMoney= data.mallNotShopEntity.balanceMoney;
-                    if(balanceMoney==0){
+                    var balanceMoney = data.mallNotShopEntity.balanceMoney;
+                    if (balanceMoney == 0) {
                         $(".item").removeClass("erp-billing-bg-color");
                         $(".xianjinItem").addClass("erp-billing-bg-color");
                     }
                     $("#balanceMoney").html(balanceMoney);
-                    var canUseConpon=data.mallNotShopEntity.canUseConpon;
-                    var couponNum=data.mallNotShopEntity.couponNum;
-                    if(canUseConpon==0){
+                    var canUseConpon = data.mallNotShopEntity.canUseConpon;
+                    var couponNum = data.mallNotShopEntity.couponNum;
+                    if (canUseConpon == 0) {
                         $(".youhuiNum").html("");
                         $(".coupon-item").find(".erp-billing-bg-color").parent().find(".youhuiNum").html("<section class='erp-billing-color'>不能使用</section>");
                         $(".content").removeClass("erp-billing-color erp-billing-bg-color");
-                    }else{
+                    } else {
                         $(".youhuiNum").html("");
-                        $(".coupon-item").find(".erp-billing-bg-color").parent().find(".youhuiNum").html("<section class='erp-billing-color'>已选择 ×"+couponNum+"</section>");
+                        $(".coupon-item").find(".erp-billing-bg-color").parent().find(".youhuiNum").html("<section class='erp-billing-color'>已选择 ×" + couponNum + "</section>");
                     }
-                    var canUsefenbi=data.mallNotShopEntity.canUsefenbi;
-                    if(canUsefenbi==0){
+                    var canUsefenbi = data.mallNotShopEntity.canUsefenbi;
+                    if (canUsefenbi == 0) {
                         $(".fenbiUserHtml").html("");
                         $(".boxfenbi").removeClass("erp-billing-bg-color");
-                    }else{
-                        var discountfenbiMoney=data.mallNotShopEntity.discountfenbiMoney;
-                        $(".fenbiUserHtml").html("已抵扣"+discountfenbiMoney+"元");
+                    } else {
+                        var discountfenbiMoney = data.mallNotShopEntity.discountfenbiMoney;
+                        $(".fenbiUserHtml").html("已抵扣" + discountfenbiMoney + "元");
                     }
-                    var canUseJifen=data.mallNotShopEntity.canUseJifen;
-                    if(canUseJifen==0){
+                    var canUseJifen = data.mallNotShopEntity.canUseJifen;
+                    if (canUseJifen == 0) {
                         $(".jifenUserHtml").html("");
                         $(".boxjifen").removeClass("erp-billing-bg-color");
-                    }else{
-                        var discountjifenMoney=data.mallNotShopEntity.discountjifenMoney;
-                        $(".jifenUserHtml").html("已抵扣"+discountjifenMoney+"元");
+                    } else {
+                        var discountjifenMoney = data.mallNotShopEntity.discountjifenMoney;
+                        $(".jifenUserHtml").html("已抵扣" + discountjifenMoney + "元");
                     }
-                    var totalMoney=data.mallNotShopEntity.totalMoney;
-                    var balanceMoney=data.mallNotShopEntity.balanceMoney;
-                    var youhuiMoney=parseFloat(totalMoney)-parseFloat(balanceMoney);
+                    var totalMoney = data.mallNotShopEntity.totalMoney;
+                    var balanceMoney = data.mallNotShopEntity.balanceMoney;
+                    var youhuiMoney = parseFloat(totalMoney) - parseFloat(balanceMoney);
 
-                    var youhuiHtml="<span class='title'>优惠金额：</span>";
-                    youhuiHtml+="<span>￥-"+youhuiMoney+"元</span>";
-                    if(canUseConpon!=0  || canUsefenbi!=0 || canUseJifen!=0 ){
-                        youhuiHtml+="<span style='padding-left: 5px;'>(消耗";
-                        if(canUseConpon==1){
-                            youhuiHtml+="优惠劵:"+couponNum+"张 &nbsp;&nbsp;";
+                    var youhuiHtml = "<span class='title'>优惠金额：</span>";
+                    youhuiHtml += "<span>￥-" + youhuiMoney + "元</span>";
+                    if (canUseConpon != 0 || canUsefenbi != 0 || canUseJifen != 0) {
+                        youhuiHtml += "<span style='padding-left: 5px;'>(消耗";
+                        if (canUseConpon == 1) {
+                            youhuiHtml += "优惠劵:" + couponNum + "张 &nbsp;&nbsp;";
                         }
-                        var fenbiNum=data.mallNotShopEntity.fenbiNum;
-                        if(canUsefenbi==1){
-                            youhuiHtml+="粉币："+fenbiNum+"&nbsp;&nbsp; ";
+                        var fenbiNum = data.mallNotShopEntity.fenbiNum;
+                        if (canUsefenbi == 1) {
+                            youhuiHtml += "粉币：" + fenbiNum + "&nbsp;&nbsp; ";
                         }
 
-                        var jifenNum=data.mallNotShopEntity.jifenNum;
-                        if(canUseJifen==1){
-                            youhuiHtml+="积分："+jifenNum;
+                        var jifenNum = data.mallNotShopEntity.jifenNum;
+                        if (canUseJifen == 1) {
+                            youhuiHtml += "积分：" + jifenNum;
                         }
-                        youhuiHtml+="）</span>";
+                        youhuiHtml += "）</span>";
 
                         $(".youhuiItem").html(youhuiHtml);
                     }
@@ -690,31 +687,31 @@
     }
 
     //储值卡或现金支付
-    function chuzhiPay(payType,obj){
-        var param={};
-        param["payType"]=payType;
-        param["visitor"]= $("#visitor").val();
-        var payMoney  =$("#payMoney").val();
-        param["payMoney"]=payMoney;
-        param["memberId"]=$("#memberId").val();
-        if($(".boxfenbi ").hasClass("erp-billing-bg-color")){
-            param["useFenbi"]=1;
-        }else{
-            param["useFenbi"]=0;
+    function chuzhiPay(payType, obj) {
+        var param = {};
+        param["payType"] = payType;
+        param["visitor"] = $("#visitor").val();
+        var payMoney = $("#payMoney").val();
+        param["payMoney"] = payMoney;
+        param["memberId"] = $("#memberId").val();
+        if ($(".boxfenbi ").hasClass("erp-billing-bg-color")) {
+            param["useFenbi"] = 1;
+        } else {
+            param["useFenbi"] = 0;
         }
 
-        if($(".boxjifen ").hasClass("erp-billing-bg-color")){
-            param["userJifen"]=1;
-        }else{
-            param["userJifen"]=0;
+        if ($(".boxjifen ").hasClass("erp-billing-bg-color")) {
+            param["userJifen"] = 1;
+        } else {
+            param["userJifen"] = 0;
         }
 
-        if($(".content").hasClass("erp-billing-bg-color")){
-            param["useCoupon"]=1;
-            param["couponType"]=$(".coupon-item").find(".erp-billing-bg-color").attr("couponType");
-            param["coupondId"]=$(".coupon-item").find(".erp-billing-bg-color").attr("coupondId");
-        }else{
-            param["useCoupon"]=0;
+        if ($(".content").hasClass("erp-billing-bg-color")) {
+            param["useCoupon"] = 1;
+            param["couponType"] = $(".coupon-item").find(".erp-billing-bg-color").attr("couponType");
+            param["coupondId"] = $(".coupon-item").find(".erp-billing-bg-color").attr("coupondId");
+        } else {
+            param["useCoupon"] = 0;
         }
         $.ajax({
             url: "/erpCount/erpChuzhiPayMent",
@@ -722,58 +719,115 @@
             type: "GET",
             dataType: "json",
             success: function (data) {
-                if(data.code==0){
+                if (data.code == 0) {
                     obj.submitOrderMsgSuccess = true;
-                }else{
+                } else {
                     $("errorHtml").html(data.msg);
-                    obj.errorsubmitOrderMsg=true;
+                    obj.errorsubmitOrderMsg = true;
                 }
             }
         });
     }
 
 
-    function saomaPayMent() {
-        var param={};
-        param["payType"]=payType;
-        param["visitor"]= $("#visitor").val();
-        param["payMoney"]=$("#payMoney").val();
+    function saomaPayMent(obj) {
+        var param = {};
+        param["visitor"] = $("#visitor").val();
+        param["payMoney"] = $("#payMoney").val();
 
-        param["memberId"]=$("#memberId").val();
-        if($(".boxfenbi ").hasClass("erp-billing-bg-color")){
-            param["useFenbi"]=1;
-        }else{
-            param["useFenbi"]=0;
+        param["memberId"] = $("#memberId").val();
+        if ($(".boxfenbi ").hasClass("erp-billing-bg-color")) {
+            param["useFenbi"] = 1;
+        } else {
+            param["useFenbi"] = 0;
         }
 
-        if($(".boxjifen ").hasClass("erp-billing-bg-color")){
-            param["userJifen"]=1;
-        }else{
-            param["userJifen"]=0;
+        if ($(".boxjifen ").hasClass("erp-billing-bg-color")) {
+            param["userJifen"] = 1;
+        } else {
+            param["userJifen"] = 0;
         }
 
-        if($(".content").hasClass("erp-billing-bg-color")){
-            param["useCoupon"]=1;
-            param["couponType"]=$(".coupon-item").find(".erp-billing-bg-color").attr("couponType");
-            param["coupondId"]=$(".coupon-item").find(".erp-billing-bg-color").attr("coupondId");
-        }else{
-            param["useCoupon"]=0;
+        if ($(".content").hasClass("erp-billing-bg-color")) {
+            param["useCoupon"] = 1;
+            param["couponType"] = $(".coupon-item").find(".erp-billing-bg-color").attr("couponType");
+            param["coupondId"] = $(".coupon-item").find(".erp-billing-bg-color").attr("coupondId");
+        } else {
+            param["useCoupon"] = 0;
         }
         $.ajax({
             url: "/erpCount/saomaPayMent",
             data: {"mallAllEntityQuery": mallAllEntityQueryStr, "param": JSON.stringify(param)},
-            type: "GET",
+            type: "POST",
             dataType: "json",
             success: function (data) {
-                if(data.code==0){
-                    obj.submitOrderMsgSuccess = true;
-                }else{
+                if (data.code == 0) {
+                    obj.dialogScanCodePayMentVisible = true;
+                    obj.$nextTick(function () {
+                        $("#saomaImage").attr("src", data.saomaoPayUrl)
+                    })
+
+                } else {
                     $("errorHtml").html(data.msg);
-                    obj.errorsubmitOrderMsg=true;
+                    obj.errorsubmitOrderMsg = true;
                 }
             }
         });
     }
+
+    //扫码钱包支付
+    function saomaQianBaoPay() {
+        var param = {};
+        param["visitor"] = $("#visitor").val();
+        param["payMoney"] = $("#payMoney").val();
+
+        var auth_code = $("#auth_code").val();
+        if (auth_code == null || auth_code == "") {
+            return;
+        }
+        param["auth_code"] = auth_code;
+        param["memberId"] = $("#memberId").val();
+        if ($(".boxfenbi ").hasClass("erp-billing-bg-color")) {
+            param["useFenbi"] = 1;
+        } else {
+            param["useFenbi"] = 0;
+        }
+
+        if ($(".boxjifen ").hasClass("erp-billing-bg-color")) {
+            param["userJifen"] = 1;
+        } else {
+            param["userJifen"] = 0;
+        }
+
+        if ($(".content").hasClass("erp-billing-bg-color")) {
+            param["useCoupon"] = 1;
+            param["couponType"] = $(".coupon-item").find(".erp-billing-bg-color").attr("couponType");
+            param["coupondId"] = $(".coupon-item").find(".erp-billing-bg-color").attr("coupondId");
+        } else {
+            param["useCoupon"] = 0;
+        }
+        $.ajax({
+            url: "/erpCount/saomaQianBaoPay",
+            data: {"mallAllEntityQuery": mallAllEntityQueryStr, "param": JSON.stringify(param)},
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                if (data.code == 0) {
+                    obj.dialogScanCodePayMentVisible = true;
+                    obj.$nextTick(function () {
+                        $("#saomaImage").attr("src", data.saomaoPayUrl)
+                    })
+
+                } else {
+                    $("errorHtml").html(data.msg);
+                    //    obj.errorsubmitOrderMsg=true;
+                }
+            }
+        });
+
+
+    }
+
 
 </script>
 </body>
