@@ -77,11 +77,13 @@ public class ERPCountController extends BaseController {
     public String countErpIndex( HttpServletRequest request, HttpServletResponse response, @RequestParam String orderCodeKey ) {
 	try {
 	    Object obj=redisCacheUtil.get( orderCodeKey );
+	    redisCacheUtil.remove( orderCodeKey );
 	    MallAllEntityQuery mallAllEntityQuery= JSON.parseObject(obj.toString() ,MallAllEntityQuery.class);
-	    request.setAttribute( "mallAllEntityQueryStr", JSONObject.toJSONString( mallAllEntityQuery ) );
+	    request.setAttribute( "mallAllEntityQueryStr", obj );
 	    request.setAttribute( "mallAllEntityQuery", mallAllEntityQuery );
 	} catch ( Exception e ) {
 	    e.printStackTrace();
+	    LOG.error( "转换异常",e );
 	}
 	return "count/erp_count";
     }

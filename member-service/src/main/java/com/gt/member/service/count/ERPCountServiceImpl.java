@@ -490,7 +490,13 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
 		memberNewService.saveCardRecordNew( member.getMcId(), 1, mallNotShopEntity.getBalanceMoney() + "元", "消费", member.getBusId(), uc.getBalance() + "", 0, 0 );
 	    }
-	    userConsumeDAO.insert( uc );
+	    UserConsume u=userConsumeDAO.findByOrderCode1( uc.getOrderCode() );
+	    if(CommonUtil.isEmpty( u )){
+		userConsumeDAO.insert( uc );
+	    }else{
+		uc.setId( u.getId() );
+		userConsumeDAO.updateById( uc );
+	    }
 
 	    //赠送
 	    //TODO
@@ -584,7 +590,14 @@ public class ERPCountServiceImpl implements ERPCountService {
 		    uc.setDisCountdepict( mallNotShopEntity.getCodes() );
 		}
 		uc.setDataSource( 0 );
-		userConsumeDAO.insert( uc );
+		UserConsume u=userConsumeDAO.findByOrderCode1( uc.getOrderCode() );
+		if(CommonUtil.isEmpty( u )){
+		    userConsumeDAO.insert( uc );
+		}else{
+		    uc.setId( u.getId() );
+		    userConsumeDAO.updateById( uc );
+		}
+
 	    }
 	    Object obj=redisCacheUtil.get( "ERP_" + mallNotShopEntity.getOrderCode() );
 	    if(CommonUtil.isNotEmpty(  obj)){
@@ -735,7 +748,13 @@ public class ERPCountServiceImpl implements ERPCountService {
 		uc.setOrderCode( mallQuery.getOrderCode() );
 		uc.setStoreId( mallNotShopEntity.getShopId() );
 		uc.setDataSource( 0 );
-		userConsumeDAO.insert( uc );
+		UserConsume u=userConsumeDAO.findByOrderCode1( uc.getOrderCode() );
+		if(CommonUtil.isEmpty( u )){
+		    userConsumeDAO.insert( uc );
+		}else{
+		    uc.setId( u.getId() );
+		    userConsumeDAO.updateById( uc );
+		}
 	    }
 
 	    Object obj=redisCacheUtil.get( "ERP_" + mallNotShopEntity.getOrderCode() );
@@ -744,10 +763,10 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    }
 	    redisCacheUtil.set( "ERP_" + mallNotShopEntity.getOrderCode(), JSON.toJSONString( mallNotShopEntity ), 600L );
 
-	    String notityUrl=memberConfig.getWebHome()+"/erpCount/79B4DE7C/successPay.do";
+
 	    String auth_code=jsonObject.getString( "auth_code" );
 	    String url = memberConfig.getWxmp_home() + SAOMA_QIANBAO_PAY+"?auth_code="+auth_code+"&body=支付&model=51&out_trade_no="+mallNotShopEntity.getOrderCode()
-			    +"&total_fee="+ mallNotShopEntity.getBalanceMoney()+"&is_calculate=1&notityUrl="+notityUrl;
+			    +"&total_fee="+ mallNotShopEntity.getBalanceMoney()+"&is_calculate=1";
 
 	    net.sf.json.JSONObject json=HttpClienUtil.httpPost( url, null, false );
 	    if("1".equals( CommonUtil.toString( json.get( "code" ) ) )){
@@ -817,19 +836,17 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    if ( CommonUtil.isNotEmpty( member.getMcId() ) ) {
 		memberNewService.saveCardRecordNew( member.getMcId(), 1, uc.getDiscountMoney() + "元", "消费", member.getBusId(), uc.getBalance() + "", 0, 0 );
 	    }
-
-	    //非游客
-	    Object obj=redisCacheUtil.get( "Memeber_ERP_" + orderCode );
-	    JSONObject json=JSON.parseObject( obj.toString() );
-	    String successNoticeUrl=CommonUtil.toString( json.get(  "successNoticeUrl") );
-	    String sign=CommonUtil.toString( json.get(  "sign")  );
-	    SignHttpUtils.postByHttp( successNoticeUrl,orderCode,sign );  //通知
-	    redisCacheUtil.remove("Memeber_ERP_"+orderCode);
-
-
+	    //ToDo
 
 	}
-	System.out.println(params);
+	//非游客
+	Object obj=redisCacheUtil.get( "Memeber_ERP_" + orderCode );
+	JSONObject json=JSON.parseObject( obj.toString() );
+	String successNoticeUrl=CommonUtil.toString( json.get(  "successNoticeUrl") );
+	String sign=CommonUtil.toString( json.get(  "sign")  );
+	SignHttpUtils.postByHttp( successNoticeUrl,orderCode,sign );  //通知
+	redisCacheUtil.remove("Memeber_ERP_"+orderCode);
+
     }
 
 }

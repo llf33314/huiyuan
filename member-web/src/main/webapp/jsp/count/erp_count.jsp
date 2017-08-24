@@ -250,7 +250,8 @@
                 <p class="title">方式2：营业员输入</p>
                 <p><input type="text" class="input" id="auth_code" placeholder="请使用扫码枪扫描或键盘输入付款码"/></p>
                 <p style="text-align: right">
-                    <button class="btn erp-billing-bg-color" onclick="saomaQianBaoPay()">确认</button>
+                    <%--<button class="btn erp-billing-bg-color" onclick="saomaQianBaoPay()">确认</button>--%>
+                    <el-button type="primary" @click="saomaQianBaoPay()" style="margin-top: 50px;" >确 定</el-button>
                 </p>
             </div>
         </div>
@@ -317,9 +318,9 @@
 
     <!--错误提示-->
     <el-dialog title="提示" :visible.sync="errorsubmitOrderMsg" size="530px" top="20%" :close-on-click-modal="false">
-        <div class="smzf-dialogs-box" style="text-align: center;padding-bottom: 0">
+        <div class="smzf-dialogs-box" style="text-align: center;">
             <div style="position: relative;padding-top: 20px;">
-                <i class="el-icon-circle-check" style="font-size: 36px;color: #34d063;position: absolute; left: 0px;"></i>
+                <i class="el-icon-circle-close" style="font-size: 36px;position: absolute; left: 0px;"></i>
                 <p style="text-align: left; padding-left: 50px;" class="errorHtml"></p>
             </div>
         </div>
@@ -414,6 +415,9 @@
             zhifuQuxiao: function () {
                 this.submitOrderMsgSuccess = false;
                 fnMember();
+            },
+            saomaQianBaoPay:function(){
+                saomaQianBaoPay(this);
             }
         }
     })
@@ -722,8 +726,10 @@
                 if (data.code == 0) {
                     obj.submitOrderMsgSuccess = true;
                 } else {
-                    $("errorHtml").html(data.msg);
                     obj.errorsubmitOrderMsg = true;
+                    obj.$nextTick(function () {
+                        $(".errorHtml").html(data.msg);
+                    })
                 }
             }
         });
@@ -764,19 +770,22 @@
                 if (data.code == 0) {
                     obj.dialogScanCodePayMentVisible = true;
                     obj.$nextTick(function () {
-                        $("#saomaImage").attr("src", data.saomaoPayUrl)
+                        $("#saomaImage").attr("src", data.saomaoPayUrl);
+                        $("#auth_code").focus();
+                    })
+                } else {
+                    obj.errorsubmitOrderMsg = true;
+                    obj.$nextTick(function () {
+                        $(".errorHtml").html(data.msg);
                     })
 
-                } else {
-                    $("errorHtml").html(data.msg);
-                    obj.errorsubmitOrderMsg = true;
                 }
             }
         });
     }
 
     //扫码钱包支付
-    function saomaQianBaoPay() {
+    function saomaQianBaoPay(obj) {
         var param = {};
         param["visitor"] = $("#visitor").val();
         param["payMoney"] = $("#payMoney").val();
@@ -813,14 +822,12 @@
             dataType: "json",
             success: function (data) {
                 if (data.code == 0) {
-                    obj.dialogScanCodePayMentVisible = true;
-                    obj.$nextTick(function () {
-                        $("#saomaImage").attr("src", data.saomaoPayUrl)
-                    })
-
+                    obj.submitOrderMsgSuccess = true;
                 } else {
-                    $("errorHtml").html(data.msg);
-                    //    obj.errorsubmitOrderMsg=true;
+                    obj.errorsubmitOrderMsg = true;
+                    obj.$nextTick(function () {
+                        $(".errorHtml").html(data.msg);
+                    })
                 }
             }
         });
