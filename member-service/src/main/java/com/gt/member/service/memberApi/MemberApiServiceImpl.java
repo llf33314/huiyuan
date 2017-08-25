@@ -215,11 +215,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    break;
 	    }
 
-
-
 	    // 查询粉笔数量
-	    Integer fenbi = fenbiFlowRecordDAO.getFenbiSurplus(busUserId,1,recFreezeType,ctId  );
-
+	    Integer fenbi = fenbiFlowRecordDAO.getFenbiSurplus( busUserId, 1, recFreezeType, ctId );
 
 	    // 如果是折扣卡 金额用折后金额
 	    if ( ctId == 2 ) {
@@ -310,10 +307,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 				    giveConsume.setGcTotal( count );
 
-
 				    // 修改粉笔数量
-				    fenbiFlowRecordDAO.updateFenbiReduce(busUserId, count, ctId,recFreezeType);
-				        fans_currency = (double) count;
+				    fenbiFlowRecordDAO.updateFenbiReduce( busUserId, count, ctId, recFreezeType );
+				    fans_currency = (double) count;
 				} else if ( "2".equals( map.get( "gId" ).toString() ) ) {
 				    Integer flowCount = Integer.parseInt( map.get( "number" ).toString() );
 				    // 会员日赠送流量
@@ -1021,7 +1017,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 
 	    // 查询粉笔数量
-	    Integer fenbi = fenbiFlowRecordDAO.getFenbiSurplus(busUserId,1,recFreezeType,ctId  );
+	    Integer fenbi = fenbiFlowRecordDAO.getFenbiSurplus( busUserId, 1, recFreezeType, ctId );
 
 	    // 如果是折扣卡 金额用折后金额
 	    if ( ctId == 2 ) {
@@ -1103,7 +1099,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 				    }
 				    giveConsume.setGcTotal( count );
 				    // 冻结商家粉笔数量
-				    fenbiFlowRecordDAO.updateFenbiReduce(busUserId, count, ctId,recFreezeType);
+				    fenbiFlowRecordDAO.updateFenbiReduce( busUserId, count, ctId, recFreezeType );
 				} else if ( "2".equals( map.get( "gId" ).toString() ) ) {
 
 				    Integer flowCount = Integer.parseInt( map.get( "number" ).toString() );
@@ -1576,8 +1572,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 
 	    // 查询粉笔数量
-	    Integer fenbi = fenbiFlowRecordDAO.getFenbiSurplus(busUserId,1,recFreezeType,ctId  );
-
+	    Integer fenbi = fenbiFlowRecordDAO.getFenbiSurplus( busUserId, 1, recFreezeType, ctId );
 
 	    // 如果是折扣卡 金额用折后金额
 	    if ( ctId == 2 ) {
@@ -1656,7 +1651,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 				    giveConsume.setGcTotal( count );
 				    // 冻结商家粉笔数量
-				    fenbiFlowRecordDAO.updateFenbiReduce(busUserId, count, ctId,recFreezeType);
+				    fenbiFlowRecordDAO.updateFenbiReduce( busUserId, count, ctId, recFreezeType );
 				} else if ( "2".equals( map.get( "gId" ).toString() ) ) {
 				    Integer flowCount = Integer.parseInt( map.get( "number" ).toString() );
 
@@ -3140,7 +3135,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		if ( cardType == 0 ) {
 		    Integer publicId = jsonObject.getInt( "publicId" );
 		    // 微信卡券
-		    cardCouponsApiService.wxCardReceive(publicId,codes);
+		    cardCouponsApiService.wxCardReceive( publicId, codes );
 		} else {
 		    Map< String,Object > params = new HashMap< String,Object >();
 		    params.put( "storeId", jsonObject.get( "storeId" ) );
@@ -3273,7 +3268,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 	return duofencards;
     }
 
-
     public Map< String,Object > verificationCard_2( Map< String,Object > params ) {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
@@ -3359,16 +3353,16 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 		// 新增粉笔和流量分配表
 		FenbiFlowRecord fenbi = new FenbiFlowRecord();
-		fenbi.setBusUserId(busUser.getId());
-		fenbi.setRecType(1);
-		fenbi.setRecCount(new BigDecimal(recommend.getFenbi()));
-		fenbi.setRecUseCount(new BigDecimal(recommend.getFenbi()));
-		fenbi.setRecDesc("推荐优惠券赠送粉币");
-		fenbi.setRecFreezeType(102);
-		fenbi.setRollStatus(2);
-		fenbi.setFlowType(0);
-		fenbi.setFlowId(0);
-		fenbiFlowRecordDAO.insert(fenbi);
+		fenbi.setBusUserId( busUser.getId() );
+		fenbi.setRecType( 1 );
+		fenbi.setRecCount( new BigDecimal( recommend.getFenbi() ) );
+		fenbi.setRecUseCount( new BigDecimal( recommend.getFenbi() ) );
+		fenbi.setRecDesc( "推荐优惠券赠送粉币" );
+		fenbi.setRecFreezeType( 102 );
+		fenbi.setRollStatus( 2 );
+		fenbi.setFlowType( 0 );
+		fenbi.setFlowId( 0 );
+		fenbiFlowRecordDAO.insert( fenbi );
 
 		BusUser b = new BusUser();
 		b.setId( busUser.getId() );
@@ -3785,7 +3779,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 	return memberCardrecordDAO.findCardrecordByMcId( mcId, page * pageSize, pageSize );
     }
 
-
     public MemberCard findMemberCardByMcId( Integer mcId ) {
 	return memberCardDAO.selectById( mcId );
     }
@@ -3833,8 +3826,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 		String[] str = shopIds.split( "," );
 		for ( int i = 0; i < str.length; i++ ) {
-		    if(CommonUtil.isEmpty( str[i] ))continue;
-		    Integer shopId=CommonUtil.toInteger( str[i] );
+		    if ( CommonUtil.isEmpty( str[i] ) ) continue;
+		    Integer shopId = CommonUtil.toInteger( str[i] );
 		    WxShop wxShop = wxShopDAO.selectById( shopId );
 		    if ( CommonUtil.isNotEmpty( wxPublicUsers ) && CommonUtil.isNotEmpty( member.getOpenid() ) && wxShop.getStatus() == 2 ) {
 			// 查询优惠券信息
@@ -3873,7 +3866,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 			}
 			if ( list.size() > 0 ) {
 			    map.put( "code", 1 );
-			    map.put( "cardList"+shopId, JSONArray.fromObject( list ) );
+			    map.put( "cardList" + shopId, JSONArray.fromObject( list ) );
 			}
 		    }
 		}
@@ -3885,7 +3878,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		Integer shopId = CommonUtil.toInteger( str[i] );
 		// 查询能使用的多粉优惠券
 		List< Map< String,Object > > duofenCards = findDuofenCardByMemberId( member.getId(), shopId );
-		map.put( "duofenCards"+shopId, duofenCards );
+		map.put( "duofenCards" + shopId, duofenCards );
 	    }
 
 	    MemberDate memberDate = memberCommonService.findMemeberDate( member.getBusId(), card.getCtId() );
@@ -3902,6 +3895,53 @@ public class MemberApiServiceImpl implements MemberApiService {
 	} catch ( Exception e ) {
 	    LOG.error( "ERP查询会员信息异常", e );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+    }
+
+    public Map< String,Object > updateMemberByTeach( Map< String,Object > map ) throws BusinessException {
+        try {
+            Map<String,Object> returnMap=new HashMap<>(  );
+	    Integer parentId = CommonUtil.toInteger( map.get( "parentId" ) );
+	    Integer wxMemberId = CommonUtil.toInteger( map.get( "wxMemberId" ) );
+
+	    Member m1 = memberDAO.selectById( parentId );  //erp粉丝信息
+	    Member wxmember = memberDAO.selectById( wxMemberId );  //微信授权粉丝
+
+	    Member member = new Member();
+	    member.setFlow( m1.getFlow() + wxmember.getFlow() );
+	    member.setIntegral( m1.getIntegral() + wxmember.getIntegral() );
+	    member.setFansCurrency( m1.getFansCurrency() + wxmember.getFansCurrency() );
+	    member.setId( m1.getId() );
+
+	    if ( CommonUtil.isNotEmpty( m1.getOldId() ) && !m1.getOldId().contains( wxmember.getId().toString() ) ) {
+		member.setOldId( m1.getId() + "," + wxmember.getId() );
+	    } else {
+		if ( CommonUtil.isNotEmpty( wxmember.getOldId() ) ) {
+		    member.setOldId( wxmember.getOldId() + "," + m1.getId() );
+		} else {
+		    member.setOldId( m1.getId() + "," + wxmember.getId() );
+		}
+	    }
+	    if ( CommonUtil.isEmpty( m1.getOpenid() ) ) {
+		member.setOpenid( wxmember.getOpenid() );
+	    }
+
+	    if ( CommonUtil.isEmpty( m1.getHeadimgurl() ) ) {
+		member.setHeadimgurl( wxmember.getHeadimgurl() );
+	    }
+
+	    memberDAO.deleteById( wxmember.getId() );
+	    memberDAO.updateById( member );
+
+	    MemberOld old = (MemberOld) JSONObject.toBean( JSONObject.fromObject( wxmember ), MemberOld.class );
+	    memberOldMapper.insert( old );
+	    // 修改小程序之前openId对应的memberId
+	    memberAppletOpenidMapper.updateMemberId( member.getId(), wxmember.getId() );
+
+	    map.put("member", member);
+	    return map;
+	}catch ( Exception e ){
+            throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
 

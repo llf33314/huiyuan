@@ -2,6 +2,7 @@ package com.gt.member.dao;
 
 import com.gt.member.entity.DuofenCard;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,7 @@ public interface DuofenCardDAO extends BaseMapper<DuofenCard> {
      * @param cardIds
      * @return
      */
-    List<Map<String, Object>> findByCardIds(Integer busId,List<Integer> cardIds);
+    List<Map<String, Object>> findByCardIds(Integer busId,@Param( "cardIds" ) List<Integer> cardIds);
 
 
     /**
@@ -34,7 +35,7 @@ public interface DuofenCardDAO extends BaseMapper<DuofenCard> {
      * @param cardIds
      * @return
      */
-    List<DuofenCard> findInCardIds(List<Integer> cardIds);
+    List<DuofenCard> findInCardIds(@Param( "cardIds" ) List<Integer> cardIds);
 
     /**
      * 查询已审核通过的优惠券

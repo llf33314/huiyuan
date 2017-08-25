@@ -1453,9 +1453,8 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    double fenbiMoney = currencyCount( 0.0, member.getFansCurrency() );
 	    Double discountfenbiMoneyByShopId = 0.0;
 	    Double balanceMoneyByShopId = 0.0;
+	    Double fenbiBanlance = 0.0;  //订单金额
 	    if ( fenbiMoney > 0 ) {
-		Double fenbiBanlance = 0.0;  //订单金额
-
 		Map< Integer,MallEntity > mallEntityMap = mallNotShopEntity.getMalls();
 		for ( MallEntity mallEntity : mallEntityMap.values() ) {
 		    //判断能使用粉币的商品信息
@@ -1508,7 +1507,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 		mallNotShopEntity.setBalanceMoney( balanceMoneyByShopId );
 		mallNotShopEntity.setMalls( mallEntityMap );
 	    }
-	    if ( fenbiMoney > 0 ) {
+	    if ( fenbiMoney > 0 && fenbiBanlance>=10.0 ) {
 		Double fenbiNumByAll = memberCommonService.deductFenbi( dict.get( 0 ), discountfenbiMoneyByShopId );
 		mallNotShopEntity.setFenbiNum( fenbiNumByAll );
 		mallNotShopEntity.setDiscountfenbiMoney( discountfenbiMoneyByShopId );

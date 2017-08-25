@@ -39,7 +39,6 @@ public class MemberApiController extends BaseController {
 
     @Autowired
     private MemberApiService memberApiService;
-    private Integer          ctId;
 
     @ApiOperation( value = "根据memberId和门店查询会员数据 返回数据包含会员信息、微信卡券、多粉卡券", notes = "根据memberId和门店查询会员数据" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "卡号或手机号", paramType = "query", required = true, dataType = "int" ),
@@ -389,6 +388,21 @@ public class MemberApiController extends BaseController {
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
+    }
+
+    @ApiOperation( value = "（教育)手机端微信授权后合并单前的登录用户信息", notes = "根据memberId和门店集合查询会员数据" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "parentId", value = "学员家长pc注册", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "wxMemberId", value = "微信授权得到memberId", paramType = "query", required = true, dataType = "int" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/updateMemberByTeach", method = RequestMethod.POST )
+    public ServerResponse updateMemberByTeach( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody){
+	try {
+	    Map< String,Object > map = memberApiService.updateMemberByTeach(requestBody );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+
     }
 
 

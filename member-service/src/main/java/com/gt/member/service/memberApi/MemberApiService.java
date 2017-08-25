@@ -603,4 +603,12 @@ public interface MemberApiService {
      * @throws Exception
      */
     public Map< String,Object > findMemberCardByMemberIdAndshopIds( Integer memberId, String shopIds ) throws BusinessException;
+
+    /**
+     * 教育家长端合并数据
+     * @param map
+     * @return
+     * @throws BusinessException
+     */
+    public Map<String,Object> updateMemberByTeach(Map<String,Object> map) throws BusinessException;
 }

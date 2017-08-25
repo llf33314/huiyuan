@@ -687,7 +687,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             if (ids.size() > 0) {
                 Map<String, Object> map = new HashMap<String, Object>();
                 Map<String, Object> recevieMap = JsonUtil.json2Map( net.sf.json.JSONObject.fromObject(receives).toString());
-                if (!DateTimeKit.laterThanNow(receives.getReceiveDate())) {
+                if (CommonUtil.isNotEmpty( receives.getReceiveDate() ) && !DateTimeKit.laterThanNow(receives.getReceiveDate())) {
                     recevieMap.put("guoqi", 1);
                 } else {
                     recevieMap.put("guoqi", 0);
@@ -709,7 +709,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                         }
                     }
                     if ("4".equals(CommonUtil.toString(map2.get("cardType")))) {
-                        String dateTimeSet = CommonUtil.toString(map2.get("datetimeset"));
+                        String dateTimeSet = CommonUtil.toString(map2.get("dateTimeSet"));
                         List<Map<String, Object>> timeList = JsonUtil.json2List(dateTimeSet);
                         for (Map<String, Object> map3 : timeList) {
                             Date startTime = DateTimeKit.parse(CommonUtil.toString(map3.get("startTime")), "yyyy-MM-dd");

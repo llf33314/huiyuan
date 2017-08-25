@@ -33,8 +33,14 @@ public class TestController extends BaseController {
 
     public static  void main(String[] arg){
 	Map<String, Object> map = new HashMap<>();
-	map.put("id", 197);
-	SignHttpUtils.postByHttp("http://192.168.2.240:8090/api/memberApi/findByMemberId",map,"MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM");
+	map.put("memberId", 197);
+	map.put("busId", 42);
+	map.put("page", 1);
+	//SignHttpUtils.postByHttp("http://192.168.2.240:8090/api/memberApi/findByMemberId",map,"MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM");
+
+
+	String aa=SignHttpUtils.postByHttp("POST /memberAPI/cardCouponseApi/findCardReceiveBuy",map,"MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM");
+	System.out.println(aa);
     }
 
 }

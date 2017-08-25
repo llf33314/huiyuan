@@ -286,7 +286,7 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findCardReceiveBuy",method = RequestMethod.POST)
     public ServerResponse findCardReceiveBuy(HttpServletRequest request,
-                                             HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+                                             HttpServletResponse response,@RequestBody Map requestBody){
         Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
         Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
         Integer page=CommonUtil.toInteger( requestBody.get( "page" ) );

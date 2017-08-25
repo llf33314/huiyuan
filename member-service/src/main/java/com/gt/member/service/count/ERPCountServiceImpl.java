@@ -599,11 +599,11 @@ public class ERPCountServiceImpl implements ERPCountService {
 		}
 
 	    }
-	    Object obj=redisCacheUtil.get( "ERP_" + mallNotShopEntity.getOrderCode() );
+	    Object obj=redisCacheUtil.get( mallNotShopEntity.getOrderCode() );
 	    if(CommonUtil.isNotEmpty(  obj)){
-		redisCacheUtil.remove( "ERP_" + mallNotShopEntity.getOrderCode()  );
+		redisCacheUtil.remove( mallNotShopEntity.getOrderCode()  );
 	    }
-	    redisCacheUtil.set( "ERP_" + mallNotShopEntity.getOrderCode(), JSON.toJSONString( mallNotShopEntity ), 600L );
+	    redisCacheUtil.set( mallNotShopEntity.getOrderCode(), JSON.toJSONString( mallNotShopEntity ), 600L );
 
 	    Map<String,Object> noticeMap=new HashMap<>(  );
 	    noticeMap.put( "successNoticeUrl",mallQuery.getSuccessNoticeUrl() );
@@ -757,11 +757,11 @@ public class ERPCountServiceImpl implements ERPCountService {
 		}
 	    }
 
-	    Object obj=redisCacheUtil.get( "ERP_" + mallNotShopEntity.getOrderCode() );
+	    Object obj=redisCacheUtil.get(mallNotShopEntity.getOrderCode() );
 	    if(CommonUtil.isNotEmpty(  obj)){
-		redisCacheUtil.remove( "ERP_" + mallNotShopEntity.getOrderCode()  );
+		redisCacheUtil.remove( mallNotShopEntity.getOrderCode()  );
 	    }
-	    redisCacheUtil.set( "ERP_" + mallNotShopEntity.getOrderCode(), JSON.toJSONString( mallNotShopEntity ), 600L );
+	    redisCacheUtil.set( mallNotShopEntity.getOrderCode(), JSON.toJSONString( mallNotShopEntity ), 600L );
 
 
 	    String auth_code=jsonObject.getString( "auth_code" );
@@ -772,6 +772,9 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    if("1".equals( CommonUtil.toString( json.get( "code" ) ) )){
 		map.put( "code",0 );
 		map.put( "msg","支付成功" );
+
+		//通知
+		SignHttpUtils.postByHttp( mallQuery.getSuccessNoticeUrl(),mallQuery.getOrderCode(),mallQuery.getSign() );  //通知
 	    }else{
 	        throw new BusinessException(CommonUtil.toInteger(json.get( "code" )),CommonUtil.toString(json.get( "msg" )));
 	    }
