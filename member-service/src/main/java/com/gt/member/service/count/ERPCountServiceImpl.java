@@ -610,16 +610,17 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    noticeMap.put( "sign",mallQuery.getSign() );
 	    redisCacheUtil.set("Memeber_ERP_"+mallNotShopEntity.getOrderCode(), JSON.toJSONString( noticeMap ),600L );
 
+	  WxPublicUsers wxPublicUsers=  wxPublicUsersMapper.selectByUserId( mallQuery.getBusId() );
 	    String notityUrl=memberConfig.getWebHome()+"/erpCount/79B4DE7C/successPay.do";
 	    String url="";
 	    if(visitor==1){
 		url = memberConfig.getWxmp_home() + "/pay/B02A45A5/79B4DE7C/createPayQR.do"
 				+ "?totalFee=" +mallNotShopEntity.getBalanceMoney()+"&model=51&busId="+mallQuery.getBusId()+"&orderNum="+mallNotShopEntity.getOrderCode()
-				+"&desc=支付&notifyUrl="+notityUrl;
+				+"&desc=支付&notifyUrl="+notityUrl+"&appid="+wxPublicUsers.getAppid();
 	    }else{
 		url = memberConfig.getWxmp_home() + "/pay/B02A45A5/79B4DE7C/createPayQR.do"
 				+ "?totalFee=" +mallNotShopEntity.getBalanceMoney()+"&model=51&busId="+mallQuery.getBusId()+"&orderNum="+mallNotShopEntity.getOrderCode()
-				+"&memberId="+mallNotShopEntity.getMemberId()+"&desc=支付&notifyUrl="+notityUrl;
+				+"&memberId="+mallNotShopEntity.getMemberId()+"&desc=支付&notifyUrl="+notityUrl+"&appid="+wxPublicUsers.getAppid();;
 	    }
 	    map.put( "saomaoPayUrl", url );
 	    map.put( "code", 0);
