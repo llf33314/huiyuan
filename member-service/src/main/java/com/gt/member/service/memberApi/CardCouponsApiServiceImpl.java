@@ -1402,7 +1402,6 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             for (Map<String, Object> map2 : list) {
                 if (CommonUtil.isNotEmpty(map2.get("id"))) {
                     ids.add(CommonUtil.toInteger(map2.get("id")));
-
                 }
             }
             if (ids.size() > 0) {

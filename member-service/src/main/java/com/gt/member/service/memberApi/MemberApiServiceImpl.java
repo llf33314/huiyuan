@@ -141,6 +141,9 @@ public class MemberApiServiceImpl implements MemberApiService {
     @Autowired
     private MemberCardDAO memberCardDAO;
 
+    @Autowired
+    private MemberParameterDAO memberParameterDAO;
+
     /**
      * 查询粉丝信息
      *
@@ -3898,6 +3901,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}
     }
 
+    @Transactional
     public Map< String,Object > updateMemberByTeach( Map< String,Object > map ) throws BusinessException {
         try {
             Map<String,Object> returnMap=new HashMap<>(  );
@@ -3945,4 +3949,36 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}
     }
 
+    @Transactional
+    public List<Map<String,Object>> saveMemberByTeach(List<Map<String,Object>> mapList){
+        try {
+	    Member m = null;
+	    Integer busId = CommonUtil.toInteger( mapList.get( 0 ).get( "busId" ) );
+	    busId = dictService.pidUserId( busId );
+	    List< Map< String,Object > > members = new ArrayList<>();
+	    for ( Map< String,Object > map : mapList ) {
+		m = new Member();
+		m.setName( CommonUtil.toString( map.get( "name" ) ) );
+		m.setBusId( busId );
+		String phone = CommonUtil.toString( map.get( "phone" ) );
+		Member member = memberDAO.findByPhone( busId, phone );
+		if ( CommonUtil.isNotEmpty( member ) ) {
+		    m.setId( member.getId() );
+		    memberDAO.updateById( m );
+		} else {
+		    m.setPhone( phone );
+		    memberDAO.insert( m );
+
+		    MemberParameter mp = new MemberParameter();
+		    mp.setMemberId( m.getId() );
+		    memberParameterDAO.insert( mp );
+		}
+		map.put( "memberId", m.getId() );
+		members.add( map );
+	    }
+	    return members;
+	}catch ( Exception e ){
+            throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
 }

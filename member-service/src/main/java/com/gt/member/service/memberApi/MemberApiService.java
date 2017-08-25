@@ -1,6 +1,7 @@
 package com.gt.member.service.memberApi;
 
 import com.gt.common.entity.BusUser;
+import com.gt.member.dto.ServerResponse;
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.entityBo.PaySuccessBo;
@@ -611,4 +612,7 @@ public interface MemberApiService {
      * @throws BusinessException
      */
     public Map<String,Object> updateMemberByTeach(Map<String,Object> map) throws BusinessException;
+
+
+    public List<Map<String,Object>> saveMemberByTeach(List<Map<String,Object>> map);
 }
