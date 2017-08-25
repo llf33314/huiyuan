@@ -677,6 +677,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     public Map<String, Object> findDuofenCardByReceiveId(Integer receiveId) throws BusinessException {
         try {
             DuofenCardReceive receives = duofenCardReceiveMapper.selectById(receiveId);
+            if(CommonUtil.isEmpty( receives ))return null;
             String[] strId = receives.getCardIds().split(",");
             List<Integer> ids = new ArrayList<Integer>();
             for (String str : strId) {
