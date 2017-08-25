@@ -616,11 +616,11 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    if(visitor==1){
 		url = memberConfig.getWxmp_home() + "/pay/B02A45A5/79B4DE7C/createPayQR.do"
 				+ "?totalFee=" +mallNotShopEntity.getBalanceMoney()+"&model=51&busId="+mallQuery.getBusId()+"&orderNum="+mallNotShopEntity.getOrderCode()
-				+"&desc=支付&notifyUrl="+notityUrl+"&appid="+wxPublicUsers.getAppid();
+				+"&desc=支付&notifyUrl="+notityUrl+"&appid="+wxPublicUsers.getAppid()+"&appidType=0&isSendMessage=0&payWay=0&sourceType=1";
 	    }else{
 		url = memberConfig.getWxmp_home() + "/pay/B02A45A5/79B4DE7C/createPayQR.do"
 				+ "?totalFee=" +mallNotShopEntity.getBalanceMoney()+"&model=51&busId="+mallQuery.getBusId()+"&orderNum="+mallNotShopEntity.getOrderCode()
-				+"&memberId="+mallNotShopEntity.getMemberId()+"&desc=支付&notifyUrl="+notityUrl+"&appid="+wxPublicUsers.getAppid();;
+				+"&memberId="+mallNotShopEntity.getMemberId()+"&desc=支付&notifyUrl="+notityUrl+"&appid="+wxPublicUsers.getAppid()+"&appidType=0&isSendMessage=0&payWay=0&sourceType=1";
 	    }
 	    map.put( "saomaoPayUrl", url );
 	    map.put( "code", 0);
