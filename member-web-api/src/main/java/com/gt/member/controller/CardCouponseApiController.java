@@ -53,7 +53,7 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "code", value = "卡券code值", paramType = "query", required = true, dataType = "String")
     })
     @ResponseBody
-    @RequestMapping (value = "/wxCardReceiveBackName",method = RequestMethod.PUT)
+    @RequestMapping (value = "/wxCardReceiveBackName",method = RequestMethod.POST)
     public ServerResponse wxCardReceiveBackName(HttpServletRequest request,
                                                 HttpServletResponse response,@RequestBody Map<String,Object> requestBody) {
         try {
@@ -163,7 +163,7 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @RequestMapping (value = "/successPayBack",method = RequestMethod.PUT)
+    @RequestMapping (value = "/successPayBack",method = RequestMethod.POST)
     public ServerResponse successPayBack(HttpServletRequest request,
                                          HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
@@ -195,7 +195,7 @@ public class CardCouponseApiController {
     @ApiOperation(value = "卡包投放", notes = "根据卡包id卡包投放")
     @ApiImplicitParam(name = "receiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @RequestMapping (value = "/publishShelve",method = RequestMethod.PUT)
+    @RequestMapping (value = "/publishShelve",method = RequestMethod.POST)
     public ServerResponse publishShelve(HttpServletRequest request,
                                         HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
@@ -215,7 +215,7 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "bagId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @RequestMapping (value = "/threeShopGetCard",method = RequestMethod.PUT)
+    @RequestMapping (value = "/threeShopGetCard",method = RequestMethod.POST)
     public ServerResponse threeShopGetCard(HttpServletRequest request,
                                            HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
@@ -323,7 +323,7 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @RequestMapping (value = "/successBuyReceive",method = RequestMethod.PUT)
+    @RequestMapping (value = "/successBuyReceive",method = RequestMethod.POST)
     public ServerResponse successBuyReceive(HttpServletRequest request,
                                             HttpServletResponse response,@RequestBody Map<String,Object> requestBody ){
         try {
@@ -397,7 +397,7 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "receiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @RequestMapping (value = "/backDuofenCardGet",method = RequestMethod.PUT)
+    @RequestMapping (value = "/backDuofenCardGet",method = RequestMethod.POST)
     public ServerResponse backDuofenCardGet(HttpServletRequest request,
                                             HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
@@ -413,7 +413,7 @@ public class CardCouponseApiController {
     @ApiOperation(value = "查询游戏卡包信息", notes = "根据商家id查询游戏卡包信息")
     @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
-    @RequestMapping (value = "/gameDuofenCardRecevice",method = RequestMethod.PUT)
+    @RequestMapping (value = "/gameDuofenCardRecevice",method = RequestMethod.POST)
     public ServerResponse gameDuofenCardRecevice(HttpServletRequest request,
                                                  HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
@@ -432,7 +432,7 @@ public class CardCouponseApiController {
             @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
-    @RequestMapping (value = "/getDuofenCardByGame",method = RequestMethod.PUT)
+    @RequestMapping (value = "/getDuofenCardByGame",method = RequestMethod.POST)
     public ServerResponse getDuofenCardByGame(HttpServletRequest request,
                                               HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         try {
@@ -453,7 +453,7 @@ public class CardCouponseApiController {
 
     })
     @ResponseBody
-    @RequestMapping (value = "/verificationCardReturnName",method = RequestMethod.PUT)
+    @RequestMapping (value = "/verificationCardReturnName",method = RequestMethod.POST)
     public ServerResponse verificationCardReturnName(HttpServletRequest request,
                                              HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
         Map<String,Object> params=new HashMap<>();

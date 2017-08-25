@@ -211,7 +211,7 @@ public class MemberApiController extends BaseController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "jifen", value = "", paramType = "query", required = true, dataType = "int" ), } )
     @ResponseBody
-    @RequestMapping( value = "/updateJifen", method = RequestMethod.PUT )
+    @RequestMapping( value = "/updateJifen", method = RequestMethod.POST )
     public ServerResponse updateJifen( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
 	try {
 	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
@@ -300,7 +300,7 @@ public class MemberApiController extends BaseController {
 		    @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = true, dataType = "String" ),
 		    @ApiImplicitParam( name = "money", value = "退款金额", paramType = "query", required = true, dataType = "double" ) } )
     @ResponseBody
-    @RequestMapping( value = "/refundMoney", method = RequestMethod.PUT )
+    @RequestMapping( value = "/refundMoney", method = RequestMethod.POST )
     public ServerResponse refundMoney( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
 	try {
 	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
@@ -322,7 +322,7 @@ public class MemberApiController extends BaseController {
 		    @ApiImplicitParam( name = "jifen", value = "积分", paramType = "query", required = true, dataType = "int" ),
     } )
     @ResponseBody
-    @RequestMapping( value = "/refundMoneyAndJifenAndFenbi", method = RequestMethod.PUT )
+    @RequestMapping( value = "/refundMoneyAndJifenAndFenbi", method = RequestMethod.POST )
     public ServerResponse refundMoneyAndJifenAndFenbi(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ){
 	try {
 	    memberApiService.refundMoneyAndJifenAndFenbi( requestBody );
@@ -394,7 +394,7 @@ public class MemberApiController extends BaseController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "parentId", value = "学员家长pc注册", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "wxMemberId", value = "微信授权得到memberId", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
-    @RequestMapping( value = "/updateMemberByTeach", method = RequestMethod.PUT )
+    @RequestMapping( value = "/updateMemberByTeach", method = RequestMethod.POST )
     public ServerResponse updateMemberByTeach( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody){
 	try {
 	    Map< String,Object > map = memberApiService.updateMemberByTeach(requestBody );
@@ -410,7 +410,7 @@ public class MemberApiController extends BaseController {
 		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String" ),
 		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )} )
     @ResponseBody
-    @RequestMapping( value = "/saveMemberByTeach", method = RequestMethod.PUT )
+    @RequestMapping( value = "/saveMemberByTeach", method = RequestMethod.POST )
     public ServerResponse saveMemberByTeach(HttpServletRequest request, HttpServletResponse response, @RequestBody List<Map<String,Object>> requestBody){
 	try {
 	    List<Map< String,Object >> mapList = memberApiService.saveMemberByTeach(requestBody );
