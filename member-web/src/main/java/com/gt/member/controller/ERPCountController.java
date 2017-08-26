@@ -191,9 +191,9 @@ public class ERPCountController extends BaseController {
      * @param params
      */
     @RequestMapping( value = "/79B4DE7C/successPay" )
-    public void successPay(HttpServletRequest request, HttpServletResponse response,@RequestParam Map<String,Object> params){
-	erpCountService.successPay(params);
-        System.out.println(params);
+    public void successPay(HttpServletRequest request, HttpServletResponse response,@RequestBody Map<String,Object> params)throws IOException{
+	Map<String ,Object> map=erpCountService.successPay(params);
+	CommonUtil.write( response,map );
     }
 
 }

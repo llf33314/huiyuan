@@ -56,5 +56,5 @@ public interface ERPCountService {
      * 支付成功回调
      * @param params
      */
-    public void successPay(Map<String,Object> params);
+    public Map<String,Object> successPay(Map<String,Object> params);
 }
