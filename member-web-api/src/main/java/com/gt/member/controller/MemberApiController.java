@@ -390,34 +390,19 @@ public class MemberApiController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "（教育)手机端微信授权后合并单前的登录用户信息", notes = "（教育)手机端微信授权后合并单前的登录用户信息" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "parentId", value = "学员家长pc注册", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "wxMemberId", value = "微信授权得到memberId", paramType = "query", required = true, dataType = "int" ) } )
+    @ApiOperation( value = "（教育)手机端微信授权后合修改微信手机号码", notes = "（教育)手机端微信授权后合修改微信手机号码" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "学员家长pc注册", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "phone", value = "微信授权得到memberId", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/updateMemberByTeach", method = RequestMethod.POST )
     public ServerResponse updateMemberByTeach( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody){
 	try {
-	    Map< String,Object > map = memberApiService.updateMemberByTeach(requestBody );
-	    return ServerResponse.createBySuccess( map );
+	    memberApiService.updateMemberByTeach(requestBody );
+	    return ServerResponse.createBySuccess( );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
 
-    }
-
-    @ApiOperation( value = "（教育)保存家长信息", notes = "（教育)保存家长信息" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "name", value = "家长姓名", paramType = "query", required = true, dataType = "String" ),
-		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String" ),
-		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )} )
-    @ResponseBody
-    @RequestMapping( value = "/saveMemberByTeach", method = RequestMethod.POST )
-    public ServerResponse saveMemberByTeach(HttpServletRequest request, HttpServletResponse response, @RequestBody List<Map<String,Object>> requestBody){
-	try {
-	    List<Map< String,Object >> mapList = memberApiService.saveMemberByTeach(requestBody );
-	    return ServerResponse.createBySuccess( mapList );
-	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
-	}
     }
 
 }

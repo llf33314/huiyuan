@@ -611,8 +611,7 @@ public interface MemberApiService {
      * @return
      * @throws BusinessException
      */
-    public Map<String,Object> updateMemberByTeach(Map<String,Object> map) throws BusinessException;
+    public void updateMemberByTeach(Map<String,Object> map) throws BusinessException;
 
 
-    public List<Map<String,Object>> saveMemberByTeach(List<Map<String,Object>> map);
 }

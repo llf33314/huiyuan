@@ -2900,7 +2900,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 		WxPublicUsers wxPublicUsers = wxPublicUsersMapper.selectByUserId( member.getBusId() );
 
-		if ( CommonUtil.isNotEmpty( wxPublicUsers ) && CommonUtil.isNotEmpty( member.getOpenid() ) && wxShop.getStatus() == 2 ) {
+		if ( CommonUtil.isNotEmpty( wxPublicUsers ) && CommonUtil.isNotEmpty( member.getOpenid() ) && CommonUtil.isNotEmpty( wxShop ) && wxShop.getStatus() == 2 ) {
 		    // 查询优惠券信息
 		    List< Map< String,Object > > cardList = wxCardReceiveMapper.findByOpenId1( wxPublicUsers.getId(), member.getOpenid() );
 		    List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
@@ -3902,81 +3902,15 @@ public class MemberApiServiceImpl implements MemberApiService {
     }
 
     @Transactional
-    public Map< String,Object > updateMemberByTeach( Map< String,Object > map ) throws BusinessException {
+    public void updateMemberByTeach( Map< String,Object > map ) throws BusinessException {
         try {
             Map<String,Object> returnMap=new HashMap<>(  );
-	    Integer parentId = CommonUtil.toInteger( map.get( "parentId" ) );
-	    Integer wxMemberId = CommonUtil.toInteger( map.get( "wxMemberId" ) );
-
-	    Member m1 = memberDAO.selectById( parentId );  //erp粉丝信息
-	    Member wxmember = memberDAO.selectById( wxMemberId );  //微信授权粉丝
-
-	    Member member = new Member();
-	    member.setFlow( m1.getFlow() + wxmember.getFlow() );
-	    member.setIntegral( m1.getIntegral() + wxmember.getIntegral() );
-	    member.setFansCurrency( m1.getFansCurrency() + wxmember.getFansCurrency() );
-	    member.setId( m1.getId() );
-
-	    if ( CommonUtil.isNotEmpty( m1.getOldId() ) && !m1.getOldId().contains( wxmember.getId().toString() ) ) {
-		member.setOldId( m1.getId() + "," + wxmember.getId() );
-	    } else {
-		if ( CommonUtil.isNotEmpty( wxmember.getOldId() ) ) {
-		    member.setOldId( wxmember.getOldId() + "," + m1.getId() );
-		} else {
-		    member.setOldId( m1.getId() + "," + wxmember.getId() );
-		}
-	    }
-	    if ( CommonUtil.isEmpty( m1.getOpenid() ) ) {
-		member.setOpenid( wxmember.getOpenid() );
-	    }
-
-	    if ( CommonUtil.isEmpty( m1.getHeadimgurl() ) ) {
-		member.setHeadimgurl( wxmember.getHeadimgurl() );
-	    }
-
-	    memberDAO.deleteById( wxmember.getId() );
-	    memberDAO.updateById( member );
-
-	    MemberOld old = (MemberOld) JSONObject.toBean( JSONObject.fromObject( wxmember ), MemberOld.class );
-	    memberOldMapper.insert( old );
-	    // 修改小程序之前openId对应的memberId
-	    memberAppletOpenidMapper.updateMemberId( member.getId(), wxmember.getId() );
-
-	    map.put("member", member);
-	    return map;
-	}catch ( Exception e ){
-            throw new BusinessException( ResponseEnums.ERROR );
-	}
-    }
-
-    @Transactional
-    public List<Map<String,Object>> saveMemberByTeach(List<Map<String,Object>> mapList){
-        try {
-	    Member m = null;
-	    Integer busId = CommonUtil.toInteger( mapList.get( 0 ).get( "busId" ) );
-	    busId = dictService.pidUserId( busId );
-	    List< Map< String,Object > > members = new ArrayList<>();
-	    for ( Map< String,Object > map : mapList ) {
-		m = new Member();
-		m.setName( CommonUtil.toString( map.get( "name" ) ) );
-		m.setBusId( busId );
-		String phone = CommonUtil.toString( map.get( "phone" ) );
-		Member member = memberDAO.findByPhone( busId, phone );
-		if ( CommonUtil.isNotEmpty( member ) ) {
-		    m.setId( member.getId() );
-		    memberDAO.updateById( m );
-		} else {
-		    m.setPhone( phone );
-		    memberDAO.insert( m );
-
-		    MemberParameter mp = new MemberParameter();
-		    mp.setMemberId( m.getId() );
-		    memberParameterDAO.insert( mp );
-		}
-		map.put( "memberId", m.getId() );
-		members.add( map );
-	    }
-	    return members;
+            Member m=new Member();
+	    Integer memberId = CommonUtil.toInteger( map.get( "memberId" ) );
+	    String phone = CommonUtil.toString( map.get( "phone" ) );
+	    m.setId( memberId );
+	    m.setPhone( phone );
+	    memberDAO.updateById( m );
 	}catch ( Exception e ){
             throw new BusinessException( ResponseEnums.ERROR );
 	}
