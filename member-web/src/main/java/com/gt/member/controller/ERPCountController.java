@@ -49,9 +49,9 @@ public class ERPCountController extends BaseController {
     private MemberConfig memberConfig;
 
     @RequestMapping( value = "/aa" )
-    public String aa( HttpServletRequest request, HttpServletResponse response ) {
+    public String aa( HttpServletRequest request, HttpServletResponse response,@RequestParam String orderCode ) {
 	MallAllEntityQuery m = new MallAllEntityQuery();
-	m.setOrderCode( "ME123456789" );  //订单号
+	m.setOrderCode( orderCode );  //订单号
 	m.setTotalMoney( 0.01 ); //订单总金额
 	List< MallEntityQuery > list = new ArrayList<>();
 	MallEntityQuery m1 = new MallEntityQuery();
