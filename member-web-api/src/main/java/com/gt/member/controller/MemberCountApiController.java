@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.enums.ResponseEnums;
 import com.gt.member.exception.BusinessException;
+import com.gt.member.service.entityBo.MallNotShopEntity;
+import com.gt.member.service.entityBo.queryBo.MallAllEntityQuery;
 import com.gt.member.service.memberApi.MemberApiService;
 import com.gt.member.service.memberApi.MemberCountMoneyApiService;
 import com.gt.member.service.entityBo.MallAllEntity;
@@ -33,7 +35,7 @@ public class MemberCountApiController {
     private  MemberApiService memberApiService;
 
 
-    @ApiOperation(value = "门店计算方法", notes = "传入值具体描述请看实体类")
+    @ApiOperation(value = "门店计算方法(跨门店)", notes = "传入值具体描述请看实体类")
     @ResponseBody
     @RequestMapping(value = "memberCountMoneyByShop",method = RequestMethod.POST)
     public ServerResponse memberCountMoneyByShop(HttpServletRequest request,
@@ -44,6 +46,20 @@ public class MemberCountApiController {
       }catch (Exception e){
           return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),"计算失败");
       }
+    }
+
+
+    @ApiOperation(value = "门店计算方法(不跨门店)", notes = "传入值具体描述请看实体类")
+    @ResponseBody
+    @RequestMapping(value = "memberCountMoneyByBusUser",method = RequestMethod.POST)
+    public ServerResponse memberCountMoneyByBusUser(HttpServletRequest request,
+                    HttpServletResponse response, MallNotShopEntity mallNotShopEntity ){
+        try {
+            mallNotShopEntity = memberCountMoneyApiService.mallSkipNotShopCount(mallNotShopEntity);
+            return ServerResponse.createBySuccess(JSONObject.toJSON(mallNotShopEntity));
+        }catch (Exception e){
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),"计算失败");
+        }
     }
 
 
