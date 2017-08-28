@@ -61,6 +61,7 @@ web:
  cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6
  domain: yifriend.com
  sms_name: 多粉平台
+ socket_url: ws:113.106.202.51:8881
 
 redisSession:
  domainName: .example.com

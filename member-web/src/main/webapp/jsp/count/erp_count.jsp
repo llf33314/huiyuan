@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/js/elementui/elementui.css">
     <link rel="stylesheet" href="/css/count/erp_billing.css">
     <link rel="stylesheet" href="/css/iconfont/iconfont.css">
+    <script type="text/javascript" src="/js/socket.io/socket.io.js"></script>
 </head>
 <body>
 <section id="erpBilling">
@@ -831,9 +832,42 @@
                 }
             }
         });
-
-
     }
+
+    //推送
+    var userId = '${member_count}';
+    var socket =  io.connect('${member_socketHost}');
+
+    socket.on('connect', function() {
+        var jsonObject = {userId: userId,
+            message: "0"};
+        socket.emit('auth', jsonObject);
+    });
+
+    socket.on('chatevent', function(data) {
+        sendMessage(data.message,data.style);
+    });
+
+    socket.on('disconnect', function() {
+        output('<span class="disconnect-msg">The client has disconnected!</span>');
+    });
+
+    function sendMessage(data){
+        data=eval('(' + data + ')');
+        var newDate = new Date();
+        //新增数据
+        var html="<li class='box' onclick='fnClick(this,"+data.id+","+data.phone+")'>";
+        html+="<div class='apply_name line2 over_flow'>"+data.nickname+"</div>";
+        html+="<div class='apply_sm_line'></div>";
+        html+="<div class='apply_box'>";
+        html+="<div class='apply_head'><img src='"+data.headimgurl+"' /></div>";
+        html+="<div class='apply_fade'><img src='/images/member/select.png'/></div>";
+        html+="</div>";
+        html+="<div class='apply_time color888'>"+newDate.toLocaleTimeString()+"</div>";
+        html+="</li>";
+        $(html).appendTo("ul");
+    }
+
 
 
 </script>

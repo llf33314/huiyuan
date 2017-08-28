@@ -20,6 +20,8 @@ import java.util.Map;
 @Component
 public interface MemberDAO extends BaseMapper<Member> {
 
+    Member selectById(Integer id);
+
     Member selectByOpenid(@Param("openid")String openid,@Param("public_id")Integer public_id);
 
     Member selectByPublicIdAndPhone(@Param("public_id")Integer public_id,@Param("phone")String phone);

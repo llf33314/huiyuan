@@ -59,6 +59,13 @@
     </sql>
 
 
+	<select id="selectById" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_wx_bus_member
+		where id=#{id}
+	</select>
+
 
 
 

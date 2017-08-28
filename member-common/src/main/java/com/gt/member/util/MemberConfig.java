@@ -25,4 +25,6 @@ public class MemberConfig {
 
     private String cardNoKey;  //会员卡秘钥
 
+    private String socket_url;  //socket.io url
+
 }

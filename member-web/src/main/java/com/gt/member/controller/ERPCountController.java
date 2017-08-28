@@ -8,6 +8,7 @@ import com.gt.member.service.count.ERPCountService;
 import com.gt.member.service.entityBo.queryBo.MallAllEntityQuery;
 import com.gt.member.service.entityBo.queryBo.MallEntityQuery;
 import com.gt.member.util.CommonUtil;
+import com.gt.member.util.MemberConfig;
 import com.gt.member.util.RedisCacheUtil;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -43,6 +44,9 @@ public class ERPCountController extends BaseController {
 
     @Autowired
     private RedisCacheUtil redisCacheUtil;
+
+    @Autowired
+    private MemberConfig memberConfig;
 
     @RequestMapping( value = "/aa" )
     public String aa( HttpServletRequest request, HttpServletResponse response ) {
@@ -81,6 +85,8 @@ public class ERPCountController extends BaseController {
 	    MallAllEntityQuery mallAllEntityQuery= JSON.parseObject(obj.toString() ,MallAllEntityQuery.class);
 	    request.setAttribute( "mallAllEntityQueryStr", obj );
 	    request.setAttribute( "mallAllEntityQuery", mallAllEntityQuery );
+	    request.setAttribute( "member_count","member_count_"+mallAllEntityQuery.getOrderCode() );
+	    request.setAttribute("member_socketHost", memberConfig.getSocket_url());
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    LOG.error( "转换异常",e );

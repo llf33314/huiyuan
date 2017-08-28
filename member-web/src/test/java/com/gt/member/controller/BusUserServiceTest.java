@@ -33,12 +33,13 @@ public class BusUserServiceTest extends BasicTest {
 
 
 	Map<String, Object> map = new HashMap<>();
-	map.put("receiveId", 144);
+	map.put("memberId", "1225636");
+	map.put("shopId", "17");
 
 	//SignHttpUtils.postByHttp("http://192.168.2.240:8090/api/memberApi/findByMemberId",map,"MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM");
 
 
-	String aa=SignHttpUtils.postByHttp("http://192.168.2.240:8090/memberAPI/cardCouponseApi/findDuofenCardByReceiveId",map,"MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM");
+	String aa=SignHttpUtils.postByHttp("http://192.168.2.240:8090/memberAPI/member/findCardByMembeId.do",map,"MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM");
 	System.out.println(aa);
     }
 

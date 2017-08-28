@@ -10,9 +10,9 @@ spring:
  application:
   name: zhangmz-SpringBoot
  profiles:
-  active: dev
+#  active: dev
 #  active: test
-#  active: prod
+  active: prod
   # SpringMvc 配置
  mvc:
   view:

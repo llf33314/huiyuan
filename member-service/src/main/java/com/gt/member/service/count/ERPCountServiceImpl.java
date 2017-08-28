@@ -798,6 +798,11 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    String orderCode = CommonUtil.toString( params.get( "out_trade_no" ) );
 	    UserConsume uc = userConsumeDAO.findByOrderCode1( orderCode );
 	    if ( CommonUtil.isNotEmpty( uc ) ) {
+	        if(uc.getPayStatus()==1){
+		    map.put( "code",0 );
+		    map.put( "msg","处理成功" );
+		    return map;
+		}
 		//通知地址
 		Member member = memberDAO.selectById( uc.getMemberId() );
 		boolean flag = false;
@@ -842,32 +847,41 @@ public class ERPCountServiceImpl implements ERPCountService {
 		    memberNewService.saveCardRecordNew( member.getMcId(), 1, uc.getDiscountMoney() + "元", "消费", member.getBusId(), uc.getBalance() + "", 0, 0 );
 		}
 		//ToDo
+		//修改uc支付状态
+		//payType:0微信，1：支付宝 2：多粉钱包
+		UserConsume u=new UserConsume();
+		u.setId( uc.getId() );
+		Integer payType=CommonUtil.toInteger( params.get( "payType" ) );
+		if(payType==0){
+		    payType=1;
+		}else if(payType==1){
+		    payType=0;
+		}else if(payType==2){
+
+		}
+		u.setPaymentType( payType );
+		u.setPayStatus( 1 );
+		u.setIsend(1);
+		u.setIsendDate(new Date(  ));
+		userConsumeDAO.updateById( u );
 	    }
 	    //非游客
 	    Object obj = redisCacheUtil.get( "Memeber_ERP_" + orderCode );
-	    JSONObject json = JSON.parseObject( obj.toString() );
-	    String successNoticeUrl = CommonUtil.toString( json.get( "successNoticeUrl" ) );
-	    String sign = CommonUtil.toString( json.get( "sign" ) );
-	    SignHttpUtils.postByHttp( successNoticeUrl, orderCode, sign );  //通知
-	    redisCacheUtil.remove( "Memeber_ERP_" + orderCode );
-
-	    //修改uc支付状态
-	    //payType:0微信，1：支付宝 2：多粉钱包
-	    UserConsume u=new UserConsume();
-	    u.setId( uc.getId() );
-	    Integer payType=CommonUtil.toInteger( params.get( "payType" ) );
-	    if(payType==0){
-	        payType=1;
-	    }else if(payType==1){
-		payType=0;
-	    }else if(payType==2){
-
+	    if(CommonUtil.isNotEmpty( obj )) {
+		JSONObject json = JSON.parseObject( obj.toString() );
+		String successNoticeUrl = CommonUtil.toString( json.get( "successNoticeUrl" ) );
+		String sign = CommonUtil.toString( json.get( "sign" ) );
+		Map<String,Object> successMap=new HashMap<>(  );
+		successMap.put( "orderCode",orderCode );
+		SignHttpUtils.postByHttp( successNoticeUrl, successMap, sign );  //通知
+		redisCacheUtil.remove( "Memeber_ERP_" + orderCode );
 	    }
-	    u.setPaymentType( payType );
-	    u.setPayStatus( 1 );
-	    u.setIsend(1);
-	    u.setIsendDate(new Date(  ));
-	    userConsumeDAO.updateById( u );
+
+	    String wxmpsignKey=memberConfig.getWxmpsignKey();
+	    String socketUrl=memberConfig.getWxmp_home()+"/8A5DA52E/socket/getSocketApi.do";
+	    Map<String,Object> socketMap=new HashMap<>(  );
+	    socketMap.put( "pushName","member_count_"+orderCode );
+	    SignHttpUtils.postByHttp( socketUrl, socketMap, wxmpsignKey );  //通知
 	    map.put( "code",0 );
 	    map.put( "msg","处理成功" );
 	}catch ( Exception e ){

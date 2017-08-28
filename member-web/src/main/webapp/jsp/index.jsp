@@ -6,30 +6,7 @@
 <html>
 <script src="/js/jquery-2.2.2.js"></script>
 <script>
-   var param={};
-   param["orderCode"]="ME123456789";
-   param["totalMoney"]=100.0;
-   param["ucType"]=103;
-   param["busId"]=42;
-   param["shopId"]=42;
-   param["successNoticeUrl"]="http://www.baid.com";
-   param["jumpUrl"]="http://www.baid.com";
 
-   var goodsTypeArr=[];
-
-   var goodsTypeJson={};
-
-   goodsTypeJson["mallId"]=1;
-   goodsTypeJson["number"]=2;
-   goodsTypeJson["totalMoneyOne"]=50.0;
-   goodsTypeJson["totalMoneyAll"]=100.0;
-   goodsTypeJson["userCard"]=1;
-   goodsTypeJson["useCoupon"]=1;
-   goodsTypeJson["useFenbi"]=1;
-   goodsTypeJson["userJifen"]=1;
-   goodsTypeJson["useLeague"]=1;
-   goodsTypeArr.push(goodsTypeJson);
-   param["malls"]=JSON.stringify(goodsTypeArr);
 
 
     window.location.href="/erpCount/countErpIndex.do?orderCodeKey="+'${orderCodeKey}';
