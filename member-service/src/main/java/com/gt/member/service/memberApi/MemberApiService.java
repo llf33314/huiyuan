@@ -613,5 +613,20 @@ public interface MemberApiService {
      */
     public void updateMemberByTeach(Map<String,Object> map) throws BusinessException;
 
+    /**
+     * 根据ids集合查询粉丝信息
+     * @param map
+     * @return
+     * @throws BusinessException
+     */
+    public List<Map<String,Object>> findMemberByIds(Map<String,Object> map) throws BusinessException;
 
-}
+    /**
+     * 根据手机号查询粉丝信息
+     * @param map
+     * @return
+     * @throws BusinessException
+     */
+    public List<Map<String,Object>> findMemberByPhoneAndBusId(Map<String,Object> map) throws BusinessException;
+
+ }

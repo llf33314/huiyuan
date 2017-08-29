@@ -402,7 +402,36 @@ public class MemberApiController extends BaseController {
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
-
     }
+
+    @ApiOperation( value = "根据ids集合查询粉丝信息返回包含数据(id,昵称，手机号码,头像)", notes = "查询粉丝信息返回包含数据((id,昵称，手机号码,头像))" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "ids", value = "memberId集合字符串 逗号隔开", paramType = "query", required = true, dataType = "String" ),
+		   	 @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/findMemberByIds", method = RequestMethod.POST )
+    public ServerResponse findMemberByIds(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody){
+	try {
+	   List<Map<String,Object>> memberList= memberApiService.findMemberByIds(requestBody);
+	    return ServerResponse.createBySuccess( memberList);
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+    @ApiOperation( value = "根据粉丝手机号码查询粉丝信息返回包含数据((id,昵称，手机号码,头像))", notes = "查询粉丝信息返回包含数据((id,昵称，手机号码,头像))" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "phone", value = "phone", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/findMemberByPhone", method = RequestMethod.POST )
+    public ServerResponse findMemberByPhone(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody){
+	try {
+	    List<Map<String,Object>> memberList= memberApiService.findMemberByPhoneAndBusId(requestBody);
+	    return ServerResponse.createBySuccess( memberList);
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+
 
 }

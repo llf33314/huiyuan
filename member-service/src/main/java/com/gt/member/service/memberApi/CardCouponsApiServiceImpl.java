@@ -2,6 +2,7 @@ package com.gt.member.service.memberApi;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.common.entity.FenbiFlowRecord;
 import com.gt.common.entity.WxPublicUsers;
 import com.gt.common.entity.WxShop;
@@ -22,7 +23,6 @@ import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.util.*;
-import com.gt.member.util.sign.SignHttpUtils;
 import net.sf.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -261,7 +261,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             map.put( "card_id", wcr.getCardId());
             map.put( "code",code );
             map.put( "busId",wxPublicUsers.getBusUserId() );
-            String result=SignHttpUtils.postByHttp(url,map,getWxmpsignKey);
+            String result= SignHttpUtils.postByHttp(url,map,getWxmpsignKey);
 
             JSONObject returnJSON =JSONObject.parseObject( result);
             if (!"0".equals(returnJSON.get("code").toString())) {

@@ -3915,4 +3915,40 @@ public class MemberApiServiceImpl implements MemberApiService {
             throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
+
+    public List<Map<String,Object>> findMemberByIds(Map<String,Object> map) throws BusinessException{
+        try{
+            Integer busId=CommonUtil.toInteger( map.get( "busId" ) );
+            String ids=CommonUtil.toString( map.get( "ids" ) );
+	    List<Integer> list=new ArrayList<>(  );
+	    String[] str=ids.split( ",");
+	    for ( int i=0;i< str.length;i++){
+	        if(CommonUtil.isNotEmpty( str[i] )){
+		    list.add( CommonUtil.toInteger( str[i] ) );
+		}
+	    }
+	    if(list.size()>0) {
+		return memberDAO.findMemberByIds( busId,list );
+	    }
+	    return null;
+	}catch ( Exception e ){
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+    /**
+     * 根据手机号查询粉丝信息
+     * @param map
+     * @return
+     * @throws BusinessException
+     */
+    public List<Map<String,Object>> findMemberByPhoneAndBusId(Map<String,Object> map) throws BusinessException{
+	try{
+	    Integer busId=CommonUtil.toInteger( map.get( "busId" ) );
+	    String phone=CommonUtil.toString( map.get( "phone" ) );
+	    return memberDAO.findMemberByPhoneAndBusId( busId,phone );
+	}catch ( Exception e ){
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
 }
