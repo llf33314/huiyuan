@@ -641,4 +641,17 @@
 		SELECT <include refid="Base_Column_List" /> FROM t_wx_bus_member where  busId=#{busId} and openid=#{openid}
 	</select>
 
+
+	<select id="findMemberByIds" resultType="Map">
+		select id,nickname,phone,headimgurl from t_wx_bus_member where  busId=#{busId} and
+		<foreach close=")" collection="ids" item="id" open="(" separator="or">
+			id=#{id}
+		</foreach>
+	</select>
+
+	<select id="findMemberByPhoneAndBusId" resultType="Map">
+		select id,nickname,phone,headimgurl from t_wx_bus_member where  busId=#{busId} and phone=#{phone}
+
+	</select>
+
 </mapper>

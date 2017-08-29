@@ -252,4 +252,21 @@ public interface MemberDAO extends BaseMapper<Member> {
                                                   @Param("pagesize")Integer pagesize);
 
     Member selectByOpenidAndBusId(@Param("openid")String openid,@Param("busId")Integer busId);
+
+    /**
+     * 根据ids查询粉丝信息
+     * @param busId
+     * @param ids
+     * @return
+     */
+    List<Map<String,Object>> findMemberByIds(@Param("busId")Integer busId,@Param("ids")List<Integer> ids);
+
+
+
+    /**
+     *  根据手机号查询粉丝信息 返回id 昵称 手机号 头像
+     * @param busId
+     * @return
+     */
+    List<Map<String,Object>> findMemberByPhoneAndBusId(@Param("busId")Integer busId,@Param("phone")String phone);
 }
