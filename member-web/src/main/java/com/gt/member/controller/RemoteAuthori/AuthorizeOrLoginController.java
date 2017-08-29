@@ -68,7 +68,7 @@ public class AuthorizeOrLoginController {
 	queryMap.put( "domainName", memberConfig.getWebHome() );
 	queryMap.put( "busId", busId );
 	queryMap.put( "uclogin", uclogin );
-	String url = "redirect:http://192.168.2.240:8080/remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryParam=" + queryMap;
+	String url = "redirect:http://192.168.2.240:8080/remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + queryMap;
 	return url;
     }
 

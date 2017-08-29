@@ -845,27 +845,16 @@
     });
 
     socket.on('chatevent', function(data) {
-        sendMessage(data.message,data.style);
+        sendMessage();
     });
 
     socket.on('disconnect', function() {
         output('<span class="disconnect-msg">The client has disconnected!</span>');
     });
 
-    function sendMessage(data){
-        data=eval('(' + data + ')');
-        var newDate = new Date();
-        //新增数据
-        var html="<li class='box' onclick='fnClick(this,"+data.id+","+data.phone+")'>";
-        html+="<div class='apply_name line2 over_flow'>"+data.nickname+"</div>";
-        html+="<div class='apply_sm_line'></div>";
-        html+="<div class='apply_box'>";
-        html+="<div class='apply_head'><img src='"+data.headimgurl+"' /></div>";
-        html+="<div class='apply_fade'><img src='/images/member/select.png'/></div>";
-        html+="</div>";
-        html+="<div class='apply_time color888'>"+newDate.toLocaleTimeString()+"</div>";
-        html+="</li>";
-        $(html).appendTo("ul");
+    function sendMessage() {
+        vue.dialogScanCodePayMentVisible = false;
+        vue.submitOrderMsgSuccess = true;
     }
 
 
