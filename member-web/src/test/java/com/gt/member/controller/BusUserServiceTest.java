@@ -2,11 +2,8 @@ package com.gt.member.controller;
 
 
 import com.gt.member.BasicTest;
-import com.gt.member.util.sign.SignHttpUtils;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 

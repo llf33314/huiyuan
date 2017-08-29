@@ -4,29 +4,39 @@
 #   测试环境：java -jar my-spring-boot.jar --spring.profiles.active=test
 #   生产环境：java -jar my -spring-boot.jar --spring.profiles.active=prod
 #  注意 "---" 表示：一组配置
-# 测试环境配置
+# 开发环境配置
 spring:
-  redis:
-     host: 14.29.79.226
-     port: 6379
-     password: gt@123456
-   session:
-     store-type: redis
+# profiles: dev
+#自动重启默认开发时开启
+ devtools:
+  restart:
+   enabled: true
+ thymeleaf:
+   cache: false
+  #redis配置
+ redis:
+  host: 113.106.202.51
+  port: 6379
+  password: gt@123456
+  database: 5
 
-# profiles: test
+ session:
+  store-type: redis
+
+
 datasource:
  druid:
   url: jdbc:mysql://113.106.202.51:3306/gt_aliyuan?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
-  username: zhangmz
-  password: zhangmz123
+  username: root
+  password: gt123456
   driver-class-name: com.mysql.jdbc.Driver
   platform: mysql
   type: com.alibaba.druid.pool.DruidDataSource
   # 下面为连接池的补充设置，应用到上面所有数据源中
   # 初始化大小，最小，最大
   initialSize: 5
-  minIdle: 10
-  maxActive: 100
+  minIdle: 5
+  maxActive: 20
   # 配置获取连接等待超时的时间
   maxWait: 60000
   # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
@@ -46,13 +56,11 @@ datasource:
   connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
   # 合并多个DruidDataSource的监控数据
   #useGlobalDataSourceStat: true
+
 server:
-  port: 8081
+  port: 8080
   session:
     timeout: 30
-
-
-
 
 web:
  webHome: http://192.168.2.240
@@ -63,7 +71,15 @@ web:
  sms_name: 多粉平台
  socket_url: ws://113.106.202.51:8881
 
+
 redisSession:
  domainName: .example.com
  cookiePath: /
  cookieName: JSESSIONID
+
+
+
+
+
+
+

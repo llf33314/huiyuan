@@ -1,8 +1,8 @@
 package com.gt.member.config.filter;
 
+import com.gt.api.util.sign.SignFilterUtils;
 import com.gt.member.enums.SignEnum;
 import com.gt.member.util.MemberConfig;
-import com.gt.member.util.sign.SignFilterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

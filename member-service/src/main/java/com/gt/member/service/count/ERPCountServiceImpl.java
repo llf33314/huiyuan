@@ -2,6 +2,7 @@ package com.gt.member.service.count;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.common.entity.BusUser;
 import com.gt.common.entity.WxPublicUsers;
 import com.gt.common.entity.WxShop;
@@ -16,7 +17,6 @@ import com.gt.member.exception.BusinessException;
 import com.gt.member.service.MemberNewService;
 import com.gt.member.service.common.MemberCommonService;
 import com.gt.member.service.common.dict.DictService;
-import com.gt.member.service.entityBo.QrPayParams;
 import com.gt.member.service.entityBo.queryBo.MallAllEntityQuery;
 import com.gt.member.service.entityBo.queryBo.MallEntityQuery;
 import com.gt.member.service.memberApi.CardCouponsApiService;
@@ -24,14 +24,12 @@ import com.gt.member.service.memberApi.MemberCountMoneyApiService;
 import com.gt.member.service.entityBo.MallEntity;
 import com.gt.member.service.entityBo.MallNotShopEntity;
 import com.gt.member.util.*;
-import com.gt.member.util.sign.SignHttpUtils;
 import net.sf.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 
@@ -94,6 +92,9 @@ public class ERPCountServiceImpl implements ERPCountService {
 
     @Autowired
     private RedisCacheUtil redisCacheUtil;
+
+    @Autowired
+    private MemberLogDAO memberLogDAO;
 
     @Override
     public Map< String,Object > findMemberByERP( Integer busId, Integer shopId, String cardNo ) {
@@ -294,14 +295,26 @@ public class ERPCountServiceImpl implements ERPCountService {
 
 	    MallNotShopEntity mallNotShopEntity = new MallNotShopEntity();
 
-	    mallNotShopEntity.setUseCoupon( CommonUtil.toInteger( jsonObject.get( "useCoupon" ) ) );
-	    mallNotShopEntity.setCouponType( CommonUtil.toInteger( jsonObject.get( "couponType" ) ) );
-	    mallNotShopEntity.setCoupondId( CommonUtil.toInteger( jsonObject.get( "coupondId" ) ) );
+	    if(CommonUtil.isNotEmpty( jsonObject.get( "useCoupon" )  )) {
+		mallNotShopEntity.setUseCoupon( CommonUtil.toInteger( jsonObject.get( "useCoupon" ) ) );
+	    }
+	    if(CommonUtil.isNotEmpty( jsonObject.get( "couponType" )  )) {
+		mallNotShopEntity.setCouponType( CommonUtil.toInteger( jsonObject.get( "couponType" ) ) );
+	    }
+	    if(CommonUtil.isNotEmpty( jsonObject.get( "coupondId" )  )) {
+		mallNotShopEntity.setCoupondId( CommonUtil.toInteger( jsonObject.get( "coupondId" ) ) );
+	    }
 	    mallNotShopEntity.setShopId( mallQuery.getShopId() );
 	    mallNotShopEntity.setTotalMoney( mallQuery.getTotalMoney() );
-	    mallNotShopEntity.setMemberId( CommonUtil.toInteger( jsonObject.get( "memberId" ) ) );
-	    mallNotShopEntity.setUseFenbi( CommonUtil.toInteger( jsonObject.get( "useFenbi" ) ) );
-	    mallNotShopEntity.setUserJifen( CommonUtil.toInteger( jsonObject.get( "userJifen" ) ) );
+	    if(CommonUtil.isNotEmpty( jsonObject.get( "memberId" )  )) {
+		mallNotShopEntity.setMemberId( CommonUtil.toInteger( jsonObject.get( "memberId" ) ) );
+	    }
+	    if(CommonUtil.isNotEmpty( jsonObject.get( "useFenbi" )  )) {
+		mallNotShopEntity.setUseFenbi( CommonUtil.toInteger( jsonObject.get( "useFenbi" ) ) );
+	    }
+	    if(CommonUtil.isNotEmpty( jsonObject.get( "userJifen" )  )) {
+		mallNotShopEntity.setUserJifen( CommonUtil.toInteger( jsonObject.get( "userJifen" ) ) );
+	    }
 
 	    Map< Integer,MallEntity > mallMap = new HashMap<>();
 	    MallEntity mall = null;
@@ -320,7 +333,6 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    }
 	    mallNotShopEntity.setMalls( mallMap );
 	    mallNotShopEntity = memberCountMoneyApiService.mallSkipNotShopCount( mallNotShopEntity );
-	    System.out.println( JSON.toJSONString( mallNotShopEntity ) );
 	    map.put( "result", true );
 	    map.put( "mallNotShopEntity", mallNotShopEntity );
 	} catch ( Exception e ) {
@@ -360,8 +372,19 @@ public class ERPCountServiceImpl implements ERPCountService {
 		if ( payMoney < mallQuery.getTotalMoney() ) {
 		    throw new BusinessException( ResponseMemberEnums.LESS_THAN_CASH );
 		}
+		Object obj=redisCacheUtil.get(mallNotShopEntity.getOrderCode() );
+		if(CommonUtil.isNotEmpty(  obj)){
+		    redisCacheUtil.remove( mallNotShopEntity.getOrderCode()  );
+		}
+		redisCacheUtil.set( mallNotShopEntity.getOrderCode(), JSON.toJSONString( mallNotShopEntity ), 600L );
 		//通知
-		SignHttpUtils.postByHttp( mallQuery.getSuccessNoticeUrl(),mallQuery.getOrderCode(),mallQuery.getSign() );
+		String tongzhi= SignHttpUtils.postByHttp( mallQuery.getSuccessNoticeUrl(),mallQuery.getOrderCode(),mallQuery.getSign() );
+		JSONObject tongzhiJson=JSONObject.parseObject( tongzhi );
+		if(CommonUtil.toInteger( tongzhiJson.get( "code" ) )!=0){
+		    MemberLog ml=new MemberLog();
+		    ml.setLogtxt( "ERP计算通知回调异常:"+ JSONObject.toJSONString( mallNotShopEntity ));
+		    memberLogDAO.insert( ml );
+		}
 		return;
 	    }
 
@@ -502,7 +525,18 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    //TODO
 
 	    //通知
-	    SignHttpUtils.postByHttp( mallQuery.getSuccessNoticeUrl(),mallQuery.getOrderCode(),mallQuery.getSign() );
+	    Object obj=redisCacheUtil.get(mallNotShopEntity.getOrderCode() );
+	    if(CommonUtil.isNotEmpty(  obj)){
+		redisCacheUtil.remove( mallNotShopEntity.getOrderCode()  );
+	    }
+	    redisCacheUtil.set( mallNotShopEntity.getOrderCode(), JSON.toJSONString( mallNotShopEntity ), 600L );
+	    String tongzhi=SignHttpUtils.postByHttp( mallQuery.getSuccessNoticeUrl(),mallQuery.getOrderCode(),mallQuery.getSign() );
+	    JSONObject tongzhiJson=JSONObject.parseObject( tongzhi );
+	    if(CommonUtil.toInteger( tongzhiJson.get( "code" ) )!=0){
+		MemberLog ml=new MemberLog();
+		ml.setLogtxt( "ERP计算通知回调异常:"+ JSONObject.toJSONString( mallNotShopEntity ));
+		memberLogDAO.insert( ml );
+	    }
 
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
@@ -610,7 +644,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    noticeMap.put( "sign",mallQuery.getSign() );
 	    redisCacheUtil.set("Memeber_ERP_"+mallNotShopEntity.getOrderCode(), JSON.toJSONString( noticeMap ),600L );
 
-	  WxPublicUsers wxPublicUsers=  wxPublicUsersMapper.selectByUserId( mallQuery.getBusId() );
+	    WxPublicUsers wxPublicUsers=  wxPublicUsersMapper.selectByUserId( mallQuery.getBusId() );
 	    String notityUrl=memberConfig.getWebHome()+"/erpCount/79B4DE7C/successPay.do";
 	    String url="";
 	    if(visitor==1){
@@ -773,9 +807,14 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    if("1".equals( CommonUtil.toString( json.get( "code" ) ) )){
 		map.put( "code",0 );
 		map.put( "msg","支付成功" );
-
 		//通知
-		SignHttpUtils.postByHttp( mallQuery.getSuccessNoticeUrl(),mallQuery.getOrderCode(),mallQuery.getSign() );  //通知
+		String tongzhi=SignHttpUtils.postByHttp( mallQuery.getSuccessNoticeUrl(),mallQuery.getOrderCode(),mallQuery.getSign() );
+		JSONObject tongzhiJson=JSONObject.parseObject( tongzhi );
+		if(CommonUtil.toInteger( tongzhiJson.get( "code" ) )!=0){
+		    MemberLog ml=new MemberLog();
+		    ml.setLogtxt( "ERP计算通知回调异常:"+ JSONObject.toJSONString( mallNotShopEntity ));
+		    memberLogDAO.insert( ml );
+		}
 	    }else{
 	        throw new BusinessException(CommonUtil.toInteger(json.get( "code" )),CommonUtil.toString(json.get( "msg" )));
 	    }
@@ -873,7 +912,16 @@ public class ERPCountServiceImpl implements ERPCountService {
 		String sign = CommonUtil.toString( json.get( "sign" ) );
 		Map<String,Object> successMap=new HashMap<>(  );
 		successMap.put( "orderCode",orderCode );
-		SignHttpUtils.postByHttp( successNoticeUrl, successMap, sign );  //通知
+
+		//通知
+		String tongzhi=SignHttpUtils.postByHttp(successNoticeUrl,successMap,sign );
+		JSONObject tongzhiJson=JSONObject.parseObject( tongzhi );
+		if(CommonUtil.toInteger( tongzhiJson.get( "code" ) )!=0) {
+		    Object mallNotShopEntity = redisCacheUtil.get(orderCode );
+		    MemberLog ml = new MemberLog();
+		    ml.setLogtxt( "ERP计算通知回调异常:" + JSONObject.toJSONString( mallNotShopEntity ) );
+		    memberLogDAO.insert( ml );
+		}
 		redisCacheUtil.remove( "Memeber_ERP_" + orderCode );
 	    }
 
@@ -881,7 +929,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    String socketUrl=memberConfig.getWxmp_home()+"/8A5DA52E/socket/getSocketApi.do";
 	    Map<String,Object> socketMap=new HashMap<>(  );
 	    socketMap.put( "pushName","member_count_"+orderCode );
-	    SignHttpUtils.postByHttp( socketUrl, socketMap, wxmpsignKey );  //通知
+	    SignHttpUtils.WxmppostByHttp( socketUrl, socketMap, wxmpsignKey );  //推送
 	    map.put( "code",0 );
 	    map.put( "msg","处理成功" );
 	}catch ( Exception e ){
