@@ -18,7 +18,7 @@ spring:
   host: 113.106.202.51
   port: 6379
   password: gt@123456
-  database: 5
+  database: 0
 
  session:
   store-type: redis
@@ -45,8 +45,8 @@ datasource:
   minEvictableIdleTimeMillis: 30000
   validationQuery: select 'x'
   testWhileIdle: true
-  testOnBorrow: false
-  testOnReturn: false
+  testOnBorrow: true
+  testOnReturn: true
   # 打开PSCache，并且指定每个连接上PSCache的大小
   poolPreparedStatements: true
   maxPoolPreparedStatementPerConnectionSize: 20
