@@ -70,7 +70,10 @@ web:
  domain: yifriend.com
  sms_name: 多粉平台
  socket_url: ws://113.106.202.51:8881
-
+ redis_ip: 113.106.202.51
+ redis_port: 6379
+ redis_password: gt@123456
+ redis_database: 0
 
 redisSession:
  domainName: .example.com

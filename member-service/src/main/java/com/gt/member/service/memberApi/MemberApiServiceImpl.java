@@ -2271,7 +2271,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    // 查询要绑定的手机号码
 	    Member oldMember = memberDAO.findByPhone( busId, phone );
 
-	    redisCacheUtil.remove( code );
+	    redisCacheUtil.del( code );
 
 	    if ( CommonUtil.isEmpty( oldMember ) ) {
 		// 新用户

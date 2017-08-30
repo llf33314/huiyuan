@@ -4,7 +4,10 @@ package com.gt.member.controller;
 import com.gt.api.exception.SignException;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.member.BasicTest;
+import com.gt.member.util.HttpClienUtil;
+import com.gt.member.util.MemberConfig;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +18,8 @@ import java.util.Map;
  */
 public class BusUserServiceTest extends BasicTest {
 
-
+    @Autowired
+	private MemberConfig memberConfig;
 
     @Test
     public void testSelect() throws SignException {
@@ -31,15 +35,19 @@ public class BusUserServiceTest extends BasicTest {
 //	}
 
 
-	Map<String, Object> map = new HashMap<>();
-	map.put("memberId", "1225636");
-	map.put("shopId", "17");
+	String wxmpsignKey=memberConfig.getWxmpsignKey();
+	String socketUrl="http://sz.yifriend.net/8A5DA52E/socket/getSocketApi.do";
+	Map<String,Object> socketMap=new HashMap<>(  );
+	socketMap.put( "pushName","member_count_"+23 );
+	String ss=SignHttpUtils.WxmppostByHttp( socketUrl, socketMap, wxmpsignKey );  //推送
+	System.out.println(ss);
+//	Map<String, Object> map = new HashMap<>();
+//	map.put("ids", "335,339");
+//	map.put("busId", "42");
 
 	//SignHttpUtils.postByHttp("http://192.168.2.240:8090/api/memberApi/findByMemberId",map,"MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM");
 
 
-	String aa= SignHttpUtils.postByHttp("http://192.168.2.240:8090/memberAPI/member/findCardByMembeId.do",map,"MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM");
-	System.out.println(aa);
     }
 
 }

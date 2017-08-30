@@ -27,4 +27,12 @@ public class MemberConfig {
 
     private String socket_url;  //socket.io url
 
+    private String redis_ip;
+
+    private String redis_port;
+
+    private String redis_password;
+
+    private String redis_database;
+
 }

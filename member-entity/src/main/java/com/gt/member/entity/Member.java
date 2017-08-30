@@ -67,6 +67,7 @@ public class Member extends Model< Member > {
     /**
      * 昵称
      */
+
     private String  nickname;
     /**
      * 性别 0未知 1男 2女
