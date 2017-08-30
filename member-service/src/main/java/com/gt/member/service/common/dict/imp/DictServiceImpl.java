@@ -2,11 +2,11 @@ package com.gt.member.service.common.dict.imp;
 
 import java.util.*;
 
+import com.gt.api.enums.ResponseEnums;
 import com.gt.common.entity.BusUser;
 import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.common.BusUserNumDAO;
 import com.gt.member.dao.common.DictItemsDAO;
-import com.gt.member.enums.ResponseEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.dict.DictService;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class DictServiceImpl implements DictService {
 	    return dictItemsDAO.getDictReturnKeyAndValue( type );
 	} catch ( Exception e ) {
 	    LOG.error( "查询字典异常", e );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -45,7 +45,7 @@ public class DictServiceImpl implements DictService {
 	    return dictItemsDAO.getDiceReturnValue( type, key );
 	} catch ( Exception e ) {
 	    LOG.error( "查询字典值异常", e );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 

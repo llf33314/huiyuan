@@ -1,11 +1,11 @@
 package com.gt.member.controller;
 
+import com.gt.api.enums.ResponseEnums;
 import com.gt.member.base.BaseController;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.entity.Member;
 import com.gt.member.entity.MemberCard;
 import com.gt.member.entity.MemberGradetype;
-import com.gt.member.enums.ResponseEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.memberApi.MemberApiService;
 import com.gt.member.util.CommonUtil;
@@ -73,7 +73,7 @@ public class MemberApiController extends BaseController {
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -154,7 +154,7 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createBySuccess( countMember );
 	} catch ( Exception e ) {
 	    logger.error( "统计会员异常", e );
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -171,7 +171,7 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createBySuccess( mapList );
 	} catch ( Exception e ) {
 	    logger.error( "查询根据ids查询粉丝信息异常", e );
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -186,7 +186,7 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createBySuccess( mapList );
 	} catch ( Exception e ) {
 	    logger.error( "根据id查询粉丝信息id集合异常", e );
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -203,7 +203,7 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
 	    logger.error( "判断粉丝是否是会员异常", e );
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -220,7 +220,7 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createBySuccess();
 	} catch ( Exception e ) {
 	    logger.error( "商场关注赠送积分异常", e );
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -237,7 +237,7 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createByError(e.getCode(),e.getMessage());
 	}catch ( Exception e ) {
 	    logger.error( "会员卡类型异常", e );
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -252,7 +252,7 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createBySuccess( maplist );
 	}catch ( Exception e ) {
 	    logger.error( "查询购买的会员卡模板异常", e );
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -267,7 +267,7 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createBySuccess( gradeType );
 	}catch ( Exception e ) {
 	    logger.error( "查询会员卡片名称异常", e );
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -290,7 +290,7 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createByError( e.getCode(),e.getMessage() );
 	}catch ( Exception e ) {
 	    logger.error( "查询会员卡片名称异常", e );
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -309,7 +309,7 @@ public class MemberApiController extends BaseController {
 	    memberApiService.refundMoney( busId, orderNo, money );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -352,7 +352,7 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}catch ( Exception e ) {
 	    logger.error( "商城）查询会员积分记录异常", e );
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -369,7 +369,7 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
 	    logger.error( "查询会员卡信息异常", e );
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -431,7 +431,5 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
-
-
 
 }

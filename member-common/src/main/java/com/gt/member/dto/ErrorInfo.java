@@ -2,7 +2,7 @@ package com.gt.member.dto;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.gt.member.enums.ResponseEnums;
+import com.gt.api.enums.ResponseEnums;
 
 import java.io.Serializable;
 
@@ -25,7 +25,7 @@ public class ErrorInfo< T > extends ServerResponse< T > implements Serializable 
     }
 
     public static < T > ErrorInfo< T > createByError() {
-	return createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	return createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
     }
 
     public static < T > ErrorInfo< T > createByErrorCodeMessage( int errorCode, String errorMessage ) {
@@ -45,7 +45,7 @@ public class ErrorInfo< T > extends ServerResponse< T > implements Serializable 
     }
 
     public static void main( String[] args ) {
-	ErrorInfo< Object > error = ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	ErrorInfo< Object > error = ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	System.out.println( " url " + error.getUrl() );
 	System.out.println( JSONObject.toJSON( error ) );
     }

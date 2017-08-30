@@ -1,11 +1,10 @@
 package com.gt.member.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.enums.ResponseEnums;
 import com.gt.member.dto.ServerResponse;
-import com.gt.member.enums.ResponseEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.entityBo.MallNotShopEntity;
-import com.gt.member.service.entityBo.queryBo.MallAllEntityQuery;
 import com.gt.member.service.memberApi.MemberApiService;
 import com.gt.member.service.memberApi.MemberCountMoneyApiService;
 import com.gt.member.service.entityBo.MallAllEntity;
@@ -44,7 +43,7 @@ public class MemberCountApiController {
           mallAllEntity = memberCountMoneyApiService.mallSkipShopCount(mallAllEntity);
           return ServerResponse.createBySuccess(JSONObject.toJSON(mallAllEntity));
       }catch (Exception e){
-          return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),"计算失败");
+          return ServerResponse.createByError( ResponseEnums.ERROR.getCode(),"计算失败");
       }
     }
 

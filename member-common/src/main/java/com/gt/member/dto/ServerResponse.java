@@ -2,7 +2,7 @@ package com.gt.member.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.gt.member.enums.ResponseEnums;
+import com.gt.api.enums.ResponseEnums;
 
 import java.io.Serializable;
 
@@ -56,7 +56,7 @@ public class ServerResponse<T> implements Serializable {
      * @return ServerResponse
      */
     public static <T> ServerResponse<T> createBySuccess() {
-        return createBySuccess(ResponseEnums.SUCCESS.getDesc());
+        return createBySuccess( ResponseEnums.SUCCESS.getMsg());
     }
 
     /**
@@ -120,7 +120,7 @@ public class ServerResponse<T> implements Serializable {
      * @return ServerResponse
      */
     public static <T> ServerResponse<T> createByError() {
-        return createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+        return createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
     }
 
     /**

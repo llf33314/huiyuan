@@ -1,19 +1,17 @@
 package com.gt.member.controller;
 
+import com.gt.api.enums.ResponseEnums;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.entity.DuofenCard;
 import com.gt.member.entity.DuofenCardGet;
 import com.gt.member.entity.DuofenCardReceive;
 import com.gt.member.entity.WxCard;
-import com.gt.member.enums.ResponseEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.memberApi.CardCouponsApiService;
 import com.gt.member.util.CommonUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import lombok.Getter;
-import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -64,7 +62,7 @@ public class CardCouponseApiController {
         }catch (BusinessException e){
             return ServerResponse.createByError(e.getCode(),e.getMessage());
         }catch (Exception e) {
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
         }
     }
 
@@ -100,7 +98,7 @@ public class CardCouponseApiController {
             List<Map<String, Object>> cardList = cardCouponsApiService.findDuofenCardByMemberIdAndMoney(memberId, wxshopId, money);
             return ServerResponse.createBySuccess(cardList);
         }catch (Exception e){
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
         }
     }
 
@@ -348,7 +346,7 @@ public class CardCouponseApiController {
             List<Map<String, Object>> mapList=cardCouponsApiService.findReceive(busId);
             return ServerResponse.createBySuccess(mapList);
         }catch (Exception e){
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
         }
     }
 
@@ -367,7 +365,7 @@ public class CardCouponseApiController {
             List<Map<String, Object>> mapList=cardCouponsApiService.findDuofenCard(busId,receiveId);
             return ServerResponse.createBySuccess(mapList);
         }catch (Exception e){
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
         }
     }
     @ApiOperation(value = "卡包中卡券信息 美容", notes = "卡包中卡券信息 美容")
@@ -387,7 +385,7 @@ public class CardCouponseApiController {
         }catch (BusinessException e){
             return ServerResponse.createByError(e.getCode(),e.getMessage());
         }catch (Exception e){
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
         }
     }
 
@@ -421,7 +419,7 @@ public class CardCouponseApiController {
             List<Map<String, Object>> map=cardCouponsApiService.gameDuofenCardRecevice(busId);
             return ServerResponse.createBySuccess(map);
         }catch (Exception e){
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
         }
     }
 
@@ -478,7 +476,7 @@ public class CardCouponseApiController {
             List<Map<String,Object>> list=cardCouponsApiService.findMeiRongDuofenCardByMemberId( memberId );
             return ServerResponse.createBySuccess(list);
         }catch ( Exception e ){
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getDesc());
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
         }
     }
 
@@ -497,7 +495,7 @@ public class CardCouponseApiController {
             List<Map<String,Object>> list=cardCouponsApiService.findMeiRongCardGetByMemberId( memberId,receiceId );
             return ServerResponse.createBySuccess(list);
         }catch ( Exception e ){
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getDesc());
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
         }
     }
 
@@ -512,7 +510,7 @@ public class CardCouponseApiController {
             Map<String,Object> map=cardCouponsApiService.findDuofenCardOne(gId);
             return ServerResponse.createBySuccess(map);
         }catch ( Exception e ){
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getDesc());
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
         }
     }
 
@@ -527,7 +525,7 @@ public class CardCouponseApiController {
             Map<String,Object> map=cardCouponsApiService.findCardDetails(gId);
             return ServerResponse.createBySuccess(map);
         }catch ( Exception e ){
-            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getDesc());
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
         }
     }
 

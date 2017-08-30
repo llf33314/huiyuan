@@ -3,6 +3,7 @@
  */
 package com.gt.member.service.memberApi;
 
+import com.gt.api.enums.ResponseEnums;
 import com.gt.common.entity.FenbiFlowRecord;
 import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.common.FenbiFlowRecordDAO;
@@ -13,7 +14,6 @@ import com.gt.common.entity.WxPublicUsers;
 import com.gt.common.entity.WxShop;
 import com.gt.member.dao.*;
 import com.gt.member.entity.*;
-import com.gt.member.enums.ResponseEnums;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.MemberCommonService;
@@ -156,7 +156,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    return memberDAO.selectById( memberId );
 	} catch ( Exception e ) {
 	    LOG.error( "查询粉丝信息异常", e );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -653,7 +653,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 	} catch ( Exception e ) {
 	    LOG.error( "发放赠送物品异常", e );
-	    throw new BusinessException( ResponseEnums.SYSTEM_ERROR.getCode(), ResponseEnums.SYSTEM_ERROR.getDesc() );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
 
     }
@@ -1210,7 +1210,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
 	    LOG.error( "退款异常", e );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
 
     }
@@ -1455,7 +1455,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		saveCardRecordNew( member.getMcId(), (byte) 2, intergral + "积分", "积分", member.getBusId(), "", null, intergral );
 	    }
 	} catch ( Exception e ) {
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -1770,7 +1770,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    LOG.error( "粉币抵扣异常", e );
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -2959,7 +2959,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
 	    LOG.error( "ERP查询会员信息异常", e );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -3121,7 +3121,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
 	    LOG.error( "ERP查询会员信息异常", e );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -3170,7 +3170,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 	} catch ( Exception e ) {
 	    LOG.error( "ERP调用payMemberCard接口异常", e );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -3630,7 +3630,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    m.setLogtxt( "方法refundMoney退款异常,请求参数商家：" + busId + "订单号:" + orderNo + "退款金额:" + refundMoney );
 	    memberLogDAO.insert( m );
 	    LOG.error( "退款异常", e );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -3774,7 +3774,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    m.setLogtxt( "方法refundMoneyAndJifenAndFenbi退款异常,请求参数商家：" + map );
 	    memberLogDAO.insert( m );
 	    LOG.error( "退款异常", e );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
@@ -3897,7 +3897,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
 	    LOG.error( "ERP查询会员信息异常", e );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 

@@ -2,6 +2,7 @@ package com.gt.member.service.memberApi;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.common.entity.FenbiFlowRecord;
 import com.gt.common.entity.WxPublicUsers;
@@ -17,7 +18,6 @@ import com.gt.member.entity.DuofenCard;
 import com.gt.member.entity.DuofenCardGet;
 import com.gt.member.entity.DuofenCardReceive;
 import com.gt.member.entity.DuofenCardReceivelog;
-import com.gt.member.enums.ResponseEnums;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.dict.DictService;
@@ -272,7 +272,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
         }catch (Exception e) {
             e.printStackTrace();
             LOG.error("卡券核销失败", e);
-            throw new BusinessException(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getDesc());
+            throw new BusinessException(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
         }
 
 
@@ -312,7 +312,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             LOG.error("微信卡券核销失败", e);
             throw new BusinessException(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
         }
 
     }
@@ -516,7 +516,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             if ("1".equals(CommonUtil.toString(map.get("cardType")))) {
                 // 如果是礼券
                 DuofenCard duofenCard = duofenCardMapper.selectById(CommonUtil.toInteger(map.get("lqId")));
-                List<Map<String, Object>> moneys = JsonUtil.json2List(duofenCard.getDateTimeSet());
+                List<Map<String, Object>> moneys = JsonReflectUtil.json2List(duofenCard.getDateTimeSet());
                 double money = CommonUtil.toDouble(moneys.get(0).get("money"));
                 for (Map<String, Object> map2 : moneys) {
                     if (money > CommonUtil.toDouble(map2.get("money"))) {
@@ -542,7 +542,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             if ("1".equals(CommonUtil.toString(map.get("cardType")))) {
                 // 如果是礼券
                 DuofenCard duofenCard = duofenCardMapper.selectById(CommonUtil.toInteger(map.get("lqId")));
-                List<Map<String, Object>> moneys = JsonUtil.json2List(duofenCard.getDateTimeSet());
+                List<Map<String, Object>> moneys = JsonReflectUtil.json2List(duofenCard.getDateTimeSet());
                 double money = CommonUtil.toDouble(moneys.get(0).get("money"));
                 for (Map<String, Object> map2 : moneys) {
                     if (money > CommonUtil.toDouble(map2.get("money"))) {
@@ -560,7 +560,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 if ("1".equals(CommonUtil.toString(map.get("cardType")))) {
                     // 如果是礼券
                     DuofenCard duofenCard = duofenCardMapper.selectById(CommonUtil.toInteger(map.get("lqId")));
-                    List<Map<String, Object>> moneys = JsonUtil.json2List(duofenCard.getDateTimeSet());
+                    List<Map<String, Object>> moneys = JsonReflectUtil.json2List(duofenCard.getDateTimeSet());
                     double money = CommonUtil.toDouble(moneys.get(0).get("money"));
                     for (Map<String, Object> map2 : moneys) {
                         if (money > CommonUtil.toDouble(map2.get("money"))) {
@@ -591,7 +591,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 }
             }
 
-            List<Map<String, Object>> cardMlist = JsonUtil.json2List(receives.getCardMessage());
+            List<Map<String, Object>> cardMlist = JsonReflectUtil.json2List(receives.getCardMessage());
 
             Member member = memberMapper.selectByKey(memberId);
             if (ids.size() > 0) {
@@ -648,7 +648,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             }
         } catch (Exception e) {
             LOG.error("用户id:" + memberId + "购买了" + num + "个卡券包id:" + receiveId, e);
-            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
         }
     }
 
@@ -687,7 +687,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             }
             if (ids.size() > 0) {
                 Map<String, Object> map = new HashMap<String, Object>();
-                Map<String, Object> recevieMap = JsonUtil.json2Map( net.sf.json.JSONObject.fromObject(receives).toString());
+                Map<String, Object> recevieMap = JsonReflectUtil.json2Map( net.sf.json.JSONObject.fromObject(receives).toString());
                 if (CommonUtil.isNotEmpty( receives.getReceiveDate() ) && !DateTimeKit.laterThanNow(receives.getReceiveDate())) {
                     recevieMap.put("guoqi", 1);
                 } else {
@@ -695,7 +695,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 }
                 List<DuofenCard> duofencards = duofenCardMapper.findInCardIds(ids);
                 JSONArray jsonList = JSONArray.fromObject(duofencards);
-                List<Map<String, Object>> duofencardList = JsonUtil.json2List(jsonList.toString());
+                List<Map<String, Object>> duofencardList = JsonReflectUtil.json2List(jsonList.toString());
 
                 List<Map<String, Object>> returnDuofencardList = new ArrayList<Map<String, Object>>();
                 for (Map<String, Object> map2 : duofencardList) {
@@ -711,7 +711,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                     }
                     if ("4".equals(CommonUtil.toString(map2.get("cardType")))) {
                         String dateTimeSet = CommonUtil.toString(map2.get("dateTimeSet"));
-                        List<Map<String, Object>> timeList = JsonUtil.json2List(dateTimeSet);
+                        List<Map<String, Object>> timeList = JsonReflectUtil.json2List(dateTimeSet);
                         for (Map<String, Object> map3 : timeList) {
                             Date startTime = DateTimeKit.parse(CommonUtil.toString(map3.get("startTime")), "yyyy-MM-dd");
                             Date endTime = DateTimeKit.parse(CommonUtil.toString(map3.get("endTime")), "yyyy-MM-dd");
@@ -733,7 +733,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             }
         } catch (Exception e) {
             LOG.error("查询卡券信息", e);
-            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+            throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
         }
         return null;
     }
@@ -793,7 +793,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
         } catch (BusinessException e) {
             throw  new BusinessException(e.getCode(),e.getMessage());
         }catch ( Exception e ){
-            throw  new BusinessException(ResponseEnums.ERROR);
+            throw  new BusinessException(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
         }
     }
 
@@ -1002,7 +1002,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
         } catch (Exception e) {
             LOG.error("领取优惠券异常", e);
-            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
         }
     }
 
@@ -1164,7 +1164,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 }
             }
 
-            List<Map<String, Object>> cardMessage = JsonUtil.json2List(dfcr.getCardMessage());
+            List<Map<String, Object>> cardMessage = JsonReflectUtil.json2List(dfcr.getCardMessage());
 
             List<Map<String, Object>> listMap = duofenCardMapper.findByCardIds(dfcr.getBusId(), cardList);
 
@@ -1231,7 +1231,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             throw new BusinessException(e.getCode(), e.getMessage());
         }catch (Exception e){
             LOG.error("ERP领取优惠券失败", e);
-            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
         }
     }
 
@@ -1249,7 +1249,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 }
             }
 
-            List<Map<String, Object>> cardMlist = JsonUtil.json2List(receives.getCardMessage());
+            List<Map<String, Object>> cardMlist = JsonReflectUtil.json2List(receives.getCardMessage());
 
             Member member = memberMapper.selectById(memberId);
             if (ids.size() > 0) {
@@ -1311,7 +1311,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             }
         } catch (Exception e) {
             LOG.error("用户id:" + memberId + "购买了" + num + "个卡券包id:" + receiveId, e);
-            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
         }
     }
 
@@ -1413,7 +1413,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
         }
         catch (Exception e) {
             LOG.error("回滚的卡券信息异常", e);
-            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
         }
 
     }
@@ -1436,7 +1436,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 }
             }
 
-            List<Map<String, Object>> cardMlist = JsonUtil.json2List(receives.getCardMessage());
+            List<Map<String, Object>> cardMlist = JsonReflectUtil.json2List(receives.getCardMessage());
 
             Member member = memberMapper.selectById(memberId);
             if (ids.size() > 0) {
@@ -1490,7 +1490,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             }
         } catch (Exception e) {
             LOG.error("用户id:" + memberId + "游戏中奖了" + num + "个卡券包id:" + receiveId, e);
-            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
         }
 
     }
@@ -1548,7 +1548,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             throw new BusinessException(e.getCode(), e.getMessage());
         } catch (Exception e) {
             LOG.error("核销失败", e);
-            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc());
+            throw new BusinessException(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
         }
     }
 
@@ -1681,7 +1681,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
         DuofenCard duofenCard = duofenCardMapper
                         .selectById(duofenCardGet.getCardId());
         map.put("duofenCard", duofenCard);
-        List<Map<String, Object>> images = JsonUtil.json2List(duofenCard
+        List<Map<String, Object>> images = JsonReflectUtil.json2List(duofenCard
                         .getTextImageList());
         map.put("images", images);
         return map;

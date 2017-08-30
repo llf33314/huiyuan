@@ -1,5 +1,6 @@
 package com.gt.member.service.common;
 
+import com.gt.api.enums.ResponseEnums;
 import com.gt.common.entity.BusUser;
 import com.gt.member.dao.MemberDateDAO;
 import com.gt.member.dao.MemberGradetypeDAO;
@@ -8,9 +9,7 @@ import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.entity.MemberDate;
 import com.gt.member.entity.MemberGradetype;
 import com.gt.member.entity.PublicParameterset;
-import com.gt.member.enums.ResponseEnums;
 import com.gt.member.exception.BusinessException;
-import com.gt.member.service.common.MemberCommonService;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.DateTimeKit;

@@ -1,6 +1,6 @@
 package com.gt.member.exception;
 
-import com.gt.member.enums.ResponseEnums;
+import com.gt.api.enums.ResponseEnums;
 import com.gt.member.enums.ResponseMemberEnums;
 
 /**

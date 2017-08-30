@@ -1,5 +1,6 @@
 package com.gt.member.controller;
 
+import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.member.base.BaseController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,8 +37,8 @@ public class TestController extends BaseController {
 	//SignHttpUtils.postByHttp("http://192.168.2.240:8090/api/memberApi/findByMemberId",map,"MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM");
 
 
-	String aa=SignHttpUtils.postByHttp("POST /memberAPI/cardCouponseApi/findCardReceiveBuy",map,"MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM");
-	System.out.println(aa);
+	//String aa= SignHttpUtils.postByHttp("POST /memberAPI/cardCouponseApi/findCardReceiveBuy",map,"MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM");
+	//System.out.println(aa);
     }
 
 }

@@ -1,7 +1,6 @@
 package com.gt.member.exception;
 
 import com.gt.member.dto.ErrorInfo;
-import com.gt.member.enums.ResponseEnums;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;

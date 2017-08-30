@@ -1,6 +1,6 @@
 package com.gt.member.exception;
 
-import com.gt.member.enums.ResponseEnums;
+import com.gt.api.enums.ResponseEnums;
 import com.gt.member.enums.ResponseMemberEnums;
 
 /**
@@ -45,9 +45,9 @@ public class SystemException extends RuntimeException {
      * @param responseEnums 通用枚举类
      */
     public SystemException(ResponseEnums responseEnums){
-        super(responseEnums.getDesc());
+        super(responseEnums.getMsg());
         this.code = responseEnums.getCode();
-        this.message= responseEnums.getDesc();
+        this.message= responseEnums.getMsg();
     }
 
     /**

@@ -1,7 +1,8 @@
 package com.gt.member.config.filter;
 
+import com.gt.api.bean.sign.SignEnum;
+import com.gt.api.util.sign.BodyRequestWrapper;
 import com.gt.api.util.sign.SignFilterUtils;
-import com.gt.member.enums.SignEnum;
 import com.gt.member.util.MemberConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

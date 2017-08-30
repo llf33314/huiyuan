@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.MemberConfig;
 import com.gt.member.util.RedisCacheUtil;
@@ -69,25 +70,5 @@ public class AuthorizeOrLoginController {
 	queryMap.put( "uclogin", uclogin );
 	String url = "redirect:http://192.168.2.240:8080/remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + queryMap;
 	return url;
-    }
-
-    /**
-     * 返回跳转到之前的页面
-     *
-     * @param request
-     * @param response
-     *
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping( value = "/{redisKey}/79B4DE7C/returnJump" )
-    public String returnJump( HttpServletRequest request, HttpServletResponse response, @PathVariable( "redisKey" ) String redisKey, Map< String,Object > params ) {
-	try {
-	    Object url = redisCacheUtil.get( redisKey );
-	    return "redirect:" + url;
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	}
-	return null;
     }
 }

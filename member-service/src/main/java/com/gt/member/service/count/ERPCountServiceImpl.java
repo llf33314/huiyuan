@@ -2,6 +2,7 @@ package com.gt.member.service.count;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.common.entity.BusUser;
 import com.gt.common.entity.WxPublicUsers;
@@ -11,7 +12,6 @@ import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.common.WxPublicUsersDAO;
 import com.gt.member.dao.common.WxShopDAO;
 import com.gt.member.entity.*;
-import com.gt.member.enums.ResponseEnums;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.MemberNewService;
