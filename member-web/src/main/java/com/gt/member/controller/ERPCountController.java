@@ -52,7 +52,7 @@ public class ERPCountController extends BaseController {
     public String aa( HttpServletRequest request, HttpServletResponse response,@RequestParam String orderCode ) {
 	MallAllEntityQuery m = new MallAllEntityQuery();
 	m.setOrderCode( orderCode );  //订单号
-	m.setTotalMoney( 0.01 ); //订单总金额
+	m.setTotalMoney( 100.01 ); //订单总金额
 	List< MallEntityQuery > list = new ArrayList<>();
 	MallEntityQuery m1 = new MallEntityQuery();
 	m1.setMallId( 1 );  //商品id or 生成序列号
@@ -71,6 +71,7 @@ public class ERPCountController extends BaseController {
 	m.setSuccessNoticeUrl( "http://www.baid.com" );  //支付成功 通知地址
 	m.setJumpUrl( "http://www.baid.com" );  //支付成功跳转地址
 	m.setJumphttpPOST( 0 );
+	m.setDerateMoney( 100.0 );
 
 	m.setMalls( list );
 	redisCacheUtil.set( m.getOrderCode(), JSONObject.toJSONString( m ),600);

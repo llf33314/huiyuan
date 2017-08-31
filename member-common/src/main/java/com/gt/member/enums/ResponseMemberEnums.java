@@ -9,9 +9,6 @@ public enum ResponseMemberEnums {
     NULL(4003,"数据空值"),
     NO_PHONE_CODE(4004,"短信验证码过时或不存在"),
 
-
-
-
     CARD_STATUS(5001, "会员卡已停用"),
     MEMBER_LESS_JIFEN(5002,"积分不足"),
     MEMBER_LESS_FENBI(5003,"粉币不足"),

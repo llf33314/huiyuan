@@ -43,8 +43,11 @@ public class MallNotShopEntity {
     private Integer leagueJifenNum = 0;  //联盟积分使用数量
     private Double leagueMoney = 0.0;  //联盟卡优惠金额
 
+    private Double derateMoney=0.0;  //减免金额 计算完减去减免金额
+
     private Integer payType=0;  //支付方式   字典1198
     private Double balanceMoney = 0.0;  //支付金额
+
 
 
     public Integer getShopId() {
@@ -279,4 +282,11 @@ public class MallNotShopEntity {
         this.orderCode = orderCode;
     }
 
+    public Double getDerateMoney() {
+        return derateMoney;
+    }
+
+    public void setDerateMoney( Double derateMoney ) {
+        this.derateMoney = derateMoney;
+    }
 }

@@ -23,6 +23,7 @@
         <input type="hidden" value="${mallAllEntityQuery.totalMoney}" id="totalMoney">
         <input type="hidden" value="${mallAllEntityQuery.jumpUrl}" id="jumpUrl"/>
         <input type="hidden" value="${mallAllEntityQuery.jumphttpPOST}" id="jumphttpPOST"/>
+        <input type="hidden" value="${mallAllEntityQuery.derateMoney}" id="derateMoney"/>
         <input type="hidden" value="" id="memberId">
         <input type="hidden" value="" id="ctId">
         <input type="hidden" value="1" id="visitor">
@@ -136,12 +137,17 @@
                     <span class="title">消费金额：</span>
                     <span>￥${mallAllEntityQuery.totalMoney}</span>
                 </li>
+                <li class="item">
+                    <span class="title">减免金额：</span>
+                    <span>￥${mallAllEntityQuery.derateMoney}</span>
+                </li>
+
                 <li class="item youhuiItem">
 
                 </li>
                 <li class="item">
                     <span class="title">应收金额：</span>
-                    <span class="erp-billing-red" style="font-size: 23px;" id="balanceMoney">￥${mallAllEntityQuery.totalMoney}</span>
+                    <span class="erp-billing-red" style="font-size: 23px;" id="balanceMoney">￥<fmt:formatNumber value="${mallAllEntityQuery.totalMoney-mallAllEntityQuery.derateMoney}" pattern="0.00"/></span>
                     <%-- <botton @click="changePrice()" class="erp-billing-bg-color btn">改价处理</botton>--%>
                 </li>
             </ul>
@@ -428,9 +434,10 @@
     function fnchangePayMoney() {
         var payMoney = $("#payMoney").val();
         var totalMoney = $("#totalMoney").val();
-        var balaceHtml = parseFloat(totalMoney) - parseFloat(payMoney);
+        var derateMoney = $("#derateMoney").val();
+        var balaceHtml = parseFloat(totalMoney)-parseFloat(derateMoney) - parseFloat(payMoney);
         if (balaceHtml < 0) {
-            $(".balaceHtml").html("￥" + balaceHtml);
+            $(".balaceHtml").html("￥" + balaceHtml.toFixed(2));
         } else {
             $(".balaceHtml").html("￥0");
         }

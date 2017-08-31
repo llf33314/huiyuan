@@ -1599,7 +1599,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    }
 	    balanceMoneyByShopId = formatNumber( BigDecimalUtil.add( balanceMoneyByShopId, mallEntity.getBalanceMoney() ) );
 	}
-	mallNotShopEntity.setBalanceMoney( balanceMoneyByShopId );
+	mallNotShopEntity.setBalanceMoney( formatNumber( BigDecimalUtil.sub(balanceMoneyByShopId,mallNotShopEntity.getDerateMoney())));
 	Long end = new Date().getTime();
 	System.out.println( "用时:" + ( end - start ) + "毫秒" );
 	return mallNotShopEntity;

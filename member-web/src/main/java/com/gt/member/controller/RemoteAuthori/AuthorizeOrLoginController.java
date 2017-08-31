@@ -65,7 +65,6 @@ public class AuthorizeOrLoginController {
 	Map< String,Object > queryMap = new HashMap< String,Object >();
 	queryMap.put( "otherRedisKey", otherRedisKey );
 	queryMap.put( "browser", browser );
-	queryMap.put( "domainName", memberConfig.getWebHome() );
 	queryMap.put( "busId", busId );
 	queryMap.put( "uclogin", uclogin );
 	String url = "redirect:http://192.168.2.240:8080/remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + queryMap;

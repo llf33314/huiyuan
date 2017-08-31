@@ -295,6 +295,8 @@ public class ERPCountServiceImpl implements ERPCountService {
 
 	    MallNotShopEntity mallNotShopEntity = new MallNotShopEntity();
 
+	    mallNotShopEntity.setDerateMoney(mallQuery.getDerateMoney());
+
 	    if(CommonUtil.isNotEmpty( jsonObject.get( "useCoupon" )  )) {
 		mallNotShopEntity.setUseCoupon( CommonUtil.toInteger( jsonObject.get( "useCoupon" ) ) );
 	    }
@@ -359,10 +361,12 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    Integer payType = CommonUtil.toInteger( jsonObject.get( "payType" ) );
 	    Integer visitor = CommonUtil.toInteger( jsonObject.get( "visitor" ) );
 	    MallNotShopEntity mallNotShopEntity = new MallNotShopEntity();
+	    mallNotShopEntity.setTotalMoney( mallQuery.getTotalMoney() );
 	    mallNotShopEntity.setOrderCode( mallQuery.getOrderCode() );
 	    mallNotShopEntity.setVisitor( visitor );
 	    mallNotShopEntity.setPayType( payType );
-	    mallNotShopEntity.setBalanceMoney( mallQuery.getTotalMoney() );
+	    mallNotShopEntity.setDerateMoney(  mallQuery.getDerateMoney());
+	    mallNotShopEntity.setBalanceMoney( BigDecimalUtil.sub(mallQuery.getTotalMoney(), mallQuery.getDerateMoney() ) );
 	    if ( visitor == 1 ) {
 		//游客 直接通知
 		Double payMoney = CommonUtil.toDouble( jsonObject.get( "payMoney" ) );
@@ -571,14 +575,13 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    MallAllEntityQuery mallQuery = JSON.toJavaObject( JSON.parseObject( mallAllEntityQuery ), MallAllEntityQuery.class );
 	    JSONObject jsonObject = JSONObject.parseObject( param );
 	    Integer visitor = CommonUtil.toInteger( jsonObject.get( "visitor" ) );
-
 	    MallNotShopEntity mallNotShopEntity = new MallNotShopEntity();
 	    mallNotShopEntity.setOrderCode( mallQuery.getOrderCode() );
 	    mallNotShopEntity.setVisitor( visitor );
-	    mallNotShopEntity.setBalanceMoney( mallQuery.getTotalMoney() );
 	    mallNotShopEntity.setShopId( mallQuery.getShopId() );
 	    mallNotShopEntity.setTotalMoney( mallQuery.getTotalMoney() );
-
+	    mallNotShopEntity.setDerateMoney(  mallQuery.getDerateMoney());
+	    mallNotShopEntity.setBalanceMoney( BigDecimalUtil.sub(mallQuery.getTotalMoney(), mallQuery.getDerateMoney() ) );
 	    if(visitor==0) {
 		mallNotShopEntity.setUseCoupon( CommonUtil.toInteger( jsonObject.get( "useCoupon" ) ) );
 		mallNotShopEntity.setCouponType( CommonUtil.toInteger( jsonObject.get( "couponType" ) ) );
@@ -686,13 +689,13 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    MallAllEntityQuery mallQuery = JSON.toJavaObject( JSON.parseObject( mallAllEntityQuery ), MallAllEntityQuery.class );
 	    JSONObject jsonObject = JSONObject.parseObject( param );
 	    Integer visitor = CommonUtil.toInteger( jsonObject.get( "visitor" ) );
-
 	    MallNotShopEntity mallNotShopEntity = new MallNotShopEntity();
 	    mallNotShopEntity.setOrderCode( mallQuery.getOrderCode() );
 	    mallNotShopEntity.setVisitor( visitor );
-	    mallNotShopEntity.setBalanceMoney( mallQuery.getTotalMoney() );
 	    mallNotShopEntity.setShopId( mallQuery.getShopId() );
 	    mallNotShopEntity.setTotalMoney( mallQuery.getTotalMoney() );
+	    mallNotShopEntity.setDerateMoney(  mallQuery.getDerateMoney());
+	    mallNotShopEntity.setBalanceMoney( BigDecimalUtil.sub(mallQuery.getTotalMoney(), mallQuery.getDerateMoney() ) );
 	    if(visitor==0) {
 		mallNotShopEntity.setUseCoupon( CommonUtil.toInteger( jsonObject.get( "useCoupon" ) ) );
 		mallNotShopEntity.setCouponType( CommonUtil.toInteger( jsonObject.get( "couponType" ) ) );

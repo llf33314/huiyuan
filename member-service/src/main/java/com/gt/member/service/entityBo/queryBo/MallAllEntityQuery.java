@@ -16,6 +16,8 @@ public class MallAllEntityQuery {
     private Integer busId;  //商家主账户id
     private Integer shopId;  //门店
 
+    private Double derateMoney;  //减免金额 计算完减去减免金额
+
     private String successNoticeUrl;  //支付成功 通知地址
 
     private String jumpUrl;  //支付成功跳转地址
@@ -102,6 +104,14 @@ public class MallAllEntityQuery {
 
     public void setJumphttpPOST( Integer jumphttpPOST ) {
         this.jumphttpPOST = jumphttpPOST;
+    }
+
+    public Double getDerateMoney() {
+        return derateMoney;
+    }
+
+    public void setDerateMoney( Double derateMoney ) {
+        this.derateMoney = derateMoney;
     }
 }
 
