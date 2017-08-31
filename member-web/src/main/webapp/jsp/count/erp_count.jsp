@@ -241,8 +241,8 @@
         </div>
     </el-dialog>
 
-    <el-dialog title="扫描支付" :visible.sync="dialogScanCodePayMentVisible" size="590px" :close-on-click-modal="false">
-        <div class="smzf-dialogs-box">
+    <el-dialog :modal="false" title="扫描支付" :visible.sync="dialogScanCodePayMentVisible" size="590px" :close-on-click-modal="false">
+         <div class="smzf-dialogs-box">
             <div class="left">
                 <p class="title">方式1：顾客扫码支付</p>
                 <img src="" id="saomaImage"/>
@@ -258,7 +258,7 @@
         </div>
     </el-dialog>
     <!--魔盒支付弹框-->
-    <el-dialog title="选择支付方式" :visible.sync="dialogmoBoxPayVisible" size="590px" top="30%" :close-on-click-modal="false">
+    <el-dialog :modal="false" title="选择支付方式" :visible.sync="dialogmoBoxPayVisible" size="590px" top="30%" :close-on-click-modal="false">
         <el-radio-group v-model="moBoxPayType">
             <el-radio :label="1" style="margin-right: 60px;">微信</el-radio>
             <el-radio :label="2">支付宝</el-radio>
@@ -279,7 +279,7 @@
             <el-button @click="dialogDiscountTypeVisible = false">取 消</el-button>
         </div>
     </el-dialog>
-    <el-dialog title="请选择挂账方式" :visible.sync="dialogBillingOrderVisible" size="590px" :close-on-click-modal="false">
+    <el-dialog :modal="false" title="请选择挂账方式" :visible.sync="dialogBillingOrderVisible" size="590px" :close-on-click-modal="false">
         <div class="smzf-dialogs-box">
             <div class="left" style="height: 275px;">
                 <p class="title">方式1：现场扫码授权</p>
@@ -303,7 +303,7 @@
     </el-dialog>
 
     <!--支付成功提示-->
-    <el-dialog title="提示" :visible.sync="submitOrderMsgSuccess" size="530px" top="20%" :close-on-click-modal="false">
+    <el-dialog :modal="false" title="提示" :visible.sync="submitOrderMsgSuccess" size="530px" top="20%" :close-on-click-modal="false">
         <div class="smzf-dialogs-box" style="text-align: center;">
             <div style="position: relative;padding-top: 20px;">
                 <i class="el-icon-circle-check" style="font-size: 36px;color: #34d063;position: absolute; left: 0px;"></i>
@@ -318,7 +318,7 @@
 
 
     <!--错误提示-->
-    <el-dialog title="提示" :visible.sync="errorsubmitOrderMsg" size="530px" top="20%" :close-on-click-modal="false">
+    <el-dialog :modal="false" title="提示" :visible.sync="errorsubmitOrderMsg" size="530px" top="20%" :close-on-click-modal="false">
         <div class="smzf-dialogs-box" style="text-align: center;">
             <div style="position: relative;padding-top: 20px;">
                 <i class="el-icon-circle-close" style="font-size: 36px;position: absolute; left: 0px;"></i>
