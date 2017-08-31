@@ -22,9 +22,11 @@
         <input type="hidden" value="${mallAllEntityQuery.busId}" id="busId"/>
         <input type="hidden" value="${mallAllEntityQuery.totalMoney}" id="totalMoney">
         <input type="hidden" value="${mallAllEntityQuery.jumpUrl}" id="jumpUrl"/>
+        <input type="hidden" value="${mallAllEntityQuery.jumphttpPOST}" id="jumphttpPOST"/>
         <input type="hidden" value="" id="memberId">
         <input type="hidden" value="" id="ctId">
         <input type="hidden" value="1" id="visitor">
+
 
 
         <!-- 查询会员信息 -->

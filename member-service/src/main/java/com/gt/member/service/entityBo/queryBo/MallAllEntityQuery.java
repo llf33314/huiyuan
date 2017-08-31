@@ -22,6 +22,8 @@ public class MallAllEntityQuery {
 
     private String sign;  //支付成功回调秘钥
 
+    private Integer jumphttpPOST=0;  //回调请求方式 0默认postByHttp   1：WxmppostByHttp请求方式
+
 
     public String getOrderCode() {
         return orderCode;
@@ -92,6 +94,14 @@ public class MallAllEntityQuery {
 
     public void setSign( String sign ) {
         this.sign = sign;
+    }
+
+    public Integer getJumphttpPOST() {
+        return jumphttpPOST;
+    }
+
+    public void setJumphttpPOST( Integer jumphttpPOST ) {
+        this.jumphttpPOST = jumphttpPOST;
     }
 }
 

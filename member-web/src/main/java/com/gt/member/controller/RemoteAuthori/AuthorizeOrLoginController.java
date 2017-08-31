@@ -61,7 +61,7 @@ public class AuthorizeOrLoginController {
 
 	String requestUrl = CommonUtil.toString( map.get( "requestUrl" ) );
 	String otherRedisKey = CommonUtil.getCode();
-	redisCacheUtil.set( otherRedisKey, requestUrl, 5 * 60L );
+	redisCacheUtil.set( otherRedisKey, requestUrl, 5 * 60 );
 	Map< String,Object > queryMap = new HashMap< String,Object >();
 	queryMap.put( "otherRedisKey", otherRedisKey );
 	queryMap.put( "browser", browser );

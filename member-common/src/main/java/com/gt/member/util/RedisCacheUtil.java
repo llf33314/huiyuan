@@ -27,6 +27,7 @@ public class RedisCacheUtil {
 
     @Autowired
     private MemberConfig memberConfig;
+
     private JedisPool pool = null;
 
     public  JedisPool getPool() {

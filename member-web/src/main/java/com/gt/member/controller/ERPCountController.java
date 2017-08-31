@@ -70,8 +70,10 @@ public class ERPCountController extends BaseController {
 	m.setShopId( 17 );  //门店订单
 	m.setSuccessNoticeUrl( "http://www.baid.com" );  //支付成功 通知地址
 	m.setJumpUrl( "http://www.baid.com" );  //支付成功跳转地址
+	m.setJumphttpPOST( 0 );
+
 	m.setMalls( list );
-	redisCacheUtil.set( m.getOrderCode(), JSONObject.toJSONString( m ),600L);
+	redisCacheUtil.set( m.getOrderCode(), JSONObject.toJSONString( m ),600);
 	request.setAttribute( "orderCodeKey", m.getOrderCode() );
 	return "index";
     }
@@ -80,9 +82,8 @@ public class ERPCountController extends BaseController {
     @RequestMapping( value = "/countErpIndex")
     public String countErpIndex( HttpServletRequest request, HttpServletResponse response, @RequestParam String orderCodeKey ) {
 	try {
-	    Object obj=redisCacheUtil.get( orderCodeKey );
-	//    redisCacheUtil.remove( orderCodeKey );
-	    MallAllEntityQuery mallAllEntityQuery= JSON.parseObject(obj.toString() ,MallAllEntityQuery.class);
+	    String obj=redisCacheUtil.get( orderCodeKey );
+	    MallAllEntityQuery mallAllEntityQuery= JSON.parseObject(obj ,MallAllEntityQuery.class);
 	    request.setAttribute( "mallAllEntityQueryStr", obj );
 	    request.setAttribute( "mallAllEntityQuery", mallAllEntityQuery );
 	    request.setAttribute( "member_count","member_count_"+mallAllEntityQuery.getOrderCode() );
