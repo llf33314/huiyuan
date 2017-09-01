@@ -38,10 +38,11 @@ public class MemberCountApiController {
     @ResponseBody
     @RequestMapping(value = "memberCountMoneyByShop",method = RequestMethod.POST)
     public ServerResponse memberCountMoneyByShop(HttpServletRequest request,
-                                         HttpServletResponse response, MallAllEntity mallAllEntity ){
+                                         HttpServletResponse response, @RequestBody String  mallAllEntity ){
         try {
-          mallAllEntity = memberCountMoneyApiService.mallSkipShopCount(mallAllEntity);
-          return ServerResponse.createBySuccess(JSONObject.toJSON(mallAllEntity));
+            MallAllEntity mallAllEntity1=JSONObject.toJavaObject( JSONObject.parseObject( mallAllEntity ),MallAllEntity.class ) ;
+            mallAllEntity1 = memberCountMoneyApiService.mallSkipShopCount(mallAllEntity1);
+          return ServerResponse.createBySuccess(JSONObject.toJSON(mallAllEntity1));
       }catch (Exception e){
           return ServerResponse.createByError( ResponseEnums.ERROR.getCode(),"计算失败");
       }
@@ -52,10 +53,11 @@ public class MemberCountApiController {
     @ResponseBody
     @RequestMapping(value = "memberCountMoneyByBusUser",method = RequestMethod.POST)
     public ServerResponse memberCountMoneyByBusUser(HttpServletRequest request,
-                    HttpServletResponse response, MallNotShopEntity mallNotShopEntity ){
+                    HttpServletResponse response,@RequestBody String   mallNotShopEntity ){
         try {
-            mallNotShopEntity = memberCountMoneyApiService.mallSkipNotShopCount(mallNotShopEntity);
-            return ServerResponse.createBySuccess(JSONObject.toJSON(mallNotShopEntity));
+            MallNotShopEntity  mallNotShopEntity1=JSONObject.toJavaObject( JSONObject.parseObject( mallNotShopEntity ),MallNotShopEntity.class ) ;
+            mallNotShopEntity1 = memberCountMoneyApiService.mallSkipNotShopCount(mallNotShopEntity1);
+            return ServerResponse.createBySuccess(JSONObject.toJSON(mallNotShopEntity1));
         }catch (Exception e){
             return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),"计算失败");
         }
@@ -67,9 +69,10 @@ public class MemberCountApiController {
     @GetMapping("/paySuccess")
     @RequestMapping(value = "paySuccess",method = RequestMethod.POST)
     public ServerResponse paySuccess(HttpServletRequest request,
-                                     HttpServletResponse response,@RequestBody PaySuccessBo paySuccessBo){
+                                     HttpServletResponse response,@RequestBody String paySuccessBo){
         try {
-            memberApiService.paySuccess(paySuccessBo);
+            PaySuccessBo  paySuccessBo1=JSONObject.toJavaObject( JSONObject.parseObject( paySuccessBo ),PaySuccessBo.class ) ;
+            memberApiService.paySuccess(paySuccessBo1);
             return ServerResponse.createBySuccess();
         }catch (BusinessException e){
             return ServerResponse.createByError(e.getCode(),e.getMessage());
