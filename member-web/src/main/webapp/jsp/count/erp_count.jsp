@@ -208,7 +208,7 @@
         </div>
         <div class="submit-content">
             <button @click="submitOrderMsg()" class="btn erp-billing-bg-color">确认</button>
-            <button class="btn cancle">取消</button>
+            <button class="btn cancle" onclick="window.history.go(-1);">取消</button>
         </div>
         <%--<button @click="dialogDiscountTypeVisible = true">选择优惠方式</button>--%>
     </div>
@@ -324,6 +324,20 @@
         </div>
     </el-dialog>
 
+    <c:if test="${error==0}">
+        <el-dialog :modal="false" title="提示" :visible.sync="orderError" size="530px" top="20%" :close-on-click-modal="false">
+            <div class="smzf-dialogs-box" style="text-align: center;">
+                <div style="position: relative;padding-top: 20px;">
+                    <i class="el-icon-circle-close" style="font-size: 36px;position: absolute; left: 0px;"></i>
+                    <p style="text-align: left; padding-left: 50px;">订单已超时,请返回重新进入</p>
+                </div>
+            </div>
+            <div slot="footer" class="dialog-footer" style="padding-bottom: 40px;padding-top: 60px;">
+                <el-button type="primary" @click="window.history.go(-1);">确 定</el-button>
+            </div>
+        </el-dialog>
+    </c:if>
+
 
     <!--错误提示-->
     <el-dialog :modal="false" title="提示" :visible.sync="errorsubmitOrderMsg" size="530px" top="20%" :close-on-click-modal="false">
@@ -358,7 +372,8 @@
             submitOrderMsgSuccess: false,
             errorsubmitOrderMsg: false,
             dialogDiscountTypeVisible: false,
-            discountType: 1
+            discountType: 1,
+            orderError:true
         },
         methods: {
             xinjinPayMent: function (e) {

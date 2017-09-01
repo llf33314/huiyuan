@@ -52,13 +52,13 @@ public class ERPCountController extends BaseController {
     public String aa( HttpServletRequest request, HttpServletResponse response,@RequestParam String orderCode ) {
 	MallAllEntityQuery m = new MallAllEntityQuery();
 	m.setOrderCode( orderCode );  //订单号
-	m.setTotalMoney( 100.01 ); //订单总金额
+	m.setTotalMoney( 100.1 ); //订单总金额
 	List< MallEntityQuery > list = new ArrayList<>();
 	MallEntityQuery m1 = new MallEntityQuery();
 	m1.setMallId( 1 );  //商品id or 生成序列号
 	m1.setNumber( 1 );  // 商品数量
-	m1.setTotalMoneyOne( 0.01 );  //商品应付单价格
-	m1.setTotalMoneyAll( 0.01 ); //商品订单总价格
+	m1.setTotalMoneyOne( 100.1 );  //商品应付单价格
+	m1.setTotalMoneyAll( 100.1 ); //商品订单总价格
 	m1.setUserCard( 1 );  //是否能用会员卡打折  0不参与 1参与
 	m1.setUseCoupon( 1 );    //是否使用优惠券 0不参与 1参与
 	m1.setUseFenbi( 1 );    //是否使用粉币 0不参与 1参与
@@ -92,6 +92,7 @@ public class ERPCountController extends BaseController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    LOG.error( "转换异常",e );
+	    request.setAttribute("error", 0);
 	}
 	return "count/erp_count";
     }
