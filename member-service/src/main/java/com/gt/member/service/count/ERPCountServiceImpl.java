@@ -956,6 +956,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    String socketUrl=memberConfig.getWxmp_home()+"/8A5DA52E/socket/getSocketApi.do";
 	    Map<String,Object> socketMap=new HashMap<>(  );
 	    socketMap.put( "pushName","member_count_"+orderCode );
+	    socketMap.put( "pushMsg","支付成功" );
 	    SignHttpUtils.WxmppostByHttp( socketUrl, socketMap, wxmpsignKey );  //推送
 	    map.put( "code",0 );
 	    map.put( "msg","处理成功" );
