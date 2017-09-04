@@ -373,7 +373,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 		if ( CommonUtil.isEmpty( payMoney ) ) {
 		    throw new BusinessException( ResponseMemberEnums.LESS_THAN_CASH );
 		}
-		if ( payMoney < mallQuery.getTotalMoney() ) {
+		if ( payMoney < mallNotShopEntity.getBalanceMoney() ) {
 		    throw new BusinessException( ResponseMemberEnums.LESS_THAN_CASH );
 		}
 		Object obj=redisCacheUtil.get(mallNotShopEntity.getOrderCode() );
