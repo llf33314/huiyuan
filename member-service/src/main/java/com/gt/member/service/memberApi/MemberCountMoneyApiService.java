@@ -19,8 +19,6 @@ public interface MemberCountMoneyApiService {
     public MemberShopEntity publicMemberCountMoney(MemberShopEntity ce) throws Exception;
 
 
-
-
     /**
      * 跨门店购买
      * @param mallAllEntity

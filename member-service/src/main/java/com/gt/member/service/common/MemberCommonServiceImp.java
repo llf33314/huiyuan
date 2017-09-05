@@ -2,15 +2,12 @@ package com.gt.member.service.common;
 
 import com.gt.api.enums.ResponseEnums;
 import com.gt.common.entity.BusUser;
-import com.gt.member.dao.MemberDateDAO;
-import com.gt.member.dao.MemberGradetypeDAO;
-import com.gt.member.dao.PublicParametersetDAO;
+import com.gt.member.dao.*;
 import com.gt.member.dao.common.BusUserDAO;
-import com.gt.member.entity.MemberDate;
-import com.gt.member.entity.MemberGradetype;
-import com.gt.member.entity.PublicParameterset;
+import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.dict.DictService;
+import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.DateTimeKit;
 import net.sf.json.JSONArray;
@@ -47,6 +44,15 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
     @Autowired
     private  BusUserDAO busUserDAO;
+
+    @Autowired
+    private MemberCardrecordDAO memberCardrecordDAO;
+
+    @Autowired
+    private SystemMsgService systemMsgService;
+
+    @Autowired
+    private MemberDAO memberDao;
 
 
 
@@ -287,4 +293,54 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
+
+
+    /**
+     * 添加会员卡记录((新数据接口))
+     *
+     * @param cardId
+     *            卡类型id
+     * @param recordType
+     *            消费类型
+     * @param number
+     *            数量
+     * @param itemName
+     *            物品名称
+     *            公众号
+     * @param balance
+     *            余额
+     */
+    @Override
+    public MemberCardrecord saveCardRecordNew(Integer cardId, Byte recordType,
+		    String number, String itemName, Integer busId, String balance,
+		    Integer ctId, double amount) {
+	if ( CommonUtil.isEmpty(busId)) {
+	    return null;
+	}
+
+	MemberCardrecord cr = new MemberCardrecord();
+	cr.setCardId(cardId);
+	cr.setRecordType(recordType.intValue());
+	cr.setNumber(number);
+	cr.setCreateDate(new Date());
+	cr.setItemName(itemName);
+	cr.setBusId(busId);
+	cr.setBalance(balance);
+	cr.setCtId(ctId);
+	cr.setAmount(amount);
+	try {
+	    memberCardrecordDAO.insert(cr);
+	    if (recordType == 2) {
+		Member member = memberDao.findByMcId1(cardId);
+		// 积分变动通知
+		systemMsgService.jifenMsg(cr, member);
+	    }
+
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    LOG.error("保存手机端记录异常", e);
+	}
+	return cr;
+    }
+
 }

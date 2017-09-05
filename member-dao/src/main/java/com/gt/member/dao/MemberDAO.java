@@ -248,8 +248,7 @@ public interface MemberDAO extends BaseMapper<Member> {
     /**
      * 查询微信非会员数据
      */
-    List<Map<String, Object>> findMemberIsNotCard(@Param("busId")Integer busId,@Param("fristpage")Integer fristpage,
-                                                  @Param("pagesize")Integer pagesize);
+    List<Map<String, Object>> findMemberIsNotCard(@Param("busId")Integer busId);
 
     Member selectByOpenidAndBusId(@Param("openid")String openid,@Param("busId")Integer busId);
 

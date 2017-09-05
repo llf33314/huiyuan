@@ -5,6 +5,7 @@ import com.gt.api.enums.ResponseEnums;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.entityBo.MallNotShopEntity;
+import com.gt.member.service.entityBo.MemberShopEntity;
 import com.gt.member.service.memberApi.MemberApiService;
 import com.gt.member.service.memberApi.MemberCountMoneyApiService;
 import com.gt.member.service.entityBo.MallAllEntity;
@@ -62,6 +63,22 @@ public class MemberCountApiController {
             return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),"计算失败");
         }
     }
+
+    @ApiOperation(value = "门店计算方法(不包含订单明细，只有订单金额)", notes = "传入值具体描述请看实体类")
+    @ResponseBody
+    @RequestMapping(value = "memberCountMoneyByBusUser",method = RequestMethod.POST)
+    public ServerResponse publicMemberCountMoney(HttpServletRequest request,
+                    HttpServletResponse response,@RequestBody String  memberShopEntity){
+        try {
+            MemberShopEntity  memberShopEntity1=JSONObject.toJavaObject( JSONObject.parseObject( memberShopEntity ),MemberShopEntity.class ) ;
+            memberShopEntity1 = memberCountMoneyApiService.publicMemberCountMoney(memberShopEntity1);
+            return ServerResponse.createBySuccess(JSONObject.toJSON(memberShopEntity1));
+        }catch (Exception e){
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),"计算失败");
+        }
+    }
+
+
 
 
     @ApiOperation(value = "支付成功回调", notes = "传入值具体描述请看实体类 储值卡支付 直接调用 回调类以处理储值卡扣款")

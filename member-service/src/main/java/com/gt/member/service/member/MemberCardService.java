@@ -43,8 +43,7 @@ public interface MemberCardService {
 	Map<String, Object> saveCardModel(Integer busId, String param)throws Exception;
 
 
-	public MemberCardrecord saveCardRecordNew(Integer cardId, Byte recordType, String number,
-                                        String itemName, Integer busId, String balance, Integer ctId, double amount);
+
 
 
 	 /**

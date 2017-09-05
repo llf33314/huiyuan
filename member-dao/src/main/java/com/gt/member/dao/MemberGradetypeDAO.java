@@ -39,7 +39,6 @@ public interface MemberGradetypeDAO extends BaseMapper<MemberGradetype> {
 
     /**
      * 兼容数据
-     * @param busId
      * @return
      */
     List<Map<String, Object>> findByPublicId1(@Param("publicId")Integer publicId);

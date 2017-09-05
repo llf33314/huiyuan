@@ -15,6 +15,7 @@ import com.gt.member.dao.MemberDAO;
 import com.gt.member.entity.Member;
 import com.gt.member.entity.MemberCardmodel;
 import com.gt.member.entity.MemberCardrecord;
+import com.gt.member.service.common.MemberCommonService;
 import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.util.CommonUtil;
@@ -45,11 +46,12 @@ public class MemberCardServiceImpl implements MemberCardService {
 	@Autowired
 	private MemberCardrecordDAO cardRecordMapper;
 
-	@Autowired
-	private SystemMsgService systemMsgService;
 
 	@Autowired
 	private MemberDAO memberMapper;
+
+	@Autowired
+	private MemberCommonService memberCommonService;
 	/**
 	 *  分组查询卡片信息
 	 */
@@ -104,57 +106,6 @@ public class MemberCardServiceImpl implements MemberCardService {
 		return map;
 	}
 
-
-
-	/**
-	 * 添加会员卡记录((新数据接口))
-	 *
-	 * @param cardId
-	 *            卡类型id
-	 * @param recordType
-	 *            消费类型
-	 * @param number
-	 *            数量
-	 * @param itemName
-	 *            物品名称
-	 *            公众号
-	 * @param balance
-	 *            余额
-	 */
-	@Override
-	public MemberCardrecord saveCardRecordNew(Integer cardId, Byte recordType,
-			String number, String itemName, Integer busId, String balance,
-			Integer ctId, double amount) {
-		if ( CommonUtil.isEmpty(busId)) {
-			return null;
-		}
-
-	   	 MemberCardrecord cr = new MemberCardrecord();
-		cr.setCardId(cardId);
-		cr.setRecordType(recordType.intValue());
-		cr.setNumber(number);
-		cr.setCreateDate(new Date());
-		cr.setItemName(itemName);
-		cr.setBusId(busId);
-		cr.setBalance(balance);
-		cr.setCtId(ctId);
-		cr.setAmount(amount);
-		try {
-			cardRecordMapper.insert(cr);
-			if (recordType == 2) {
-				Member member = memberMapper.findByMcId1(cardId);
-				// 积分变动通知
-				systemMsgService.jifenMsg(cr, member);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			LOG.error("保存手机端记录异常", e);
-		}
-		return cr;
-	}
-
-
 	@Override
 	public void clearJifen(String busIds) {
 		try {
@@ -176,7 +127,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	@Override
 	public void jifenLog(String str) {
 		JSONObject obj=JSONObject.fromObject(str);
-		saveCardRecordNew(obj.getInt("mcId"), (byte)2, obj.getString("number"), obj.getString("itemName"), obj.getInt("busId"), null, null, obj.getDouble("amount"));
+		memberCommonService.saveCardRecordNew(obj.getInt("mcId"), (byte)2, obj.getString("number"), obj.getString("itemName"), obj.getInt("busId"), null, null, obj.getDouble("amount"));
 
 	}
 

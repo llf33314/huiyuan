@@ -432,4 +432,38 @@ public class MemberApiController extends BaseController {
 	}
     }
 
+    @ApiOperation( value = "（墨盒）查询会员发布的会员卡类型", notes = "（墨盒）查询会员发布的会员卡类型" )
+    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
+    @ResponseBody
+    @RequestMapping( value = "/findMemberGradeType", method = RequestMethod.POST )
+    public ServerResponse findMemberGradeType(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody){
+	try {
+	    List<Map<String,Object>> memberList= memberApiService.findMemberGradeTypeByBusId(requestBody);
+	    return ServerResponse.createBySuccess( memberList);
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+    @ApiOperation( value = "（墨盒）领取会员卡", notes = "（墨盒）领取会员卡" )
+    @ApiImplicitParams( {
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "ctId", value = "会员卡类型", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "phone", value = "手机号", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "shopId", value = "门店", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "gtId", value = "会员卡等级", paramType = "query", required = false, dataType = "int" )
+
+    } )
+
+    @ResponseBody
+    @RequestMapping( value = "/receiveMemberCard", method = RequestMethod.POST )
+    public ServerResponse linquMemberCard(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody){
+	try {
+	    memberApiService.linquMemberCard(requestBody);
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
 }

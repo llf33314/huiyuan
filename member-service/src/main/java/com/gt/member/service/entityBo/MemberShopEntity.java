@@ -7,17 +7,16 @@ package com.gt.member.service.entityBo;
  */
 public class MemberShopEntity {
 
-    private Double totalMoney; //订单金额
-    private Integer memberId;  //粉丝信息
+    private Double totalMoney; //订单金额 not null
+    private Integer memberId;  //粉丝信息 not null
     private Double discountMemberMoney = 0.0; //会员优惠券金额
 
-
-    private boolean useCoupon;  //是否使用优惠券
+    private Integer useCoupon=0;  //是否使用优惠券 0不是用 1使用  not null
     private Integer couponType; //优惠券类型 0微信 1多粉优惠券
     private Integer coupondId;  //卡券id
     private String codes;  //使用优惠券code值 用来核销卡券 不存在set
     private Integer couponNum = 1;  //使用优惠券数量 不存在set
-    private boolean canUseConpon = false;  //是否能用优惠券
+    private Integer canUseConpon = 0;  //是否能用优惠券  0不允许用 1允许用
     private Double discountConponMoney = 0.0;
 
 
@@ -25,24 +24,23 @@ public class MemberShopEntity {
     private Double leagueDiscount = 1.0; //联盟折扣   userLeague=1 not null
     private Integer leagueJifen = 0; //联盟积分  传入最高能使用积分值   userLeague=1 not null
 
-    private boolean useFenbi;
-    private Integer fenbiNum;  //使用粉币数量 不存在set
-    private Double discountfenbiMoney = 0.0; //粉币抵扣金额  不存在set
-    private boolean canUsefenbi = false;  //是否能用优惠券
+    private Integer useFenbi=0;  //是否使用粉币  not null  0未使用 1使用
+    private Integer fenbiNum;  //使用粉币数量
+    private Double discountfenbiMoney = 0.0; //粉币抵扣金额
+    private Integer canUsefenbi = 0;  //是否能用粉币   0不允许用 1允许用
 
-    private boolean userJifen;  //是否使用积分
+    private Integer userJifen;  //是否使用积分  not null  0未使用 1使用
     private Integer jifenNum;  //使用积分数量 不存在set
-    private Double discountjifenMoney = 0.0; //积分抵扣金额  不存在set
-    private boolean canUseJifen = false;  //是否能用优惠券
+    private Double discountjifenMoney = 0.0; //积分抵扣金额
+    private Integer canUseJifen = 0;  //是否能用积分   0不允许用 1允许用
 
     private Double balanceMoney = 0.0;  //支付金额
-
 
     public Double getTotalMoney() {
         return totalMoney;
     }
 
-    public void setTotalMoney(Double totalMoney) {
+    public void setTotalMoney( Double totalMoney ) {
         this.totalMoney = totalMoney;
     }
 
@@ -50,7 +48,7 @@ public class MemberShopEntity {
         return memberId;
     }
 
-    public void setMemberId(Integer memberId) {
+    public void setMemberId( Integer memberId ) {
         this.memberId = memberId;
     }
 
@@ -58,15 +56,15 @@ public class MemberShopEntity {
         return discountMemberMoney;
     }
 
-    public void setDiscountMemberMoney(Double discountMemberMoney) {
+    public void setDiscountMemberMoney( Double discountMemberMoney ) {
         this.discountMemberMoney = discountMemberMoney;
     }
 
-    public boolean isUseCoupon() {
+    public Integer getUseCoupon() {
         return useCoupon;
     }
 
-    public void setUseCoupon(boolean useCoupon) {
+    public void setUseCoupon( Integer useCoupon ) {
         this.useCoupon = useCoupon;
     }
 
@@ -74,7 +72,7 @@ public class MemberShopEntity {
         return couponType;
     }
 
-    public void setCouponType(Integer couponType) {
+    public void setCouponType( Integer couponType ) {
         this.couponType = couponType;
     }
 
@@ -82,7 +80,7 @@ public class MemberShopEntity {
         return coupondId;
     }
 
-    public void setCoupondId(Integer coupondId) {
+    public void setCoupondId( Integer coupondId ) {
         this.coupondId = coupondId;
     }
 
@@ -90,7 +88,7 @@ public class MemberShopEntity {
         return codes;
     }
 
-    public void setCodes(String codes) {
+    public void setCodes( String codes ) {
         this.codes = codes;
     }
 
@@ -98,15 +96,15 @@ public class MemberShopEntity {
         return couponNum;
     }
 
-    public void setCouponNum(Integer couponNum) {
+    public void setCouponNum( Integer couponNum ) {
         this.couponNum = couponNum;
     }
 
-    public boolean isCanUseConpon() {
+    public Integer getCanUseConpon() {
         return canUseConpon;
     }
 
-    public void setCanUseConpon(boolean canUseConpon) {
+    public void setCanUseConpon( Integer canUseConpon ) {
         this.canUseConpon = canUseConpon;
     }
 
@@ -114,80 +112,8 @@ public class MemberShopEntity {
         return discountConponMoney;
     }
 
-    public void setDiscountConponMoney(Double discountConponMoney) {
+    public void setDiscountConponMoney( Double discountConponMoney ) {
         this.discountConponMoney = discountConponMoney;
-    }
-
-    public boolean isUseFenbi() {
-        return useFenbi;
-    }
-
-    public void setUseFenbi(boolean useFenbi) {
-        this.useFenbi = useFenbi;
-    }
-
-    public Integer getFenbiNum() {
-        return fenbiNum;
-    }
-
-    public void setFenbiNum(Integer fenbiNum) {
-        this.fenbiNum = fenbiNum;
-    }
-
-    public Double getDiscountfenbiMoney() {
-        return discountfenbiMoney;
-    }
-
-    public void setDiscountfenbiMoney(Double discountfenbiMoney) {
-        this.discountfenbiMoney = discountfenbiMoney;
-    }
-
-    public boolean isCanUsefenbi() {
-        return canUsefenbi;
-    }
-
-    public void setCanUsefenbi(boolean canUsefenbi) {
-        this.canUsefenbi = canUsefenbi;
-    }
-
-    public boolean isUserJifen() {
-        return userJifen;
-    }
-
-    public void setUserJifen(boolean userJifen) {
-        this.userJifen = userJifen;
-    }
-
-    public Integer getJifenNum() {
-        return jifenNum;
-    }
-
-    public void setJifenNum(Integer jifenNum) {
-        this.jifenNum = jifenNum;
-    }
-
-    public Double getDiscountjifenMoney() {
-        return discountjifenMoney;
-    }
-
-    public void setDiscountjifenMoney(Double discountjifenMoney) {
-        this.discountjifenMoney = discountjifenMoney;
-    }
-
-    public boolean isCanUseJifen() {
-        return canUseJifen;
-    }
-
-    public void setCanUseJifen(boolean canUseJifen) {
-        this.canUseJifen = canUseJifen;
-    }
-
-    public Double getBalanceMoney() {
-        return balanceMoney;
-    }
-
-    public void setBalanceMoney(Double balanceMoney) {
-        this.balanceMoney = balanceMoney;
     }
 
     public Integer getUserLeague() {
@@ -212,5 +138,77 @@ public class MemberShopEntity {
 
     public void setLeagueJifen( Integer leagueJifen ) {
         this.leagueJifen = leagueJifen;
+    }
+
+    public Integer getUseFenbi() {
+        return useFenbi;
+    }
+
+    public void setUseFenbi( Integer useFenbi ) {
+        this.useFenbi = useFenbi;
+    }
+
+    public Integer getFenbiNum() {
+        return fenbiNum;
+    }
+
+    public void setFenbiNum( Integer fenbiNum ) {
+        this.fenbiNum = fenbiNum;
+    }
+
+    public Double getDiscountfenbiMoney() {
+        return discountfenbiMoney;
+    }
+
+    public void setDiscountfenbiMoney( Double discountfenbiMoney ) {
+        this.discountfenbiMoney = discountfenbiMoney;
+    }
+
+    public Integer getCanUsefenbi() {
+        return canUsefenbi;
+    }
+
+    public void setCanUsefenbi( Integer canUsefenbi ) {
+        this.canUsefenbi = canUsefenbi;
+    }
+
+    public Integer getUserJifen() {
+        return userJifen;
+    }
+
+    public void setUserJifen( Integer userJifen ) {
+        this.userJifen = userJifen;
+    }
+
+    public Integer getJifenNum() {
+        return jifenNum;
+    }
+
+    public void setJifenNum( Integer jifenNum ) {
+        this.jifenNum = jifenNum;
+    }
+
+    public Double getDiscountjifenMoney() {
+        return discountjifenMoney;
+    }
+
+    public void setDiscountjifenMoney( Double discountjifenMoney ) {
+        this.discountjifenMoney = discountjifenMoney;
+    }
+
+    public Integer getCanUseJifen() {
+        return canUseJifen;
+    }
+
+    public void setCanUseJifen( Integer canUseJifen ) {
+        this.canUseJifen = canUseJifen;
+    }
+
+    public Double getBalanceMoney() {
+        return balanceMoney;
+    }
+
+    public void setBalanceMoney( Double balanceMoney ) {
+        this.balanceMoney = balanceMoney;
     }
 }

@@ -17,6 +17,7 @@ public enum ResponseMemberEnums {
     MEMBER_LESS_MONEY(5006,"余额不足"),
     MEMBER_CHUZHI_CARD(5007,"非储值会员卡"),
     NOT_ORDER_DATA(5008,"订单数据不存在"),
+    NOT_MEMBER_COUNT(5009,"会员卡数量不足"),
 
 
 
@@ -27,7 +28,8 @@ public enum ResponseMemberEnums {
     COUPONSE_NO_GUOQI(6005,"卡券过期或已核销,不能执行卡券核销操作"),
 
     NOT_PAY_TYPE(7001,"不存在当前支付方式"),
-    LESS_THAN_CASH(7002,"收取现金不够");
+    LESS_THAN_CASH(7002,"收取现金不够"),
+    PLEASE_PAY(7003,"请支付购买会员卡金额");
 
     private Integer code;
     private String msg;

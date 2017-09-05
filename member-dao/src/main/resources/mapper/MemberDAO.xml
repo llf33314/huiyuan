@@ -632,7 +632,7 @@
 
 	<select id="findMemberIsNotCard" resultType="Map">
 		select id ,nickname,headimgurl,subscribeDate from t_wx_bus_member
-		where busId=#{busId} and loginMode=0 and mc_id is null  ORDER BY subscribeDate DESC LIMIT #{fristpage},#{pagesize}
+		where busId=#{busId} and loginMode=0 and mc_id is null  ORDER BY subscribeDate
 
 	</select>
 

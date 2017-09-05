@@ -82,7 +82,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 
 	    // 使用了折扣优惠券 将不会启动折扣卡打折
 	    Boolean isUseDisCount = false;
-	    if ( ce.isUseCoupon() ) {
+	    if ( ce.getUseCoupon()==1 ) {
 		if ( ce.getCouponType() == 0 ) {
 		    // 微信优惠券
 		    wxCardReceive = wxCardReceiveMapper.selectById( ce.getCoupondId() );
@@ -123,7 +123,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    }
 
 	    // 计算使用优惠券后
-	    if ( ce.isUseCoupon() ) {
+	    if ( ce.getUseCoupon()==1 ) {
 		if ( ce.getCouponType() == 0 ) {
 		    if ( "DISCOUNT".equals( wxcard.getCardType() ) ) {
 			// 折扣券
@@ -131,14 +131,14 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 			pay = pay - discountConponMoney;
 			ce.setDiscountConponMoney( discountConponMoney ); // 优惠券优惠金额
 			ce.setCodes( wxCardReceive.getUserCardCode() );
-			ce.setCanUseConpon( true );
+			ce.setCanUseConpon( 1 );
 		    } else if ( "CASH".equals( wxcard.getCardType() ) ) {
 			// 减免券
 			if ( pay >= wxcard.getCashLeastCost() ) {
 			    pay = pay - wxcard.getReduceCost();
 			    ce.setDiscountConponMoney( wxcard.getReduceCost() ); // 优惠券优惠金额
 			    ce.setCodes( wxCardReceive.getUserCardCode() );
-			    ce.setCanUseConpon( true );
+			    ce.setCanUseConpon( 1 );
 			}
 		    }
 		} else if ( ce.getCouponType() == 1 ) {
@@ -148,7 +148,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 			Double discountConponMoney = formatNumber( pay * ( 10 - dfcard.getDiscount() ) / 10 );
 			pay = pay - discountConponMoney;
 			ce.setDiscountConponMoney( discountConponMoney ); // 优惠券优惠金额
-			ce.setCanUseConpon( true );
+			ce.setCanUseConpon( 1 );
 			ce.setCodes( dfget.getCode() );
 		    } else if ( dfcard.getCardType() == 1 ) {
 			// 减免券
@@ -158,7 +158,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 				pay = pay - dfcard.getReduceCost();
 				ce.setDiscountConponMoney( dfcard.getReduceCost() ); // 优惠券优惠金额
 				ce.setCodes( dfget.getCode() );
-				ce.setCanUseConpon( true );
+				ce.setCanUseConpon( 1 );
 			    }
 			} else {
 			    Integer num = 0;
@@ -180,7 +180,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 				    ce.setDiscountConponMoney( discountConponMoney );
 				    ce.setCouponNum( num ); // 使用优惠券数量
 				    ce.setCodes( duofenCode );
-				    ce.setCanUseConpon( true );
+				    ce.setCanUseConpon( 1 );
 				}
 			    }
 			}
@@ -189,7 +189,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    }
 
 	    // 计算粉币金额 粉币10元启用
-	    if ( ce.isUseFenbi() ) {
+	    if ( ce.getUseFenbi()==1 ) {
 		Double discountfenbiMoney = currencyCount( pay, member.getFansCurrency() ); // 计算粉币抵扣
 		if ( discountfenbiMoney > 0 ) {
 		    List< Map< String,Object > > dict = dictService.getDict( "1058" );
@@ -197,12 +197,12 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 		    Integer fenbiNum = memberCommonService.deductFenbi( dict.get( 0 ), discountfenbiMoney ).intValue();
 		    ce.setFenbiNum( fenbiNum );
 		    ce.setDiscountfenbiMoney( discountfenbiMoney );
-		    ce.setCanUsefenbi( true );
+		    ce.setCanUsefenbi( 1 );
 		}
 	    }
 
 	    // 计算积分金额
-	    if ( ce.isUseFenbi() ) {
+	    if ( ce.getUseFenbi()==1 ) {
 		PublicParameterset pps = publicParameterSetMapper.findBybusId( member.getBusId() );
 		Double discountjifenMoney = memberCommonService.integralCount( pay, member.getIntegral().doubleValue(), member.getBusId() ); // 计算积分
 		if ( discountjifenMoney > 0 ) {
@@ -210,7 +210,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 		    Integer jifenNum = memberCommonService.deductJifen( pps, discountjifenMoney, member.getBusId() ).intValue();
 		    ce.setJifenNum( jifenNum );
 		    ce.setDiscountjifenMoney( discountjifenMoney );
-		    ce.setCanUseJifen( true );
+		    ce.setCanUseJifen( 1 );
 		}
 	    }
 	    ce.setBalanceMoney( pay );

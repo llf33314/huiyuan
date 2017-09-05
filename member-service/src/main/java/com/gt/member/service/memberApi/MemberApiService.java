@@ -132,23 +132,6 @@ public interface MemberApiService {
     public Map< String,Object > findNextGrade( Integer busId, Integer ctId, Integer gtId, Integer integral, double totalmoney );
 
     /*
-	 * 新数据接口
-	 *
-	 *
-	 * 保存会员卡积分、粉币、流量、 消费记录
-	 * @param cardId 会员卡id
-	 * @param recordType 类型 0充值和消费  1积分 2 粉币  3流量
-	 * @param number  消费和赠送积分或粉币流量   描述例如:  10积分  或 10粉币 10元
-	 * @param itemName 描述
-	 * @param busId 必填
-	 * @param balance 可不填
-	 * @param ctId 可不填
-	 * @param amount 积分 粉币 流量 消费或赠送值  正数赠送 负数消费
-	 * @return
-	 */
-    public void saveCardRecordNew( Integer cardId, Byte recordType, String number, String itemName, Integer busId, String balance, Integer ctId, double amount );
-
-    /*
      *  购买会员卡回调
      * @param orderId
      * @param payStatus
@@ -628,5 +611,21 @@ public interface MemberApiService {
      * @throws BusinessException
      */
     public List<Map<String,Object>> findMemberByPhoneAndBusId(Map<String,Object> map) throws BusinessException;
+
+    /**
+     * 查询商家发布的卡片类型
+     * @param map
+     * @return
+     * @throws BusinessException
+     */
+    public List<Map<String,Object>> findMemberGradeTypeByBusId(Map<String,Object> map) throws BusinessException;
+
+    /**
+     * 墨盒领取会员卡
+     * @param params
+     * @return
+     * @throws BusinessException
+     */
+    public void linquMemberCard(Map<String, Object> params) throws BusinessException;
 
  }

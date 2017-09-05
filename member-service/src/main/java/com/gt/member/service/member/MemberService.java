@@ -1,48 +1,28 @@
-//package com.gt.member.service.old.member;
-//
-//import com.gt.member.entity.BusUser;
-//import com.gt.member.entity.Member;
-//import com.gt.member.entity.MemberRecommend;
-//import com.gt.member.entity.WxPublicUsers;
-//import com.gt.member.util.Page;
-//
-//import java.io.InputStream;
-//import java.util.List;
-//import java.util.Map;
-//
-//import javax.servlet.http.HttpServletRequest;
-//
-//
-///**
-// *
-// *
-// * @author 李逢喜
-// * @version 创建时间：2015年9月7日 下午7:14:20
-// *
-// */
-//public interface MemberService {
-//
-//
-//	/**
-//	 * 保存会员信息
-//	 * @param code
-//	 * @param public_id
-//	 * @return
-//	 */
-//	Map<String, Object> saveMember(String code, Integer public_id, boolean snsapi_userinfo);
-//
-//
-//	/**
-//	 * 保存会员信息(针对会员二码合一支付)
-//	 * @param code
-//	 * @param public_id
-//	 * @param snsapi_userinfo
-//	 * @param memberId
-//	 * @return
-//	 */
-//	Map<String, Object> saveMember1(String code, Integer public_id, boolean snsapi_userinfo, Integer memberId);
-//
-//
+package com.gt.member.service.member;
+
+import com.gt.member.entity.Member;
+import com.gt.member.entity.MemberRecommend;
+import com.gt.member.util.Page;
+
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+
+/**
+ *
+ *
+ * @author 李逢喜
+ * @version 创建时间：2015年9月7日 下午7:14:20
+ *
+ */
+public interface MemberService {
+
+
+
+
 //	/**
 //	 * 修改手机号码
 //	 * @param member
@@ -357,6 +337,7 @@
 ////	 * @return
 ////	 */
 ////	public Map<String, Object> buyMemberCard(BusUser busUser,Map<String, Object> params)throws Exception;
-//}
-//
-//
+
+}
+
+

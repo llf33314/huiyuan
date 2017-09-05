@@ -20,6 +20,7 @@ import com.gt.member.entity.DuofenCardReceive;
 import com.gt.member.entity.DuofenCardReceivelog;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
+import com.gt.member.service.common.MemberCommonService;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.util.*;
@@ -102,6 +103,9 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
     @Autowired
     private FenbiFlowRecordDAO fenbiFlowRecordDAO;
+
+    @Autowired
+    private MemberCommonService memberCommonService;
 
     //	@Autowired
     //	private BusUserBranchRelationMapper busUserBranchRelationMapper;
@@ -902,7 +906,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                     throw new BusinessException(ResponseMemberEnums.MEMBER_LESS_JIFEN.getCode(), ResponseMemberEnums.MEMBER_LESS_JIFEN.getMsg());
                 }
                 if (CommonUtil.isNotEmpty(member.getMcId())) {
-                    memberCardService.saveCardRecordNew(member.getMcId(), (byte) 2, dfcr.getJifen() + "积分", "领取优惠券扣除积分", member.getBusId(), null, 0, -dfcr.getJifen());
+                    memberCommonService.saveCardRecordNew(member.getMcId(), (byte) 2, dfcr.getJifen() + "积分", "领取优惠券扣除积分", member.getBusId(), null, 0, -dfcr.getJifen());
                 }
                 flag = true;
                 m1.setIntegral(member.getIntegral() - dfcr.getJifen());
@@ -914,7 +918,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                     throw new BusinessException(ResponseMemberEnums.MEMBER_LESS_FENBI.getCode(), ResponseMemberEnums.MEMBER_LESS_FENBI.getMsg());
                 }
                 if (CommonUtil.isNotEmpty(member.getMcId())) {
-                    memberCardService.saveCardRecordNew(member.getMcId(), (byte) 3, dfcr.getFenbi() + "粉币", "领取优惠券扣除粉币", member.getBusId(), null, 0, -dfcr.getFenbi());
+                    memberCommonService.saveCardRecordNew(member.getMcId(), (byte) 3, dfcr.getFenbi() + "粉币", "领取优惠券扣除粉币", member.getBusId(), null, 0, -dfcr.getFenbi());
                 }
                 flag = true;
                 m1.setFansCurrency(member.getFansCurrency() - dfcr.getFenbi());
@@ -1568,7 +1572,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
         if (recommend.getIntegral() > 0) {
             m1.setIntegral(tuijianMember.getIntegral() + recommend.getIntegral());
             //积分记录
-            memberCardService.saveCardRecordNew(tuijianMember.getMcId(), (byte) 2, recommend.getIntegral() + "", "推荐优惠券赠送", tuijianMember.getBusId(), null, 0,
+            memberCommonService.saveCardRecordNew(tuijianMember.getMcId(), (byte) 2, recommend.getIntegral() + "", "推荐优惠券赠送", tuijianMember.getBusId(), null, 0,
                     Double.valueOf(recommend.getIntegral()));
             flag = true;
         }
@@ -1598,7 +1602,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
                 m1.setFansCurrency(tuijianMember.getFansCurrency() + recommend.getFenbi());
                 //粉币记录
-                memberCardService.saveCardRecordNew(tuijianMember.getMcId(), (byte) 3, recommend.getFenbi() + "", "推荐优惠券赠送", tuijianMember.getBusId(), null, 0,
+                memberCommonService.saveCardRecordNew(tuijianMember.getMcId(), (byte) 3, recommend.getFenbi() + "", "推荐优惠券赠送", tuijianMember.getBusId(), null, 0,
                         Double.valueOf(recommend.getFenbi()));
                 flag = true;
             }
@@ -1607,7 +1611,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
         if (recommend.getFlow() > 0) {
             m1.setFlow(tuijianMember.getFlow() + recommend.getFlow());
             //流量记录
-            memberCardService.saveCardRecordNew(tuijianMember.getMcId(), (byte) 4, recommend.getFlow() + "", "推荐优惠券赠送", tuijianMember.getBusId(), null, 0,
+            memberCommonService.saveCardRecordNew(tuijianMember.getMcId(), (byte) 4, recommend.getFlow() + "", "推荐优惠券赠送", tuijianMember.getBusId(), null, 0,
                     Double.valueOf(recommend.getFlow()));
             flag = true;
         }
@@ -1622,7 +1626,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             c.setGiveMoney(card.getGiveMoney() + recommend.getMoney());
             cardMapper.updateById(c);
             //流量记录
-            memberCardService.saveCardRecordNew(tuijianMember.getMcId(), (byte) 1, recommend.getMoney() + "", "推荐优惠券赠送", tuijianMember.getBusId(), null, 0,
+            memberCommonService.saveCardRecordNew(tuijianMember.getMcId(), (byte) 1, recommend.getMoney() + "", "推荐优惠券赠送", tuijianMember.getBusId(), null, 0,
                     Double.valueOf(recommend.getMoney()));
         }
 

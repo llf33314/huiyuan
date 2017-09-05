@@ -1,5 +1,6 @@
 package com.gt.member.service.common;
 
+import com.gt.member.entity.MemberCardrecord;
 import com.gt.member.entity.MemberDate;
 import com.gt.member.entity.PublicParameterset;
 import com.gt.member.exception.BusinessException;
@@ -73,4 +74,8 @@ public interface MemberCommonService {
      * @param fenbi
      */
     public void guihuiBusUserFenbi(Integer busId,Double fenbi)throws BusinessException;
+
+
+    public MemberCardrecord saveCardRecordNew(Integer cardId, Byte recordType, String number,
+                    String itemName, Integer busId, String balance, Integer ctId, double amount);
 }
