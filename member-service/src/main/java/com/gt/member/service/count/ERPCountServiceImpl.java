@@ -376,17 +376,13 @@ public class ERPCountServiceImpl implements ERPCountService {
 		if ( payMoney < mallNotShopEntity.getBalanceMoney() ) {
 		    throw new BusinessException( ResponseMemberEnums.LESS_THAN_CASH );
 		}
-		Object obj=redisCacheUtil.get(mallNotShopEntity.getOrderCode() );
-		if(CommonUtil.isNotEmpty(  obj)){
-		    redisCacheUtil.del( mallNotShopEntity.getOrderCode()  );
-		}
-		redisCacheUtil.set( mallNotShopEntity.getOrderCode(), JSON.toJSONString( mallNotShopEntity ), 600 );
+
 		//通知
 		String tongzhi=null;
 		if(mallQuery.getJumphttpPOST()==0){
-		    tongzhi= SignHttpUtils.postByHttp( mallQuery.getSuccessNoticeUrl(),mallQuery.getOrderCode(),mallQuery.getSign() );
+		    tongzhi= SignHttpUtils.postByHttp( mallQuery.getSuccessNoticeUrl(),mallNotShopEntity,mallQuery.getSign() );
 		}else{
-		    tongzhi= SignHttpUtils.WxmppostByHttp( mallQuery.getSuccessNoticeUrl(),mallQuery.getOrderCode(),mallQuery.getSign() );
+		    tongzhi= SignHttpUtils.WxmppostByHttp( mallQuery.getSuccessNoticeUrl(),mallNotShopEntity,mallQuery.getSign() );
 		}
 		JSONObject tongzhiJson=JSONObject.parseObject( tongzhi );
 		if(CommonUtil.toInteger( tongzhiJson.get( "code" ) )!=0){
@@ -534,16 +530,11 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    //TODO
 
 	    //通知
-	    Object obj=redisCacheUtil.get(mallNotShopEntity.getOrderCode() );
-	    if(CommonUtil.isNotEmpty(  obj)){
-		redisCacheUtil.del( mallNotShopEntity.getOrderCode()  );
-	    }
-	    redisCacheUtil.set( mallNotShopEntity.getOrderCode(), JSON.toJSONString( mallNotShopEntity ), 600 );
 	    String tongzhi=null;
 	    if(mallQuery.getJumphttpPOST()==0){
-		tongzhi= SignHttpUtils.postByHttp( mallQuery.getSuccessNoticeUrl(),mallQuery.getOrderCode(),mallQuery.getSign() );
+		tongzhi= SignHttpUtils.postByHttp( mallQuery.getSuccessNoticeUrl(),mallNotShopEntity,mallQuery.getSign() );
 	    }else{
-		tongzhi= SignHttpUtils.WxmppostByHttp( mallQuery.getSuccessNoticeUrl(),mallQuery.getOrderCode(),mallQuery.getSign() );
+		tongzhi= SignHttpUtils.WxmppostByHttp( mallQuery.getSuccessNoticeUrl(),mallNotShopEntity,mallQuery.getSign() );
 	    }
 	    JSONObject tongzhiJson=JSONObject.parseObject( tongzhi );
 	    if(CommonUtil.toInteger( tongzhiJson.get( "code" ) )!=0){
@@ -806,13 +797,6 @@ public class ERPCountServiceImpl implements ERPCountService {
 		}
 	    }
 
-	    Object obj=redisCacheUtil.get(mallNotShopEntity.getOrderCode() );
-	    if(CommonUtil.isNotEmpty(  obj)){
-		redisCacheUtil.del( mallNotShopEntity.getOrderCode()  );
-	    }
-	    redisCacheUtil.set( mallNotShopEntity.getOrderCode(), JSON.toJSONString( mallNotShopEntity ), 600 );
-
-
 	    String auth_code=jsonObject.getString( "auth_code" );
 	    String url = memberConfig.getWxmp_home() + SAOMA_QIANBAO_PAY+"?auth_code="+auth_code+"&body=支付&model=51&out_trade_no="+mallNotShopEntity.getOrderCode()
 			    +"&total_fee="+ mallNotShopEntity.getBalanceMoney()+"&is_calculate=1";
@@ -825,9 +809,9 @@ public class ERPCountServiceImpl implements ERPCountService {
 
 		String tongzhi=null;
 		if(mallQuery.getJumphttpPOST()==0){
-		    tongzhi= SignHttpUtils.postByHttp( mallQuery.getSuccessNoticeUrl(),mallQuery.getOrderCode(),mallQuery.getSign() );
+		    tongzhi= SignHttpUtils.postByHttp( mallQuery.getSuccessNoticeUrl(),mallNotShopEntity,mallQuery.getSign() );
 		}else{
-		    tongzhi= SignHttpUtils.WxmppostByHttp( mallQuery.getSuccessNoticeUrl(),mallQuery.getOrderCode(),mallQuery.getSign() );
+		    tongzhi= SignHttpUtils.WxmppostByHttp( mallQuery.getSuccessNoticeUrl(),mallNotShopEntity,mallQuery.getSign() );
 		}
 		JSONObject tongzhiJson=JSONObject.parseObject( tongzhi );
 		if(CommonUtil.toInteger( tongzhiJson.get( "code" ) )!=0){
@@ -934,17 +918,17 @@ public class ERPCountServiceImpl implements ERPCountService {
 		successMap.put( "orderCode",orderCode );
 
 		Integer jumphttpPOST=CommonUtil.toInteger( json.get( "jumphttpPOST" ) );
+		Object mallNotShopEntity=redisCacheUtil.get(orderCode );
 
 		//通知
 		String tongzhi=null;
 		if(jumphttpPOST==0){
-		    tongzhi= SignHttpUtils.postByHttp( successNoticeUrl,successMap,sign );
+		    tongzhi= SignHttpUtils.postByHttp( successNoticeUrl,mallNotShopEntity,sign );
 		}else{
-		    tongzhi= SignHttpUtils.WxmppostByHttp( successNoticeUrl,successMap,sign);
+		    tongzhi= SignHttpUtils.WxmppostByHttp( successNoticeUrl,mallNotShopEntity,sign);
 		}
 		JSONObject tongzhiJson=JSONObject.parseObject( tongzhi );
 		if(CommonUtil.toInteger( tongzhiJson.get( "code" ) )!=0) {
-		    Object mallNotShopEntity = redisCacheUtil.get(orderCode );
 		    MemberLog ml = new MemberLog();
 		    ml.setLogtxt( "ERP计算通知回调异常:" + JSONObject.toJSONString( mallNotShopEntity ) );
 		    memberLogDAO.insert( ml );
