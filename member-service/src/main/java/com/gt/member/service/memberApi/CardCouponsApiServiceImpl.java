@@ -731,8 +731,8 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                     }
                     returnDuofencardList.add(map2);
                 }
-                map.put("recevieMap", recevieMap);
-                map.put("returnDuofencardList", returnDuofencardList);
+                map.put("recevieMap", JSONObject.toJSON(recevieMap  ));
+                map.put("returnDuofencardList", com.alibaba.fastjson.JSONArray.toJSON(  returnDuofencardList) );
                 return map;
             }
         } catch (Exception e) {
