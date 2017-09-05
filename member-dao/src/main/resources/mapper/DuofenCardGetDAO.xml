@@ -308,7 +308,7 @@
 		c.timeType,g.id as gId, g.getType, g.code, g.state, g.getDate, g.cardReceiveId,g.startTime,
 		g.endTime
 		from t_duofen_card_get g inner join t_duofen_card c on c.id=g.cardId
-		where  g.id=#{receiceId} and g.memberId
+		where  g.cardReceiveId=#{receiceId} and g.memberId
 		in
 		<foreach close=")" collection="memberIds" item="m" open="(" separator=",">
 			#{m}
