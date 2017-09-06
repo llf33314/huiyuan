@@ -66,7 +66,7 @@ public class MemberCountApiController {
 
     @ApiOperation(value = "门店计算方法(不包含订单明细，只有订单金额)", notes = "传入值具体描述请看实体类")
     @ResponseBody
-    @RequestMapping(value = "memberCountMoneyByBusUser",method = RequestMethod.POST)
+    @RequestMapping(value = "publicMemberCountMoney",method = RequestMethod.POST)
     public ServerResponse publicMemberCountMoney(HttpServletRequest request,
                     HttpServletResponse response,@RequestBody String  memberShopEntity){
         try {

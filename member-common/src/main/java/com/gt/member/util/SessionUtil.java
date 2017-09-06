@@ -79,7 +79,7 @@ public class SessionUtil {
     }
 
     /**
-     * 获取账户busId
+     * 获取主账户busId
      *
      * @param request
      *

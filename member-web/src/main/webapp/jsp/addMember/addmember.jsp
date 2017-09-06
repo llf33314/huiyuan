@@ -19,6 +19,8 @@ pageEncoding="UTF-8" %>
 <body>
     <div id="member">
         <input type="hidden" value="${shopId}" id="shopId"/>
+        <input type="hidden" value="${busId}" id="busId"/>
+
 
         <el-breadcrumb separator="/" class="member-brand">
             <el-breadcrumb-item :to="{ path: '/' }">工作台</el-breadcrumb-item>
@@ -26,7 +28,7 @@ pageEncoding="UTF-8" %>
         </el-breadcrumb>
         <div class="member-search">
             <label>会员查询</label>
-            <el-input placeholder="会员卡号/手机号" icon="search" size="small" v-model="input2" :on-icon-click="handleIconClick">
+            <el-input placeholder="会员卡号/手机号" icon="search" size="small" v-model="search" :on-icon-click="handleIconClick">
             </el-input>
         </div>
 
@@ -80,7 +82,7 @@ pageEncoding="UTF-8" %>
                         <div class="code-pic">
                             <img :src="guanZhuqrcode" alt="" title="二维码" width="240" height="240">
                             <div class="martop20">
-                                <el-button :plain="true" type="info" class="border-btn">下载该二维码</el-button>
+                                <el-button :plain="true" type="info" class="border-btn" @click="downQcode">下载该二维码</el-button>
                             </div>
                         </div>
                         <div class="textleft color999 code-txt">
@@ -104,16 +106,6 @@ pageEncoding="UTF-8" %>
                                 <p class="color999 martop20">时间： 2017-05-14 00:00:00</p>
                             </div>
                             <label  class="list-item-status">
-                                <i class="list-item-check iconfont disnone">&#xe669;</i>
-                            </label>
-                        </li>
-                        <li class="list-item">
-                            <img :src="qrcode" alt="粉丝头像" title="粉丝头像">
-                            <div class="list-item-name">
-                                <p>粉丝微信昵称</p>
-                                <p class="color999 martop20">时间： 2017-05-14 00:00:00</p>
-                            </div>
-                            <label class="list-item-status">
                                 <i class="list-item-check iconfont disnone">&#xe669;</i>
                             </label>
                         </li>
@@ -141,13 +133,28 @@ pageEncoding="UTF-8" %>
             <div class="textcenter error-txt success-txt"></div>
         </el-dialog>
 
+
+
+        <!-- 会员信息弹出层 -->
+        <el-dialog title="会员信息" :visible.sync="dialogTableVisible4" size="tiny"  :modal="false" >
+            <div class="memberHtml"></div>
+        </el-dialog>
+
     </div>
-    <div class="notice"> <i class="iconfont">&#xe657;</i> 通知 <i class="notice-num">1</i></div>
+
     <script src="/js/vue.min.js"></script>
     <!-- 引入组件库 -->
     <script src="/js/elementui/elementui.js"></script>
     <script src="/js/jquery-2.2.2.js"></script>
     <script type="text/javascript" src="/js/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('.scrollBar li').click(function () {
+                console.log(this);
+                $(this).addClass("cur-list").siblings().removeClass('cur-list');
+            })
+        });
+    </script>
 
     <script>
         const TIME_COUNT = 60;
@@ -158,11 +165,17 @@ pageEncoding="UTF-8" %>
                 var validateCardType = (rule, value, callback) => {
                     if (value === '') {
                         callback(new Error('不能为空！'));
+                    }else {
+                        callback();
                     }
+
                 };
                 var validateCardRanke = (rule, value, callback) => {
                     if (value === '') {
                         callback(new Error('不能为空！'));
+                    }
+                    else {
+                        callback();
                     }
                 };
                 var validateCardPhone = (rule, value, callback) => {
@@ -178,7 +191,7 @@ pageEncoding="UTF-8" %>
                     }
                 };
                 return{
-                    input2: '',
+                    search: '',
                     codeShow: false,
                     qrcode:'',
                     guanZhuqrcode:'',
@@ -190,6 +203,7 @@ pageEncoding="UTF-8" %>
                     dialogVisible: false,
                     dialogVisible2: false,
                     dialogVisible3:false,
+                    dialogTableVisible4:false,
                     cardPriceVisible:${gradeTypes[0].applyType==3},
                     ruleForm: {
                         follow:false ,
@@ -221,11 +235,90 @@ pageEncoding="UTF-8" %>
             },
             methods: {
                 handleIconClick: function (ev) {
+                    var cardno=vm.search;
+                    if(cardno==null || cardno==""){
+                        return;
+                    }
+                    $.ajax({
+                        url:"/addMember/findMemberByCardNo.do",
+                        data:{"cardNo":cardno,"busId":$("#busId").val()},
+                        type:"POST",
+                        dataType:"JSON",
+                        success:function (data) {
+                            if(data.result==true){
+                                vm.dialogTableVisible4=true;
+                                var html="<div class='flex dialog-item'>";
+                                 html+="<div class='item-left'><img src='"+data.headimgUrl+"' alt='' class='item-pic'></div>";
+                                html+=" <div class='flex-1 item-right lineH'>"+data.nickName+"</div>";
+                                html+="   </div>";
+                                html+=" <div class='flex dialog-item'>";
+                                html+="  <div class='item-left'>会员卡号：</div>";
+                                html+="<div class='flex-1 item-right cardno'>"+data.cardNo+"</div>";
+                                html+="     </div>";
+                                html+="    <div class='flex dialog-item'>";
+                                html+="    <div class='item-left'>性别：</div>";
+
+                                html+="<div class='flex-1 item-right sex'>";
+                                if(data.sex==0){
+                                    html+="未知";
+                                }else if(data.sex==1){
+                                    html+="男";
+                                }else{
+                                    html+="女";
+                                }
+                                html+="</div>";
+                                html+="     </div>";
+                                html+="    <div class='flex dialog-item'>";
+                                html+="    <div class='item-left'>领卡时间：</div>";
+                                html+="<div class='flex-1 item-right '>"+data.receiveDate+"</div>";
+                                html+="    </div>";
+
+
+                                html+="   <div class='flex dialog-item'>";
+                                html+="   <div class='item-left'>会员卡名称：</div>";
+                                html+=" <div class='flex-1 item-right'>"+data.ctName+"</div>";
+                                html+="    </div>";
+
+                                html+="   <div class='flex dialog-item'>";
+                                html+="   <div class='item-left'>会员卡等级：</div>";
+                                html+=" <div class='flex-1 item-right'>"+data.gradeName+"</div>";
+                                html+="    </div>";
+
+                                var ctId=data.ctId;
+                                if(ctId==2){
+                                    html+="   <div class='flex dialog-item'>";
+                                    html+="   <div class='item-left'>会员卡折扣：</div>";
+                                    html+=" <div class='flex-1 item-right'>"+data.discount+"</div>";
+                                    html+="    </div>";
+                                }else if(ctId==3){
+                                    html+="   <div class='flex dialog-item'>";
+                                    html+="   <div class='item-left'>会员卡余额：</div>";
+                                    html+=" <div class='flex-1 item-right'>"+data.money+"</div>";
+                                    html+="    </div>";
+                                }
+
+                                html+="   <div class='flex dialog-item'>";
+                                html+="   <div class='item-left'>积分：</div>";
+                                html+=" <div class='flex-1 item-right'>"+data.integral+"</div>";
+                                html+="    </div>";
+                                html+="   <div class='flex dialog-item'>";
+                                html+="   <div class='item-left'>粉币：</div>";
+                                html+=" <div class='flex-1 item-right'>"+data.fans_currency+"</div>";
+                                html+="    </div>";
+
+                                vm.$nextTick(function () {
+                                    $(".memberHtml").html(html);
+                                })
+
+                            }
+                        }
+                    })
                     console.log(ev);
                 } ,
 
                 fnGuanZhu: function (e) {
                     if(e == true){
+                        vm.codeShow = true;
                         $.ajax({
                             url:"/addMember/guanzhuiQcode.do",
                             type:"POST",
@@ -267,6 +360,7 @@ pageEncoding="UTF-8" %>
                         if(validphone==true) {
                             $.get("/addMember/sendMsgerp.do", {
                                 telNo: phone,
+                                busId:$("#busId").val(),
                             }, function (data) {
                                 if (!data.result) {
                                     vm.dialogVisible3 = true;
@@ -317,8 +411,8 @@ pageEncoding="UTF-8" %>
                 },
 
                 submitForm: function (formName) {
-                    console.log("ruleForm==",this.ruleForm)
                     this.$refs[formName].validate((valid) => {
+                        console.log(valid);
                         if (valid) {
                             var phone=vm.ruleForm.phone;
                             var vcode=vm.ruleForm.verification;
@@ -330,7 +424,7 @@ pageEncoding="UTF-8" %>
                                 return;
                             }
 
-                            var gtId=vm.ruleForm.cardRank;
+                            var gtId=vm.ruleForm.cardRank.gt_id;
                             if(gtId==null || gtId==""){
                                 return;
                             }
@@ -340,19 +434,21 @@ pageEncoding="UTF-8" %>
                             params["phone"]=phone;
                             params["ctId"]=ctId;
                             params["gtId"]=gtId;
-                            params["applyType"]=1;
                             params["vcode"]=vcode;
+                            params["busId"]=$("#busId").val();
                             $.ajax({
-                                url:"/memberERP/liquMemberCard.do",
+                                url:"/addMember/liquMemberCard.do",
                                 data:params,
                                 dataType:"JSON",
                                 type:"POST",
                                 success:function(data){
                                     if(data.code==-1){
-                                        vm.dialogVisible2=true;
+                                        vm.dialogVisible3 = true;
+                                        vm.$nextTick(function () {
+                                            $(".error-txt").html(data.message);
+                                        })
                                     }else if(data.code==1){
-                                        $(".error-txt").html(data.message);
-                                        vm.dialogVisible3=true;
+                                        vm.dialogVisible2=true;
                                     }else if(data.code==2){
                                         //跳转支付页面
                                         vm.dialogVisible=true;
@@ -368,6 +464,11 @@ pageEncoding="UTF-8" %>
                         }
                     });
 
+                },
+
+                downQcode:function () {
+                  //下载二维码
+                    window.location.href="/addMember/downQcode.do?url="+vm.guanZhuqrcode;
                 },
                 fnGradeType:function(){
                     var ctId = vm.ruleForm.cardType;

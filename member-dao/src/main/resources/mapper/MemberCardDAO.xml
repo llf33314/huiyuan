@@ -34,7 +34,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        mc_id AS mcId, cardNo, ct_id , gt_id , public_Id, receiveDate, source, isbinding, money, frequency, gr_id , expireDate,
+        mc_id , cardNo, ct_id , gt_id , public_Id, receiveDate, source, isbinding, money, frequency, gr_id , expireDate,
         ucId, nominateCode, systemcode, isChecked, applyType, memberId, changeCardType, entityMemberId,
         cardStatus, busId, oldId, giveMoney, shopId, online
     </sql>

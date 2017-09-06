@@ -319,7 +319,9 @@
             </div>
         </div>
         <div slot="footer" class="dialog-footer" style="padding-bottom: 40px;padding-top: 60px;">
-            <el-button type="primary" @click="returnFirstView()">返回首页</el-button>
+            <c:if test="  ${mallAllEntityQuery.jumpUrl!=null && mallAllEntityQuery.jumpUrl!='' }">
+                <el-button type="primary" @click="returnFirstView()">返回首页</el-button>
+            </c:if>
             <el-button @click="zhifuQuxiao()">取 消</el-button>
         </div>
     </el-dialog>

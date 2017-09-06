@@ -1,0 +1,184 @@
+body {
+  background-color: #fff;
+}
+.pl60 {
+  padding-left: 60px;
+}
+.member-search {
+  padding: 15px 60px 15px;
+  background-color: #f5f5f5;
+}
+.member-search .el-input {
+  width: 220px;
+}
+.member-search label {
+  font-weight: bold;
+  margin-right: 30px;
+}
+.add-member-box {
+  position: relative;
+}
+.add-member-box .add-main {
+  margin-left: 55px;
+  margin-top: 22px;
+}
+.add-member-box .add-main-left {
+  text-align: right;
+  min-width: 130px;
+  margin-right: 20px;
+}
+.add-member-box input[type='text'] {
+  width: 221.4px;
+}
+.right-box {
+  border: 1px solid #dfe6ec;
+  width: 420px;
+  height: 680px;
+  overflow: hidden;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  position: absolute;
+  top: 22px;
+  right: 65px;
+  padding-bottom:40px;
+}
+.right-box h2 {
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 40px;
+  padding: 0 30px;
+  background-color: #eef1f6;
+}
+.qrCode .code-detail {
+  width: 325px;
+  margin: 0 auto;
+}
+.qrCode .code-pic {
+  padding-top: 50px;
+  padding-bottom: 40px ;
+  border-bottom: 1px solid #dfe6ec;
+}
+.qrCode .code-txt {
+  padding-top: 35px;
+  line-height: 1.6;
+}
+.member-list ul {
+  height: 100%;
+  overflow: auto;
+}
+.member-list li {
+  width: 345px;
+  height: 120px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  margin: 23px auto;
+  padding: 25px 0 25px 15px;
+  border: 1px solid #dddddd;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+.member-list li.cur-list {
+  border: 1px solid #20A0FF;
+}
+.member-list li.cur-list .list-item-status {
+  display: block;
+  position: absolute;
+  right: -17px;
+  bottom: -7px;
+  width: 46px;
+  height: 26px;
+  background: #20A0FF;
+  text-align: center;
+  transform: rotate(-45deg);
+  box-shadow: 0 1px 1px #ccc;
+}
+.member-list li.cur-list .list-item-check {
+  display: block;
+  color: #fff;
+  transform: rotate(45deg);
+}
+.list-item img {
+  vertical-align: middle;
+  display: inline-block;
+  width: 70px;
+  height: 70px;
+  float: left;
+  position: relative;
+  z-index: 1;
+}
+.list-item .list-item-name {
+  color: #48576a;
+  display: block;
+  padding-left: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color .3s;
+  white-space: nowrap;
+}
+.widthAuto {
+  width: inherit;
+}
+.notice {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 125px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  background-color: #fbb874;
+  color: #fff;
+  font-size: 15px;
+}
+.notice .notice-num {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  background-color: #fff;
+  color: #fbb874;
+  border-radius: 50%;
+  text-align: center;
+}
+.payCode img {
+  width: 200px;
+  height: 200px;
+  display: block;
+  margin: 0 auto;
+}
+.success {
+  font-size: 13px;
+}
+.success .el-dialog__body {
+  padding-bottom: 100px;
+}
+.success .el-icon-circle-check {
+  color: #34d063;
+}
+.success .success-txt {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+.dialog-item{
+  margin-bottom: 25px;
+  font-size: 14px
+}
+.dialog-item .item-left{
+  text-align: right;
+  width: 100px
+}
+.dialog-item .item-right{
+  padding-left: 30px;
+}
+.dialog-item .item-pic{
+  width: 55px;
+  height: 55px;
+  vertical-align: middle;
+  border-radius: 50%
+}
+.dialog-item .lineH{
+  line-height: 55px
+}
