@@ -856,8 +856,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    if ( card.getIsChecked() == 0 || card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS );
 	    }
+	}else {
+	    throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
 	}
-	throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
     }
 
     /**

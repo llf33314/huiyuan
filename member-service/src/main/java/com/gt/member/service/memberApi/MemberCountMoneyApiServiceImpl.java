@@ -4,6 +4,8 @@ import com.gt.member.dao.*;
 import com.gt.member.entity.*;
 import com.gt.member.entity.DuofenCard;
 import com.gt.member.entity.DuofenCardGet;
+import com.gt.member.enums.ResponseMemberEnums;
+import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.MemberCommonService;
 import com.gt.member.service.entityBo.*;
 import com.gt.member.service.common.dict.DictService;
@@ -82,7 +84,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 
 	    // 使用了折扣优惠券 将不会启动折扣卡打折
 	    Boolean isUseDisCount = false;
-	    if ( ce.getUseCoupon()==1 ) {
+	    if ( ce.getUseCoupon() == 1 ) {
 		if ( ce.getCouponType() == 0 ) {
 		    // 微信优惠券
 		    wxCardReceive = wxCardReceiveMapper.selectById( ce.getCoupondId() );
@@ -123,7 +125,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    }
 
 	    // 计算使用优惠券后
-	    if ( ce.getUseCoupon()==1 ) {
+	    if ( ce.getUseCoupon() == 1 ) {
 		if ( ce.getCouponType() == 0 ) {
 		    if ( "DISCOUNT".equals( wxcard.getCardType() ) ) {
 			// 折扣券
@@ -189,7 +191,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    }
 
 	    // 计算粉币金额 粉币10元启用
-	    if ( ce.getUseFenbi()==1 ) {
+	    if ( ce.getUseFenbi() == 1 ) {
 		Double discountfenbiMoney = currencyCount( pay, member.getFansCurrency() ); // 计算粉币抵扣
 		if ( discountfenbiMoney > 0 ) {
 		    List< Map< String,Object > > dict = dictService.getDict( "1058" );
@@ -202,7 +204,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    }
 
 	    // 计算积分金额
-	    if ( ce.getUseFenbi()==1 ) {
+	    if ( ce.getUseFenbi() == 1 ) {
 		PublicParameterset pps = publicParameterSetMapper.findBybusId( member.getBusId() );
 		Double discountjifenMoney = memberCommonService.integralCount( pay, member.getIntegral().doubleValue(), member.getBusId() ); // 计算积分
 		if ( discountjifenMoney > 0 ) {
@@ -1151,6 +1153,32 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
      * @return
      */
     public MallNotShopEntity mallSkipNotShopCount( MallNotShopEntity mallNotShopEntity ) {
+	if ( mallNotShopEntity.getDerateMoney() > 0 ) {
+	    //减免金额大于0 商品分摊
+	    Double totalMoneys = 0.0;
+	    Integer jianmainCount = 0;
+	    Integer jianmainCount1 = 0;
+	    Map< Integer,MallEntity > mallMap=mallNotShopEntity.getMalls();
+	    for ( MallEntity mallEntity : mallMap.values() ) {
+		totalMoneys += mallEntity.getTotalMoneyAll();
+		jianmainCount++;
+	    }
+	    Double jianmainFenTan = 0.0;  //分摊比例
+	    Double jianmainFenTanAll = 0.0;  //
+	    for ( MallEntity mallEntity : mallNotShopEntity.getMalls().values() ) {
+		if ( jianmainCount == jianmainCount1 + 1 ) {
+		    jianmainFenTan = formatNumber( BigDecimalUtil.sub( mallNotShopEntity.getDerateMoney(), jianmainFenTanAll ) );
+		} else {
+		    jianmainFenTan = formatNumber( BigDecimalUtil.mul( BigDecimalUtil.div( mallEntity.getTotalMoneyAll(), totalMoneys ), mallNotShopEntity.getDerateMoney() ) );
+		    jianmainFenTanAll = formatNumber( BigDecimalUtil.add( jianmainFenTanAll, jianmainFenTan ) );
+		}
+		mallEntity.setTotalMoneyAll( BigDecimalUtil.sub( mallEntity.getTotalMoneyAll(), jianmainFenTan ) );
+		mallEntity.setTotalMoneyOne( BigDecimalUtil.div( mallEntity.getTotalMoneyAll(), mallEntity.getNumber() ) );
+		jianmainCount1++;
+		mallNotShopEntity.getMalls().put( mallEntity.getMallId(), mallEntity );
+	    }
+	}
+
 	if ( mallNotShopEntity.getUserLeague() == 1 ) {
 	    return leagueCount( mallNotShopEntity );
 	}
@@ -1509,7 +1537,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 		mallNotShopEntity.setBalanceMoney( balanceMoneyByShopId );
 		mallNotShopEntity.setMalls( mallEntityMap );
 	    }
-	    if ( fenbiMoney > 0 && fenbiBanlance>=10.0 ) {
+	    if ( fenbiMoney > 0 && fenbiBanlance >= 10.0 ) {
 		Double fenbiNumByAll = memberCommonService.deductFenbi( dict.get( 0 ), discountfenbiMoneyByShopId );
 		mallNotShopEntity.setFenbiNum( fenbiNumByAll );
 		mallNotShopEntity.setDiscountfenbiMoney( discountfenbiMoneyByShopId );
@@ -1601,7 +1629,8 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    }
 	    balanceMoneyByShopId = formatNumber( BigDecimalUtil.add( balanceMoneyByShopId, mallEntity.getBalanceMoney() ) );
 	}
-	mallNotShopEntity.setBalanceMoney( formatNumber( BigDecimalUtil.sub(balanceMoneyByShopId,mallNotShopEntity.getDerateMoney())));
+
+	mallNotShopEntity.setBalanceMoney(balanceMoneyByShopId);
 	Long end = new Date().getTime();
 	System.out.println( "用时:" + ( end - start ) + "毫秒" );
 	return mallNotShopEntity;
