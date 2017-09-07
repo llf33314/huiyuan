@@ -594,6 +594,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 				Double fenbiNum = memberCommonService.deductFenbi( dict.get( 0 ), fenbiFenTan );
 				mallEntity.setFenbiNum( fenbiNum );
 				mallEntity.setCanUsefenbi( 1 );
+				mallEntity.setUnitPrice( formatNumber( BigDecimalUtil.div( mallEntity.getTotalMoneyAll(), mallEntity.getNumber() ) ) );
 				mallEntity.setBalanceMoney( formatNumber( BigDecimalUtil.sub( mallEntity.getTotalMoneyAll(), fenbiFenTan ) ) );
 				mallEntity.setTotalMoneyAll( formatNumber( BigDecimalUtil.sub( mallEntity.getTotalMoneyAll(), fenbiFenTan ) ) );
 				mallEntityMap.put( mallEntity.getMallId(), mallEntity );
@@ -677,6 +678,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 			    Double jifenNum = memberCommonService.deductJifen( pps, jifenFenTan, member.getBusId() );
 			    mallEntity.setJifenNum( jifenNum );
 			    mallEntity.setCanUseJifen( 1 );
+			    mallEntity.setUnitPrice( formatNumber( BigDecimalUtil.div( mallEntity.getTotalMoneyAll(), mallEntity.getNumber() ) ) );
 			    mallEntity.setBalanceMoney( formatNumber( BigDecimalUtil.sub( mallEntity.getTotalMoneyAll(), jifenFenTan ) ) );
 			    mallEntity.setTotalMoneyAll( formatNumber( BigDecimalUtil.sub( mallEntity.getTotalMoneyAll(), jifenFenTan ) ) );
 			    mallEntityMap.put( mallEntity.getMallId(), mallEntity );
