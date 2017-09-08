@@ -9,6 +9,7 @@ import com.gt.member.entity.WxCard;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.memberApi.CardCouponsApiService;
 import com.gt.member.util.CommonUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -27,6 +28,7 @@ import java.util.Map;
  * <p>
  * Created by Administrator on 2017/8/2 0002.
  */
+@Api(value = "优惠券卡券接口",description = "优惠券卡券接口")
 @Controller
 @RequestMapping("/memberAPI/cardCouponseApi")
 public class CardCouponseApiController {

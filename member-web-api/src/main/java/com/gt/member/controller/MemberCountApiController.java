@@ -10,6 +10,7 @@ import com.gt.member.service.memberApi.MemberApiService;
 import com.gt.member.service.memberApi.MemberCountMoneyApiService;
 import com.gt.member.service.entityBo.MallAllEntity;
 import com.gt.member.service.entityBo.PaySuccessBo;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * Created by pengjiangli on 2017/8/2 0002.
  */
+@Api(value = "结算算法接口",description = "结算算法接口")
 @Controller
 @RequestMapping("/memberAPI/memberCountApi")
 public class MemberCountApiController {

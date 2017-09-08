@@ -146,4 +146,12 @@ public interface MemberGradetypeDAO extends BaseMapper<MemberGradetype> {
      * @return
      */
     List<Map<String,Object>> findBuyGradeType(@Param( "busId" )Integer busId);
+
+    /**
+     * 查询会员等级信息
+     * @param busId
+     * @return
+     */
+    List<Map<String,Object>> findGradeTyeBybusIdAndctId(@Param( "busId" )Integer busId,@Param("ctId")Integer ctId);
+
 }

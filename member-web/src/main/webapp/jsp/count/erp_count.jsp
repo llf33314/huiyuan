@@ -655,7 +655,7 @@
                 if (data.result == false) {
 
                 } else {
-                    $("#totalMoney").val(data.mallNotShopEntity.balanceMoney);
+                    $("#totalMoney").val(data.mallNotShopEntity.totalMoney);
                     var balanceMoney = data.mallNotShopEntity.balanceMoney;
                     if (balanceMoney == 0) {
                         $(".item").removeClass("erp-billing-bg-color");
@@ -690,10 +690,11 @@
                     }
                     var totalMoney = data.mallNotShopEntity.totalMoney;
                     var balanceMoney = data.mallNotShopEntity.balanceMoney;
-                    var youhuiMoney = parseFloat(totalMoney) - parseFloat(balanceMoney);
+                    var derateMoney = data.mallNotShopEntity.derateMoney;
+                    var discountConponMoney=data.mallNotShopEntity.discountConponMoney;
 
                     var youhuiHtml = "<span class='title'>优惠金额：</span>";
-                    youhuiHtml += "<span>￥-" + youhuiMoney + "元</span>";
+                    youhuiHtml += "<span>￥-" + discountConponMoney + "元</span>";
                     if (canUseConpon != 0 || canUsefenbi != 0 || canUseJifen != 0) {
                         youhuiHtml += "<span style='padding-left: 5px;'>(消耗";
                         if (canUseConpon == 1) {

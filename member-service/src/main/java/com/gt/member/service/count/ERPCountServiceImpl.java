@@ -335,6 +335,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    }
 	    mallNotShopEntity.setMalls( mallMap );
 	    mallNotShopEntity = memberCountMoneyApiService.mallSkipNotShopCount( mallNotShopEntity );
+	    LOG.error( "计算erp参数"+JSON.toJSONString( mallNotShopEntity ) );
 	    map.put( "result", true );
 	    map.put( "mallNotShopEntity", mallNotShopEntity );
 	} catch ( Exception e ) {
@@ -357,6 +358,12 @@ public class ERPCountServiceImpl implements ERPCountService {
     public void erpChuzhiPayMent( String mallAllEntityQuery, String param ) throws BusinessException {
 	try {
 	    MallAllEntityQuery mallQuery = JSON.toJavaObject( JSON.parseObject( mallAllEntityQuery ), MallAllEntityQuery.class );
+
+	    UserConsume userConsume= userConsumeDAO.findByOrderCode1( mallQuery.getOrderCode() );
+	    if(CommonUtil.isNotEmpty( userConsume ) && userConsume.getPayStatus()==1){
+	        throw new BusinessException(ResponseMemberEnums.ORDER_PAY_REPEAT);
+	    }
+
 	    JSONObject jsonObject = JSONObject.parseObject( param );
 	    Integer payType = CommonUtil.toInteger( jsonObject.get( "payType" ) );
 	    Integer visitor = CommonUtil.toInteger( jsonObject.get( "visitor" ) );
@@ -564,6 +571,11 @@ public class ERPCountServiceImpl implements ERPCountService {
 	Map< String,Object > map = new HashMap<>();
 	try {
 	    MallAllEntityQuery mallQuery = JSON.toJavaObject( JSON.parseObject( mallAllEntityQuery ), MallAllEntityQuery.class );
+	    UserConsume userConsume= userConsumeDAO.findByOrderCode1( mallQuery.getOrderCode() );
+	    if(CommonUtil.isNotEmpty( userConsume ) && userConsume.getPayStatus()==1){
+		throw new BusinessException(ResponseMemberEnums.ORDER_PAY_REPEAT);
+	    }
+
 	    JSONObject jsonObject = JSONObject.parseObject( param );
 	    Integer visitor = CommonUtil.toInteger( jsonObject.get( "visitor" ) );
 	    MallNotShopEntity mallNotShopEntity = new MallNotShopEntity();
@@ -678,6 +690,10 @@ public class ERPCountServiceImpl implements ERPCountService {
         Map<String,Object> map=new HashMap<>(  );
 	try {
 	    MallAllEntityQuery mallQuery = JSON.toJavaObject( JSON.parseObject( mallAllEntityQuery ), MallAllEntityQuery.class );
+	    UserConsume userConsume= userConsumeDAO.findByOrderCode1( mallQuery.getOrderCode() );
+	    if(CommonUtil.isNotEmpty( userConsume ) && userConsume.getPayStatus()==1){
+		throw new BusinessException(ResponseMemberEnums.ORDER_PAY_REPEAT);
+	    }
 	    JSONObject jsonObject = JSONObject.parseObject( param );
 	    Integer visitor = CommonUtil.toInteger( jsonObject.get( "visitor" ) );
 	    MallNotShopEntity mallNotShopEntity = new MallNotShopEntity();

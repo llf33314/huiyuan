@@ -22,6 +22,8 @@ import com.gt.member.service.entityBo.queryBo.MallAllEntityQuery;
 import com.gt.member.service.entityBo.queryBo.MallEntityQuery;
 import com.gt.member.service.member.CardERPService;
 import com.gt.member.util.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,12 +43,13 @@ import java.util.Map;
 
 /**
  * <p>
- * erp 统一结算页面
+ * 统一新增会员卡页面
  * </p>
  *
  * @author pengjiangli
  * @since 2017-08-09
  */
+@Api(value = "统一新增会员卡页面",description = "统一新增会员卡页面")
 @Controller
 @RequestMapping( "/addMember" )
 public class AddMemberController {
@@ -81,9 +84,11 @@ public class AddMemberController {
     private MemberConfig memberConfig;
 
     @ApiOperation( value = "新增会员统一页面", notes = "新增会员统一页面" )
+    @ApiImplicitParam( name = "shopId", value = "门店id(没有门店请传主门店id)", paramType = "query", required = true, dataType = "int" )
     @RequestMapping( "/erpAddMember" )
     public String erpAddMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
+
 	//测试
 	BusUser busUser = busUserMapper.selectById( 42 );
 	Integer busId = busUser.getId();
@@ -109,7 +114,7 @@ public class AddMemberController {
 	List< Map< String,Object > > mapList = gradeTypeMapper.findBybusId1( busId );//查询该商户下的卡片类型
 	request.setAttribute( "mapList", JSON.toJSON( mapList ) );
 	if ( mapList.size() > 0 ) {
-	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findAllBybusId( busId, CommonUtil.toInteger( mapList.get( 0 ).get( "ctId" ) ) );
+	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, CommonUtil.toInteger( mapList.get( 0 ).get( "ctId" ) ) );
 	    request.setAttribute( "gradeTypes", JSON.toJSON( gradeTypes ) );
 	}
 	request.setAttribute( "busId",busId );
@@ -139,7 +144,7 @@ public class AddMemberController {
 	    if ( busUser.getPid() > 0 ) {
 		busId = dictService.pidUserId( busUser.getId() );
 	    }
-	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findAllBybusId( busId, cardType );
+	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, cardType );
 	    map.put( "code", 0 );
 	    map.put( "gradeTypes", gradeTypes );
 	} catch ( Exception e ) {
@@ -152,7 +157,6 @@ public class AddMemberController {
     /**
      * 发送短信
      *
-     * @param sType 验证类型: 0 短信验证, 1 语音验证
      * @param telNo
      *
      * @throws IOException
@@ -226,14 +230,29 @@ public class AddMemberController {
 	    CommonUtil.write( response, map );
 	    return;
 	}
-
 	String vcode = CommonUtil.toString( params.get( "vcode" ) );
-
 	String vcode1 = redisCacheUtil.get( vcode );
-
 	if ( CommonUtil.isEmpty( vcode1 ) ) {
 	    map.put( "code", -1 );
 	    map.put( "message", "验证码超时或错误" );
+	    CommonUtil.write( response, map );
+	    return;
+	}
+	if ( CommonUtil.isEmpty( params.get( "ctId" ) ) ) {
+	    map.put( "code", -1 );
+	    map.put( "message", "请选择会员卡" );
+	    CommonUtil.write( response, map );
+	    return;
+	}
+	if ( CommonUtil.isEmpty( params.get( "gtId" )  ) ) {
+	    map.put( "code", -1 );
+	    map.put( "message", "请选择会员卡等级" );
+	    CommonUtil.write( response, map );
+	    return;
+	}
+	if ( CommonUtil.isEmpty( params.get( "shopId" )  ) ) {
+	    map.put( "code", -1 );
+	    map.put( "message", "门店不能为空" );
 	    CommonUtil.write( response, map );
 	    return;
 	}
@@ -241,11 +260,9 @@ public class AddMemberController {
 	Integer busId =CommonUtil.toInteger( params.get( "busId" ) );
 
 	busId = dictService.pidUserId( busId );
-	BusUser   busUser = busUserMapper.selectById( busId );
-
 
 	try {
-	    map = cardERPService.linquMemberCard( busUser, params );
+	    map = cardERPService.linquMemberCard( busId, params );
 	} catch ( Exception e ) {
 	    map.put( "code", -1 );
 	    map.put( "message", "领取失败" );
@@ -269,40 +286,9 @@ public class AddMemberController {
 	CommonUtil.write( response, map );
     }
 
-    /**
-     * 跳入支付页面
-     *
-     * @param request
-     * @param response
-     * @param memberId
-     * @param shopId
-     * @param ctId
-     * @param gtId
-     * @param color
-     *
-     * @return
-     */
-    @RequestMapping( "/tiaozhuanPay" )
-    public String tiaozhuanPay( HttpServletRequest request, HttpServletResponse response, Integer memberId, Integer shopId, Integer ctId, Integer gtId, Integer color ) {
-
-	BusUser busUser = CommonUtil.getLoginUser( request );
-	Integer busId = busUser.getId();
-
-	request.setAttribute( "memberId", memberId );
-	request.setAttribute( "shopId", shopId );
-	request.setAttribute( "ctId", ctId );
-	request.setAttribute( "gtId", gtId );
-	MemberGradetype gt = gradeTypeMapper.selectById( gtId );
-	request.setAttribute( "buyMoney", gt.getBuyMoney() );
-	request.setAttribute( "memberUser", "member_" + memberId );
-
-	request.setAttribute( "host", memberConfig.getSocket_url() );
-
-	return "merchants/member/erp/pay";
-    }
 
     /**
-     * 购买会员卡
+     * 购买会员卡支付回调
      *
      * @param request
      * @param response
@@ -310,18 +296,12 @@ public class AddMemberController {
      *
      * @throws IOException
      */
-    @RequestMapping( "/buyMemberCard" )
-    public void buyMemberCard( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
-	BusUser busUser = CommonUtil.getLoginUser( request );
-	Integer busId = busUser.getId();
-	if ( busUser.getPid() > 0 ) {
-	    busId = dictService.pidUserId( busUser.getId() );
-	    busUser = busUserMapper.selectById( busId );
-	}
+    @RequestMapping( "/79B4DE7C/successPayBuyCard" )
+    public void successPayBuyCard( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > map = new HashMap< String,Object >();
 
 	try {
-	    map = cardERPService.buyMemberCard( busUser, params );
+	    map = cardERPService.buyMemberCard(params );
 	} catch ( Exception e ) {
 	    map.put( "code", -1 );
 	    map.put( "message", "领取成功" );
@@ -329,20 +309,6 @@ public class AddMemberController {
 	CommonUtil.write( response, map );
     }
 
-    /**
-     * 领取成功跳转页面
-     *
-     * @param request
-     * @param response
-     * @param color
-     *
-     * @return
-     */
-    @RequestMapping( "/paysuccess" )
-    public String paysuccess( HttpServletRequest request, HttpServletResponse response, Integer color, Integer shopId ) {
-	request.setAttribute( "shopId", shopId );
-	return "merchants/member/erp/paysuccess";
-    }
 
     /**
      * 查询粉丝列表

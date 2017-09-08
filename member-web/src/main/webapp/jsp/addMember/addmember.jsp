@@ -42,13 +42,13 @@ pageEncoding="UTF-8" %>
                         </el-form-item>
                     </c:if>
                     <el-form-item label="会员卡类型：" prop="cardType">
-                        <el-select v-model="ruleForm.cardType"  placeholder="" size="small" @change="fnGradeType">
-                                <el-option :label="option.ctName" :value="option.ctId" v-for="option in options"></el-option>
-                        </el-select>
+                        <el-select v-model="cardType"  placeholder="" size="small" @change="fnGradeType">
+                               <el-option :label="option.ctName" :value="option.ctId" v-for="option in options"></el-option>
+                          </el-select>
                     </el-form-item>
                     <el-form-item label="会员卡等级：" prop="cardRank">
-                        <el-select v-model="ruleForm.cardRank"   placeholder="请选择会员卡等级" size="small" @change="fnGradeTypeBuy">
-                                <el-option :label="option.gt_name"  :value="option"   v-for="option in gradeTypesOption"></el-option>
+                        <el-select v-model="cardRank"   placeholder="请选择会员卡等级" size="small" @change="fnGradeTypeBuy">
+                                <el-option :label="option.gt_name"   :value="option"    v-for="option in gradeTypesOption"></el-option>
                         </el-select>
                         <span class="grey-warning"></span>
                     </el-form-item>
@@ -162,22 +162,6 @@ pageEncoding="UTF-8" %>
         var vm = new Vue({
             el: '#member',
             data(){
-                var validateCardType = (rule, value, callback) => {
-                    if (value === '') {
-                        callback(new Error('不能为空！'));
-                    }else {
-                        callback();
-                    }
-
-                };
-                var validateCardRanke = (rule, value, callback) => {
-                    if (value === '') {
-                        callback(new Error('不能为空！'));
-                    }
-                    else {
-                        callback();
-                    }
-                };
                 var validateCardPhone = (rule, value, callback) => {
                     if (value === '') {
                         callback(new Error('不能为空！'));
@@ -205,23 +189,17 @@ pageEncoding="UTF-8" %>
                     dialogVisible3:false,
                     dialogTableVisible4:false,
                     cardPriceVisible:${gradeTypes[0].applyType==3},
+                    options:${mapList},
+                    cardType:${mapList[0].ctId},
+                    gradeTypesOption:'${gradeTypes}',
+                    cardRank:'${gradeTypes[0]}',
+                    carID:${gradeTypes[0].gt_id},
                     ruleForm: {
                         follow:false ,
-                        cardType:'',
-                        cardRank:'',
                         phone:'',
                         verification:''
                     },
-                    options:${mapList},
-                    gradeTypesOption:${gradeTypes},
                     rules:{
-                        cardType: [
-                            { required: true, validator: validateCardType,  trigger: 'change' }
-                        ],
-                        cardRank: [
-                            { required: true, validator: validateCardRanke, trigger: 'change' }
-                        ],
-
                         verification: [
                             { required: true, message: '请输入手机验证码', trigger: 'blur' }
 
@@ -231,7 +209,6 @@ pageEncoding="UTF-8" %>
                         ]
                     }
                 }
-
             },
             methods: {
                 handleIconClick: function (ev) {
@@ -248,7 +225,11 @@ pageEncoding="UTF-8" %>
                             if(data.result==true){
                                 vm.dialogTableVisible4=true;
                                 var html="<div class='flex dialog-item'>";
-                                 html+="<div class='item-left'><img src='"+data.headimgUrl+"' alt='' class='item-pic'></div>";
+                                if(data.headimgUrl==null || data.headimgUrl==""){
+                                    html+="<div class='item-left'><img src='/images/addmember/headImage.png' alt='' class='item-pic'></div>";
+                                }else{
+                                    html+="<div class='item-left'><img src='"+data.headimgUrl+"' alt='' class='item-pic'></div>";
+                                }
                                 html+=" <div class='flex-1 item-right lineH'>"+data.nickName+"</div>";
                                 html+="   </div>";
                                 html+=" <div class='flex dialog-item'>";
@@ -391,19 +372,19 @@ pageEncoding="UTF-8" %>
                         }
                 },
 
-                fnGradeTypeBuy:function(arg){
-                    var applyTyper=arg.applyType;
+                fnGradeTypeBuy:function(){
+                    var applyTyper=vm.cardRank.applyType;
                     if(applyTyper==3){
                         vm.cardPriceVisible=true;
                         vm.$nextTick(function () {
-                           $(".buyMoneyHtml").html(arg.buyMoney);
+                           $(".buyMoneyHtml").html(vm.cardRank.buyMoney);
                         })
                     }else{
                         vm.cardPriceVisible=false;
                     }
-                    var ctId=vm.ruleForm.cardType;
+                    var ctId=vm.cardType;
                     if(ctId==2){
-                        $(".grey-warning").html("该卡享受"+arg.gr_discount/10+"折");
+                        $(".grey-warning").html("该卡享受"+vm.cardRank.gr_discount/10+"折");
                     }else{
                         $(".grey-warning").html("");
                     }
@@ -419,14 +400,17 @@ pageEncoding="UTF-8" %>
                             if(vcode==null || vcode==""){
                                 return;
                             }
-                            var ctId=vm.ruleForm.cardType;
+                            var ctId=vm.cardType;
                             if(ctId==null || ctId==""){
                                 return;
                             }
 
-                            var gtId=vm.ruleForm.cardRank.gt_id;
+                            var gtId=vm.cardRank.gt_id;
                             if(gtId==null || gtId==""){
-                                return;
+                                gtId=vm.carID;
+                                if(gtId==null || gtId==""){
+                                    return;
+                                }
                             }
 
                             var params={};
@@ -471,8 +455,7 @@ pageEncoding="UTF-8" %>
                     window.location.href="/addMember/downQcode.do?url="+vm.guanZhuqrcode;
                 },
                 fnGradeType:function(){
-                    var ctId = vm.ruleForm.cardType;
-                    console.log(vm.ruleForm.cardType);
+                    var ctId = vm.cardType;
                     if(ctId==null || ctId==""){
                         return;
                     }
@@ -489,12 +472,7 @@ pageEncoding="UTF-8" %>
                                     $(".grey-warning").html("");
                                 }
                                 vm.$set(vm,"gradeTypesOption",data.gradeTypes);
-
-                                if(data.gradeTypes[0].applyType==3){
-                                    vm.cardPriceVisible=true;
-                                }else{
-                                    vm.cardPriceVisible=false;
-                                }
+                                vm.cardRank=data.gradeTypes[0];
                             }else{
                                 $(".error-txt").html(data.message);
                                 this.dialogVisible3=true;

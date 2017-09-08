@@ -18,22 +18,20 @@ public interface CardERPService {
     /**
      * erp领取会员
      *
-     * @param busUser
      * @param params
      *
      * @return
      */
-    public Map< String,Object > linquMemberCard( BusUser busUser, Map< String,Object > params ) throws Exception;
+    public Map< String,Object > linquMemberCard( Integer busId, Map< String,Object > params ) throws Exception;
 
     /**
      * 购买会员卡
      *
-     * @param busUser
      * @param params
      *
      * @return
      */
-    public Map< String,Object > buyMemberCard( BusUser busUser, Map< String,Object > params ) throws Exception;
+    public Map< String,Object > buyMemberCard(Map< String,Object > params ) throws Exception;
 
     /**
      * 查询会员信息

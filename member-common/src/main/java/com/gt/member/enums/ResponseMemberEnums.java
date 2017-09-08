@@ -27,9 +27,14 @@ public enum ResponseMemberEnums {
     COUPONSE_NO_EXIST(6004,"卡券不存在"),
     COUPONSE_NO_GUOQI(6005,"卡券过期或已核销,不能执行卡券核销操作"),
 
+
+
     NOT_PAY_TYPE(7001,"不存在当前支付方式"),
     LESS_THAN_CASH(7002,"收取现金不够"),
-    PLEASE_PAY(7003,"请支付购买会员卡金额");
+    PLEASE_PAY(7003,"请支付购买会员卡金额"),
+    ORDER_PAY_REPEAT(7004,"订单重复支付"),
+    ORDER_PAY_ERROR(7005,"当前订单支付存在问题,将影响收入")
+    ;
 
     private Integer code;
     private String msg;

@@ -10,6 +10,7 @@ import com.gt.member.service.entityBo.queryBo.MallEntityQuery;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.MemberConfig;
 import com.gt.member.util.RedisCacheUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,7 @@ import java.util.Map;
  * @author pengjiangli
  * @since 2017-08-09
  */
+@Api(value = "erp 统一结算页面",description = "erp 统一结算页面")
 @Controller
 @RequestMapping( "/erpCount" )
 public class ERPCountController extends BaseController {
@@ -52,19 +54,48 @@ public class ERPCountController extends BaseController {
     public String aa( HttpServletRequest request, HttpServletResponse response,@RequestParam String orderCode ) {
 	MallAllEntityQuery m = new MallAllEntityQuery();
 	m.setOrderCode( orderCode );  //订单号
-	m.setTotalMoney( 100.1 ); //订单总金额
+	m.setTotalMoney( 12000.01 ); //订单总金额
 	List< MallEntityQuery > list = new ArrayList<>();
 	MallEntityQuery m1 = new MallEntityQuery();
 	m1.setMallId( 1 );  //商品id or 生成序列号
 	m1.setNumber( 1 );  // 商品数量
-	m1.setTotalMoneyOne( 100.1 );  //商品应付单价格
-	m1.setTotalMoneyAll( 100.1 ); //商品订单总价格
+	m1.setTotalMoneyOne( 3000.0 );  //商品应付单价格
+	m1.setTotalMoneyAll( 3000.0 ); //商品订单总价格
 	m1.setUserCard( 1 );  //是否能用会员卡打折  0不参与 1参与
 	m1.setUseCoupon( 1 );    //是否使用优惠券 0不参与 1参与
 	m1.setUseFenbi( 1 );    //是否使用粉币 0不参与 1参与
 	m1.setUserJifen( 1 );  //是否使用积分 0不参与 1参与
 	m1.setUseLeague( 1 );     //商品是否能使用联盟卡 0不参与 1参与
 	list.add( m1 );
+
+
+	MallEntityQuery m2 = new MallEntityQuery();
+	m2.setMallId( 2 );  //商品id or 生成序列号
+	m2.setNumber( 2 );  // 商品数量
+	m2.setTotalMoneyOne( 4500.0 );  //商品应付单价格
+	m2.setTotalMoneyAll( 9000.0 ); //商品订单总价格
+	m2.setUserCard( 1 );  //是否能用会员卡打折  0不参与 1参与
+	m2.setUseCoupon( 1 );    //是否使用优惠券 0不参与 1参与
+	m2.setUseFenbi( 1 );    //是否使用粉币 0不参与 1参与
+	m2.setUserJifen( 1 );  //是否使用积分 0不参与 1参与
+	m2.setUseLeague( 1 );     //商品是否能使用联盟卡 0不参与 1参与
+	list.add( m2 );
+
+	MallEntityQuery m3 = new MallEntityQuery();
+	m3.setMallId( 3);  //商品id or 生成序列号
+	m3.setNumber( 1);  // 商品数量
+	m3.setTotalMoneyOne( 0.01 );  //商品应付单价格
+	m3.setTotalMoneyAll( 0.01 ); //商品订单总价格
+	m3.setUserCard( 1 );  //是否能用会员卡打折  0不参与 1参与
+	m3.setUseCoupon( 1 );    //是否使用优惠券 0不参与 1参与
+	m3.setUseFenbi( 1 );    //是否使用粉币 0不参与 1参与
+	m3.setUserJifen( 1 );  //是否使用积分 0不参与 1参与
+	m3.setUseLeague( 1 );     //商品是否能使用联盟卡 0不参与 1参与
+	list.add( m3 );
+
+
+
+
 	m.setUcType( 103 );   //消费类型  请查看A003消费类型  没有请添加
 	m.setBusId( 42 );  //商家主账户id
 	m.setShopId( 17 );  //门店订单

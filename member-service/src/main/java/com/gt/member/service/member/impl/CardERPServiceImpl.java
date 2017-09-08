@@ -3,6 +3,7 @@ package com.gt.member.service.member.impl;
 import com.gt.common.entity.BusUser;
 import com.gt.common.entity.WxPublicUsers;
 import com.gt.member.dao.*;
+import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.common.WxPublicUsersDAO;
 import com.gt.member.entity.*;
 import com.gt.member.service.common.MemberCommonService;
@@ -65,6 +66,9 @@ public class CardERPServiceImpl implements CardERPService {
     @Autowired
     private WxPublicUsersDAO wxPublicUsersDAO;
 
+    @Autowired
+    private BusUserDAO busUserDAO;
+
     @Override
     public List< Map< String,Object > > findMemberIsNotCard( Integer busId, Map< String,Object > params ) {
 	try {
@@ -97,13 +101,15 @@ public class CardERPServiceImpl implements CardERPService {
      * @throws Exception
      */
     @Transactional
-    public Map< String,Object > linquMemberCard( BusUser busUser, Map< String,Object > params ) throws Exception {
+    public Map< String,Object > linquMemberCard( Integer busId, Map< String,Object > params ) throws Exception {
 	Map< String,Object > returnMap = new HashMap<>();
 	try {
 
-	    int count = cardMapper.countCardisBinding( busUser.getId() );
+	    int count = cardMapper.countCardisBinding( busId );
 
-	    String dictNum = dictService.dictBusUserNum( busUser.getId(), busUser.getLevel(), 4, "1093" ); // 多粉 翼粉
+	    BusUser busUser= busUserDAO.selectById(busId  );
+
+	    String dictNum = dictService.dictBusUserNum( busId, busUser.getLevel(), 4, "1093" ); // 多粉 翼粉
 	    if ( CommonUtil.toInteger( dictNum ) < count ) {
 		returnMap.put( "code", -1 );
 		returnMap.put( "message", "会员卡已领取完!" );
@@ -216,55 +222,37 @@ public class CardERPServiceImpl implements CardERPService {
 
     @Transactional
     @Override
-    public Map< String,Object > buyMemberCard( BusUser busUser, Map< String,Object > params ) throws Exception {
+    public Map< String,Object > buyMemberCard( Map< String,Object > params ) throws Exception {
 	Map< String,Object > returnMap = new HashMap<>();
-	Integer memberId = CommonUtil.toInteger( params.get( "memberId" ) );
-	Integer ctId = CommonUtil.toInteger( params.get( "ctId" ) );
-	Integer gtId = CommonUtil.toInteger( params.get( "gtId" ) );
-	Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
-	Integer payType = CommonUtil.toInteger( params.get( "payType" ) );
-	//购买会员卡
-	MemberGradetype gradeType = gradeTypeMapper.selectById( gtId );
-	if ( CommonUtil.isEmpty( gradeType ) || CommonUtil.isEmpty( gradeType.getBuyMoney() <= 0 ) ) {
-	    throw new Exception();
-	}
-	// 添加会员记录
-	UserConsume uc = new UserConsume();
-	uc.setMemberId( memberId );
-	uc.setCtId( ctId );
-	uc.setRecordType( 2 );
-	uc.setUcType( 13 );
-	uc.setTotalMoney( gradeType.getBuyMoney() );
-	uc.setCreateDate( new Date() );
-	uc.setPayStatus( 0 );
-	uc.setDiscount( 100 );
-	uc.setDiscountMoney( gradeType.getBuyMoney() );
-	String orderCode = CommonUtil.getMEOrderCode();
-	uc.setOrderCode( orderCode );
-	uc.setGtId( gtId );
-	uc.setBusUserId( busUser.getId() );
-	uc.setStoreId( shopId );
-	if ( payType == 1 ) {
-	    //现金
+
+	try {
+	    String orderCode = CommonUtil.toString( params.get( "out_trade_no" ) );
+	    UserConsume uc = userConsumeMapper.findByOrderCode1( orderCode );
+	    //购买会员卡
+	    MemberGradetype gradeType = gradeTypeMapper.selectById( uc.getId() );
+	    if ( CommonUtil.isEmpty( gradeType ) || CommonUtil.isEmpty( gradeType.getBuyMoney() <= 0 ) ) {
+		throw new Exception();
+	    }
+	    Integer payType = CommonUtil.toInteger( params.get( "payType" ) );
 	    uc.setPayStatus( 1 );
-	    uc.setPaymentType( 10 );
+	    uc.setPaymentType( payType );
 	    userConsumeMapper.insert( uc );
 
 	    // 添加会员卡
 	    MemberCard card = new MemberCard();
 	    card.setIsChecked( 1 );
 	    card.setCardNo( CommonUtil.getCode() );
-	    card.setCtId( ctId );
+	    card.setCtId( uc.getCtId() );
 
 	    card.setSystemcode( CommonUtil.getNominateCode() );
 	    card.setApplyType( 3 );
-	    card.setMemberId( memberId );
-	    card.setGtId( gtId );
-	    MemberGiverule giveRule = giveRuleMapper.findBybusIdAndGtIdAndCtId( busUser.getId(), card.getGtId(), card.getCtId() );
+	    card.setMemberId( uc.getMemberId() );
+	    card.setGtId( uc.getGtId() );
+	    MemberGiverule giveRule = giveRuleMapper.findBybusIdAndGtIdAndCtId( uc.getBusUserId(), card.getGtId(), card.getCtId() );
 	    card.setGrId( giveRule.getGrId() );
 
 	    card.setCardNo( CommonUtil.getCode() );
-	    card.setBusId( busUser.getId() );
+	    card.setBusId( uc.getBusUserId() );
 	    card.setReceiveDate( new Date() );
 	    card.setIsbinding( 1 );
 
@@ -285,10 +273,11 @@ public class CardERPServiceImpl implements CardERPService {
 	    cardMapper.insert( card );
 
 	    Member member = new Member();
-	    member.setId( memberId );
+	    member.setId( uc.getMemberId() );
 	    member.setIsBuy( 1 );
 	    member.setMcId( card.getMcId() );
 	    memberMapper.updateById( member );
+
 	    String balance = null;
 	    if ( card.getCtId() == 5 ) {
 		balance = card.getFrequency() + "次";
@@ -298,28 +287,16 @@ public class CardERPServiceImpl implements CardERPService {
 	    memberCommonService.saveCardRecordNew( card.getMcId(), (byte) 1, gradeType.getBuyMoney() + "元", "购买会员卡", card.getPublicId(), balance, card.getCtId(), 0.0 );
 
 	    // 新增会员短信通知
-	    member = memberMapper.selectById( memberId );
+	    member = memberMapper.selectById( uc.getMemberId() );
 	    systemMsgService.sendNewMemberMsg( member );
 
-	    returnMap.put( "code", 1 );
+	    returnMap.put( "code", 0 );
 	    returnMap.put( "message", "领取成功" );
-
-	} else if ( payType == 2 ) {
-	    //扫码支付
-	    userConsumeMapper.insert( uc );
-
-	    returnMap.put( "orderid", orderCode );
-	    returnMap.put( "businessUtilName", "alipayNotifyUrlBuinessServiceBuyCard" );
-	    returnMap.put( "totalFee", gradeType.getBuyMoney() );
-	    returnMap.put( "model", 7 );
-	    returnMap.put( "busId", busUser.getId() );
-	    returnMap.put( "appidType", 0 );
-	    returnMap.put( "orderNum", orderCode );
-	    returnMap.put( "memberId", memberId );
-	    returnMap.put( "code", 2 );
-	    returnMap.put( "message", "领取成功" );
+	    return returnMap;
+	}catch ( Exception e ){
+	    throw new Exception(  );
 	}
-	return returnMap;
+
     }
 
     @Override

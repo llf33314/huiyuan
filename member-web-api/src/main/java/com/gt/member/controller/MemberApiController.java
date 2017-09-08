@@ -10,6 +10,7 @@ import com.gt.member.exception.BusinessException;
 import com.gt.member.service.memberApi.MemberApiService;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.MemberConfig;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -28,6 +29,7 @@ import java.util.Map;
  *
  * @author Administrator
  */
+@Api(value = "粉丝和会员接口",description = "粉丝和会员接口")
 @Controller
 @RequestMapping( "/memberAPI/member" )
 public class MemberApiController extends BaseController {
