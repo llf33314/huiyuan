@@ -701,10 +701,10 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 		    mallShopEntity.setMalls( mallEntityMap );
 		    mallShopMap.put( mallShopEntity.getShopId(), mallShopEntity );
 		}
-		if ( jifenMoney > 0 ) {
-		    Integer jifenNumByAll = memberCommonService.deductJifen( pps, jifenMoney, member.getBusId() ).intValue();
+		if ( discountJifenMoneyByShopId > 0 ) {
+		    Integer jifenNumByAll = memberCommonService.deductJifen( pps, discountJifenMoneyByShopId, member.getBusId() ).intValue();
 		    mallAllEntity.setJifenNum( jifenNumByAll );
-		    mallAllEntity.setDiscountjifenMoney( jifenMoney );
+		    mallAllEntity.setDiscountjifenMoney( discountJifenMoneyByShopId );
 		}
 		mallAllEntity.setMallShops( mallShopMap );
 		mallAllEntity.setCanUseJifen( canUseJifenByAll );
