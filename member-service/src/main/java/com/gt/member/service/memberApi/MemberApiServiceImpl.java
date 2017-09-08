@@ -220,7 +220,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 
 	    // 查询粉笔数量
-	    Integer fenbi = fenbiFlowRecordDAO.getFenbiSurplus( busUserId, 1, recFreezeType, ctId );
+	    Integer fenbi = fenbiFlowRecordDAO.getFenbiSurplus( busUserId, 1, recFreezeType, ctId ).intValue();
 
 	    // 如果是折扣卡 金额用折后金额
 	    if ( ctId == 2 ) {
@@ -1008,7 +1008,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 
 	    // 查询粉笔数量
-	    Integer fenbi = fenbiFlowRecordDAO.getFenbiSurplus( busUserId, 1, recFreezeType, ctId );
+	    Integer fenbi = fenbiFlowRecordDAO.getFenbiSurplus( busUserId, 1, recFreezeType, ctId ).intValue();
 
 	    // 如果是折扣卡 金额用折后金额
 	    if ( ctId == 2 ) {
@@ -1563,7 +1563,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 
 	    // 查询粉笔数量
-	    Integer fenbi = fenbiFlowRecordDAO.getFenbiSurplus( busUserId, 1, recFreezeType, ctId );
+	    Integer fenbi = fenbiFlowRecordDAO.getFenbiSurplus( busUserId, 1, recFreezeType, ctId ).intValue();
 
 	    // 如果是折扣卡 金额用折后金额
 	    if ( ctId == 2 ) {

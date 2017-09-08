@@ -14,7 +14,7 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface FenbiFlowRecordDAO extends BaseMapper<FenbiFlowRecord > {
 
-    int getFenbiSurplus(@Param("userId")Integer userId,
+    Double getFenbiSurplus(@Param("userId")Integer userId,
 		    @Param("rec_type")Integer rec_type,
 		    @Param("fre_type")Integer fre_type,
 		    @Param("fkId")Integer fkId);

@@ -191,8 +191,8 @@ pageEncoding="UTF-8" %>
                     cardPriceVisible:${gradeTypes[0].applyType==3},
                     options:${mapList},
                     cardType:${mapList[0].ctId},
-                    gradeTypesOption:'${gradeTypes}',
-                    cardRank:'${gradeTypes[0]}',
+                    gradeTypesOption:${gradeTypes},
+                    cardRank:'${gradeTypes[0].gt_name}',
                     carID:${gradeTypes[0].gt_id},
                     ruleForm: {
                         follow:false ,
