@@ -1,15 +1,21 @@
 package com.gt.member.service.common;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
+import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.common.entity.BusUser;
+import com.gt.common.entity.WxPublicUsers;
 import com.gt.member.dao.*;
 import com.gt.member.dao.common.BusUserDAO;
+import com.gt.member.dao.common.WxPublicUsersDAO;
 import com.gt.member.entity.*;
+import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.DateTimeKit;
+import com.gt.member.util.MemberConfig;
 import net.sf.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,6 +60,15 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
     @Autowired
     private MemberDAO memberDao;
+
+    @Autowired
+    private MemberQcodeWxDAO memberQcodeWxDAO;
+
+    @Autowired
+    private MemberConfig memberConfig;
+
+    @Autowired
+    private WxPublicUsersDAO wxPublicUsersDAO;
 
 
 
@@ -341,6 +357,38 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    LOG.error("保存手机端记录异常", e);
 	}
 	return cr;
+    }
+
+
+    public String findWxQcode(Integer busId,Integer busType,String scene_id){
+	try {
+	    MemberQcodeWx mqw = memberQcodeWxDAO.findByBusId( busId, 0 );
+	    String imgUrl = "";
+	    if ( CommonUtil.isEmpty( mqw ) ) {
+		WxPublicUsers wxPublicUsers = wxPublicUsersDAO.selectByUserId( busId );
+		Map< String,Object > querymap = new HashMap<>();
+		querymap.put( "scene_id", scene_id );
+		querymap.put( "publicId", wxPublicUsers.getId() );
+		String url = memberConfig.getWxmp_home() + "/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/qrcodeCreateFinal.do";
+		String json = SignHttpUtils.WxmppostByHttp( url, querymap, memberConfig.getWxmpsignKey() );
+
+		JSONObject obj = JSONObject.parseObject( json );
+
+		imgUrl = obj.getString( "imgUrl" );
+		if ( CommonUtil.isNotEmpty( imgUrl ) ) {
+		    mqw = new MemberQcodeWx();
+		    mqw.setBusId( busId );
+		    mqw.setBusType( busType );
+		    mqw.setCodeUrl( imgUrl );
+		    memberQcodeWxDAO.insert( mqw );
+		}
+	    } else {
+		imgUrl = mqw.getCodeUrl();
+	    }
+	    return imgUrl;
+	}catch ( Exception e ){
+	    throw  new BusinessException( ResponseEnums.ERROR);
+	}
     }
 
 }

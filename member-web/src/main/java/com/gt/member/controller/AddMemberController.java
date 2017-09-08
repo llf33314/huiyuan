@@ -115,7 +115,13 @@ public class AddMemberController {
 	request.setAttribute( "mapList", JSON.toJSON( mapList ) );
 	if ( mapList.size() > 0 ) {
 	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, CommonUtil.toInteger( mapList.get( 0 ).get( "ctId" ) ) );
-	    request.setAttribute( "gradeTypes", JSON.toJSON( gradeTypes ) );
+	    if(gradeTypes.size()>0 ) {
+	        if("3".equals( gradeTypes.get( 0 ).get( "applyType" ) )){
+		    request.setAttribute( "gradeTypes", JSON.toJSON( gradeTypes ) );
+		}else{
+		    request.setAttribute( "gradeTypes", JSON.toJSON( gradeTypes.get( 0 ) ) );
+		}
+	    }
 	}
 	request.setAttribute( "busId",busId );
 	request.setAttribute( "shopId", shopId );
@@ -145,8 +151,14 @@ public class AddMemberController {
 		busId = dictService.pidUserId( busUser.getId() );
 	    }
 	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, cardType );
+	    if(gradeTypes.size()>0 ) {
+		if("3".equals( gradeTypes.get( 0 ).get( "applyType" ) )){
+		    request.setAttribute( "gradeTypes", JSON.toJSON( gradeTypes ) );
+		}else{
+		    request.setAttribute( "gradeTypes", JSON.toJSON( gradeTypes.get( 0 ) ) );
+		}
+	    }
 	    map.put( "code", 0 );
-	    map.put( "gradeTypes", gradeTypes );
 	} catch ( Exception e ) {
 	    map.put( "code", "-1" );//保存返回的结果code 100为正常返回
 	    map.put( "data", "查询数据错误" );//保存数据源
@@ -279,8 +291,6 @@ public class AddMemberController {
     @RequestMapping("/findMemberByCardNo")
     public void findMemberByCardNo( HttpServletRequest request, HttpServletResponse response, @RequestParam Map<String,Object>  params ) throws Exception {
 	Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
-	// BusUser busUser = CommonUtil.getLoginUser(request);
-	//   Integer busId=busUser.getId();
 	String cardNo=CommonUtil.toString( params.get( "cardNo" ) );
 	Map< String,Object > map = cardERPService.findMemberCard( busId, cardNo );
 	CommonUtil.write( response, map );

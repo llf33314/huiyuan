@@ -78,4 +78,9 @@ public interface MemberCommonService {
 
     public MemberCardrecord saveCardRecordNew(Integer cardId, Byte recordType, String number,
                     String itemName, Integer busId, String balance, Integer ctId, double amount);
+
+    /**
+     * 关注公众号的接口
+     */
+    public String findWxQcode(Integer busId,Integer busType,String scene_id);
 }

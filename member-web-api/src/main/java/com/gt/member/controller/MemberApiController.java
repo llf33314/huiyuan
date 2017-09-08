@@ -392,19 +392,7 @@ public class MemberApiController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "（教育)手机端微信授权后合修改微信手机号码", notes = "（教育)手机端微信授权后合修改微信手机号码" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "学员家长pc注册", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "phone", value = "微信授权得到memberId", paramType = "query", required = true, dataType = "int" ) } )
-    @ResponseBody
-    @RequestMapping( value = "/updateMemberByTeach", method = RequestMethod.POST )
-    public ServerResponse updateMemberByTeach( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody){
-	try {
-	    memberApiService.updateMemberByTeach(requestBody );
-	    return ServerResponse.createBySuccess( );
-	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
-	}
-    }
+
 
     @ApiOperation( value = "根据ids集合查询粉丝信息返回包含数据(id,昵称，手机号码,头像)", notes = "查询粉丝信息返回包含数据((id,昵称，手机号码,头像))" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "ids", value = "memberId集合字符串 逗号隔开", paramType = "query", required = true, dataType = "String" ),
@@ -437,16 +425,30 @@ public class MemberApiController extends BaseController {
     @ApiOperation( value = "（墨盒）查询会员发布的会员卡类型", notes = "（墨盒）查询会员发布的会员卡类型" )
     @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
     @ResponseBody
-    @RequestMapping( value = "/findMemberGradeType", method = RequestMethod.POST )
-    public ServerResponse findMemberGradeType(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody){
+    @RequestMapping( value = "/findMemberCardType", method = RequestMethod.POST )
+    public ServerResponse findMemberCardType(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody){
 	try {
-	    List<Map<String,Object>> memberList= memberApiService.findMemberGradeTypeByBusId(requestBody);
-	    return ServerResponse.createBySuccess( memberList);
+	    Map<String,Object> cardTypes= memberApiService.findMemberCardTypeByBusId(requestBody);
+	    return ServerResponse.createBySuccess( cardTypes);
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
-
+    @ApiOperation( value = "（墨盒）查询会员发布的会员卡等级", notes = "（墨盒）查询会员发布的会员卡会员卡等级" )
+    @ApiImplicitParams({
+	@ApiImplicitParam( name = "ctId", value = "会员卡等级", paramType = "query", required = true, dataType = "int" ),
+	@ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findMemberGradeType", method = RequestMethod.POST )
+    public ServerResponse findMemberGradeType(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody){
+	try {
+	    List<Map<String,Object>> cardTypes= memberApiService.findMemberGradeTypeByctId(requestBody);
+	    return ServerResponse.createBySuccess( cardTypes);
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
+	}
+    }
     @ApiOperation( value = "（墨盒）领取会员卡", notes = "（墨盒）领取会员卡" )
     @ApiImplicitParams( {
 		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
@@ -457,7 +459,6 @@ public class MemberApiController extends BaseController {
 		    @ApiImplicitParam( name = "gtId", value = "会员卡等级", paramType = "query", required = false, dataType = "int" )
 
     } )
-
     @ResponseBody
     @RequestMapping( value = "/receiveMemberCard", method = RequestMethod.POST )
     public ServerResponse linquMemberCard(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody){
@@ -468,4 +469,27 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
+
+
+
+    @ApiOperation( value = "（墨盒）根据手机号或会员卡号获取会员信息包括会员卡类型 会员卡等级 会员积分和粉币、余额、充值信息", notes = "手机号或卡号查询会员相关信息" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "phone", value = "手机号", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/findMemberAndChongZhi", method = RequestMethod.POST )
+    public ServerResponse findMemberAndChongZhi( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    String cardNo = CommonUtil.toString( requestBody.get( "cardNo" ) );
+	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
+	    Map< String,Object > map = memberApiService.findMemberAndChongZhi( requestBody );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
+
+
+
 }

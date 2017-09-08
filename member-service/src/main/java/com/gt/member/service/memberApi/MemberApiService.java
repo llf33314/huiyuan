@@ -618,8 +618,23 @@ public interface MemberApiService {
      * @return
      * @throws BusinessException
      */
-    public List<Map<String,Object>> findMemberGradeTypeByBusId(Map<String,Object> map) throws BusinessException;
+    public Map<String,Object> findMemberCardTypeByBusId(Map<String,Object> map) throws BusinessException;
 
+    /**
+     * 查询会员卡等级
+     * @param map
+     * @return
+     * @throws BusinessException
+     */
+    public List<Map<String,Object>> findMemberGradeTypeByctId(Map<String,Object> map) throws BusinessException;
+
+    /**
+     * 墨盒会员卡充值接口
+     * @param map
+     * @return
+     * @throws BusinessException
+     */
+    public Map<String ,Object> findMemberAndChongZhi(Map<String,Object> map)throws BusinessException;
     /**
      * 墨盒领取会员卡
      * @param params
