@@ -131,8 +131,6 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
         if (CommonUtil.isEmpty(wxPublicUsersId)) {
             return null;
         }
-
-
         WxShop wxShop= wxShopDAO.selectById(  shopId);
 
         if (CommonUtil.isEmpty(wxShop) || CommonUtil.isEmpty(wxShop.getPoiId())) {
@@ -374,55 +372,61 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
      */
     @Override
     public List<Map<String, Object>> findDuofenCardByMemberIdAndMoney(Integer memberId, Integer wxshopId, Double money) throws BusinessException {
-        List<Map<String, Object>> duofencardgets = duofenCardGetMapper.findCardByMemberId(memberId);
-        if (CommonUtil.isEmpty(duofencardgets) || duofencardgets.size() == 0) {
-            throw new BusinessException(ResponseMemberEnums.NO_DATA.getCode(), ResponseMemberEnums.NO_DATA.getMsg());
-        }
+       try {
+           List< Map< String,Object > > duofencardgets = duofenCardGetMapper.findCardByMemberId( memberId );
+           if ( CommonUtil.isEmpty( duofencardgets ) || duofencardgets.size() == 0 ) {
+               return null;
+           }
 
-        List<Map<String, Object>> duofencards = new ArrayList<Map<String, Object>>();
-        for (Map<String, Object> map : duofencardgets) {
-            if ("2".equals(map.get("card_type").toString()) || "3".equals(map.get("card_type").toString()) || "4".equals(map.get("card_type").toString())) {
-                continue;
-            }
+           List< Map< String,Object > > duofencards = new ArrayList< Map< String,Object > >();
+           for ( Map< String,Object > map : duofencardgets ) {
+               if ( "2".equals( map.get( "card_type" ).toString() ) || "3".equals( map.get( "card_type" ).toString() ) || "4".equals( map.get( "card_type" ).toString() ) ) {
+                   continue;
+               }
 
-            String day = DateTimeKit.getDayToEnglish();
-            if (!map.get("time_limit").toString().contains(day)) {
-                continue;
-            }
+               String day = DateTimeKit.getDayToEnglish();
+               if ( !map.get( "time_limit" ).toString().contains( day ) ) {
+                   continue;
+               }
 
-            if ("1".equals(map.get("card_type").toString())) {
-                Double cash_least_cost = CommonUtil.toDouble(map.get("cash_least_cost"));
-                Integer countId = CommonUtil.toInteger(map.get("countId"));
-                if (cash_least_cost > 0 && cash_least_cost > money) {
-                    continue;
-                }
+               if ( "1".equals( map.get( "card_type" ).toString() ) ) {
+                   Double cash_least_cost = CommonUtil.toDouble( map.get( "cash_least_cost" ) );
+                   Integer countId = CommonUtil.toInteger( map.get( "countId" ) );
+                   if ( cash_least_cost > 0 && cash_least_cost > money ) {
+                       continue;
+                   }
 
-                Integer addUser = CommonUtil.toInteger(map.get("addUser"));
+                   Integer addUser = CommonUtil.toInteger( map.get( "addUser" ) );
 
-                if (addUser == 1 || "1".equals(addUser)) {
-                    if (cash_least_cost > 0) {
-                        Double count = money / cash_least_cost;
-                        int num = count.intValue();
-                        if (countId > num) {
-                            map.put("countId", num);
-                        }
-                    }
-                } else {
-                    map.put("countId", 1);
-                }
+                   if ( addUser == 1 || "1".equals( addUser ) ) {
+                       if ( cash_least_cost > 0 ) {
+                           Double count = money / cash_least_cost;
+                           int num = count.intValue();
+                           if ( countId > num ) {
+                               map.put( "countId", num );
+                           }
+                       }
+                   } else {
+                       map.put( "countId", 1 );
+                   }
 
-            }
+               }
 
-            if (CommonUtil.isNotEmpty(map.get("location_id_list"))) {
-                String location_id_list = CommonUtil.toString(map.get("location_id_list"));
-                if (location_id_list.contains(wxshopId.toString())) {
-                    duofencards.add(map);
-                }
-            } else {
-                duofencards.add(map);
-            }
-        }
-        return duofencards;
+               if ( CommonUtil.isNotEmpty( map.get( "location_id_list" ) ) ) {
+                   String location_id_list = CommonUtil.toString( map.get( "location_id_list" ) );
+                   if ( location_id_list.contains( wxshopId.toString() ) ) {
+                       duofencards.add( map );
+                   }
+               } else {
+                   duofencards.add( map );
+               }
+           }
+           return duofencards;
+       }catch ( BusinessException e ){
+           throw e;
+       }catch ( Exception e ){
+           throw new BusinessException( ResponseEnums.ERROR );
+       }
     }
 
     @Override

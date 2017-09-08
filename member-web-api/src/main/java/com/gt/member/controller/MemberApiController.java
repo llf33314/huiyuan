@@ -422,7 +422,7 @@ public class MemberApiController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "（墨盒）查询会员发布的会员卡类型", notes = "（墨盒）查询会员发布的会员卡类型" )
+    @ApiOperation( value = "（魔盒）查询会员发布的会员卡类型", notes = "（墨盒）查询会员发布的会员卡类型" )
     @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
     @ResponseBody
     @RequestMapping( value = "/findMemberCardType", method = RequestMethod.POST )
@@ -434,7 +434,7 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
-    @ApiOperation( value = "（墨盒）查询会员发布的会员卡等级", notes = "（墨盒）查询会员发布的会员卡会员卡等级" )
+    @ApiOperation( value = "（魔盒）查询会员发布的会员卡等级", notes = "（墨盒）查询会员发布的会员卡会员卡等级" )
     @ApiImplicitParams({
 	@ApiImplicitParam( name = "ctId", value = "会员卡等级", paramType = "query", required = true, dataType = "int" ),
 	@ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
@@ -449,7 +449,7 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
 	}
     }
-    @ApiOperation( value = "（墨盒）领取会员卡", notes = "（墨盒）领取会员卡" )
+    @ApiOperation( value = "（魔盒）领取会员卡", notes = "（墨盒）领取会员卡" )
     @ApiImplicitParams( {
 		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "ctId", value = "会员卡类型", paramType = "query", required = true, dataType = "int" ),
@@ -472,7 +472,7 @@ public class MemberApiController extends BaseController {
 
 
 
-    @ApiOperation( value = "（墨盒）根据手机号或会员卡号获取会员信息包括会员卡类型 会员卡等级 会员积分和粉币、余额、充值信息", notes = "手机号或卡号查询会员相关信息" )
+    @ApiOperation( value = "（魔盒）根据手机号或会员卡号获取会员信息包括会员卡类型 会员卡等级 会员积分和粉币、余额、充值信息", notes = "手机号或卡号查询会员相关信息" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "phone", value = "手机号", paramType = "query", required = true, dataType = "String" ),
 		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody

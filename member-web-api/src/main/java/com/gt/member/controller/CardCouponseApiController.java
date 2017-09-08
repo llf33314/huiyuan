@@ -42,10 +42,37 @@ public class CardCouponseApiController {
     @RequestMapping (value = "/findWxCard",method = RequestMethod.POST)
     public ServerResponse findWxCard(HttpServletRequest request,
                                      HttpServletResponse response,@RequestBody Map<String,Object> requestBody) {
-        Integer publicId= CommonUtil.toInteger(requestBody.get( "publicId" ));
-        List<Map<String, Object>> cardList = cardCouponsApiService.findWxCard(publicId);
-        return ServerResponse.createBySuccess(cardList);
+      try {
+          Integer publicId = CommonUtil.toInteger( requestBody.get( "publicId" ) );
+          List< Map< String,Object > > cardList = cardCouponsApiService.findWxCard( publicId );
+          return ServerResponse.createBySuccess( cardList );
+      }catch (Exception e) {
+          return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
+      }
     }
+
+    @ApiOperation(value = "查询商户下所有用的卡券信息 card_type:判断卡片类型 card_type=DISCOUNT折扣券 discount=值 折扣数\n" + "     * card_type=CASH 代金券 cash_least_cost=值 条件值 reduce_cost=值 减免金额\n"
+                    + " user_card_code 卡券code image 卡券图标", notes = "")
+    @ApiImplicitParams( {
+                    @ApiImplicitParam(name = "publicId", value = "公众号id", paramType = "query", required = true, dataType = "int"),
+                    @ApiImplicitParam(name = "shopId", value = "门店id", paramType = "query", required = true, dataType = "int"),
+                    @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
+    } )
+    @ResponseBody
+    @RequestMapping (value = "/findWxCardByShopId",method = RequestMethod.POST)
+    public ServerResponse findWxCardByShopId(HttpServletRequest request,
+                    HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+        try {
+            Integer publicId = CommonUtil.toInteger( requestBody.get( "publicId" ) );
+            Integer shopId = CommonUtil.toInteger( requestBody.get( "shopId" ) );
+            Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            List< Map< String,Object > > cardList = cardCouponsApiService.findWxCardByShopId( shopId, publicId, memberId );
+            return ServerResponse.createBySuccess( cardList );
+        }catch (Exception e) {
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
+        }
+    }
+
 
     @ApiOperation(value = "核销微信优惠券", notes = "微信卡券核销返回卡券id和name")
     @ApiImplicitParams({
