@@ -223,6 +223,7 @@ public class CardERPServiceImpl implements CardERPService {
 		returnMap.put( "code", 2 );
 		returnMap.put( "message", "未支付" );
 		returnMap.put( "url", url );
+		returnMap.put( "orderCode",orderCode );
 	    }
 
 	} catch ( Exception e ) {
@@ -247,13 +248,13 @@ public class CardERPServiceImpl implements CardERPService {
 	    Integer payType = CommonUtil.toInteger( params.get( "payType" ) );
 	    UserConsume u=new UserConsume();
 	    u.setId( uc.getId() );
-	    uc.setPayStatus( 1 );
+	    u.setPayStatus( 1 );
 	    if(payType==0){
-		uc.setPaymentType( 1 );
+		u.setPaymentType( 1 );
 	    }else if(payType==1) {
-		uc.setPaymentType( 0 );
+		u.setPaymentType( 0 );
 	    }
-	    userConsumeMapper.updateById( uc );
+	    userConsumeMapper.updateById( u );
 
 	    // 添加会员卡
 	    MemberCard card = new MemberCard();
@@ -311,7 +312,8 @@ public class CardERPServiceImpl implements CardERPService {
 	    String socketUrl= PropertiesUtil.getWxmp_home()+"/8A5DA52E/socket/getSocketApi.do";
 
 	    Map<String,Object> socketMap=new HashMap<>(  );
-	    socketMap.put( "pushName","member_count_"+orderCode );
+
+	    socketMap.put( "pushName","addMember_"+orderCode );
 	    socketMap.put( "pushMsg","支付成功" );
 	    socketMap.put( "pushStyle","1" );
 	    SignHttpUtils.WxmppostByHttp( socketUrl, socketMap, wxmpsignKey );  //推送
