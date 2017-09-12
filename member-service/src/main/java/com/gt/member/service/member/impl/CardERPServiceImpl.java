@@ -313,7 +313,7 @@ public class CardERPServiceImpl implements CardERPService {
 
 	    Map<String,Object> socketMap=new HashMap<>(  );
 
-	    socketMap.put( "pushName","addMember_"+orderCode );
+	    socketMap.put( "pushName","addmember_"+uc.getBusUserId()+"_"+uc.getStoreId() );
 	    socketMap.put( "pushMsg","支付成功" );
 	    socketMap.put( "pushStyle","1" );
 	    SignHttpUtils.WxmppostByHttp( socketUrl, socketMap, wxmpsignKey );  //推送

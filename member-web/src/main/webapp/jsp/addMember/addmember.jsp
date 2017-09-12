@@ -536,7 +536,7 @@ pageEncoding="UTF-8" %>
 
 
         //推送
-        var userId1 = '';
+        var userId1 = '${addmember}';
         var socket1 =  io.connect('${host}');
 
         socket1.on('connect', function() {
@@ -552,8 +552,6 @@ pageEncoding="UTF-8" %>
         socket1.on('disconnect', function() {
             output('<span class="disconnect-msg">The client has disconnected!</span>');
         });
-
-
 
         function selli(obj,memberId) {
             $(obj).addClass("cur-list").siblings().removeClass('cur-list');

@@ -135,6 +135,7 @@ public class AddMemberController {
 	request.setAttribute( "busId",busId );
 	request.setAttribute( "shopId", shopId );
 	request.setAttribute( "memberUser", "member_" +loginStyle+"_"+ userId );
+	request.setAttribute( "addmember", "addmember_" +busId+"_"+shopId );
 	request.setAttribute( "host", propertiesUtil.getSocket_url() );
 
 	return "addMember/addmember";
