@@ -364,7 +364,7 @@ public class MemberApiController extends BaseController {
     })
 
     @ResponseBody
-    @RequestMapping( value = "/findCardrecord", method = RequestMethod.POST )
+    @RequestMapping( value = "/updateJifenAndFenBiByPinglu", method = RequestMethod.POST )
     public ServerResponse updateJifenAndFenBiByPinglu(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ){
 	try {
 	    Integer mcId=CommonUtil.toInteger( requestBody.get( "mcId" ) );
