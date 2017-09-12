@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -310,7 +311,7 @@ public class AddMemberController {
      * @throws IOException
      */
     @RequestMapping( "/79B4DE7C/successPayBuyCard" )
-    public void successPayBuyCard( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    public void successPayBuyCard( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) throws IOException {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
 	    map = cardERPService.buyMemberCard(params );
