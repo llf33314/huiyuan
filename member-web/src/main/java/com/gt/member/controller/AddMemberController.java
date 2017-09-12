@@ -317,7 +317,7 @@ public class AddMemberController {
 	    map = cardERPService.buyMemberCard(params );
 	} catch ( Exception e ) {
 	    map.put( "code", -1 );
-	    map.put( "message", "领取成功" );
+	    map.put( "msg", "领取异常" );
 	}
 	CommonUtil.write( response, map );
     }

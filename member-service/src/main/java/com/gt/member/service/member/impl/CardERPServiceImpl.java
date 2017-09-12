@@ -210,7 +210,7 @@ public class CardERPServiceImpl implements CardERPService {
 		String notityUrl = PropertiesUtil.getWebHome() + "/addMember/79B4DE7C/successPayBuyCard";
 		WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersDAO.selectByUserId( busUserEntity.getId() );
 
-
+		userConsumeMapper.insert( uc );
 		MemberEntity memberEntity1 = new MemberEntity();
 		memberEntity1.setId( memberEntity.getId() );
 		memberEntity1.setPhone( phone );
@@ -240,18 +240,20 @@ public class CardERPServiceImpl implements CardERPService {
 	    String orderCode = CommonUtil.toString( params.get( "out_trade_no" ) );
 	    UserConsume uc = userConsumeMapper.findByOrderCode1( orderCode );
 	    //购买会员卡
-	    MemberGradetype gradeType = gradeTypeMapper.selectById( uc.getId() );
+	    MemberGradetype gradeType = gradeTypeMapper.selectById( uc.getGtId() );
 	    if ( CommonUtil.isEmpty( gradeType ) || CommonUtil.isEmpty( gradeType.getBuyMoney() <= 0 ) ) {
 		throw new Exception();
 	    }
 	    Integer payType = CommonUtil.toInteger( params.get( "payType" ) );
+	    UserConsume u=new UserConsume();
+	    u.setId( uc.getId() );
 	    uc.setPayStatus( 1 );
 	    if(payType==0){
 		uc.setPaymentType( 1 );
 	    }else if(payType==1) {
 		uc.setPaymentType( 0 );
 	    }
-	    userConsumeMapper.insert( uc );
+	    userConsumeMapper.updateById( uc );
 
 	    // 添加会员卡
 	    MemberCard card = new MemberCard();
@@ -315,7 +317,7 @@ public class CardERPServiceImpl implements CardERPService {
 	    SignHttpUtils.WxmppostByHttp( socketUrl, socketMap, wxmpsignKey );  //推送
 
 	    returnMap.put( "code", 0 );
-	    returnMap.put( "message", "领取成功" );
+	    returnMap.put( "msg", "领取成功" );
 	    return returnMap;
 	}catch ( Exception e ){
 	    throw new Exception(  );
