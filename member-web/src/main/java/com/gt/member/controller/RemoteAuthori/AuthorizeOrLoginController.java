@@ -9,11 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.alibaba.fastjson.JSON;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.member.util.CommonUtil;
-import com.gt.member.util.MemberConfig;
+import com.gt.member.util.PropertiesUtil;
 import com.gt.member.util.RedisCacheUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSONObject;
@@ -33,7 +32,7 @@ public class AuthorizeOrLoginController {
     private RedisCacheUtil redisCacheUtil;
 
     @Autowired
-    private MemberConfig memberConfig;
+    private PropertiesUtil propertiesUtil;
 
     @RequestMapping( value = "/79B4DE7C/authorizeMember" )
     public String authorizeMember( HttpServletRequest request, HttpServletResponse response, Map< String,Object > map ) throws Exception {
@@ -43,7 +42,7 @@ public class AuthorizeOrLoginController {
 	Map< String,Object > getWxPublicMap = new HashMap<>();
 	getWxPublicMap.put( "busId", busId );
 	//判断商家信息 1是否过期 2公众号是否变更过
-	String wxpublic = SignHttpUtils.postByHttp(memberConfig.getWxmp_home()+GETWXPULICMSG, getWxPublicMap, memberConfig.getWxmpsignKey() );
+	String wxpublic = SignHttpUtils.postByHttp( propertiesUtil.getWxmp_home()+GETWXPULICMSG, getWxPublicMap, propertiesUtil.getWxmpsignKey() );
 	JSONObject json = JSONObject.parseObject( wxpublic );
 	Integer code = CommonUtil.toInteger( json.get( "code" ) );
 	if ( code == 0 ) {
@@ -67,7 +66,7 @@ public class AuthorizeOrLoginController {
 	queryMap.put( "browser", browser );
 	queryMap.put( "busId", busId );
 	queryMap.put( "uclogin", uclogin );
-	String url = "redirect:"+memberConfig.getWxmp_home()+"/remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString(  queryMap);
+	String url = "redirect:"+ propertiesUtil.getWxmp_home()+"/remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString(  queryMap);
 	return url;
     }
 }

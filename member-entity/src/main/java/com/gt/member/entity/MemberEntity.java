@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
-import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -23,7 +22,7 @@ import java.util.Date;
 @Data
 @Accessors( chain = true )
 @TableName( "t_wx_bus_member" )
-public class Member extends Model< Member > {
+public class MemberEntity extends Model< MemberEntity > {
 
     private static final long serialVersionUID = 1L;
 
@@ -187,7 +186,7 @@ public class Member extends Model< Member > {
 
     @Override
     public String toString() {
-	return "Member{" + "id=" + id + ", dfMemberId=" + dfMemberId + ", publicId=" + publicId + ", fansCurrency=" + fansCurrency + ", flow=" + flow + ", integral=" + integral
+	return "MemberEntity{" + "id=" + id + ", dfMemberId=" + dfMemberId + ", publicId=" + publicId + ", fansCurrency=" + fansCurrency + ", flow=" + flow + ", integral=" + integral
 			+ ", level=" + level + ", openid=" + openid + ", phone=" + phone + ", nickname=" + nickname + ", sex=" + sex + ", province=" + province + ", city=" + city
 			+ ", country=" + country + ", headimgurl=" + headimgurl + ", operateType=" + operateType + ", mcId=" + mcId + ", totalMoney=" + totalMoney
 			+ ", totalIntegral=" + totalIntegral + ", address=" + address + ", email=" + email + ", cardId=" + cardId + ", cardImgback=" + cardImgback + ", cardImg="

@@ -8,7 +8,7 @@
 //import java.util.Map;
 //import java.util.SortedMap;
 //
-//import com.gt.entity.common.BusUser;
+//import com.gt.entity.common.BusUserEntity;
 //import com.gt.entity.offlinepay.Offlinepay;
 //
 ///**
@@ -24,14 +24,14 @@
 //	 * @param busUser
 //	 * @return
 //	 */
-//	public List<Map<String, Object>> findOfflinepay(BusUser busUser);
+//	public List<Map<String, Object>> findOfflinepay(BusUserEntity busUser);
 //
 //	/**
 //	 * 查询登陆用户下店铺信息
 //	 * @param busUser
 //	 * @return
 //	 */
-//	public List<Map<String, Object>> findShop(BusUser busUser);
+//	public List<Map<String, Object>> findShop(BusUserEntity busUser);
 //
 //	/**
 //	 * 保存减免规则
@@ -40,7 +40,7 @@
 //	 * @param param
 //	 * @return
 //	 */
-//	public Map<String, Object> saveOfflinepay(BusUser busUser, String param)throws Exception;
+//	public Map<String, Object> saveOfflinepay(BusUserEntity busUser, String param)throws Exception;
 //
 //	/**
 //	 * 多选线下支付

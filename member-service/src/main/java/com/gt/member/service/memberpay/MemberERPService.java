@@ -1,6 +1,6 @@
 package com.gt.member.service.memberpay;
 
-import com.gt.common.entity.BusUser;
+import com.gt.common.entity.BusUserEntity;
 
 import java.util.Map;
 
@@ -9,13 +9,13 @@ public interface MemberERPService {
 	
 	/**
 	 * 查询会员的信息
-	 * @param busUser
+	 * @param busUserEntity
 	 * @param cardNoKey
 	 * @param cardNo
 	 * @param shopId
 	 * @return
 	 */
-	public Map<String, Object> findMemberCard(BusUser busUser,
+	public Map<String, Object> findMemberCard(BusUserEntity busUserEntity,
                                               String cardNoKey, String cardNo, Integer shopId);
 	
 	/**
@@ -31,7 +31,7 @@ public interface MemberERPService {
 	 * @param memberId 粉丝id
 	 * @return
 	 */
-	public boolean isMemember(BusUser busUser,
+	public boolean isMemember(BusUserEntity busUserEntity,
                               String cardNoKey, String cardNo);
 	
 	

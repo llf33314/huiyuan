@@ -2,24 +2,21 @@ package com.gt.member.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.util.HttpClienUtils;
+import com.gt.api.util.RequestUtils;
 import com.gt.api.util.sign.SignHttpUtils;
-import com.gt.common.entity.BusUser;
-import com.gt.common.entity.TCommonStaff;
-import com.gt.common.entity.WxPublicUsers;
-import com.gt.member.base.BaseController;
-import com.gt.member.dao.MemberDAO;
+import com.gt.common.entity.BusUserEntity;
+import com.gt.common.entity.TCommonStaffEntity;
+import com.gt.common.entity.WxPublicUsersEntity;
+import com.gt.member.dao.MemberEntityDAO;
 import com.gt.member.dao.MemberGradetypeDAO;
 import com.gt.member.dao.MemberQcodeWxDAO;
 import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.common.WxPublicUsersDAO;
-import com.gt.member.entity.Member;
-import com.gt.member.entity.MemberGradetype;
+import com.gt.member.dao.common.WxShopDAO;
+import com.gt.member.entity.MemberEntity;
 import com.gt.member.entity.MemberQcodeWx;
-import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.dict.DictService;
-import com.gt.member.service.count.ERPCountService;
-import com.gt.member.service.entityBo.queryBo.MallAllEntityQuery;
-import com.gt.member.service.entityBo.queryBo.MallEntityQuery;
 import com.gt.member.service.member.CardERPService;
 import com.gt.member.util.*;
 import io.swagger.annotations.Api;
@@ -29,13 +26,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +59,7 @@ public class AddMemberController {
     private MemberQcodeWxDAO memberQcodeWxMapper;
 
     @Autowired
-    private MemberDAO memberMapper;
+    private MemberEntityDAO memberMapper;
 
     @Autowired
     private WxPublicUsersDAO wxPublicUsersMapper;
@@ -81,30 +80,37 @@ public class AddMemberController {
     private RedisCacheUtil redisCacheUtil;
 
     @Autowired
-    private MemberConfig memberConfig;
+    private PropertiesUtil propertiesUtil;
+
+    @Autowired
+    private WxShopDAO wxShopDAO;
 
     @ApiOperation( value = "新增会员统一页面", notes = "新增会员统一页面" )
     @ApiImplicitParam( name = "shopId", value = "门店id(没有门店请传主门店id)", paramType = "query", required = true, dataType = "int" )
     @RequestMapping( "/erpAddMember" )
     public String erpAddMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
+	SessionUtil.setLoginStyle( request,1 );
+	BusUserEntity busUserEntity =busUserMapper.selectById( 42 );
+	SessionUtil.setLoginUser( request, busUserEntity );
+	SessionUtil.setPidBusId(request,42);
 
-	//测试
-	BusUser busUser = busUserMapper.selectById( 42 );
-	Integer busId = busUser.getId();
+
+        Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
 	Integer loginStyle = SessionUtil.getLoginStyle( request );
 	Integer userId = 0;
 	if ( "0".equals( loginStyle ) ) {
-	    TCommonStaff tc = SessionUtil.getTCommonStaff( request );
+	    TCommonStaffEntity tc = SessionUtil.getCommonStaff( request );
 	    userId = tc.getId();
 	} else {
-	    //	userId= SessionUtil.getBusUser(request).getId();
-	    busId = dictService.pidUserId( busId );
+	    userId= SessionUtil.getLoginUser(request).getId();
 	}
+	Integer busId = SessionUtil.getLoginUser( request ).getId();
+	if(CommonUtil.isEmpty( shopId )){
+	    shopId= wxShopDAO.selectMainShopByBusId(busId  ).getId();
+	}
+	WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersMapper.selectByUserId( busId );
 
-	WxPublicUsers wxPublicUsers = wxPublicUsersMapper.selectByUserId( busId );
-
-	if ( ( CommonUtil.isEmpty( wxPublicUsers ) ) || wxPublicUsers.getServiceTypeInfo() != 2 || wxPublicUsers.getVerifyTypeInfo() != 0 ) {
+	if ( ( CommonUtil.isEmpty( wxPublicUsersEntity ) ) || wxPublicUsersEntity.getServiceTypeInfo() != 2 || wxPublicUsersEntity.getVerifyTypeInfo() != 0 ) {
 	    request.setAttribute( "gongzhong", 0 );
 	} else {
 	    request.setAttribute( "gongzhong", 1 );
@@ -116,17 +122,19 @@ public class AddMemberController {
 	if ( mapList.size() > 0 ) {
 	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, CommonUtil.toInteger( mapList.get( 0 ).get( "ctId" ) ) );
 	    if(gradeTypes.size()>0 ) {
-	        if("3".equals( gradeTypes.get( 0 ).get( "applyType" ) )){
+	        if("3".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "applyType" ) ) )){
 		    request.setAttribute( "gradeTypes", JSON.toJSON( gradeTypes ) );
 		}else{
-		    request.setAttribute( "gradeTypes", JSON.toJSON( gradeTypes.get( 0 ) ) );
+		    List< Map< String,Object > > gts=new ArrayList<>(  );
+		    gts.add( gradeTypes.get( 0 ) );
+		    request.setAttribute( "gradeTypes", JSON.toJSON( gts) );
 		}
 	    }
 	}
 	request.setAttribute( "busId",busId );
 	request.setAttribute( "shopId", shopId );
-	request.setAttribute( "memberUser", "member_" + userId );
-	request.setAttribute( "host", memberConfig.getSocket_url() );
+	request.setAttribute( "memberUser", "member_" +loginStyle+"_"+ userId );
+	request.setAttribute( "host", propertiesUtil.getSocket_url() );
 
 	return "addMember/addmember";
     }
@@ -144,18 +152,16 @@ public class AddMemberController {
     public void findCardType( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer cardType ) throws IOException {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
-	    BusUser busUser = busUserMapper.selectById( 42 );
-	    //	BusUser busUser = CommonUtil.getLoginUser(request);
-	    Integer busId = busUser.getId();
-	    if ( busUser.getPid() > 0 ) {
-		busId = dictService.pidUserId( busUser.getId() );
-	    }
+
+	    Integer busId = SessionUtil.getPidBusId( request );
 	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, cardType );
 	    if(gradeTypes.size()>0 ) {
 		if("3".equals( gradeTypes.get( 0 ).get( "applyType" ) )){
-		    request.setAttribute( "gradeTypes", JSON.toJSON( gradeTypes ) );
+		    map.put( "gradeTypes",gradeTypes );
 		}else{
-		    request.setAttribute( "gradeTypes", JSON.toJSON( gradeTypes.get( 0 ) ) );
+		    List< Map< String,Object > > gts=new ArrayList<>(  );
+		    gts.add( gradeTypes.get( 0 ) );
+		    map.put( "gradeTypes",gts );
 		}
 	    }
 	    map.put( "code", 0 );
@@ -179,21 +185,16 @@ public class AddMemberController {
 	    // 验证类型
 	    LOG.debug( "进入短信发送,手机号:" + telNo );
 	}
-
-	//	    BusUser busUser = CommonUtil.getLoginUser(request);
-	//	    Integer busId=busUser.getId();
-
-
 	Map< String,Object > map = new HashMap< String,Object >();
-	Member member = memberMapper.findByPhone( busId, telNo );
-	if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( member.getMcId() ) ) {
+	MemberEntity memberEntity = memberMapper.findByPhone( busId, telNo );
+	if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
 	    map.put( "result", false );
 	    map.put( "msg", "用户已是会员" );
 	    CommonUtil.write( response, map );
 	    return;
 	}
 
-	String url = memberConfig.getWxmp_home() + "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do";
+	String url = propertiesUtil.getWxmp_home() + "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do";
 	Map< String,Object > obj = new HashMap<>();
 	String no = CommonUtil.getPhoneCode();
 	redisCacheUtil.set( no, no, 5 * 60 );
@@ -201,10 +202,10 @@ public class AddMemberController {
 	obj.put( "busId", busId );
 	obj.put( "telNo", telNo );
 	obj.put( "content", "会员短信校验码：" + no );
-	obj.put( "company", memberConfig.getSms_name() );
+	obj.put( "company", propertiesUtil.getSms_name() );
 	obj.put( "model", 9 );
 	try {
-	    String smsStr = SignHttpUtils.WxmppostByHttp( url, obj, memberConfig.getWxmpsignKey() );
+	    String smsStr = SignHttpUtils.WxmppostByHttp( url, obj, propertiesUtil.getWxmpsignKey() );
 	    JSONObject smsJSON = JSONObject.parseObject( smsStr );
 	    if ( "0".equals( smsJSON.get( "code" ) ) ) {
 		map.put( "result", true );
@@ -270,9 +271,7 @@ public class AddMemberController {
 	}
 
 	Integer busId =CommonUtil.toInteger( params.get( "busId" ) );
-
 	busId = dictService.pidUserId( busId );
-
 	try {
 	    map = cardERPService.linquMemberCard( busId, params );
 	} catch ( Exception e ) {
@@ -309,7 +308,6 @@ public class AddMemberController {
     @RequestMapping( "/79B4DE7C/successPayBuyCard" )
     public void successPayBuyCard( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > map = new HashMap< String,Object >();
-
 	try {
 	    map = cardERPService.buyMemberCard(params );
 	} catch ( Exception e ) {
@@ -331,10 +329,10 @@ public class AddMemberController {
      */
     @RequestMapping( "/erpMember" )
     public String erpMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > param ) {
-	BusUser busUser = CommonUtil.getLoginUser( request );
-	Integer busId = busUser.getId();
-	if ( busUser.getPid() > 0 ) {
-	    busId = dictService.pidUserId( busUser.getId() );
+	BusUserEntity busUserEntity = CommonUtil.getLoginUser( request );
+	Integer busId = busUserEntity.getId();
+	if ( busUserEntity.getPid() > 0 ) {
+	    busId = dictService.pidUserId( busUserEntity.getId() );
 	}
 	List< Map< String,Object > > listMap = cardERPService.findMemberIsNotCard( busId, param );
 	request.setAttribute( "memberList", listMap );
@@ -354,44 +352,48 @@ public class AddMemberController {
     @RequestMapping( "/guanzhuiQcode" )
     public void guanzhuiQcode( HttpServletRequest request, HttpServletResponse response ) throws Exception {
 	Map< String,Object > map = new HashMap<>();
-	BusUser busUser = busUserMapper.selectById( 42 );
-
-	//	    BusUser busUser = CommonUtil.getLoginUser(request);
-	Integer busId = busUser.getId();
-	if ( busUser.getPid() > 0 ) {
-	    busId = dictService.pidUserId( busUser.getId() );
-	}
-
-	MemberQcodeWx mqw = memberQcodeWxMapper.findByBusId( busId, 0 );
-	String imgUrl = null;
-
 	Integer loginStyle = SessionUtil.getLoginStyle( request );
 	String scene_id = "";
-	Integer userId = 0;
-	if ( "0".equals(loginStyle ) ) {
-	    TCommonStaff tc = SessionUtil.getTCommonStaff( request );
+	Integer pIduserId = 0;
+	Integer userId=0;
+	if (loginStyle==0 ) {
+	    TCommonStaffEntity tc = SessionUtil.getCommonStaff( request );
 	    userId = tc.getId();
-	    scene_id = userId + "_" + System.currentTimeMillis() + "_4";//员工
+	    scene_id = userId + "_" + System.currentTimeMillis() + "_5";//员工
 	} else {
-	//    userId = SessionUtil.getBusUser( request ).getId();
-	    scene_id = userId + "_" + System.currentTimeMillis() + "_4";//管理员
+	    userId = SessionUtil.getLoginUser( request ).getId();
+	    scene_id = userId + "_" + System.currentTimeMillis() + "_6";//管理员
 	}
+
+	if(loginStyle==0){
+	    loginStyle=1;
+	}else{
+	    loginStyle=0;
+	}
+
+	MemberQcodeWx mqw = memberQcodeWxMapper.findByBusId( userId, loginStyle);
+	String imgUrl = null;
 	if ( CommonUtil.isEmpty( mqw ) ) {
 	    Map< String,Object > querymap = new HashMap<>();
-	    querymap.put( "scene_id", scene_id );
-	    querymap.put( "busId", busId );
-	    String url = memberConfig.getWxmp_home() + "/memberERP/79B4DE7C/guanzhuiQcode.do";
-	    String json = SignHttpUtils.WxmppostByHttp( url, querymap, memberConfig.getWxmpsignKey() );
+	    pIduserId=SessionUtil.getPidBusId( request );
+	    WxPublicUsersEntity wxPublicUsersEntity =wxPublicUsersMapper.selectByUserId( pIduserId );
 
-	    JSONObject obj = JSONObject.parseObject( json );
+	    RequestUtils requestUtils=new RequestUtils<>(  );
+	      querymap.put( "scene_id", scene_id );
+	    querymap.put( "publicId", wxPublicUsersEntity.getId() );
+	    requestUtils.setReqdata( querymap );
+	    String url = propertiesUtil.getWxmp_home() + "/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/qrcodeCreateFinal.do";
+	    Map<String,Object> jsonMap= HttpClienUtils.reqPostUTF8( JSON.toJSONString( requestUtils ),url,Map.class, propertiesUtil.getWxmpsignKey() );
 
-	    imgUrl = obj.getString( "imgUrl" );
-	    if ( CommonUtil.isNotEmpty( imgUrl ) ) {
+	    if ( "0".equals( CommonUtil.toString( jsonMap.get( "code" ) ) )  ) {
+		imgUrl=CommonUtil.toString( jsonMap.get( "data" ) );
 		mqw = new MemberQcodeWx();
-		mqw.setBusId( busId );
-		mqw.setBusType( 0 );
+		mqw.setBusId( userId );
+		mqw.setBusType( loginStyle );
 		mqw.setCodeUrl( imgUrl );
-		memberQcodeWxMapper.insert( mqw );
+		if(CommonUtil.isNotEmpty( imgUrl )) {
+		    memberQcodeWxMapper.insert( mqw );
+		}
 	    }
 	} else {
 	    imgUrl = mqw.getCodeUrl();
@@ -409,11 +411,36 @@ public class AddMemberController {
      * @throws IOException
      */
     @RequestMapping( "/downQcode" )
-    public void downPulishCardImage( HttpServletRequest request, HttpServletResponse response, @RequestParam String url ) throws IOException {
+    public void downPulishCardImage( HttpServletRequest request, HttpServletResponse response, @RequestParam String url ) throws Exception {
+        String headPath = URLConnectionDownloader.downloadRqcode(url,PropertiesUtil.getRes_image_path() + "/images", 300, 300);
+	String path = headPath;
 	String filename = "关注公众号.jpg";
-	response.addHeader( "Content-Disposition", "attachment;filename=" + new String( filename.replaceAll( " ", "" ).getBytes( "utf-8" ), "iso8859-1" ) );
-	response.setContentType( "application/octet-stream" );
-	QRcodeKit.buildQRcode( url, 450, 450, response );
+	response.addHeader("Content-Disposition", "attachment;filename="
+			+ new String(filename.replaceAll(" ", "").getBytes("utf-8"),
+			"iso8859-1"));
+	response.setContentType("application/octet-stream");
+	InputStream in = null;
+	OutputStream out = null;
+	try {
+	    in = new FileInputStream(path);
+	    int len = 0;
+	    byte[] buffer = new byte[1024];
+	    out = response.getOutputStream();
+	    while ((len = in.read(buffer)) > 0) {
+		out.write(buffer, 0, len);
+	    }
+	} catch (Exception e) {
+	    throw new RuntimeException(e);
+	} finally {
+	    if (in != null) {
+		try {
+		    in.close();
+		} catch (Exception e) {
+		    throw new RuntimeException(e);
+		}
+	    }
+	}
+
     }
 
 }

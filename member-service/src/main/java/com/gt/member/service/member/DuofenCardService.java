@@ -1,8 +1,8 @@
 //package com.gt.member.service.old.member;
 //
-//import com.gt.member.entity.BusUser;
-//import com.gt.member.entity.Member;
-//import com.gt.member.entity.WxPublicUsers;
+//import com.gt.member.entity.BusUserEntity;
+//import com.gt.member.entity.MemberEntity;
+//import com.gt.member.entity.WxPublicUsersEntity;
 //import com.gt.member.util.Page;
 //
 //import java.util.Map;
@@ -92,7 +92,7 @@
 //	 * @param code
 //	 * @return
 //	 */
-//	public Map<String, Object> findCardReceive(BusUser busUser, String code);
+//	public Map<String, Object> findCardReceive(BusUserEntity busUser, String code);
 //
 //	/**
 //	 * 卡券核销
@@ -106,7 +106,7 @@
 //	 * @return
 //	 */
 //	public Map<String, Object> cardReceive(HttpServletRequest request,
-//                                           String code, Double money, BusUser busUser,
+//                                           String code, Double money, BusUserEntity busUser,
 //                                           Integer payType, Double jifenmoney, Double fenbimoney)
 //			throws Exception;
 //
@@ -116,7 +116,7 @@
 //	 * @param params
 //	 * @return
 //	 */
-//	public Map<String, Object> findWxcardReceive(BusUser busUser, Map<String, Object> params);
+//	public Map<String, Object> findWxcardReceive(BusUserEntity busUser, Map<String, Object> params);
 //
 //	/**
 //	 * 查看卡券审核不通过原因
@@ -132,7 +132,7 @@
 //	 * @param wxPublicUsers
 //	 * @return
 //	 */
-//	public Page findThreeCard(WxPublicUsers wxPublicUsers,
+//	public Page findThreeCard(WxPublicUsersEntity wxPublicUsers,
 //                              Map<String, Object> params);
 //
 //	/**
@@ -143,7 +143,7 @@
 //	 * @param gtIds
 //	 */
 //	public void duanxiTF(Integer receiveId, String ctIds, String gtIds,
-//                         WxPublicUsers wxPublicUsers, BusUser busUser);
+//                         WxPublicUsersEntity wxPublicUsers, BusUserEntity busUser);
 //
 //
 //
@@ -184,7 +184,7 @@
 //	 * @param code
 //	 * @return
 //	 */
-//	public void duofencardHeiXiao(HttpServletRequest request, Member member, String code);
+//	public void duofencardHeiXiao(HttpServletRequest request, MemberEntity member, String code);
 //
 //
 //	/**
@@ -193,7 +193,7 @@
 //	 * @param member
 //	 * @param cardId
 //	 */
-//	public void tuijianfriend(HttpServletRequest request, Member member, Integer cardId);
+//	public void tuijianfriend(HttpServletRequest request, MemberEntity member, Integer cardId);
 //
 //
 //
@@ -205,6 +205,6 @@
 //	 * @param memberId
 //	 * @param cardId
 //	 */
-//	public void tuijianget(HttpServletRequest request, Member member, Integer memberId, Integer cardId)throws Exception;
+//	public void tuijianget(HttpServletRequest request, MemberEntity member, Integer memberId, Integer cardId)throws Exception;
 //
 //}

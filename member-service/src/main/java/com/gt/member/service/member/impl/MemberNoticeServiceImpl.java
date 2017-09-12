@@ -25,8 +25,8 @@
 //import com.gt.dao.member.SystemNoticeCallMapper;
 //import com.gt.dao.member.SystemNoticeMapper;
 //import com.gt.dao.util.DaoUtil;
-//import com.gt.entity.common.BusUser;
-//import com.gt.entity.common.WxPublicUsers;
+//import com.gt.entity.common.BusUserEntity;
+//import com.gt.entity.common.WxPublicUsersEntity;
 //import com.gt.entity.member.MemberNotice;
 //import com.gt.entity.member.NoticeUser;
 //import com.gt.entity.member.NoticeUserKey;
@@ -155,7 +155,7 @@
 //			List<Integer> ctId = null;
 //			sb = new StringBuffer();
 //			// 修改方式状态
-//			BusUser busUser = busUserMapper.selectByPrimaryKey(memberNotice
+//			BusUserEntity busUser = busUserMapper.selectByPrimaryKey(memberNotice
 //					.getBusid());
 //			if (CommonUtil.isEmpty(busUser)) {
 //				return;
@@ -191,7 +191,7 @@
 ////					params.put("content", memberNotice.getContent());
 ////					params.put("busId", busUser.getId());
 ////					params.put("model", 3);
-////					WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+////					WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 ////							.selectByUserId(busUser.getId());
 ////					if (CommonUtil.isEmpty(wxPublicUsers)) {
 ////						params.put("company", busUser.getMerchant_name());
@@ -232,7 +232,7 @@
 //						.toString());
 //				Integer noticeId = CommonUtil.toInteger(map.get("id"));
 //				Integer busId = CommonUtil.toInteger(map.get("busId"));
-//				BusUser busUser = busUserMapper.selectByPrimaryKey(busId);
+//				BusUserEntity busUser = busUserMapper.selectByPrimaryKey(busId);
 //				if (CommonUtil.isEmpty(busUser)) {
 //					continue;
 //				}
@@ -313,7 +313,7 @@
 ////						params.put("content", map.get("content"));
 ////						params.put("busId", busUser.getId());
 ////						params.put("model", 3);
-////						WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+////						WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 ////								.selectByUserId(busUser.getId());
 ////						if (CommonUtil.isEmpty(wxPublicUsers)) {
 ////							params.put("company", busUser.getMerchant_name());
@@ -355,7 +355,7 @@
 //	public Map<String, Object> saveMemberNotice(HttpServletRequest request,
 //			String json, String sendDate) throws Exception {
 //		Map<String, Object> map = new HashMap<String, Object>();
-//		BusUser busUser = CommonUtil.getLoginUser(request);
+//		BusUserEntity busUser = CommonUtil.getLoginUser(request);
 //		int busId = busUser.getId();
 //		if (busUser.getPid() != 0) {
 //			busId = busUser.getPid();

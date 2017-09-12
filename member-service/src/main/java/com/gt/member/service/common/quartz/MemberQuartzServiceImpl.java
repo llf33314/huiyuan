@@ -24,8 +24,8 @@ import com.gt.dao.member.PublicParameterSetMapper;
 import com.gt.dao.member.SystemNoticeCallMapper;
 import com.gt.dao.member.SystemNoticeMapper;
 import com.gt.dao.util.DaoUtil;
-import com.gt.entity.common.BusUser;
-import com.gt.entity.member.Member;
+import com.gt.entity.common.BusUserEntity;
+import com.gt.entity.member.MemberEntity;
 import com.gt.entity.member.MemberBir;
 import com.gt.entity.member.MemberNotice;
 import com.gt.entity.member.PublicParameterSet;
@@ -139,7 +139,7 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
 						.toString());
 				Integer noticeId = CommonUtil.toInteger(map.get("id"));
 				Integer busId = CommonUtil.toInteger(map.get("busId"));
-				BusUser busUser = busUserMapper.selectByPrimaryKey(busId);
+				BusUserEntity busUser = busUserMapper.selectByPrimaryKey(busId);
 				// 通知某个人群
 				if (noticeMember == 1) {
 					List<Map<String, Object>> noticeUsers = noticeUserMapper
@@ -350,7 +350,7 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
 					.intValue();
 			Integer busId = CommonUtil.toInteger(cmap.get("busId"));
 			Integer cardId = CommonUtil.toInteger(cmap.get("cardId"));
-			Member m = memberMapper.findByMcIdAndbusId(busId, cardId);
+			MemberEntity m = memberMapper.findByMcIdAndbusId(busId, cardId);
 
 			if (CommonUtil.isNotEmpty(amounts) && amounts > 0) {
 				if (currentYear.size() == 0) {
@@ -471,7 +471,7 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
 						.valueOf(cmap.get("amounts").toString()).intValue();
 				Integer busId = CommonUtil.toInteger(cmap.get("busId"));
 				Integer cardId = CommonUtil.toInteger(cmap.get("cardId"));
-				Member m = memberMapper.findByMcIdAndbusId(busId, cardId);
+				MemberEntity m = memberMapper.findByMcIdAndbusId(busId, cardId);
 				boolean flag = false;
 				if (CommonUtil.isNotEmpty(amounts) && amounts > 0) {
 

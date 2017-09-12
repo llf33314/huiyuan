@@ -1,7 +1,7 @@
 package com.gt.member.dao.common;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.gt.common.entity.WxPublicUsers;
+import com.gt.common.entity.WxPublicUsersEntity;
 
 /**
  * <p>
@@ -12,6 +12,6 @@ import com.gt.common.entity.WxPublicUsers;
  * @author pengjiangli
  * @since 2017-07-26
  */
-public interface WxPublicUsersDAO extends BaseMapper<WxPublicUsers> {
-    WxPublicUsers selectByUserId(int userId);
+public interface WxPublicUsersDAO extends BaseMapper<WxPublicUsersEntity > {
+    WxPublicUsersEntity selectByUserId(int userId);
 }

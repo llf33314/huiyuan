@@ -4,8 +4,6 @@ import com.gt.member.dao.*;
 import com.gt.member.entity.*;
 import com.gt.member.entity.DuofenCard;
 import com.gt.member.entity.DuofenCardGet;
-import com.gt.member.enums.ResponseMemberEnums;
-import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.MemberCommonService;
 import com.gt.member.service.entityBo.*;
 import com.gt.member.service.common.dict.DictService;
@@ -29,7 +27,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
     private static final Logger LOG = Logger.getLogger( MemberCountMoneyApiServiceImpl.class );
 
     @Autowired
-    private MemberDAO memberMapper;
+    private MemberEntityDAO memberMapper;
 
     @Autowired
     private MemberCardDAO cardMapper;
@@ -75,7 +73,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
     public MemberShopEntity publicMemberCountMoney( MemberShopEntity ce ) throws Exception {
 	try {
 	    Double pay = ce.getTotalMoney();
-	    Member member = memberMapper.selectById( ce.getMemberId() );
+	    MemberEntity memberEntity = memberMapper.selectById( ce.getMemberId() );
 
 	    WxCardReceive wxCardReceive = null;
 	    WxCard wxcard = null;
@@ -103,7 +101,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    }
 
 	    // 会员查询会员信息
-	    MemberCard card = cardMapper.selectById( member.getMcId() );
+	    MemberCard card = cardMapper.selectById( memberEntity.getMcId() );
 
 	    // 查询会员折扣
 	    if ( CommonUtil.isNotEmpty( card ) && card.getCtId() == 2 ) {
@@ -192,7 +190,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 
 	    // 计算粉币金额 粉币10元启用
 	    if ( ce.getUseFenbi() == 1 ) {
-		Double discountfenbiMoney = currencyCount( pay, member.getFansCurrency() ); // 计算粉币抵扣
+		Double discountfenbiMoney = currencyCount( pay, memberEntity.getFansCurrency() ); // 计算粉币抵扣
 		if ( discountfenbiMoney > 0 ) {
 		    List< Map< String,Object > > dict = dictService.getDict( "1058" );
 		    pay = pay - discountfenbiMoney;
@@ -205,11 +203,11 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 
 	    // 计算积分金额
 	    if ( ce.getUseFenbi() == 1 ) {
-		PublicParameterset pps = publicParameterSetMapper.findBybusId( member.getBusId() );
-		Double discountjifenMoney = memberCommonService.integralCount( pay, member.getIntegral().doubleValue(), member.getBusId() ); // 计算积分
+		PublicParameterset pps = publicParameterSetMapper.findBybusId( memberEntity.getBusId() );
+		Double discountjifenMoney = memberCommonService.integralCount( pay, memberEntity.getIntegral().doubleValue(), memberEntity.getBusId() ); // 计算积分
 		if ( discountjifenMoney > 0 ) {
 		    pay = pay - discountjifenMoney;
-		    Integer jifenNum = memberCommonService.deductJifen( pps, discountjifenMoney, member.getBusId() ).intValue();
+		    Integer jifenNum = memberCommonService.deductJifen( pps, discountjifenMoney, memberEntity.getBusId() ).intValue();
 		    ce.setJifenNum( jifenNum );
 		    ce.setDiscountjifenMoney( discountjifenMoney );
 		    ce.setCanUseJifen( 1 );
@@ -230,10 +228,10 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	Long start = new Date().getTime();
 	boolean isMemberCard = false;  //用来标示该粉丝是会员
 	MemberCard card = null;
-	Member member = memberMapper.selectById( mallAllEntity.getMemberId() );
+	MemberEntity memberEntity = memberMapper.selectById( mallAllEntity.getMemberId() );
 	Double memberDiscount = 1.0;  //会员卡折扣
-	if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( member.getMcId() ) ) {
-	    card = cardMapper.selectById( member.getMcId() );
+	if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
+	    card = cardMapper.selectById( memberEntity.getMcId() );
 	    if ( card.getCardStatus() == 0 ) {  //如果会员卡状态不为0标示该会员卡被禁用了
 		isMemberCard = true;
 		// 折扣卡
@@ -553,7 +551,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    Integer fcount = 0; //能抵扣的粉币商品数量
 	    Integer fcount1 = 0; //能抵扣的粉币商品数量
 	    Double fenbiFenTanAll = 0.0;
-	    double fenbiMoney = currencyCount( 0.0, member.getFansCurrency() );
+	    double fenbiMoney = currencyCount( 0.0, memberEntity.getFansCurrency() );
 	    Double discountfenbiMoneyByShopId = 0.0;
 	    Double balanceMoneyByShopId = 0.0;
 	    if ( fenbiMoney > 0 ) {
@@ -632,7 +630,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 
 	//<!-----------------积分计算start---------------------------->
 	if ( isMemberCard && mallAllEntity.getUserJifen() == 1 ) {
-	    PublicParameterset pps = publicParameterSetMapper.findBybusId( member.getBusId() );
+	    PublicParameterset pps = publicParameterSetMapper.findBybusId( memberEntity.getBusId() );
 	    Double discountJifenMoneyByShopId = 0.0;
 	    Double jifenBanlance = 0.0;  //订单金额
 	    Double balanceMoneyByShopId = 0.0;
@@ -650,7 +648,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 		    }
 		}
 	    }
-	    Double jifenMoney = memberCommonService.integralCount( jifenBanlance, member.getIntegral().doubleValue(), member.getBusId() );
+	    Double jifenMoney = memberCommonService.integralCount( jifenBanlance, memberEntity.getIntegral().doubleValue(), memberEntity.getBusId() );
 
 	    if ( jifenMoney > 0 ) {
 		//计算积分分摊结果
@@ -677,7 +675,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 			    }
 			    //商品数据
 			    mallEntity.setDiscountjifenMoney( jifenFenTan );
-			    Double jifenNum = memberCommonService.deductJifen( pps, jifenFenTan, member.getBusId() );
+			    Double jifenNum = memberCommonService.deductJifen( pps, jifenFenTan, memberEntity.getBusId() );
 			    mallEntity.setJifenNum( jifenNum );
 			    mallEntity.setCanUseJifen( 1 );
 			    mallEntity.setBalanceMoney( formatNumber( BigDecimalUtil.sub( mallEntity.getTotalMoneyAll(), jifenFenTan ) ) );
@@ -702,7 +700,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 		    mallShopMap.put( mallShopEntity.getShopId(), mallShopEntity );
 		}
 		if ( discountJifenMoneyByShopId > 0 ) {
-		    Integer jifenNumByAll = memberCommonService.deductJifen( pps, discountJifenMoneyByShopId, member.getBusId() ).intValue();
+		    Integer jifenNumByAll = memberCommonService.deductJifen( pps, discountJifenMoneyByShopId, memberEntity.getBusId() ).intValue();
 		    mallAllEntity.setJifenNum( jifenNumByAll );
 		    mallAllEntity.setDiscountjifenMoney( discountJifenMoneyByShopId );
 		}
@@ -743,7 +741,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
     public MallAllEntity leagueCount( MallAllEntity mallAllEntity ) {
 	Long start = new Date().getTime();
 	MemberCard card = null;
-	Member member = memberMapper.selectById( mallAllEntity.getMemberId() );
+	MemberEntity memberEntity = memberMapper.selectById( mallAllEntity.getMemberId() );
 
 	//所有门店使用卡券信息
 	Map< Integer,MallShopEntity > mallShopMap = mallAllEntity.getMallShops();
@@ -1185,10 +1183,10 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	Long start = new Date().getTime();
 	boolean isMemberCard = false;  //用来标示该粉丝是会员
 	MemberCard card = null;
-	Member member = memberMapper.selectById( mallNotShopEntity.getMemberId() );
+	MemberEntity memberEntity = memberMapper.selectById( mallNotShopEntity.getMemberId() );
 	Double memberDiscount = 1.0;  //会员卡折扣
-	if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( member.getMcId() ) ) {
-	    card = cardMapper.selectById( member.getMcId() );
+	if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
+	    card = cardMapper.selectById( memberEntity.getMcId() );
 	    if ( card.getCardStatus() == 0 ) {  //如果会员卡状态不为0标示该会员卡被禁用了
 		isMemberCard = true;
 		// 折扣卡
@@ -1480,7 +1478,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    Integer fcount = 0; //能抵扣的粉币商品数量
 	    Integer fcount1 = 0; //能抵扣的粉币商品数量
 	    Double fenbiFenTanAll = 0.0;
-	    double fenbiMoney = currencyCount( 0.0, member.getFansCurrency() );
+	    double fenbiMoney = currencyCount( 0.0, memberEntity.getFansCurrency() );
 	    Double discountfenbiMoneyByShopId = 0.0;
 	    Double balanceMoneyByShopId = 0.0;
 	    Double fenbiBanlance = 0.0;  //订单金额
@@ -1548,7 +1546,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 
 	//<!-----------------积分计算start---------------------------->
 	if ( isMemberCard && mallNotShopEntity.getUserJifen() == 1 ) {
-	    PublicParameterset pps = publicParameterSetMapper.findBybusId( member.getBusId() );
+	    PublicParameterset pps = publicParameterSetMapper.findBybusId( memberEntity.getBusId() );
 	    Double discountJifenMoneyByShopId = 0.0;
 	    Double jifenBanlance = 0.0;  //订单金额
 	    Double balanceMoneyByShopId = 0.0;
@@ -1565,7 +1563,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 		}
 	    }
 
-	    Double jifenMoney = memberCommonService.integralCount( jifenBanlance, member.getIntegral().doubleValue(), member.getBusId() );
+	    Double jifenMoney = memberCommonService.integralCount( jifenBanlance, memberEntity.getIntegral().doubleValue(), memberEntity.getBusId() );
 
 	    if ( jifenMoney > 0 ) {
 		//计算积分分摊结果
@@ -1590,7 +1588,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 			}
 			//商品数据
 			mallEntity.setDiscountjifenMoney( jifenFenTan );
-			Double jifenNum = memberCommonService.deductJifen( pps, jifenFenTan, member.getBusId() );
+			Double jifenNum = memberCommonService.deductJifen( pps, jifenFenTan, memberEntity.getBusId() );
 			mallEntity.setJifenNum( jifenNum );
 			mallEntity.setCanUseJifen( 1 );
 			mallEntity.setBalanceMoney( formatNumber( BigDecimalUtil.sub( mallEntity.getTotalMoneyAll(), jifenFenTan ) ) );
@@ -1611,7 +1609,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 		mallNotShopEntity.setMalls( mallEntityMap );
 	    }
 	    if ( jifenMoney > 0 ) {
-		Integer jifenNumByAll = memberCommonService.deductJifen( pps, jifenMoney, member.getBusId() ).intValue();
+		Integer jifenNumByAll = memberCommonService.deductJifen( pps, jifenMoney, memberEntity.getBusId() ).intValue();
 		mallNotShopEntity.setJifenNum( jifenNumByAll );
 		mallNotShopEntity.setDiscountjifenMoney( jifenMoney );
 		mallNotShopEntity.setCanUseJifen( 1 );
@@ -1646,7 +1644,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
     public MallNotShopEntity leagueCount( MallNotShopEntity mallNotShopEntity ) {
 	Long start = new Date().getTime();
 	MemberCard card = null;
-	Member member = memberMapper.selectById( mallNotShopEntity.getMemberId() );
+	MemberEntity memberEntity = memberMapper.selectById( mallNotShopEntity.getMemberId() );
 
 	Double leagueMoney = 0.0;  //联盟卡优惠
 	boolean isUseDisCount = false;  //实付使用折扣

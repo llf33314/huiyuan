@@ -30,7 +30,7 @@
 //import com.gt.entity.member.GiveRuleGoodsTypeKey;
 //import com.gt.entity.member.GoodsType;
 //import com.gt.entity.member.GradeType;
-//import com.gt.entity.member.Member;
+//import com.gt.entity.member.MemberEntity;
 //import com.gt.entity.member.RechargeGive;
 //import com.gt.controller.common.dict.DictService;
 //import com.gt.controller.member.GiveRuleService;
@@ -422,7 +422,7 @@
 //			map.put("result", true);
 //			map.put("message", "升级成功");
 //			card=cardMapper.selectByPrimaryKey(mcId);
-//			Member member=memberMapper.findByMcIdAndbusId(busId, mcId);
+//			MemberEntity member=memberMapper.findByMcIdAndbusId(busId, mcId);
 //			//升级通知
 //			systemMsgService.upgradeMemberMsg(member, card.getCardno(), CommonUtil.isEmpty(card.getExpiredate())?"长期有效":DateTimeKit.format(card.getExpiredate()));
 //

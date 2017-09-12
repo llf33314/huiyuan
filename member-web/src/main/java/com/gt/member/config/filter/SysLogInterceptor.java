@@ -33,7 +33,7 @@ public class SysLogInterceptor extends HandlerInterceptorAdapter {
 		//todo 调用陈丹日志接口
 		/*DaoUtil daoUtil= CommonUtil.getApplicationContext().getBean(DaoUtil.class);
 		Map<String, Object> logObj=new HashMap<String, Object>();
-		BusUser user=CommonUtil.getLoginUser(request);
+		BusUserEntity user=CommonUtil.getLoginUser(request);
 		Class<?> bean=handlerMethod.getBeanType();
 		String controller=bean.getName();
 		if(user!=null){

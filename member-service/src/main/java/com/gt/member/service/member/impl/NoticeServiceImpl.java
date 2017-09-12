@@ -19,11 +19,11 @@ import com.gt.dao.member.SystemNoticeCallMapper;
 import com.gt.dao.member.SystemNoticeMapper;
 import com.gt.dao.user.BusUserMapper;
 import com.gt.dao.user.WxPublicUsersMapper;
-import com.gt.entity.member.Member;
+import com.gt.entity.member.MemberEntity;
 import com.gt.entity.member.SystemNotice;
 import com.gt.entity.member.SystemNoticeCall;
-import com.gt.entity.user.BusUser;
-import com.gt.entity.user.WxPublicUsers;
+import com.gt.entity.user.BusUserEntity;
+import com.gt.entity.user.WxPublicUsersEntity;
 import com.gt.controller.common.sms.SmsSpendingService;
 import com.gt.controller.member.NoticeService;
 import com.gt.util.CommonUtil;
@@ -104,8 +104,8 @@ public class NoticeServiceImpl implements NoticeService {
 
 		// 短信提醒
 		if (1 == systemNotice.getSmsstatus()) {
-			Member member = memberMapper.selectByPrimaryKey(memberId);
-			WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+			MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
+			WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 					.selectByUserId(bususerId);
 			Map<String, Object> params = new HashMap<String, Object>();
 			if (CommonUtil.isNotEmpty(member.getPhone())) {
@@ -117,7 +117,7 @@ public class NoticeServiceImpl implements NoticeService {
 					if (CommonUtil.isNotEmpty(wxPublicUsers)) {
 						params.put("company", wxPublicUsers.getAuthorizerInfo());
 					} else {
-						BusUser user = busUserMapper
+						BusUserEntity user = busUserMapper
 								.selectByPrimaryKey(bususerId);
 						params.put("company", user.getMerchant_name());
 					}

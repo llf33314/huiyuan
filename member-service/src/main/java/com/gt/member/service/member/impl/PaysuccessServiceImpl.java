@@ -26,12 +26,12 @@ import com.gt.dao.personCenter.PaySuccessMapper;
 import com.gt.dao.user.BusUserMapper;
 import com.gt.dao.user.FenbiFlowRecordMapper;
 import com.gt.dao.user.WxPublicUsersMapper;
-import com.gt.entity.member.Member;
+import com.gt.entity.member.MemberEntity;
 import com.gt.entity.member.card.DuofenCardReceive;
 import com.gt.entity.personCenter.PaySuccess;
 import com.gt.entity.personCenter.PaySuccessLog;
-import com.gt.entity.user.BusUser;
-import com.gt.entity.user.WxPublicUsers;
+import com.gt.entity.user.BusUserEntity;
+import com.gt.entity.user.WxPublicUsersEntity;
 import com.gt.controller.common.sms.SmsSpendingService;
 import com.gt.controller.member.DuofenCardService;
 import com.gt.controller.member.PaysuccessService;
@@ -107,7 +107,7 @@ public class PaysuccessServiceImpl implements PaysuccessService {
 
 			Integer memberId = CommonUtil.toInteger(map.get("memberId"));
 
-			Member member = memberMapper.selectByPrimaryKey(memberId);
+			MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 
 			PaySuccess paysuccess = paySuccessMapper.findBybusIdAndModel(
 					member.getBusid(),
@@ -232,7 +232,7 @@ public class PaysuccessServiceImpl implements PaysuccessService {
 								CommonUtil.toInteger(cardMap.get("id")));
 
 						// 赠送粉丝积分和粉币
-						Member m = new Member();
+						MemberEntity m = new MemberEntity();
 						m.setId(member.getId());
 						if (paysuccess.getJifenopen() == 1) {
 							if (isGive == 1) {
@@ -345,7 +345,7 @@ public class PaysuccessServiceImpl implements PaysuccessService {
 				}
 			}
 
-			BusUser busUser = busUserMapper.selectByPrimaryKey(member
+			BusUserEntity busUser = busUserMapper.selectByPrimaryKey(member
 					.getBusid());
 			// 短信通知商家
 			if (CommonUtil.isEmpty(paysuccess.getPhone())
@@ -356,7 +356,7 @@ public class PaysuccessServiceImpl implements PaysuccessService {
 
 				String realname = null;
 
-				WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+				WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 						.selectByUserId(member.getBusid());
 
 				if (CommonUtil.isEmpty(wxPublicUsers)) {

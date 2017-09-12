@@ -1,16 +1,5 @@
 package com.gt.member.service.member;
 
-import com.gt.member.entity.Member;
-import com.gt.member.entity.MemberRecommend;
-import com.gt.member.util.Page;
-
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-
 /**
  *
  *
@@ -28,9 +17,9 @@ public interface MemberService {
 //	 * @param member
 //	 * @return
 //	 */
-//	public Map<String, Object> upMemberPhone(Member member);
+//	public Map<String, Object> upMemberPhone(MemberEntity member);
 //
-//	public Member findById(Integer id);
+//	public MemberEntity findById(Integer id);
 //
 //	/**
 //	 * 分页查询会员
@@ -49,7 +38,7 @@ public interface MemberService {
 //	 * 导入会员信息
 //	 * @param input
 //	 */
-//	//public List<ErrorWorkbook> upLoadMember(Integer busId, BusUser busUser, InputStream input) throws Exception;
+//	//public List<ErrorWorkbook> upLoadMember(Integer busId, BusUserEntity busUser, InputStream input) throws Exception;
 //
 //
 //	//public SXSSFWorkbook errorMember(List<ErrorWorkbook> wbs);
@@ -79,7 +68,7 @@ public interface MemberService {
 //	/**
 //	 * 申请会员卡
 //	 */
-//	public void applyMember(MemberRecommend recommend, int applyType, Member member, Integer ctId, int ischecked,
+//	public void applyMember(MemberRecommend recommend, int applyType, MemberEntity member, Integer ctId, int ischecked,
 //                            String nominateCode, String phone, String json)throws Exception ;
 //	/**
 //	 * 消费查询卡片
@@ -87,7 +76,7 @@ public interface MemberService {
 //	 * @param cardNo
 //	 * @return
 //	 */
-//	public Map<String, Object> findMemberCard(BusUser busUser, String cardNoKey, String cardNo);
+//	public Map<String, Object> findMemberCard(BusUserEntity busUser, String cardNoKey, String cardNo);
 //
 //	/**
 //	 * 充值查询卡片
@@ -259,7 +248,7 @@ public interface MemberService {
 //	public void clearJifen(List<Integer> busIds) throws Exception ;
 //
 //
-//	public String insertTwoCode(String scene_id, WxPublicUsers wxPublicUsers);
+//	public String insertTwoCode(String scene_id, WxPublicUsersEntity wxPublicUsers);
 //
 //
 //	/**
@@ -328,7 +317,7 @@ public interface MemberService {
 ////	 * @param params
 ////	 * @return
 ////	 */
-////	public Map<String, Object> linquMemberCard(BusUser busUser,Map<String, Object> params)throws Exception;
+////	public Map<String, Object> linquMemberCard(BusUserEntity busUser,Map<String, Object> params)throws Exception;
 ////
 ////	/**
 ////	 * 购买会员卡
@@ -336,7 +325,7 @@ public interface MemberService {
 ////	 * @param params
 ////	 * @return
 ////	 */
-////	public Map<String, Object> buyMemberCard(BusUser busUser,Map<String, Object> params)throws Exception;
+////	public Map<String, Object> buyMemberCard(BusUserEntity busUser,Map<String, Object> params)throws Exception;
 
 }
 

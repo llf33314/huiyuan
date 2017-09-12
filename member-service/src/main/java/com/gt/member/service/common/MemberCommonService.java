@@ -75,7 +75,18 @@ public interface MemberCommonService {
      */
     public void guihuiBusUserFenbi(Integer busId,Double fenbi)throws BusinessException;
 
-
+    /**
+     *
+     * @param cardId
+     * @param recordType  记录类型  1充值或消费  2积分 3粉笔 4 流量
+     * @param number 加单位
+     * @param itemName
+     * @param busId
+     * @param balance
+     * @param ctId
+     * @param amount
+     * @return
+     */
     public MemberCardrecord saveCardRecordNew(Integer cardId, Byte recordType, String number,
                     String itemName, Integer busId, String balance, Integer ctId, double amount);
 
@@ -83,4 +94,6 @@ public interface MemberCommonService {
      * 关注公众号的接口
      */
     public String findWxQcode(Integer busId,Integer busType,String scene_id);
+
+
 }

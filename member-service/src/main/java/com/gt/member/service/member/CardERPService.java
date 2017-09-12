@@ -1,7 +1,5 @@
 package com.gt.member.service.member;
 
-import com.gt.common.entity.BusUser;
-
 import java.util.List;
 import java.util.Map;
 

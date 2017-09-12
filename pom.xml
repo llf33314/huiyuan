@@ -16,7 +16,7 @@
     </modules>
     <packaging>pom</packaging>
     <name>parent</name>
-    <url>http://member.duofee.com</url>
+    <url>http://memberEntity.duofee.com</url>
     <!-- 开发人员列表 -->
     <developers>
         <developer>
@@ -38,7 +38,7 @@
         <java.version>1.7</java.version>
         <dev.lib.swagger2>2.6.0</dev.lib.swagger2>
         <dev.lib.mybatis>1.1.1</dev.lib.mybatis>
-        <dev.lib.druid>1.0.31</dev.lib.druid>
+        <dev.lib.druid-spring-boot-starter>1.1.2</dev.lib.druid-spring-boot-starter>
         <dev.lib.mysql>5.0.5</dev.lib.mysql>
         <dev.lib.mybatis-plus>2.1-gamma</dev.lib.mybatis-plus>
         <dev.lib.velocity>1.7</dev.lib.velocity>
@@ -49,7 +49,7 @@
         <dev.lib.jjwt>0.7.0</dev.lib.jjwt>
         <!-- Mybatis Generator -->
         <!--<entity.target.dir>src/main/java/</entity.target.dir>-->
-        <!--<com.gt.member.dao.resources.dir>src/main/resources/</com.gt.member.dao.resources.dir>-->
+        <!--<commemberEntitymber.dao.resources.dir>src/main/resources/</commemberEntitymber.dao.resources.dir>-->
         <dev.lib.lombok>1.16.18</dev.lib.lombok>
     </properties>
 
@@ -164,7 +164,7 @@
         <dependency>
             <groupId>com.gt.api</groupId>
             <artifactId>gt_api</artifactId>
-            <version>1.3.7-SNAPSHOT</version>
+            <version>1.3.10-SNAPSHOT</version>
         </dependency>
 
 
@@ -209,8 +209,8 @@
         <!-- druid阿里巴巴数据库连接池 -->
         <dependency>
             <groupId>com.alibaba</groupId>
-            <artifactId>druid</artifactId>
-            <version>${dev.lib.druid}</version>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${dev.lib.druid-spring-boot-starter}</version>
         </dependency>
         <!-- MySql数据库驱动 -->
         <dependency>
@@ -333,6 +333,19 @@
         </resources>
 
         <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>UTF-8</encoding>
+                    <compilerArguments>
+                        <verbose/>
+                        <bootclasspath>${java.home}\lib\rt.jar;${java.home}\lib\jce.jar</bootclasspath>
+                    </compilerArguments>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>

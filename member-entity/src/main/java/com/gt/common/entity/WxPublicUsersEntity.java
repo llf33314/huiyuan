@@ -23,7 +23,7 @@ import java.util.Date;
 @Data
 @Accessors(chain = true)
 @TableName("t_wx_public_users")
-public class WxPublicUsers extends Model<WxPublicUsers> {
+public class WxPublicUsersEntity extends Model<WxPublicUsersEntity > {
 
     private static final long serialVersionUID = 1L;
 
@@ -227,7 +227,7 @@ public class WxPublicUsers extends Model<WxPublicUsers> {
 
 	@Override
 	public String toString() {
-		return "WxPublicUsers{" +
+		return "WxPublicUsersEntity{" +
 			"id=" + id +
 			", wxUserToken=" + wxUserToken +
 			", authRefreshToken=" + authRefreshToken +

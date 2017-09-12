@@ -34,10 +34,10 @@ import com.gt.dao.member.card.DuofenCardMapper;
 import com.gt.dao.member.card.DuofenCardReceiveLogMapper;
 import com.gt.dao.member.card.DuofenCardReceiveMapper;
 import com.gt.dao.util.DaoUtil;
-import com.gt.entity.common.BusUser;
-import com.gt.entity.common.WxPublicUsers;
+import com.gt.entity.common.BusUserEntity;
+import com.gt.entity.common.WxPublicUsersEntity;
 import com.gt.entity.member.Card;
-import com.gt.entity.member.Member;
+import com.gt.entity.member.MemberEntity;
 import com.gt.entity.member.Recommend;
 import com.gt.entity.member.UserConsume;
 import com.gt.entity.member.card.DuofenCard;
@@ -429,7 +429,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 					}
 				}
 			}
-			Member member = memberMapper.selectByPrimaryKey(memberId);
+			MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 			if (dfcr.getDeliverytype() == 2) {
 				if (!memberPayService.isMemember(memberId)) {
 					map.put("result", false);
@@ -450,7 +450,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 				return map;
 			}
 
-			Member m1 = new Member();
+			MemberEntity m1 = new MemberEntity();
 			boolean flag = false; // 用来标示是否修改修改用户数据
 			if (dfcr.getJifen() > 0) {
 				// 扣除用户积分
@@ -554,7 +554,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 
 			// 短信通知
 			if (dfcr.getIscallsms() == 1) {
-				WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+				WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 						.selectByPrimaryKey(member.getBusid());
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("busId", member.getBusid());
@@ -563,7 +563,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 				if (CommonUtil.isNotEmpty(wxPublicUsers)) {
 					params.put("company", wxPublicUsers.getAuthorizerInfo());
 				} else {
-					BusUser user = busUserMapper.selectByPrimaryKey(member
+					BusUserEntity user = busUserMapper.selectByPrimaryKey(member
 							.getBusid());
 					params.put("company", user.getMerchant_name());
 				}
@@ -768,7 +768,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 				}
 			}
 
-			Member member = memberMapper.selectByPrimaryKey(memberId);
+			MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 			if (dfcr.getDeliverytype() == 2) {
 				if (!memberPayService.isMemember(memberId)) {
 					returnMap.put("result", false);
@@ -789,7 +789,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 				return returnMap;
 			}
 
-			Member m1 = new Member();
+			MemberEntity m1 = new MemberEntity();
 			boolean flag = false; // 用来标示是否修改修改用户数据
 			if (dfcr.getJifen() > 0) {
 				// 扣除用户积分
@@ -910,14 +910,14 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 
 			// 短信通知
 			if (dfcr.getIscallsms() == 1) {
-				WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+				WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 						.selectByUserId(member.getBusid());
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("busId", member.getBusid());
 				params.put("model", 12);
 				params.put("mobiles", dfcr.getMobilephone());
 				if (CommonUtil.isEmpty(wxPublicUsers)) {
-					BusUser user = busUserMapper.selectByPrimaryKey(member
+					BusUserEntity user = busUserMapper.selectByPrimaryKey(member
 							.getBusid());
 					params.put("company", user.getMerchant_name());
 				} else {
@@ -1000,14 +1000,14 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 
 			// 短信通知
 			if (dfcr.getIscallsms() == 1) {
-				WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+				WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 						.selectByUserId(busId);
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("busId", busId);
 				params.put("model", 12);
 				params.put("mobiles", dfcr.getMobilephone());
 				if (CommonUtil.isEmpty(wxPublicUsers)) {
-					BusUser user = busUserMapper.selectByPrimaryKey(busId);
+					BusUserEntity user = busUserMapper.selectByPrimaryKey(busId);
 					params.put("company", user.getMerchant_name());
 				} else {
 					params.put("company", wxPublicUsers.getAuthorizerInfo());
@@ -1029,7 +1029,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 	}
 
 	@Override
-	public Map<String, Object> findCardReceive(BusUser busUser, String code) {
+	public Map<String, Object> findCardReceive(BusUserEntity busUser, String code) {
 		Integer busId = 0;
 		if (busUser.getPid() == 0) {
 			busId = busUser.getId();
@@ -1081,7 +1081,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 		Integer cardId = CommonUtil.toInteger(cardGet.get("cardId"));
 		DuofenCard duofenCard = duofenCardMapper.selectByPrimaryKey(cardId);
 		Integer memberId = CommonUtil.toInteger(cardGet.get("memberId"));
-		Member member = memberMapper.selectByPrimaryKey(memberId);
+		MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 		if (memberPayService.isMemember(memberId)) {
 			List<Map<String, Object>> cards = cardMapper.findCardById(member
 					.getMcId());
@@ -1117,7 +1117,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public Map<String, Object> cardReceive(HttpServletRequest request,
-			String code, Double money, BusUser busUser, Integer payType,
+			String code, Double money, BusUserEntity busUser, Integer payType,
 			Double jifenmoney, Double fenbimoney) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
@@ -1131,7 +1131,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 			Map<String, Object> cg = duofenCardGetMapper
 					.findByCode(busId, code);
 
-			Member member = memberMapper.selectByPrimaryKey(CommonUtil
+			MemberEntity member = memberMapper.selectByPrimaryKey(CommonUtil
 					.toInteger(cg.get("memberId")));
 
 			DuofenCard duofencard = duofenCardMapper
@@ -1248,7 +1248,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 
 			if (CommonUtil.isNotEmpty(member.getMcId())) {
 				if (jifen > 0 || fenbi1 > 0) {
-					Member m = new Member();
+					MemberEntity m = new MemberEntity();
 					m.setId(member.getId());
 					m.setFansCurrency(member.getFansCurrency() - fenbi1);
 					m.setIntegral(member.getIntegral() - jifen);
@@ -1261,13 +1261,13 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 								-jifen);
 					}
 					if (fenbi1 > 0) {
-						BusUser bususer = busUserMapper
+						BusUserEntity bususer = busUserMapper
 								.selectByPrimaryKey(busId);
 						// 归还到商家账户
 						bususer.setFansCurrency(bususer.getFansCurrency()
 								+ fenbi1);
 						CommonUtil.setLoginUser(request, bususer);
-						BusUser b = new BusUser();
+						BusUserEntity b = new BusUserEntity();
 						b.setId(bususer.getId());
 						b.setFansCurrency(bususer.getFansCurrency());
 						busUserMapper.updateByPrimaryKeySelective(b);
@@ -1311,7 +1311,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 	}
 
 	@Override
-	public Map<String, Object> findWxcardReceive(BusUser busUser,
+	public Map<String, Object> findWxcardReceive(BusUserEntity busUser,
 			Map<String, Object> params) {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		try {
@@ -1381,7 +1381,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 	}
 
 	@Override
-	public Page findThreeCard(WxPublicUsers wxPublicUsers,
+	public Page findThreeCard(WxPublicUsersEntity wxPublicUsers,
 			Map<String, Object> params) {
 		try {
 			params.put("curPage", CommonUtil.isEmpty(params.get("curPage")) ? 1
@@ -1411,7 +1411,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 	*//** 卡券短信投放 *//*
 	@Override
 	public void duanxiTF(Integer receiveId, String ctIds, String gtIds,
-			WxPublicUsers wxPublicUsers, BusUser busUser) {
+			WxPublicUsersEntity wxPublicUsers, BusUserEntity busUser) {
 		List<Integer> ctIdlist = new ArrayList<Integer>();
 		List<Integer> gtIdList = new ArrayList<Integer>();
 		String[] ctIdstr = ctIds.split(",");
@@ -1626,7 +1626,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 		return null;
 	}
 
-	public void duofencardHeiXiao(HttpServletRequest request, Member member,
+	public void duofencardHeiXiao(HttpServletRequest request, MemberEntity member,
 			String code) {
 		try {
 			DuofenCardAuthorization dfca = duofenCardAuthorizationMapper
@@ -1783,7 +1783,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 	 * @param member
 	 * @param cardId
 	 *//*
-	public void tuijianfriend(HttpServletRequest request,Member member,Integer cardId){
+	public void tuijianfriend(HttpServletRequest request,MemberEntity member,Integer cardId){
 		DuofenCardGet duofencardget=duofenCardGetMapper.selectByPrimaryKey(cardId);
 		Integer count=recommendMapper.countRecommendByCardId(cardId, member.getId());
 		DuofenCard dc=duofenCardMapper.selectByPrimaryKey(duofencardget.getCardid());
@@ -1824,7 +1824,7 @@ public class DuofenCardServiceImpl implements DuofenCardService {
 	 * @throws Exception 
 	 *//*
 	@Transactional(rollbackFor=Exception.class)
-	public void tuijianget(HttpServletRequest request,Member member,Integer memberId,Integer cardId) throws Exception{
+	public void tuijianget(HttpServletRequest request,MemberEntity member,Integer memberId,Integer cardId) throws Exception{
 		try {
 			DuofenCardGet duofencardget = duofenCardGetMapper
 					.selectByPrimaryKey(cardId);

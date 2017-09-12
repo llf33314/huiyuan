@@ -4,19 +4,15 @@
 package com.gt.member.service.member.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.gt.member.dao.MemberCardmodelDAO;
 import com.gt.member.dao.MemberCardrecordDAO;
-import com.gt.member.dao.MemberDAO;
-import com.gt.member.entity.Member;
+import com.gt.member.dao.MemberEntityDAO;
 import com.gt.member.entity.MemberCardmodel;
-import com.gt.member.entity.MemberCardrecord;
 import com.gt.member.service.common.MemberCommonService;
-import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.util.CommonUtil;
 import net.sf.json.JSONArray;
@@ -48,7 +44,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 
 	@Autowired
-	private MemberDAO memberMapper;
+	private MemberEntityDAO memberMapper;
 
 	@Autowired
 	private MemberCommonService memberCommonService;

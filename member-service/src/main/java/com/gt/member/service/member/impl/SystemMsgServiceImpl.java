@@ -1,7 +1,7 @@
 package com.gt.member.service.member.impl;
 
 
-import com.gt.member.entity.Member;
+import com.gt.member.entity.MemberEntity;
 import com.gt.member.entity.MemberCardrecord;
 import com.gt.member.service.member.SystemMsgService;
 import org.springframework.stereotype.Service;
@@ -17,62 +17,62 @@ import org.springframework.stereotype.Service;
 public class SystemMsgServiceImpl implements SystemMsgService {
 
 	@Override
-	public boolean jifenMsg(MemberCardrecord cardRecord, Member member) {
+	public boolean jifenMsg(MemberCardrecord cardRecord, MemberEntity memberEntity ) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean fenbiMsg(MemberCardrecord cardRecord, Member member) {
+	public boolean fenbiMsg(MemberCardrecord cardRecord, MemberEntity memberEntity ) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean flowMsg(MemberCardrecord cardRecord, Member member) {
+	public boolean flowMsg(MemberCardrecord cardRecord, MemberEntity memberEntity ) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean upgradeMemberMsg(Member member, String cardNo,
+	public boolean upgradeMemberMsg(MemberEntity memberEntity, String cardNo,
 			String dateTime) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean sendNewMemberMsg(Member member) {
+	public boolean sendNewMemberMsg(MemberEntity memberEntity ) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean sendChuzhiCard(Member member, Double money) {
+	public boolean sendChuzhiCard(MemberEntity memberEntity, Double money) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean sendCikaCard(Member member, double money, int count) {
+	public boolean sendCikaCard(MemberEntity memberEntity, double money, int count) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean sendCikaXiaofei(Member member) {
+	public boolean sendCikaXiaofei(MemberEntity memberEntity ) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean sendChuzhiXiaofei(Member member, Double money) {
+	public boolean sendChuzhiXiaofei(MemberEntity memberEntity, Double money) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean sendChuzhiTuikuan(Member member, Double money) {
+	public boolean sendChuzhiTuikuan(MemberEntity memberEntity, Double money) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -99,14 +99,14 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 	private CardMapper cardMapper;
 
 	@Override
-	public boolean jifenMsg(CardRecord cardRecord, Member member) {
+	public boolean jifenMsg(CardRecord cardRecord, MemberEntity member) {
 		try {
 			SystemNotice systemNotice = systemNoticeMapper
 					.findBybusIdAndCallType(member.getBusid(), (byte) 2);
 			// 公众号消息推送
 			if (CommonUtil.isNotEmpty(systemNotice)
 					&& systemNotice.getPublicmsg() == 1) {
-				WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+				WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 						.selectByPrimaryKey(member.getPublicId());
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("id", systemNotice.getPublicidmsgid());
@@ -133,19 +133,19 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 	}
 
 	@Override
-	public boolean fenbiMsg(CardRecord cardRecord, Member member) {
+	public boolean fenbiMsg(CardRecord cardRecord, MemberEntity member) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean flowMsg(CardRecord cardRecord, Member member) {
+	public boolean flowMsg(CardRecord cardRecord, MemberEntity member) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean upgradeMemberMsg(Member member, String cardNo,
+	public boolean upgradeMemberMsg(MemberEntity member, String cardNo,
 			String dateTime) {
 		try {
 			SystemNotice systemNotice = systemNoticeMapper
@@ -153,7 +153,7 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 			// 公众号消息推送
 			if (CommonUtil.isNotEmpty(systemNotice)
 					&& systemNotice.getPublicmsg() == 1) {
-				WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+				WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 						.selectByPrimaryKey(member.getPublicId());
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("id", systemNotice.getPublicidmsgid());
@@ -178,12 +178,12 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 	}
 
 	@Override
-	public boolean sendNewMemberMsg(Member member) {
+	public boolean sendNewMemberMsg(MemberEntity member) {
 		SystemNotice systemNotice = systemNoticeMapper.findBybusIdAndCallType(
 				member.getBusid(), (byte) 11);
 		if (CommonUtil.isNotEmpty(systemNotice)
 				&& CommonUtil.isNotEmpty(member.getPhone())) {
-			BusUser bususer = busUserMapper.selectByPrimaryKey(member
+			BusUserEntity bususer = busUserMapper.selectByPrimaryKey(member
 					.getBusid());
 
 			String content = systemNotice.getSmscontent();
@@ -207,14 +207,14 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 	}
 
 	@Override
-	public boolean sendChuzhiCard(Member member, Double money) {
+	public boolean sendChuzhiCard(MemberEntity member, Double money) {
 		try {
 			SystemNotice systemNotice = systemNoticeMapper
 					.findBybusIdAndCallType(member.getBusid(), (byte) 4);
 			// 公众号消息推送
 			if (CommonUtil.isNotEmpty(systemNotice)
 					&& systemNotice.getPublicmsg() == 1) {
-				WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+				WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 						.selectByPrimaryKey(member.getPublicId());
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("id", systemNotice.getPublicidmsgid());
@@ -257,14 +257,14 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 	}
 
 	@Override
-	public boolean sendCikaCard(Member member, double money, int count) {
+	public boolean sendCikaCard(MemberEntity member, double money, int count) {
 		try {
 			SystemNotice systemNotice = systemNoticeMapper
 					.findBybusIdAndCallType(member.getBusid(), (byte) 5);
 			// 公众号消息推送
 			if (CommonUtil.isNotEmpty(systemNotice)
 					&& systemNotice.getPublicmsg() == 1) {
-				WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+				WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 						.selectByPrimaryKey(member.getPublicId());
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("id", systemNotice.getPublicidmsgid());
@@ -300,14 +300,14 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 	}
 
 	@Override
-	public boolean sendCikaXiaofei(Member member) {
+	public boolean sendCikaXiaofei(MemberEntity member) {
 		try {
 			SystemNotice systemNotice = systemNoticeMapper
 					.findBybusIdAndCallType(member.getBusid(), (byte) 8);
 			// 公众号消息推送
 			if (CommonUtil.isNotEmpty(systemNotice)
 					&& systemNotice.getPublicmsg() == 1) {
-				WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+				WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 						.selectByPrimaryKey(member.getPublicId());
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("id", systemNotice.getPublicidmsgid());
@@ -342,14 +342,14 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 	}
 
 	@Override
-	public boolean sendChuzhiXiaofei(Member member, Double money) {
+	public boolean sendChuzhiXiaofei(MemberEntity member, Double money) {
 		try {
 			SystemNotice systemNotice = systemNoticeMapper
 					.findBybusIdAndCallType(member.getBusid(), (byte) 12);
 			// 公众号消息推送
 			if (CommonUtil.isNotEmpty(systemNotice)
 					&& systemNotice.getPublicmsg() == 1) {
-				WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+				WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 						.selectByPrimaryKey(member.getPublicId());
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("id", systemNotice.getPublicidmsgid());
@@ -379,14 +379,14 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 
 
 	@Override
-	public boolean sendChuzhiTuikuan(Member member, Double money) {
+	public boolean sendChuzhiTuikuan(MemberEntity member, Double money) {
 		try {
 			SystemNotice systemNotice = systemNoticeMapper
 					.findBybusIdAndCallType(member.getBusid(), (byte) 12);
 			// 公众号消息推送
 			if (CommonUtil.isNotEmpty(systemNotice)
 					&& systemNotice.getPublicmsg() == 1) {
-				WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+				WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 						.selectByPrimaryKey(member.getPublicId());
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("id", systemNotice.getPublicidmsgid());

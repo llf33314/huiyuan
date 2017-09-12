@@ -3,7 +3,7 @@
 <mapper namespace="com.gt.member.dao.common.BusUserDAO">
 
 	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.gt.common.entity.BusUser">
+	<resultMap id="BaseResultMap" type="com.gt.common.entity.BusUserEntity">
 		<id column="id" property="id" />
 		<result column="name" property="name" />
 		<result column="email" property="email" />

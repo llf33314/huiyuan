@@ -1,7 +1,7 @@
 package com.gt.member.service.member.impl;
 
-import com.gt.common.entity.BusUser;
-import com.gt.common.entity.WxPublicUsers;
+import com.gt.common.entity.BusUserEntity;
+import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.member.dao.*;
 import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.common.WxPublicUsersDAO;
@@ -13,7 +13,7 @@ import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.DateTimeKit;
 import com.gt.member.util.EncryptUtil;
-import com.gt.member.util.MemberConfig;
+import com.gt.member.util.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class CardERPServiceImpl implements CardERPService {
     private static final Logger LOG = LoggerFactory.getLogger( CardERPServiceImpl.class );
 
     @Autowired
-    private MemberDAO memberMapper;
+    private MemberEntityDAO memberMapper;
 
     @Autowired
     private MemberCardDAO cardMapper;
@@ -59,9 +59,7 @@ public class CardERPServiceImpl implements CardERPService {
 
     @Autowired
     private SystemMsgService systemMsgService;
-
-    @Autowired
-    private MemberConfig memberConfig;
+    
 
     @Autowired
     private WxPublicUsersDAO wxPublicUsersDAO;
@@ -107,9 +105,9 @@ public class CardERPServiceImpl implements CardERPService {
 
 	    int count = cardMapper.countCardisBinding( busId );
 
-	    BusUser busUser= busUserDAO.selectById(busId  );
+	    BusUserEntity busUserEntity = busUserDAO.selectById(busId  );
 
-	    String dictNum = dictService.dictBusUserNum( busId, busUser.getLevel(), 4, "1093" ); // 多粉 翼粉
+	    String dictNum = dictService.dictBusUserNum( busId, busUserEntity.getLevel(), 4, "1093" ); // 多粉 翼粉
 	    if ( CommonUtil.toInteger( dictNum ) < count ) {
 		returnMap.put( "code", -1 );
 		returnMap.put( "message", "会员卡已领取完!" );
@@ -118,19 +116,19 @@ public class CardERPServiceImpl implements CardERPService {
 
 	    String phone = CommonUtil.toString( params.get( "phone" ) );
 
-	    Member member = memberMapper.findByPhone( busUser.getId(), phone );
-	    if ( CommonUtil.isEmpty( member ) ) {
+	    MemberEntity memberEntity = memberMapper.findByPhone( busUserEntity.getId(), phone );
+	    if ( CommonUtil.isEmpty( memberEntity ) ) {
 		// 新增用户
-		member = new Member();
-		member.setPhone( phone );
-		member.setBusId( busUser.getId() );
-		member.setLoginMode( 1 );
-		member.setNickname( "Fans_" + phone.substring( 4 ) );
-		memberMapper.insert( member );
-		MemberParameter memberParameter = memberParameterMapper.findByMemberId( member.getId() );
+		memberEntity = new MemberEntity();
+		memberEntity.setPhone( phone );
+		memberEntity.setBusId( busUserEntity.getId() );
+		memberEntity.setLoginMode( 1 );
+		memberEntity.setNickname( "Fans_" + phone.substring( 4 ) );
+		memberMapper.insert( memberEntity );
+		MemberParameter memberParameter = memberParameterMapper.findByMemberId( memberEntity.getId() );
 		if ( CommonUtil.isEmpty( memberParameter ) ) {
 		    MemberParameter mp = new MemberParameter();
-		    mp.setMemberId( member.getId() );
+		    mp.setMemberId( memberEntity.getId() );
 		    memberParameterMapper.insert( mp );
 		}
 	    }
@@ -141,7 +139,7 @@ public class CardERPServiceImpl implements CardERPService {
 	    Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
 
 	    // 根据卡片类型 查询第一等级
-	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findBybusIdAndCtId3( member.getBusId(), ctId );
+	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findBybusIdAndCtId3( memberEntity.getBusId(), ctId );
 	    if ( CommonUtil.toInteger(gradeTypes.get( 0 ).get("applyType")) != 3 ) {
 		//非购买会员卡  直接分配会员卡
 		MemberCard card = new MemberCard();
@@ -159,10 +157,10 @@ public class CardERPServiceImpl implements CardERPService {
 		if ( gradeTypes != null && gradeTypes.size() > 0 ) {
 		    card.setGtId( Integer.parseInt( gradeTypes.get( 0 ).get( "gt_id" ).toString() ) );
 		    MemberGiverule giveRule = giveRuleMapper
-				    .findBybusIdAndGtIdAndCtId( member.getBusId(), Integer.parseInt( gradeTypes.get( 0 ).get( "gt_id" ).toString() ), ctId );
+				    .findBybusIdAndGtIdAndCtId( memberEntity.getBusId(), Integer.parseInt( gradeTypes.get( 0 ).get( "gt_id" ).toString() ), ctId );
 		    card.setGrId( giveRule.getGrId() );
 		}
-		card.setBusId( member.getBusId() );
+		card.setBusId( memberEntity.getBusId() );
 		card.setReceiveDate( new Date() );
 		card.setIsbinding( 1 );
 
@@ -170,13 +168,13 @@ public class CardERPServiceImpl implements CardERPService {
 		card.setOnline( 0 );
 		cardMapper.insert( card );
 
-		Member member1 = new Member();
-		member1.setMcId( card.getMcId() );
-		member1.setId( member.getId() );
-		memberMapper.updateById( member1 );
+		MemberEntity memberEntity1 = new MemberEntity();
+		memberEntity1.setMcId( card.getMcId() );
+		memberEntity1.setId( memberEntity.getId() );
+		memberMapper.updateById( memberEntity1 );
 
 		// 新增会员短信通知
-		systemMsgService.sendNewMemberMsg( member );
+		systemMsgService.sendNewMemberMsg( memberEntity );
 		returnMap.put( "code", 1 );
 		returnMap.put( "message", "领取成功" );
 	    } else {
@@ -187,7 +185,7 @@ public class CardERPServiceImpl implements CardERPService {
 		}
 		// 添加会员记录
 		UserConsume uc = new UserConsume();
-		uc.setMemberId( member.getId() );
+		uc.setMemberId( memberEntity.getId() );
 		uc.setCtId( ctId );
 		uc.setRecordType( 2 );
 		uc.setUcType( 13 );
@@ -199,15 +197,15 @@ public class CardERPServiceImpl implements CardERPService {
 		String orderCode = CommonUtil.getMEOrderCode();
 		uc.setOrderCode( orderCode );
 		uc.setGtId( gtId );
-		uc.setBusUserId( busUser.getId() );
+		uc.setBusUserId( busUserEntity.getId() );
 		uc.setStoreId( shopId );
-		String notityUrl = memberConfig.getWebHome() + "/addMember/79B4DE7C/successPayBuyCard";
-		WxPublicUsers wxPublicUsers = wxPublicUsersDAO.selectByUserId( busUser.getId() );
+		String notityUrl = PropertiesUtil.getWebHome() + "/addMember/79B4DE7C/successPayBuyCard";
+		WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersDAO.selectByUserId( busUserEntity.getId() );
 
-		String url = memberConfig.getWxmp_home() + "/pay/B02A45A5/79B4DE7C/createPayQR.do" + "?totalFee=" + gradeType.getBuyMoney() + "&model=13&busId=" + busUser.getId()
-				+ "&orderNum=" + orderCode + "&memberId=" + member.getId() + "&desc=支付&notifyUrl=" + notityUrl + "&appid=" + wxPublicUsers.getAppid()
+		String url = PropertiesUtil.getWxmp_home() + "/pay/B02A45A5/79B4DE7C/createPayQR.do" + "?totalFee=" + gradeType.getBuyMoney() + "&model=13&busId=" + busUserEntity.getId()
+				+ "&orderNum=" + orderCode + "&memberId=" + memberEntity.getId() + "&desc=支付&notifyUrl=" + notityUrl + "&appid=" + wxPublicUsersEntity.getAppid()
 				+ "&appidType=0&isSendMessage=0&payWay=0&sourceType=1";
-		returnMap.put( "memberId", member.getId() );
+		returnMap.put( "memberId", memberEntity.getId() );
 		returnMap.put( "code", 2 );
 		returnMap.put( "message", "未支付" );
 		returnMap.put( "url", url );
@@ -272,11 +270,11 @@ public class CardERPServiceImpl implements CardERPService {
 
 	    cardMapper.insert( card );
 
-	    Member member = new Member();
-	    member.setId( uc.getMemberId() );
-	    member.setIsBuy( 1 );
-	    member.setMcId( card.getMcId() );
-	    memberMapper.updateById( member );
+	    MemberEntity memberEntity = new MemberEntity();
+	    memberEntity.setId( uc.getMemberId() );
+	    memberEntity.setIsBuy( 1 );
+	    memberEntity.setMcId( card.getMcId() );
+	    memberMapper.updateById( memberEntity );
 
 	    String balance = null;
 	    if ( card.getCtId() == 5 ) {
@@ -287,8 +285,8 @@ public class CardERPServiceImpl implements CardERPService {
 	    memberCommonService.saveCardRecordNew( card.getMcId(), (byte) 1, gradeType.getBuyMoney() + "元", "购买会员卡", card.getPublicId(), balance, card.getCtId(), 0.0 );
 
 	    // 新增会员短信通知
-	    member = memberMapper.selectById( uc.getMemberId() );
-	    systemMsgService.sendNewMemberMsg( member );
+	    memberEntity = memberMapper.selectById( uc.getMemberId() );
+	    systemMsgService.sendNewMemberMsg( memberEntity );
 
 	    returnMap.put( "code", 0 );
 	    returnMap.put( "message", "领取成功" );
@@ -304,7 +302,7 @@ public class CardERPServiceImpl implements CardERPService {
 	Map< String,Object > map = new HashMap< String,Object >();
 	String cardNodecrypt = "";
 	try {
-	    String cardNoKey=memberConfig.getCardNoKey();
+	    String cardNoKey= PropertiesUtil.getCardNoKey();
 	    // 如果手动输入 会出现异常
 	    cardNodecrypt = EncryptUtil.decrypt( cardNoKey, cardNo );
 	} catch ( Exception e ) {
@@ -332,20 +330,20 @@ public class CardERPServiceImpl implements CardERPService {
 
 	MemberCard card=null;
 	try {
-	    Member member = null;
+	    MemberEntity memberEntity = null;
 	    // 查询卡号是否存在
 	    if ( CommonUtil.isEmpty( card ) ) {
 		card = cardMapper.findCardByCardNo( busId, cardNo );
 		if ( CommonUtil.isNotEmpty( card ) ) {
-		    member = memberMapper.findByMcIdAndbusId( busId, card.getMcId() );
+		    memberEntity = memberMapper.findByMcIdAndbusId( busId, card.getMcId() );
 		}
 
 	    }
 
 	    if ( CommonUtil.isEmpty( card ) ) {
-		member = memberMapper.findByPhone( busId, cardNo );
-		if ( CommonUtil.isNotEmpty( member ) ) {
-		    card = cardMapper.selectById( member.getMcId() );
+		memberEntity = memberMapper.findByPhone( busId, cardNo );
+		if ( CommonUtil.isNotEmpty( memberEntity ) ) {
+		    card = cardMapper.selectById( memberEntity.getMcId() );
 		}
 	    }
 
@@ -361,10 +359,10 @@ public class CardERPServiceImpl implements CardERPService {
 		List< Map< String,Object > > cards = cardMapper.findCardById( card.getMcId() );
 		MemberGiverule giveRule = giveRuleMapper.selectById( card.getGrId() );
 		map.put( "result", true );
-		map.put( "sex",member.getSex() );
-		map.put("headimgUrl",member.getHeadimgurl());
-		map.put( "nickName", member.getNickname() );
-		map.put( "phone", member.getPhone() );
+		map.put( "sex", memberEntity.getSex() );
+		map.put("headimgUrl", memberEntity.getHeadimgurl());
+		map.put( "nickName", memberEntity.getNickname() );
+		map.put( "phone", memberEntity.getPhone() );
 		map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
 		map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
 		map.put( "cardNo", card.getCardNo() );
@@ -373,8 +371,8 @@ public class CardERPServiceImpl implements CardERPService {
 		map.put( "money", card.getMoney() );
 		map.put( "frequency", card.getFrequency() );
 		map.put("receiveDate",DateTimeKit.format( card.getReceiveDate() ));
-		map.put( "fans_currency", member.getFansCurrency() );
-		map.put( "integral", member.getIntegral() );
+		map.put( "fans_currency", memberEntity.getFansCurrency() );
+		map.put( "integral", memberEntity.getIntegral() );
 		return map;
 	    }
 	} catch ( Exception e ) {

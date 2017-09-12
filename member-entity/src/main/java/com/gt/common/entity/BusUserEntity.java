@@ -23,7 +23,7 @@ import java.util.Date;
 @Data
 @Accessors(chain = true)
 @TableName("bus_user")
-public class BusUser extends Model<BusUser> {
+public class BusUserEntity extends Model<BusUserEntity > {
 
     private static final long serialVersionUID = 1L;
 
@@ -193,7 +193,7 @@ public class BusUser extends Model<BusUser> {
 
 	@Override
 	public String toString() {
-		return "BusUser{" +
+		return "BusUserEntity{" +
 			"id=" + id +
 			", name=" + name +
 			", email=" + email +

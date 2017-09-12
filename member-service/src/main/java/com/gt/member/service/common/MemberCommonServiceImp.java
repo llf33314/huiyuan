@@ -3,25 +3,25 @@ package com.gt.member.service.common;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.sign.SignHttpUtils;
-import com.gt.common.entity.BusUser;
-import com.gt.common.entity.WxPublicUsers;
+import com.gt.common.entity.BusUserEntity;
+import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.member.dao.*;
 import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.common.WxPublicUsersDAO;
 import com.gt.member.entity.*;
-import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.DateTimeKit;
-import com.gt.member.util.MemberConfig;
+import com.gt.member.util.PropertiesUtil;
 import net.sf.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Member;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -59,13 +59,13 @@ public class MemberCommonServiceImp implements MemberCommonService {
     private SystemMsgService systemMsgService;
 
     @Autowired
-    private MemberDAO memberDao;
+    private MemberEntityDAO memberDao;
 
     @Autowired
     private MemberQcodeWxDAO memberQcodeWxDAO;
 
     @Autowired
-    private MemberConfig memberConfig;
+    private PropertiesUtil propertiesUtil;
 
     @Autowired
     private WxPublicUsersDAO wxPublicUsersDAO;
@@ -297,12 +297,12 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
     public void guihuiBusUserFenbi(Integer busId,Double fenbi)throws BusinessException{
 	try {
-	    BusUser busUser = busUserDAO.selectById( busId );
+	    BusUserEntity busUserEntity = busUserDAO.selectById( busId );
 	    // 归还到商家账户
 	    BigDecimal b1 = new BigDecimal( fenbi );
-	    BusUser b = new BusUser();
-	    b.setId( busUser.getId() );
-	    b.setFansCurrency( busUser.getFansCurrency().add( b1 ) );
+	    BusUserEntity b = new BusUserEntity();
+	    b.setId( busUserEntity.getId() );
+	    b.setFansCurrency( busUserEntity.getFansCurrency().add( b1 ) );
 	    busUserDAO.updateById( b );
 	}catch ( Exception e ){
 	    LOG.error( "归还商家粉币异常参数商家id",e );
@@ -347,9 +347,9 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	try {
 	    memberCardrecordDAO.insert(cr);
 	    if (recordType == 2) {
-		Member member = memberDao.findByMcId1(cardId);
+		MemberEntity memberEntity = memberDao.findByMcId1(cardId);
 		// 积分变动通知
-		systemMsgService.jifenMsg(cr, member);
+		systemMsgService.jifenMsg(cr, memberEntity );
 	    }
 
 	} catch (Exception e) {
@@ -365,12 +365,12 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    MemberQcodeWx mqw = memberQcodeWxDAO.findByBusId( busId, 0 );
 	    String imgUrl = "";
 	    if ( CommonUtil.isEmpty( mqw ) ) {
-		WxPublicUsers wxPublicUsers = wxPublicUsersDAO.selectByUserId( busId );
+		WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersDAO.selectByUserId( busId );
 		Map< String,Object > querymap = new HashMap<>();
 		querymap.put( "scene_id", scene_id );
-		querymap.put( "publicId", wxPublicUsers.getId() );
-		String url = memberConfig.getWxmp_home() + "/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/qrcodeCreateFinal.do";
-		String json = SignHttpUtils.WxmppostByHttp( url, querymap, memberConfig.getWxmpsignKey() );
+		querymap.put( "publicId", wxPublicUsersEntity.getId() );
+		String url = propertiesUtil.getWxmp_home() + "/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/qrcodeCreateFinal.do";
+		String json = SignHttpUtils.WxmppostByHttp( url, querymap, propertiesUtil.getWxmpsignKey() );
 
 		JSONObject obj = JSONObject.parseObject( json );
 

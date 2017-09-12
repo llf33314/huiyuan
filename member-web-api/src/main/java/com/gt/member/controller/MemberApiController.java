@@ -3,13 +3,13 @@ package com.gt.member.controller;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.member.base.BaseController;
 import com.gt.member.dto.ServerResponse;
-import com.gt.member.entity.Member;
+import com.gt.member.entity.MemberEntity;
 import com.gt.member.entity.MemberCard;
 import com.gt.member.entity.MemberGradetype;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.memberApi.MemberApiService;
 import com.gt.member.util.CommonUtil;
-import com.gt.member.util.MemberConfig;
+import com.gt.member.util.PropertiesUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -36,8 +36,6 @@ public class MemberApiController extends BaseController {
 
     private static final Logger LOG = Logger.getLogger( MemberApiController.class );
 
-    @Autowired
-    private MemberConfig memberConfig;
 
     @Autowired
     private MemberApiService memberApiService;
@@ -69,7 +67,7 @@ public class MemberApiController extends BaseController {
 	    String cardNo = CommonUtil.toString( requestBody.get( "cardNo" ) );
 	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
 	    Integer shopId = CommonUtil.toInteger( requestBody.get( "shopId" ) );
-	    String cardNoKey = memberConfig.getCardNoKey();
+	    String cardNoKey = PropertiesUtil.getCardNoKey();
 	    Map< String,Object > map = memberApiService.findMemberCard( busId, cardNoKey, cardNo, shopId );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
@@ -86,8 +84,8 @@ public class MemberApiController extends BaseController {
     public ServerResponse findByMemberId( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
 	try {
 	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
-	    Member member = memberApiService.findByMemberId( memberId );
-	    return ServerResponse.createBySuccess( member );
+	    MemberEntity memberEntity = memberApiService.findByMemberId( memberId );
+	    return ServerResponse.createBySuccess( memberEntity );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
@@ -109,7 +107,7 @@ public class MemberApiController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "根据粉丝id获取会员折扣", notes = "根据粉丝id获取会员折扣" )
+    @ApiOperation( value = "根据粉丝id获取会员折扣（0到1）", notes = "根据粉丝id获取会员折扣" )
     @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
     @ResponseBody
     @RequestMapping( value = "/findCardTypeReturnDiscount", method = RequestMethod.POST )
@@ -136,8 +134,8 @@ public class MemberApiController extends BaseController {
 	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
 	    String phone = CommonUtil.toString( requestBody.get( "phone" ) );
 	    String code = CommonUtil.toString( requestBody.get( "code" ) );
-	    Member member = memberApiService.bingdingPhone( memberId, phone, code, busId );
-	    return ServerResponse.createBySuccess( member );
+	    MemberEntity memberEntity = memberApiService.bingdingPhone( memberId, phone, code, busId );
+	    return ServerResponse.createBySuccess( memberEntity );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
@@ -358,6 +356,30 @@ public class MemberApiController extends BaseController {
 	}
     }
 
+    @ApiOperation( value = "（商城）评论修改会员积分或粉币", notes = "（商城）评论修改会员积分或粉币" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "memberId", value = "粉丝Id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "jifen", value = "积分", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "fenbi", value = "粉币", paramType = "query", required = true, dataType = "int" )
+    })
+
+    @ResponseBody
+    @RequestMapping( value = "/findCardrecord", method = RequestMethod.POST )
+    public ServerResponse updateJifenAndFenBiByPinglu(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ){
+	try {
+	    Integer mcId=CommonUtil.toInteger( requestBody.get( "mcId" ) );
+	    Integer page=CommonUtil.toInteger( requestBody.get( "page" ) );
+	    Integer pageSize=CommonUtil.toInteger( requestBody.get( "pageSize" ) );
+	    memberApiService.updateJifenAndFenBiByPinglu(requestBody);
+	    return ServerResponse.createBySuccess();
+	} catch ( Exception e ) {
+	    logger.error( "商城）评论修改会员积分或粉币异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+
+    }
+
+
     @ApiOperation( value = "查询会员卡信息", notes = "查询会员卡信息" )
     @ApiImplicitParam( name = "mcId", value = "会员卡id", paramType = "query", required = true, dataType = "int" )
     @ResponseBody
@@ -487,6 +509,22 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
+
+    @ApiOperation( value = "（魔盒）会员卡充值 支付方式 0支付包 1微信 10现金", notes = "（魔盒）会员卡充值" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "money", value = "充值金额", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "paymentType", value = "支付方式", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "shopId", value = "门店", paramType = "query", required = true, dataType = "int" )} )
+    @ResponseBody
+    @RequestMapping( value = "/successChongZhi", method = RequestMethod.POST )
+    public ServerResponse successChongZhi(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody){
+	try {
+	    memberApiService.successChongZhi(requestBody);
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
 

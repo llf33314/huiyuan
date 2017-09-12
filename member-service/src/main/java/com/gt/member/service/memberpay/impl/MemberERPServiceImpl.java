@@ -26,11 +26,11 @@
 //import com.gt.entity.member.Card;
 //import com.gt.entity.member.CardLent;
 //import com.gt.entity.member.GiveRule;
-//import com.gt.entity.member.Member;
+//import com.gt.entity.member.MemberEntity;
 //import com.gt.entity.member.MemberDate;
 //import com.gt.entity.set.WxShop;
-//import com.gt.entity.user.BusUser;
-//import com.gt.entity.user.WxPublicUsers;
+//import com.gt.entity.user.BusUserEntity;
+//import com.gt.entity.user.WxPublicUsersEntity;
 //import com.gt.service.common.dict.DictService;
 //import com.gt.service.common.wxcard.IWxCardService;
 //import com.gt.service.member.DuofenCardService;
@@ -87,7 +87,7 @@
 //	private MemberService memberService;
 //
 //	@Override
-//	public Map<String, Object> findMemberCard(BusUser busUser,
+//	public Map<String, Object> findMemberCard(BusUserEntity busUser,
 //			String cardNoKey, String cardNo, Integer shopId) {
 //		Map<String, Object> map = new HashMap<String, Object>();
 //		String cardNodecrypt = "";
@@ -146,7 +146,7 @@
 //		}
 //
 //		try {
-//			Member member = null;
+//			MemberEntity member = null;
 //			// 查询卡号是否存在
 //			if (CommonUtil.isEmpty(card)) {
 //				card = cardMapper.findCardByCardNo(busId, cardNo);
@@ -203,7 +203,7 @@
 //
 //				WxShop wxshop = wxShopMapper.selectByPrimaryKey(shopId);
 //
-//				WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+//				WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 //						.selectByUserId(busId);
 //
 //				if (CommonUtil.isNotEmpty(wxPublicUsers)
@@ -309,7 +309,7 @@
 //				Integer cardType = jsonObject.getInt("cardType");
 //				if (cardType == 0) {
 //					Integer publicId = jsonObject.getInt("publicId");
-//					WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+//					WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 //							.selectByPrimaryKey(publicId);
 //					// 微信卡券
 //					Map<String, Object> map = wxCardService.wxCardReceive(
@@ -366,7 +366,7 @@
 //					&& CommonUtil.toInteger(isUsefenbi) == 1) {
 //				Integer memberId = jsonObject.getInt("memberId");
 //				Double fenbi = jsonObject.getDouble("fenbi");
-//				Member member = memberMapper.selectByPrimaryKey(memberId);
+//				MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //				Map<String, Object> map = memberPayService.reduceFansCurrency(
 //						null, member, member.getBusid(), fenbi);
 //				if ("1".equals(CommonUtil.toString(map.get("result")))) {
@@ -389,7 +389,7 @@
 //	 * 判断用户是否是会员 false 不是 true 是
 //	 */
 //	@Override
-//	public boolean isMemember(BusUser busUser, String cardNoKey, String cardNo) {
+//	public boolean isMemember(BusUserEntity busUser, String cardNoKey, String cardNo) {
 //		Map<String, Object> map = new HashMap<String, Object>();
 //		String cardNodecrypt = "";
 //		try {
@@ -421,7 +421,7 @@
 //		}
 //		Card card = null;
 //		try {
-//			Member member = null;
+//			MemberEntity member = null;
 //			// 查询卡号是否存在
 //			if (CommonUtil.isEmpty(card)) {
 //				card = cardMapper.findCardByCardNo(busId, cardNo);

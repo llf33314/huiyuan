@@ -18,7 +18,7 @@ import com.gt.dao.personCenter.PersonCenterModuleMapper;
 import com.gt.dao.util.DaoUtil;
 import com.gt.entity.personCenter.PersonCenter;
 import com.gt.entity.personCenter.PersonCenterModule;
-import com.gt.entity.user.BusUser;
+import com.gt.entity.user.BusUserEntity;
 import com.gt.controller.common.dict.DictService;
 import com.gt.util.CommonUtil;
 import com.gt.util.PropertiesUtil;
@@ -113,7 +113,7 @@ public class PersonCenterServiceImpl implements PersonCenterService{
 	}
 
 	@Override
-	public List<Map<String, Object>> findOption(BusUser busUser) {
+	public List<Map<String, Object>> findOption(BusUserEntity busUser) {
 		List<Map<String, Object>> mList=personCenterModuleMapper.findBybusId(busUser.getId());
 		String urls="";
 		if(CommonUtil.isNotEmpty(mList) && mList.size()>0){
@@ -237,7 +237,7 @@ public class PersonCenterServiceImpl implements PersonCenterService{
 
 	
 	@Override
-	public List<Map<String, Object>> findModel(BusUser busUser) {
+	public List<Map<String, Object>> findModel(BusUserEntity busUser) {
 		List<Map<String, Object>> optionList=new ArrayList<Map<String,Object>>();
 		List<Map<String, Object>> list=zimenus(busUser.getId(), busUser.getLevel(), busUser.getIndustryid());
 		

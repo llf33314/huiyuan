@@ -18,6 +18,7 @@ public enum ResponseMemberEnums {
     MEMBER_CHUZHI_CARD(5007,"非储值会员卡"),
     NOT_ORDER_DATA(5008,"订单数据不存在"),
     NOT_MEMBER_COUNT(5009,"会员卡数量不足"),
+    NOT_FIND_CHONGZHI_MSG(5010,"未查询到充值信息"),
 
 
 

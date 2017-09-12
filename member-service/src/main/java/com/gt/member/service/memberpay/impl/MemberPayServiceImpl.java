@@ -51,14 +51,14 @@
 //import com.gt.entity.member.GiveRuleGoodsType;
 //import com.gt.entity.member.GiveRuleGoodsTypeKey;
 //import com.gt.entity.member.GradeType;
-//import com.gt.entity.member.Member;
+//import com.gt.entity.member.MemberEntity;
 //import com.gt.entity.member.MemberDate;
 //import com.gt.entity.member.MemberOld;
 //import com.gt.entity.member.PublicParameterSet;
 //import com.gt.entity.member.UserConsume;
 //import com.gt.entity.set.WxShop;
-//import com.gt.entity.user.BusUser;
-//import com.gt.entity.user.WxPublicUsers;
+//import com.gt.entity.user.BusUserEntity;
+//import com.gt.entity.user.WxPublicUsersEntity;
 //import com.gt.service.common.dict.DictService;
 //import com.gt.service.member.MemberService;
 //import com.gt.service.member.SystemMsgService;
@@ -165,7 +165,7 @@
 //				|| CommonUtil.isEmpty(money)) {
 //			throw new Exception();
 //		}
-//		Member member = memberMapper.selectByPrimaryKey(memberId);
+//		MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //		Card card = cardMapper.findCardByCardNo(member.getBusid(), cardNo);
 //		if (CommonUtil.isEmpty(card)) {
 //			throw new Exception();
@@ -219,7 +219,7 @@
 //
 //		userConsumeMapper.insertSelective(uc);
 //
-//		WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+//		WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 //				.selectByPrimaryKey(member.getPublicId());
 //		// 统一下单调用
 //		Map<String, Object> params = new HashMap<String, Object>();
@@ -501,7 +501,7 @@
 //						.get(0).get("mcId").toString()));
 //
 //				// 修改会员的流量 粉笔 积分信息
-//				Member member1 = memberMapper.findByMcIdAndbusId(
+//				MemberEntity member1 = memberMapper.findByMcIdAndbusId(
 //						card.getBusid(),
 //						Integer.parseInt(ucs.get(0).get("mcId").toString()));
 //				// 消费 积分为负数 改为正数
@@ -510,7 +510,7 @@
 //				}
 //
 //				if (CommonUtil.isNotEmpty(member1)) {
-//					Member member = new Member();
+//					MemberEntity member = new MemberEntity();
 //					member.setId(member1.getId());
 //					member.setFansCurrency(member1.getFansCurrency()
 //							+ fans_currency);
@@ -773,7 +773,7 @@
 //		try {
 //			cardRecordMapper.insertSelective(cr);
 //			if (recordType == 2) {
-//				Member member = memberMapper.findByMcId1(cardId);
+//				MemberEntity member = memberMapper.findByMcId1(cardId);
 //				if (CommonUtil.isNotEmpty(member.getPublicId())) {
 //					// 积分变动通知
 //					systemMsgService.jifenMsg(cr, member);
@@ -823,7 +823,7 @@
 //		try {
 //			cardRecordMapper.insertSelective(cr);
 //			if (recordType == 2) {
-//				Member member = memberMapper.findByMcId1(cardId);
+//				MemberEntity member = memberMapper.findByMcId1(cardId);
 //				// 积分变动通知
 //				systemMsgService.jifenMsg(cr, member);
 //
@@ -917,7 +917,7 @@
 //								.parseInt(ucs.get(0).get("mcId").toString()));
 //
 //						// 修改会员的流量 粉笔 积分信息
-//						Member member = memberMapper.findByMcIdAndbusId(
+//						MemberEntity member = memberMapper.findByMcIdAndbusId(
 //								card.getBusid(),
 //								Integer.parseInt(ucs.get(0).get("mcId")
 //										.toString()));
@@ -980,7 +980,7 @@
 //	@Override
 //	@Transactional(rollbackFor = Exception.class)
 //	public Map<String, Object> memberConsume(HttpServletRequest request,
-//			Integer publicId1, BusUser busUser, String cardNo, double money,
+//			Integer publicId1, BusUserEntity busUser, String cardNo, double money,
 //			Byte recordType, Byte type, Integer integral, Integer fenbi,
 //			Integer uccount, Integer discount, Double discountmoney,
 //			Integer orderid, String uctable, Byte paymenttype, Byte paystatus,
@@ -1001,7 +1001,7 @@
 //			return map;
 //		}
 //
-//		Member member = memberMapper.findByMcIdAndbusId(busUser.getId(),
+//		MemberEntity member = memberMapper.findByMcIdAndbusId(busUser.getId(),
 //				card.getMcId());
 //
 //		switch (card.getCtId()) {
@@ -1098,7 +1098,7 @@
 //
 //		if (CommonUtil.isNotEmpty(cardNo)) {
 //			if (jifen > 0 || fenbi1 > 0) {
-//				Member m = new Member();
+//				MemberEntity m = new MemberEntity();
 //				m.setId(member.getId());
 //				m.setFansCurrency(member.getFansCurrency() - fenbi1);
 //				m.setIntegral(member.getIntegral() - jifen);
@@ -1113,7 +1113,7 @@
 //					// 归还到商家账户
 //					busUser.setFansCurrency(busUser.getFansCurrency() + fenbi1);
 //					CommonUtil.setLoginUser(request, busUser);
-//					BusUser b = new BusUser();
+//					BusUserEntity b = new BusUserEntity();
 //					b.setId(busUser.getId());
 //					b.setFansCurrency(busUser.getFansCurrency());
 //					busUserMapper.updateByPrimaryKeySelective(b);
@@ -1153,7 +1153,7 @@
 //		}
 //
 //		Card card = cardMapper.findCardByCardNo(busId, cardNo);
-//		Member member = null;
+//		MemberEntity member = null;
 //		try {
 //			member = memberMapper.findByMcIdAndbusId(busId, card.getMcId());
 //		} catch (Exception e) {
@@ -1412,7 +1412,7 @@
 //			map.put("message", "会员id为空");
 //			return map;
 //		}
-//		Member member = memberMapper.selectByPrimaryKey(memberId);
+//		MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //		if (CommonUtil.isEmpty(member) || CommonUtil.isEmpty(member.getMcId())) {
 //			map.put("result", false);
 //			map.put("message", "未找到该会员");
@@ -1455,7 +1455,7 @@
 //	 */
 //	public Map<String, Object> storePay(Integer memberId, double totalMoney) {
 //		Map<String, Object> map = new HashMap<String, Object>();
-//		Member member = memberMapper.selectByPrimaryKey(memberId);
+//		MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //		if (CommonUtil.isEmpty(member.getMcId())) {
 //			map.put("result", 0);
 //			map.put("message", "非储值会员");
@@ -1537,7 +1537,7 @@
 //	 */
 //	@Override
 //	public boolean isMemember(Integer memberId) {
-//		Member member = memberMapper.selectByPrimaryKey(memberId);
+//		MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //		if (CommonUtil.isNotEmpty(member)
 //				&& CommonUtil.isNotEmpty(member.getMcId())) {
 //			Card card = cardMapper.selectByPrimaryKey(member.getMcId());
@@ -1560,7 +1560,7 @@
 //		if (CommonUtil.isEmpty(memberId)) {
 //			return -1;
 //		}
-//		Member member = memberMapper.selectByPrimaryKey(memberId);
+//		MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //		if (CommonUtil.isEmpty(memberId)
 //				|| CommonUtil.isEmpty(member.getMcId())) {
 //			return -1;
@@ -1582,7 +1582,7 @@
 //		if (CommonUtil.isEmpty(memberId)) {
 //			return null;
 //		}
-//		Member member = memberMapper.selectByPrimaryKey(memberId);
+//		MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //		if (CommonUtil.isEmpty(memberId)
 //				|| CommonUtil.isEmpty(member.getMcId())) {
 //			return null;
@@ -1605,7 +1605,7 @@
 //		}
 //
 //		// 根据会员id查询赠送规则
-//		Member member = memberMapper.selectByPrimaryKey(memberId);
+//		MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //		Card card = cardMapper.selectByPrimaryKey(member.getMcId());
 //		GiveRule giveRule = giveRuleMapper.selectByPrimaryKey(card.getGrId());
 //		switch (card.getCtId()) {
@@ -1915,7 +1915,7 @@
 //	public Map<String, Object> chargeBack(Integer memberId, double refundMoney) {
 //		Map<String, Object> map = new HashMap<String, Object>();
 //		try {
-//			Member member = memberMapper.selectByPrimaryKey(memberId);
+//			MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //			if (CommonUtil.isEmpty(member)
 //					|| CommonUtil.isEmpty(member.getMcId())) {
 //				map.put("result", false);
@@ -1970,7 +1970,7 @@
 //			return;
 //		}
 //		List<GiveConsume> gcs = giveConsumeMapper.findByUcId(uc.getId());
-//		Member member = memberMapper.selectByPrimaryKey(uc.getMemberid());
+//		MemberEntity member = memberMapper.selectByPrimaryKey(uc.getMemberid());
 //		int integral = 0; // 积分
 //		int flow = 0;
 //		double fanCurrency = 0.0;
@@ -2051,7 +2051,7 @@
 //		if (CommonUtil.isEmpty(memberId) || CommonUtil.isEmpty(ctId)) {
 //			throw new Exception();
 //		}
-//		Member member = memberMapper.selectByPrimaryKey(memberId);
+//		MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //
 //		GradeType gradeTypes = gradeTypeMapper.selectByPrimaryKey(gtId);
 //		if (CommonUtil.isEmpty(gradeTypes)
@@ -2086,7 +2086,7 @@
 //
 //		userConsumeMapper.insertSelective(uc);
 //
-//		WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+//		WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 //				.selectByPrimaryKey(member.getPublicId());
 //		// 统一下单调用
 //		Map<String, Object> params = new HashMap<String, Object>();
@@ -2178,7 +2178,7 @@
 //
 //			cardMapper.insertSelective(card);
 //
-//			Member member = new Member();
+//			MemberEntity member = new MemberEntity();
 //			member.setId(CommonUtil.toInteger(ucs.get(0).get("memberId")));
 //			member.setIsbuy((byte) 1);
 //			member.setMcId(card.getMcId());
@@ -2216,7 +2216,7 @@
 //				map.put("message", "该会员卡不存在!");
 //				return map;
 //			}
-//			Member member = memberMapper.findByMcIdAndbusId(busId,
+//			MemberEntity member = memberMapper.findByMcIdAndbusId(busId,
 //					card.getMcId());
 //			Integer jifen = member.getIntegral();
 //			if (intergral > jifen) {
@@ -2224,7 +2224,7 @@
 //				map.put("message", "积分不够!");
 //				return map;
 //			}
-//			Member mem = new Member();
+//			MemberEntity mem = new MemberEntity();
 //			mem.setId(member.getId());
 //			mem.setIntegral(member.getIntegral() - intergral);
 //			memberMapper.updateByPrimaryKeySelective(mem);
@@ -2272,14 +2272,14 @@
 //			HttpServletRequest request, Integer memberId, Integer intergral) {
 //		Map<String, Object> map = new HashMap<String, Object>();
 //		try {
-//			Member member = memberMapper.selectByPrimaryKey(memberId);
+//			MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //			Integer mIntergral = member.getIntegral();
 //			if (mIntergral < -intergral) {
 //				map.put("result", 1);
 //				map.put("message", "积分不足");
 //				return map;
 //			}
-//			Member member1 = new Member();
+//			MemberEntity member1 = new MemberEntity();
 //			member1.setId(member.getId());
 //			member1.setIntegral(member.getIntegral() + intergral);
 //			memberMapper.updateByPrimaryKeySelective(member1);
@@ -2304,7 +2304,7 @@
 //	}
 //
 //	@Override
-//	public Map<String, Object> findBuyCard(Member member) {
+//	public Map<String, Object> findBuyCard(MemberEntity member) {
 //		Map<String, Object> map = new HashMap<String, Object>();
 //		if (CommonUtil.isEmpty(member.getMcId())) {
 //			// 判断该用户是否已购买
@@ -2329,7 +2329,7 @@
 //	}
 //
 //	@Override
-//	public Map<String, Object> buyCard(Member member, Double money, Integer ctId) {
+//	public Map<String, Object> buyCard(MemberEntity member, Double money, Integer ctId) {
 //		Map<String, Object> map = new HashMap<String, Object>();
 //		try {
 //			CardBuy cardbuy = new CardBuy();
@@ -2338,7 +2338,7 @@
 //			cardbuy.setCtid(ctId);
 //			cardbuy.setMemberid(member.getId());
 //			cardBuyMapper.insertSelective(cardbuy);
-//			Member m = new Member();
+//			MemberEntity m = new MemberEntity();
 //			m.setId(member.getId());
 //			m.setIsbuy((byte) 1);
 //			memberMapper.updateByPrimaryKeySelective(m);
@@ -2356,8 +2356,8 @@
 //			Double fans_currency) {
 //		Map<String, Object> map = new HashMap<String, Object>();
 //		try {
-//			BusUser busUser = busUserMapper.selectByPrimaryKey(busId);
-//			BusUser busUser1 = new BusUser();
+//			BusUserEntity busUser = busUserMapper.selectByPrimaryKey(busId);
+//			BusUserEntity busUser1 = new BusUserEntity();
 //			busUser1.setId(busId);
 //			busUser1.setFansCurrency(busUser.getFansCurrency() + fans_currency);
 //			busUserMapper.updateByPrimaryKeySelective(busUser1);
@@ -2714,7 +2714,7 @@
 //	@Transactional(rollbackFor = Exception.class)
 //	@Override
 //	public Map<String, Object> reduceFansCurrencyMoney(
-//			HttpServletRequest request, Member member, Integer busId,
+//			HttpServletRequest request, MemberEntity member, Integer busId,
 //			Double fenbimoney) throws Exception {
 //		Map<String, Object> map = new HashMap<String, Object>();
 //		try {
@@ -2729,7 +2729,7 @@
 //				return map;
 //			}
 //
-//			Member m = new Member();
+//			MemberEntity m = new MemberEntity();
 //			m.setId(member.getId());
 //			m.setFansCurrency(member.getFansCurrency() - fenbi);
 //			memberMapper.updateByPrimaryKeySelective(m);
@@ -2743,8 +2743,8 @@
 //						+ "粉币", "粉币", member.getBusid(), "", null, -fenbi);
 //			}
 //
-//			BusUser busUser = busUserMapper.selectByPrimaryKey(busId);
-//			BusUser busUser1 = new BusUser();
+//			BusUserEntity busUser = busUserMapper.selectByPrimaryKey(busId);
+//			BusUserEntity busUser1 = new BusUserEntity();
 //			busUser1.setId(busId);
 //			busUser1.setFansCurrency(busUser.getFansCurrency() + fenbi);
 //			busUserMapper.updateByPrimaryKeySelective(busUser1);
@@ -2761,7 +2761,7 @@
 //	@Transactional(rollbackFor = Exception.class)
 //	@Override
 //	public Map<String, Object> reduceFansCurrency(HttpServletRequest request,
-//			Member member, Integer busId, Double fenbi) throws Exception {
+//			MemberEntity member, Integer busId, Double fenbi) throws Exception {
 //		Map<String, Object> map = new HashMap<String, Object>();
 //		try {
 //			if (member.getFansCurrency() < fenbi) {
@@ -2769,7 +2769,7 @@
 //				map.put("message", "粉币不足");
 //				return map;
 //			}
-//			Member m = new Member();
+//			MemberEntity m = new MemberEntity();
 //			m.setId(member.getId());
 //			m.setFansCurrency(member.getFansCurrency() - fenbi);
 //			memberMapper.updateByPrimaryKeySelective(m);
@@ -2783,8 +2783,8 @@
 //						+ "粉币", "粉币", member.getBusid(), "", null, -fenbi);
 //			}
 //
-//			BusUser busUser = busUserMapper.selectByPrimaryKey(busId);
-//			BusUser busUser1 = new BusUser();
+//			BusUserEntity busUser = busUserMapper.selectByPrimaryKey(busId);
+//			BusUserEntity busUser1 = new BusUserEntity();
 //			busUser1.setId(busId);
 //			busUser1.setFansCurrency(busUser.getFansCurrency() + fenbi);
 //			busUserMapper.updateByPrimaryKeySelective(busUser1);
@@ -2801,7 +2801,7 @@
 //	@Transactional(rollbackFor = Exception.class)
 //	@Override
 //	public GradeType findGradeType(Integer memberId) {
-//		Member member = memberMapper.selectByPrimaryKey(memberId);
+//		MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //		if (CommonUtil.isEmpty(member) || CommonUtil.isEmpty(member.getMcId())) {
 //			return null;
 //		}
@@ -2818,15 +2818,15 @@
 //			Double fenbi) throws Exception {
 //		Map<String, Object> map = new HashMap<String, Object>();
 //		try {
-//			Member member = memberMapper.selectByPrimaryKey(memberId);
+//			MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //			if (member.getFansCurrency() < -fenbi) {
 //				map.put("result", "1");
 //				map.put("message", "粉币不足");
 //				return map;
 //			}
-//			BusUser busUser = busUserMapper.selectByPrimaryKey(busId);
+//			BusUserEntity busUser = busUserMapper.selectByPrimaryKey(busId);
 //
-//			Member m = new Member();
+//			MemberEntity m = new MemberEntity();
 //			m.setId(member.getId());
 //			m.setFansCurrency(member.getFansCurrency() + fenbi);
 //			memberMapper.updateByPrimaryKeySelective(m);
@@ -2847,7 +2847,7 @@
 //
 //			}
 //
-//			BusUser busUser1 = new BusUser();
+//			BusUserEntity busUser1 = new BusUserEntity();
 //			busUser1.setId(busId);
 //			busUser1.setFansCurrency(busUser.getFansCurrency() - fenbi);
 //			busUserMapper.updateByPrimaryKeySelective(busUser1);
@@ -2979,7 +2979,7 @@
 //			throw new Exception();
 //		}
 //		try {
-//			Member member = memberMapper.selectByPrimaryKey(memberId);
+//			MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //			Card card = cardMapper.findCardByCardNo(member.getBusid(), cardNo);
 //			if (CommonUtil.isEmpty(card)) {
 //				throw new Exception();
@@ -3054,7 +3054,7 @@
 //	@Override
 //	public Map<String, Object> findMember(String openId,Integer busId) {
 //		Map<String, Object> returnMap = new HashMap<String, Object>();
-//		Member member = memberMapper.selectByOpenidAndBusId(openId, busId);
+//		MemberEntity member = memberMapper.selectByOpenidAndBusId(openId, busId);
 //		if (CommonUtil.isEmpty(member) || CommonUtil.isEmpty(member.getMcId())) {
 //			returnMap.put("result", 0);
 //			returnMap.put("message", "非会员");
@@ -3125,7 +3125,7 @@
 //			Double jifenMoney,Integer busId) throws Exception {
 //		Map<String, Object> returnMap = new HashMap<String, Object>();
 //		try {
-//			Member member = memberMapper.selectByOpenidAndBusId(openId, busId);
+//			MemberEntity member = memberMapper.selectByOpenidAndBusId(openId, busId);
 //			UserConsume uc = new UserConsume();
 //			// 添加会员记录
 //			Card card = null;
@@ -3170,7 +3170,7 @@
 //					pay = reduce(pay - jifenMoney);
 //				}
 //			}
-//			WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+//			WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 //					.selectByPrimaryKey(member.getPublicId());
 //			uc.setBususerid(wxPublicUsers.getBusUserId());
 //			uc.setPublicId(member.getPublicId());
@@ -3228,7 +3228,7 @@
 //					// 归还商户粉币
 //					returnfansCurrency(wxPublicUsers.getBusUserId(), -uc
 //							.getFenbi().doubleValue());
-//					Member member1 = new Member();
+//					MemberEntity member1 = new MemberEntity();
 //					member1.setId(member.getId());
 //					member1.setFansCurrency(member.getFansCurrency()
 //							+ uc.getFenbi());
@@ -3237,7 +3237,7 @@
 //				}
 //				if (jifenMoney > 0) {
 //					// 扣除用户积分数量
-//					Member member1 = new Member();
+//					MemberEntity member1 = new MemberEntity();
 //					member1.setId(member.getId());
 //					member1.setIntegral(member.getIntegral() + uc.getIntegral());
 //					memberMapper.updateByPrimaryKeySelective(member1);
@@ -3276,9 +3276,9 @@
 //			if (CommonUtil.isEmpty(userConsume)) {
 //				throw new Exception();
 //			}
-//			Member member = memberMapper.selectByPrimaryKey(userConsume
+//			MemberEntity member = memberMapper.selectByPrimaryKey(userConsume
 //					.getMemberid());
-//			Member m1 = new Member();
+//			MemberEntity m1 = new MemberEntity();
 //			boolean flag = false;
 //			// 粉币
 //			if (userConsume.getFenbi() != 0) {
@@ -3327,13 +3327,13 @@
 //			if (CommonUtil.isEmpty(userConsume)) {
 //				throw new Exception();
 //			}
-//			Member member = memberMapper.selectByPrimaryKey(userConsume
+//			MemberEntity member = memberMapper.selectByPrimaryKey(userConsume
 //					.getMemberid());
 //			Double fenbi = member.getFansCurrency();
 //			Integer jifen = member.getIntegral();
 //			Integer flow = member.getFlow();
 //
-//			Member m1 = new Member();
+//			MemberEntity m1 = new MemberEntity();
 //			m1.setId(member.getId());
 //			boolean flag = false;
 //
@@ -3464,21 +3464,21 @@
 //				return map;
 //			}
 //			// 查询要绑定的手机号码
-//			Member oldMember = memberMapper.findByPhone(busId, phone);
+//			MemberEntity oldMember = memberMapper.findByPhone(busId, phone);
 //
 //			if (CommonUtil.isEmpty(oldMember)) {
 //				// 新用户
-//				Member member = memberMapper.selectByPrimaryKey(memberId);
-//				Member m = new Member();
+//				MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
+//				MemberEntity m = new MemberEntity();
 //				m.setId(member.getId());
 //				m.setPhone(phone);
 //				memberMapper.updateByPrimaryKeySelective(m);
 //				member.setPhone(phone);
 //				map.put("member", member);
 //			} else {
-//				Member m1 = memberMapper.selectByPrimaryKey(memberId);
+//				MemberEntity m1 = memberMapper.selectByPrimaryKey(memberId);
 //
-//				Member member = new Member();
+//				MemberEntity member = new MemberEntity();
 //				member.setFlow(m1.getFlow() + oldMember.getFlow());
 //				member.setIntegral(m1.getIntegral() + oldMember.getIntegral());
 //				member.setFansCurrency(m1.getFansCurrency()
@@ -3566,7 +3566,7 @@
 //				return map;
 //			}
 //			Card card = cardMapper.findCardByCardNo(busId, cardNo);
-//			Member member = null;
+//			MemberEntity member = null;
 //			try {
 //				member = memberMapper.findByMcIdAndbusId(busId, card.getMcId());
 //			} catch (Exception e) {
@@ -3731,7 +3731,7 @@
 //	@Override
 //	public List<Integer> findMemberIds(Integer memberId) {
 //		List<Integer> list = new ArrayList<Integer>();
-//		Member member = memberMapper.selectByPrimaryKey(memberId);
+//		MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //		if (CommonUtil.isEmpty(member.getOldid())) {
 //			list.add(memberId);
 //			return list;
@@ -3769,8 +3769,8 @@
 //				map.put("message", "缺少对应的数据");
 //				return map;
 //			}
-//			Member member = memberMapper.selectByPrimaryKey(memberId);
-//			Member m = new Member();
+//			MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
+//			MemberEntity m = new MemberEntity();
 //			m.setId(memberId);
 //			m.setFlow(flow + member.getFlow());
 //			memberMapper.updateByPrimaryKeySelective(m);
@@ -3843,7 +3843,7 @@
 //			Integer shopId) {
 //		Map<String, Object> map = new HashMap<>();
 //
-//		Member member = memberMapper.findByPhone(busId, phone);
+//		MemberEntity member = memberMapper.findByPhone(busId, phone);
 //		if (CommonUtil.isEmpty(member) || CommonUtil.isEmpty(member.getMcId())) {
 //			map.put("result", false);
 //			map.put("message", "当前用户非会员");
@@ -3977,15 +3977,15 @@
 //			card.setMoney(0.0);
 //
 //			// 查询要绑定的手机号码
-//			Member oldMember = memberMapper.findByPhone(busId, phone);
+//			MemberEntity oldMember = memberMapper.findByPhone(busId, phone);
 //
-//			Member member = null;
+//			MemberEntity member = null;
 //
-//			Member m1 = memberMapper.selectByPrimaryKey(memberId);
+//			MemberEntity m1 = memberMapper.selectByPrimaryKey(memberId);
 //
 //			if (CommonUtil.isNotEmpty(oldMember)
 //					&& !m1.getId().equals(oldMember.getId())) {
-//				member = new Member();
+//				member = new MemberEntity();
 //				member.setFlow(m1.getFlow() + oldMember.getFlow());
 //				member.setIntegral(m1.getIntegral() + oldMember.getIntegral());
 //				member.setFansCurrency(m1.getFansCurrency()
@@ -4028,7 +4028,7 @@
 //			} else {
 //				// 新用户
 //				member = memberMapper.selectByPrimaryKey(memberId);
-//				Member m = new Member();
+//				MemberEntity m = new MemberEntity();
 //				m.setId(member.getId());
 //				m.setPhone(phone);
 //				if (CommonUtil.isEmpty(member.getMcId())) {
@@ -4056,14 +4056,14 @@
 //			Integer memberId, Integer intergral) {
 //		Map<String, Object> map = new HashMap<String, Object>();
 //		try {
-//			Member member = memberMapper.selectByPrimaryKey(memberId);
+//			MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //			Integer mIntergral = member.getIntegral();
 //			if (mIntergral < -intergral) {
 //				map.put("result", 1);
 //				map.put("message", "积分不足");
 //				return map;
 //			}
-//			Member member1 = new Member();
+//			MemberEntity member1 = new MemberEntity();
 //			member1.setId(member.getId());
 //			member1.setIntegral(member.getIntegral() + intergral);
 //			memberMapper.updateByPrimaryKeySelective(member1);
@@ -4084,7 +4084,7 @@
 //
 //	@Override
 //	public boolean isAdequateMoney(Integer memberId, double totalMoney) {
-//		Member member = memberMapper.selectByPrimaryKey(memberId);
+//		MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
 //		if (CommonUtil.isEmpty(member.getMcId())) {
 //			return false;
 //		}

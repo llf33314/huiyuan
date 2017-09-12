@@ -3,7 +3,7 @@ package com.gt.member.config.filter;
 import com.gt.api.bean.sign.SignEnum;
 import com.gt.api.util.sign.BodyRequestWrapper;
 import com.gt.api.util.sign.SignFilterUtils;
-import com.gt.member.util.MemberConfig;
+import com.gt.member.util.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class MyInterceptor implements HandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger( MyInterceptor.class );
 
     @Autowired
-    private MemberConfig memberConfig;
+    private PropertiesUtil propertiesUtil;
 
     //不需要登录就可访问的url
     private static final Map< String,String > urls = new HashMap< String,String >();

@@ -12,7 +12,7 @@
 //
 //import com.gt.dao.member.MemberMapper;
 //import com.gt.dao.member.MemberParameterMapper;
-//import com.gt.entity.member.Member;
+//import com.gt.entity.member.MemberEntity;
 //import com.gt.entity.member.MemberParameter;
 //import com.gt.controller.member.LoginService;
 //import com.gt.util.CommonUtil;
@@ -54,7 +54,7 @@
 //			}
 //			// 密码加密
 //			pwd = SHA1.encode(pwd);
-//			List<Member> memberList = memberMapper.selectByPhoneAndPwd(busId,
+//			List<MemberEntity> memberList = memberMapper.selectByPhoneAndPwd(busId,
 //					phone, pwd);
 //			if (CommonUtil.isEmpty(memberList) || memberList.size() != 1) {
 //				map.put("result", false);
@@ -62,7 +62,7 @@
 //				return map;
 //			}
 //
-//			Member member = memberList.get(0);
+//			MemberEntity member = memberList.get(0);
 //
 //			if(CommonUtil.isEmpty(member.getHeadimgurl())){
 //				MemberParameter mp=memberParameterMapper.findByMemberId(member.getId());
@@ -112,7 +112,7 @@
 //				returnMap.put("message", "密码不一致请重新填写");
 //				return returnMap;
 //			}
-//			Member member = memberMapper.findByPhone(busId, phone);
+//			MemberEntity member = memberMapper.findByPhone(busId, phone);
 //			if (CommonUtil.isNotEmpty(member)
 //					&& CommonUtil.isNotEmpty(member.getPwd())) {
 //				returnMap.put("result", false);
@@ -122,7 +122,7 @@
 //
 //			if (CommonUtil.isEmpty(member)) {
 //				// 新增用户
-//				member = new Member();
+//				member = new MemberEntity();
 //				member.setPhone(phone);
 //				member.setBusid(busId);
 //				member.setPwd(SHA1.encode(onePwd));
@@ -132,7 +132,7 @@
 //				CommonUtil.setLoginMember(request, member);
 //			} else {
 //				// 修改用户
-//				Member m1 = new Member();
+//				MemberEntity m1 = new MemberEntity();
 //				m1.setId(member.getId());
 //				m1.setPhone(phone);
 //				m1.setPwd(SHA1.encode(onePwd));
@@ -175,7 +175,7 @@
 //				return returnMap;
 //			}
 //			JedisUtil.del(vcode1);
-//			Member member = memberMapper.findByPhone(busId, phone);
+//			MemberEntity member = memberMapper.findByPhone(busId, phone);
 //			if (CommonUtil.isNotEmpty(member)) {
 //				MemberParameter mp=memberParameterMapper.findByMemberId(member.getId());
 //				if(CommonUtil.isNotEmpty(mp)){
@@ -224,7 +224,7 @@
 //				returnMap.put("message", "请填写密码");
 //				return returnMap;
 //			}
-//			Member member = memberMapper.findByPhone(busId, phone);
+//			MemberEntity member = memberMapper.findByPhone(busId, phone);
 //			if (CommonUtil.isEmpty(member)) {
 //				returnMap.put("result", false);
 //				returnMap.put("message", "用户不存在。");
@@ -232,7 +232,7 @@
 //			}
 //
 //			// 修改用户
-//			Member m1 = new Member();
+//			MemberEntity m1 = new MemberEntity();
 //			m1.setId(member.getId());
 //			m1.setPhone(phone);
 //			m1.setPwd(SHA1.encode(pwd));

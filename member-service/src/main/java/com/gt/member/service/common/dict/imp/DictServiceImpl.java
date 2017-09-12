@@ -3,7 +3,7 @@ package com.gt.member.service.common.dict.imp;
 import java.util.*;
 
 import com.gt.api.enums.ResponseEnums;
-import com.gt.common.entity.BusUser;
+import com.gt.common.entity.BusUserEntity;
 import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.common.BusUserNumDAO;
 import com.gt.member.dao.common.DictItemsDAO;
@@ -78,11 +78,11 @@ public class DictServiceImpl implements DictService {
     @Override
     public Integer pidUserId( Integer user_id ) {
 	// TODO Auto-generated method stub
-	BusUser busUser = busUserDAO.selectById( user_id );
-	if ( busUser.getPid() > 0 ) {
-	    pidUserId( busUser.getPid() );
+	BusUserEntity busUserEntity = busUserDAO.selectById( user_id );
+	if ( busUserEntity.getPid() > 0 ) {
+	    pidUserId( busUserEntity.getPid() );
 	}
-	return busUser.getId();
+	return busUserEntity.getId();
     }
 
 }

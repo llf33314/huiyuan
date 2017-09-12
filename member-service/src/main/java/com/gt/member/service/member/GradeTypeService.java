@@ -4,7 +4,7 @@
 //
 //package com.gt.member.service.old.member;
 //
-//import com.gt.member.entity.BusUser;
+//import com.gt.member.entity.BusUserEntity;
 //
 //import java.util.List;
 //import java.util.Map;
@@ -50,5 +50,5 @@
 //	 * @return
 //	 * @throws Exception
 //	 */
-//	public Map<String, Object> saveOrUpdataRadio(BusUser busUser, String json, Integer qiandao) throws Exception;
+//	public Map<String, Object> saveOrUpdataRadio(BusUserEntity busUser, String json, Integer qiandao) throws Exception;
 //}

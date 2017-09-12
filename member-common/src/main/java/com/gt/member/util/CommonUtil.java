@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
 import com.gt.member.constant.CommonConst;
-import com.gt.common.entity.BusUser;
-import com.gt.member.entity.Member;
+import com.gt.common.entity.BusUserEntity;
+import com.gt.member.entity.MemberEntity;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
@@ -783,18 +783,18 @@ public class CommonUtil {
 	 * @param request
 	 * @return
 	 */
-	public static void setLoginMember(HttpServletRequest request, Member member) {
+	public static void setLoginMember(HttpServletRequest request, MemberEntity memberEntity ) {
 		try {
-			if (CommonUtil.isEmpty(member)||CommonUtil.isEmpty(member.getId())) {// 充值
-				request.getSession().setAttribute("member", member);
+			if (CommonUtil.isEmpty( memberEntity )||CommonUtil.isEmpty( memberEntity.getId())) {// 充值
+				request.getSession().setAttribute("member", memberEntity );
 			} else {
-				Integer busId = member.getBusId();
+				Integer busId = memberEntity.getBusId();
 			}
 		} catch (Exception e) {
 			log.info(e.getLocalizedMessage());
 			e.printStackTrace();
 		}
-		request.getSession().setAttribute("member", member);
+		request.getSession().setAttribute("member", memberEntity );
 	};
 	
 	
@@ -804,13 +804,13 @@ public class CommonUtil {
 	 * @param request
 	 * @return
 	 */
-	public static Member getMemberByBusId(HttpServletRequest request,
+	public static MemberEntity getMemberByBusId(HttpServletRequest request,
 			Integer busId) {
 		try {
-			Member member = (Member) request.getSession()
-					.getAttribute("member");
-			if (isNotEmpty(member) && member.getBusId().equals(busId)) {
-				return member;
+			MemberEntity memberEntity = (MemberEntity) request.getSession()
+					.getAttribute("memberEntity");
+			if (isNotEmpty( memberEntity ) && memberEntity.getBusId().equals(busId)) {
+				return memberEntity;
 			} else {
 				return null;
 			}
@@ -828,9 +828,9 @@ public class CommonUtil {
 	 * @param request
 	 * @return
 	 */
-	public static BusUser getLoginUser(HttpServletRequest request) {
+	public static BusUserEntity getLoginUser(HttpServletRequest request) {
 		try {
-			return (BusUser) request.getSession().getAttribute(
+			return (BusUserEntity) request.getSession().getAttribute(
 					CommonConst.SESSION_BUSINESS_KEY);
 		} catch (Exception e) {
 			log.info(e.getLocalizedMessage());
@@ -847,15 +847,15 @@ public class CommonUtil {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static void setLoginUser(HttpServletRequest request, BusUser busUser) {
+	public static void setLoginUser(HttpServletRequest request, BusUserEntity busUserEntity ) {
 		try {
-			Integer pid = busUser.getPid();
+			Integer pid = busUserEntity.getPid();
 			if (pid == 0 || pid == null) {
 				request.getSession().setAttribute(
-						CommonConst.SESSION_BUSINESS_KEY, busUser);
+						CommonConst.SESSION_BUSINESS_KEY, busUserEntity );
 			} else {
 				request.getSession().setAttribute(
-						CommonConst.SESSION_BUSINESS_KEY, busUser);
+						CommonConst.SESSION_BUSINESS_KEY, busUserEntity );
 			}
 		} catch (Exception e) {
 			log.info(e.getLocalizedMessage());

@@ -2,17 +2,12 @@ package com.gt.member.util;
 
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Redis缓存工具类
@@ -26,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class RedisCacheUtil {
 
     @Autowired
-    private MemberConfig memberConfig;
+    private PropertiesUtil propertiesUtil;
 
     private JedisPool pool = null;
 
@@ -42,10 +37,11 @@ public class RedisCacheUtil {
             config.setMaxWaitMillis(3000 * 100);
             // 在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的；
             config.setTestOnBorrow(true);
-            if(CommonUtil.isNotEmpty(memberConfig.getRedis_password())){
-                pool = new JedisPool(config,memberConfig.getRedis_ip(),CommonUtil.toInteger(memberConfig.getRedis_port()),60000,memberConfig.getRedis_password(),CommonUtil.toInteger(memberConfig.getRedis_database()));
+            if(CommonUtil.isNotEmpty( propertiesUtil.getRedis_password())){
+                pool = new JedisPool(config, propertiesUtil.getRedis_ip(),CommonUtil.toInteger( propertiesUtil.getRedis_port()),60000,
+				propertiesUtil.getRedis_password(),CommonUtil.toInteger( propertiesUtil.getRedis_database()));
             }else{
-                pool = new JedisPool(config,memberConfig.getRedis_ip(),CommonUtil.toInteger(memberConfig.getRedis_port()),60000);
+                pool = new JedisPool(config, propertiesUtil.getRedis_ip(),CommonUtil.toInteger( propertiesUtil.getRedis_port()),60000);
             }
         }
         return pool;

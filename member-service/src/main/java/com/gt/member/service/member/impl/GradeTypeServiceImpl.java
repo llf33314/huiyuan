@@ -21,7 +21,7 @@
 //import com.gt.dao.member.MemberFindMapper;
 //import com.gt.dao.member.PublicParameterSetMapper;
 //import com.gt.dao.util.DaoUtil;
-//import com.gt.entity.common.BusUser;
+//import com.gt.entity.common.BusUserEntity;
 //import com.gt.entity.member.GradeType;
 //import com.gt.entity.member.MemberFind;
 //import com.gt.entity.member.PublicParameterSet;
@@ -247,7 +247,7 @@
 //
 //	@Transactional(rollbackFor=Exception.class)
 //	@Override
-//	public Map<String, Object> saveOrUpdataRadio(BusUser busUser,String json,Integer qiandao) throws Exception {
+//	public Map<String, Object> saveOrUpdataRadio(BusUserEntity busUser,String json,Integer qiandao) throws Exception {
 //		Map<String, Object> map = new HashMap<String, Object>();
 //		try {
 //			int busId=busUser.getId();

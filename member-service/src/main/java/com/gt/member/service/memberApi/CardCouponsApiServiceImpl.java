@@ -4,11 +4,11 @@ package com.gt.member.service.memberApi;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.sign.SignHttpUtils;
+import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.FenbiFlowRecord;
-import com.gt.common.entity.WxPublicUsers;
+import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.common.entity.WxShop;
 import com.gt.member.dao.common.BusUserDAO;
-import com.gt.common.entity.BusUser;
 import com.gt.member.dao.*;
 import com.gt.member.dao.common.FenbiFlowRecordDAO;
 import com.gt.member.dao.common.WxPublicUsersDAO;
@@ -44,9 +44,6 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
     private static final Logger LOG = LoggerFactory.getLogger(CardCouponsApiServiceImpl.class);
 
-    @Autowired
-    private MemberConfig memberConfig;
-
     //微信卡券核销
     private final String CODE_CONSUME = "/8A5DA52E/wxcardapi/6F6D9AD2/79B4DE7C/codeConsume.do";
 
@@ -72,7 +69,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     private DuofenCardReceivelogDAO duofenCardReceiveLogMapper;
 
     @Autowired
-    private MemberDAO memberMapper;
+    private MemberEntityDAO memberMapper;
 
     @Autowired
     private MemberCardService memberCardService;
@@ -137,14 +134,14 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             return null;
         }
 
-        Member member = memberMapper.selectById(memberId);
+        MemberEntity memberEntity = memberMapper.selectById(memberId);
 
-        if (CommonUtil.isEmpty(member.getOpenid())) {
+        if (CommonUtil.isEmpty( memberEntity.getOpenid())) {
             return null;
         }
 
         //查询优惠券信息
-        List<Map<String, Object>> cardList = wxCardReceiveMapper.findByOpenId1(wxPublicUsersId, member.getOpenid());
+        List<Map<String, Object>> cardList = wxCardReceiveMapper.findByOpenId1(wxPublicUsersId, memberEntity.getOpenid());
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         if (CommonUtil.isNotEmpty(cardList) && cardList.size() > 0) {
             for (Map<String, Object> map2 : cardList) {
@@ -192,14 +189,14 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             return null;
         }
 
-        Member member = memberMapper.selectById(memberId);
+        MemberEntity memberEntity = memberMapper.selectById(memberId);
 
-        if (CommonUtil.isEmpty(member.getOpenid())) {
+        if (CommonUtil.isEmpty( memberEntity.getOpenid())) {
             return null;
         }
 
         //查询优惠券信息
-        List<Map<String, Object>> cardList = wxCardReceiveMapper.findByOpenId1(wxPublicUsersId, member.getOpenid());
+        List<Map<String, Object>> cardList = wxCardReceiveMapper.findByOpenId1(wxPublicUsersId, memberEntity.getOpenid());
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         if (CommonUtil.isNotEmpty(cardList) && cardList.size() > 0) {
             for (Map<String, Object> map2 : cardList) {
@@ -257,12 +254,12 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 throw new BusinessException(ResponseMemberEnums.NO_DATA.getCode(), ResponseMemberEnums.NO_DATA.getMsg());
             }
 
-            WxPublicUsers wxPublicUsers= wxPublicUsersDAO.selectById( wxPublicUsersId );
-            String url= memberConfig.getWxmp_home()+CODE_CONSUME;
-            String getWxmpsignKey=memberConfig.getWxmpsignKey();
+            WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersDAO.selectById( wxPublicUsersId );
+            String url= PropertiesUtil.getWxmp_home()+CODE_CONSUME;
+            String getWxmpsignKey= PropertiesUtil.getWxmpsignKey();
             map.put( "card_id", wcr.getCardId());
             map.put( "code",code );
-            map.put( "busId",wxPublicUsers.getBusUserId() );
+            map.put( "busId", wxPublicUsersEntity.getBusUserId() );
             String result= SignHttpUtils.postByHttp(url,map,getWxmpsignKey);
 
             JSONObject returnJSON =JSONObject.parseObject( result);
@@ -292,12 +289,12 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 throw new BusinessException(ResponseMemberEnums.NO_DATA.getCode(), ResponseMemberEnums.COUPONSE_VERIFICATION.getMsg());
             }
             Map<String, Object> map = new HashMap<>();
-            WxPublicUsers wxPublicUsers= wxPublicUsersDAO.selectById( wxPublicUsersId );
-            String url= memberConfig.getWxmp_home()+CODE_CONSUME;
-            String getWxmpsignKey=memberConfig.getWxmpsignKey();
+            WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersDAO.selectById( wxPublicUsersId );
+            String url= PropertiesUtil.getWxmp_home()+CODE_CONSUME;
+            String getWxmpsignKey= PropertiesUtil.getWxmpsignKey();
             map.put( "card_id", wcr.getCardId());
             map.put( "code",code );
-            map.put( "busId",wxPublicUsers.getBusUserId() );
+            map.put( "busId", wxPublicUsersEntity.getBusUserId() );
             String result=SignHttpUtils.postByHttp(url,map,getWxmpsignKey);
 
             JSONObject returnJSON =JSONObject.parseObject( result);
@@ -601,7 +598,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
             List<Map<String, Object>> cardMlist = JsonReflectUtil.json2List(receives.getCardMessage());
 
-            Member member = memberMapper.selectByKey(memberId);
+            MemberEntity memberEntity = memberMapper.selectByKey(memberId);
             if (ids.size() > 0) {
                 List<DuofenCardGet > list = new ArrayList<DuofenCardGet>();
                 List<DuofenCard> duofencards = duofenCardMapper.findInCardIds(ids);
@@ -619,9 +616,9 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                                     dfg.setGetDate(new Date());
                                     dfg.setCardReceiveId(receiveId);
                                     dfg.setMemberId(memberId);
-                                    dfg.setPublicId(member.getPublicId());
+                                    dfg.setPublicId( memberEntity.getPublicId());
                                     dfg.setFriendMemberId("");
-                                    dfg.setBusId(member.getBusId());
+                                    dfg.setBusId( memberEntity.getBusId());
                                     if ("DATE_TYPE_FIX_TIME_RANGE".equals(duofenCard.getType())) {
                                         dfg.setStartTime(duofenCard.getBeginTimestamp());
                                         dfg.setEndTime(duofenCard.getEndTimestamp());
@@ -629,7 +626,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                                         dfg.setStartTime(DateTimeKit.addDate(new Date(), duofenCard.getFixedBeginTerm()));
                                         dfg.setEndTime(DateTimeKit.addDate(new Date(), duofenCard.getFixedTerm()));
                                     }
-                                    dfg.setBusId(member.getBusId());
+                                    dfg.setBusId( memberEntity.getBusId());
                                     list.add(dfg);
                                 }
                             }
@@ -642,13 +639,13 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 if (receives.getIsCallSms() == 1) {
                     try {
 			Map< String,Object > params = new HashMap< String,Object >();
-			params.put( "busId", member.getBusId() );
+			params.put( "busId", memberEntity.getBusId() );
 			params.put( "model", 12 );
 			params.put( "mobiles", receives.getMobilePhone() );
 			params.put( "content", "用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券" );
-			params.put( "company", memberConfig.getSms_name() );
-			String url = memberConfig.getWxmp_home() + SEND_SMS;
-			SignHttpUtils.postByHttp( url, params, memberConfig.getWxmpsignKey() );
+			params.put( "company", PropertiesUtil.getSms_name() );
+			String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
+			SignHttpUtils.postByHttp( url, params, PropertiesUtil.getWxmpsignKey() );
 		    }catch ( Exception e ){
                         LOG.error( "短信发送失败",e );
 		    }
@@ -873,7 +870,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
         try {
             DuofenCardReceive dfcr = duofenCardReceiveMapper.selectById(bagId);
 
-            Member member = memberMapper.selectById(memberId);
+            MemberEntity memberEntity = memberMapper.selectById(memberId);
 
             Map<String, Object> dfcrl = duofenCardReceiveLogMapper.countByCrIdAndMemberId(dfcr.getId(), memberId);
 
@@ -902,36 +899,36 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 }
             }
 
-            Member m1 = new Member();
+            MemberEntity m1 = new MemberEntity();
             boolean flag = false; // 用来标示是否修改修改用户数据
             if (dfcr.getJifen() > 0) {
                 // 扣除用户积分
-                if (member.getIntegral() < dfcr.getJifen()) {
+                if ( memberEntity.getIntegral() < dfcr.getJifen()) {
                     throw new BusinessException(ResponseMemberEnums.MEMBER_LESS_JIFEN.getCode(), ResponseMemberEnums.MEMBER_LESS_JIFEN.getMsg());
                 }
-                if (CommonUtil.isNotEmpty(member.getMcId())) {
-                    memberCommonService.saveCardRecordNew(member.getMcId(), (byte) 2, dfcr.getJifen() + "积分", "领取优惠券扣除积分", member.getBusId(), null, 0, -dfcr.getJifen());
+                if (CommonUtil.isNotEmpty( memberEntity.getMcId())) {
+                    memberCommonService.saveCardRecordNew( memberEntity.getMcId(), (byte) 2, dfcr.getJifen() + "积分", "领取优惠券扣除积分", memberEntity.getBusId(), null, 0, -dfcr.getJifen());
                 }
                 flag = true;
-                m1.setIntegral(member.getIntegral() - dfcr.getJifen());
+                m1.setIntegral( memberEntity.getIntegral() - dfcr.getJifen());
             }
 
             if (dfcr.getFenbi() > 0) {
                 // 扣除用户粉币
-                if (member.getFansCurrency() < dfcr.getFenbi()) {
+                if ( memberEntity.getFansCurrency() < dfcr.getFenbi()) {
                     throw new BusinessException(ResponseMemberEnums.MEMBER_LESS_FENBI.getCode(), ResponseMemberEnums.MEMBER_LESS_FENBI.getMsg());
                 }
-                if (CommonUtil.isNotEmpty(member.getMcId())) {
-                    memberCommonService.saveCardRecordNew(member.getMcId(), (byte) 3, dfcr.getFenbi() + "粉币", "领取优惠券扣除粉币", member.getBusId(), null, 0, -dfcr.getFenbi());
+                if (CommonUtil.isNotEmpty( memberEntity.getMcId())) {
+                    memberCommonService.saveCardRecordNew( memberEntity.getMcId(), (byte) 3, dfcr.getFenbi() + "粉币", "领取优惠券扣除粉币", memberEntity.getBusId(), null, 0, -dfcr.getFenbi());
                 }
                 flag = true;
-                m1.setFansCurrency(member.getFansCurrency() - dfcr.getFenbi());
+                m1.setFansCurrency( memberEntity.getFansCurrency() - dfcr.getFenbi());
 
                 // 归还商户粉币
-                returnfansCurrency(member.getBusId(), new Double(-dfcr.getFenbi()));
+                returnfansCurrency( memberEntity.getBusId(), new Double(-dfcr.getFenbi()));
             }
             if (flag) {
-                m1.setId(member.getId());
+                m1.setId( memberEntity.getId());
                 memberMapper.updateById(m1);
             }
 
@@ -947,7 +944,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             for (Map<String, Object> map : listMap) {
                 DuofenCardGet duofenCardGet = new DuofenCardGet();
                 duofenCardGet.setPublicId(dfcr.getPublicId());
-                duofenCardGet.setMemberId(member.getId());
+                duofenCardGet.setMemberId( memberEntity.getId());
                 String code = getCode(12);
                 duofenCardGet.setCode(code);
                 duofenCardGet.setGetType(3);
@@ -962,7 +959,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                     duofenCardGet.setStartTime(DateTimeKit.addDate(new Date(), CommonUtil.toInteger(map.get("fixed_begin_term"))));
                     duofenCardGet.setEndTime(DateTimeKit.addDate(new Date(), CommonUtil.toInteger(map.get("fixed_term"))));
                 }
-                duofenCardGet.setBusId(member.getBusId());
+                duofenCardGet.setBusId( memberEntity.getBusId());
                 duofenCardGetMapper.insert(duofenCardGet);
 
             }
@@ -970,7 +967,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             DuofenCardReceivelog duofenCardReceiveLog = new DuofenCardReceivelog();
             duofenCardReceiveLog.setCrId(dfcr.getId());
             duofenCardReceiveLog.setCreateDate(new Date());
-            duofenCardReceiveLog.setMemberId(member.getId());
+            duofenCardReceiveLog.setMemberId( memberEntity.getId());
             duofenCardReceiveLog.setThreeMemberId(threeMemberId);
             duofenCardReceiveLogMapper.insert(duofenCardReceiveLog);
 
@@ -978,13 +975,13 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             if (dfcr.getIsCallSms() == 1) {
                 try {
 		    Map< String,Object > params = new HashMap< String,Object >();
-		    params.put( "busId", member.getBusId() );
+		    params.put( "busId", memberEntity.getBusId() );
 		    params.put( "model", 12 );
 		    params.put( "mobiles", dfcr.getMobilePhone() );
 		    params.put( "content", "用户领取一个包,包名：" + dfcr.getCardsName() );
-		    params.put( "company", memberConfig.getSms_name() );
-		    String url = memberConfig.getWxmp_home() + SEND_SMS;
-		    SignHttpUtils.postByHttp( url, params, memberConfig.getWxmpsignKey() );
+		    params.put( "company", PropertiesUtil.getSms_name() );
+		    String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
+		    SignHttpUtils.postByHttp( url, params, PropertiesUtil.getWxmpsignKey() );
 		}catch ( Exception e ){
                     LOG.error( "短信过期",e );
 		}
@@ -1228,9 +1225,9 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 		    params.put( "model", 12 );
 		    params.put( "mobiles", dfcr.getMobilePhone() );
 		    params.put( "content", "用户领取一个包,包名：" + dfcr.getCardsName() );
-		    params.put( "company", memberConfig.getSms_name() );
-		    String url = memberConfig.getWxmp_home() + SEND_SMS;
-		    SignHttpUtils.postByHttp( url, params, memberConfig.getWxmpsignKey() );
+		    params.put( "company", PropertiesUtil.getSms_name() );
+		    String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
+		    SignHttpUtils.postByHttp( url, params, PropertiesUtil.getWxmpsignKey() );
 		}catch ( Exception e ){
                     LOG.error( "短信发送失败",e );
 		}
@@ -1259,7 +1256,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
             List<Map<String, Object>> cardMlist = JsonReflectUtil.json2List(receives.getCardMessage());
 
-            Member member = memberMapper.selectById(memberId);
+            MemberEntity memberEntity = memberMapper.selectById(memberId);
             if (ids.size() > 0) {
                 List<DuofenCardGet> list = new ArrayList<DuofenCardGet>();
                 List<DuofenCard> duofencards = duofenCardMapper.findInCardIds(ids);
@@ -1280,10 +1277,10 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                                     dfg.setGetDate(new Date());
                                     dfg.setCardReceiveId(receiveId);
                                     dfg.setMemberId(memberId);
-                                    dfg.setPublicId(member.getPublicId());
+                                    dfg.setPublicId( memberEntity.getPublicId());
                                     dfg.setBusId(0);
                                     dfg.setFriendMemberId("");
-                                    dfg.setBusId(member.getBusId());
+                                    dfg.setBusId( memberEntity.getBusId());
                                     if ("DATE_TYPE_FIX_TIME_RANGE".equals(duofenCard.getType())) {
                                         dfg.setStartTime(duofenCard.getBeginTimestamp());
                                         dfg.setEndTime(duofenCard.getEndTimestamp());
@@ -1291,7 +1288,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                                         dfg.setStartTime(DateTimeKit.addDate(new Date(), duofenCard.getFixedBeginTerm()));
                                         dfg.setEndTime(DateTimeKit.addDate(new Date(), duofenCard.getFixedTerm()));
                                     }
-                                    dfg.setBusId(member.getBusId());
+                                    dfg.setBusId( memberEntity.getBusId());
                                     list.add(dfg);
                                 }
                             }
@@ -1304,13 +1301,13 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 if (receives.getIsCallSms() == 1) {
 		    try {
 			Map< String,Object > params = new HashMap< String,Object >();
-			params.put( "busId", member.getBusId() );
+			params.put( "busId", memberEntity.getBusId() );
 			params.put( "model", 12 );
 			params.put( "mobiles", receives.getMobilePhone() );
 			params.put( "content", "用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券");
-			params.put( "company", memberConfig.getSms_name() );
-			String url = memberConfig.getWxmp_home() + SEND_SMS;
-			SignHttpUtils.postByHttp( url, params, memberConfig.getWxmpsignKey() );
+			params.put( "company", PropertiesUtil.getSms_name() );
+			String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
+			SignHttpUtils.postByHttp( url, params, PropertiesUtil.getWxmpsignKey() );
 		    }catch ( Exception e ){
 			LOG.error( "短信发送失败",e );
 		    }
@@ -1446,7 +1443,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
             List<Map<String, Object>> cardMlist = JsonReflectUtil.json2List(receives.getCardMessage());
 
-            Member member = memberMapper.selectById(memberId);
+            MemberEntity memberEntity = memberMapper.selectById(memberId);
             if (ids.size() > 0) {
                 List<DuofenCardGet> list = new ArrayList<DuofenCardGet>();
                 List<DuofenCard> duofencards = duofenCardMapper.findInCardIds(ids);
@@ -1462,9 +1459,9 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                                 dfg.setGetDate(new Date());
                                 dfg.setCardReceiveId(receiveId);
                                 dfg.setMemberId(memberId);
-                                dfg.setPublicId(member.getPublicId());
+                                dfg.setPublicId( memberEntity.getPublicId());
                                 dfg.setFriendMemberId("");
-                                dfg.setBusId(member.getBusId());
+                                dfg.setBusId( memberEntity.getBusId());
                                 if ("DATE_TYPE_FIX_TIME_RANGE".equals(duofenCard.getType())) {
                                     dfg.setStartTime(duofenCard.getBeginTimestamp());
                                     dfg.setEndTime(duofenCard.getEndTimestamp());
@@ -1472,7 +1469,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                                     dfg.setStartTime(DateTimeKit.addDate(new Date(), duofenCard.getFixedBeginTerm()));
                                     dfg.setEndTime(DateTimeKit.addDate(new Date(), duofenCard.getFixedTerm()));
                                 }
-                                dfg.setBusId(member.getBusId());
+                                dfg.setBusId( memberEntity.getBusId());
                                 list.add(dfg);
                             }
                         }
@@ -1484,13 +1481,13 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 if (receives.getIsCallSms() == 1) {
 		    try {
 			Map< String,Object > params = new HashMap< String,Object >();
-			params.put( "busId", member.getBusId() );
+			params.put( "busId", memberEntity.getBusId() );
 			params.put( "model", 12 );
 			params.put( "mobiles", receives.getMobilePhone() );
 			params.put( "content","用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券");
-			params.put( "company", memberConfig.getSms_name() );
-			String url = memberConfig.getWxmp_home() + SEND_SMS;
-			SignHttpUtils.postByHttp( url, params, memberConfig.getWxmpsignKey() );
+			params.put( "company", PropertiesUtil.getSms_name() );
+			String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
+			SignHttpUtils.postByHttp( url, params, PropertiesUtil.getWxmpsignKey() );
 		    }catch ( Exception e ){
 			LOG.error( "短信发送失败",e );
 		    }
@@ -1570,24 +1567,24 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
         boolean flag = false;
 
         //赠送积分、粉币、流量、金额
-        Member tuijianMember = memberMapper.selectById(recommend.getMemberId());
-        Member m1 = new Member();
+        MemberEntity tuijianMemberEntity = memberMapper.selectById(recommend.getMemberId());
+        MemberEntity m1 = new MemberEntity();
         m1.setId(recommend.getMemberId());
         if (recommend.getIntegral() > 0) {
-            m1.setIntegral(tuijianMember.getIntegral() + recommend.getIntegral());
+            m1.setIntegral( tuijianMemberEntity.getIntegral() + recommend.getIntegral());
             //积分记录
-            memberCommonService.saveCardRecordNew(tuijianMember.getMcId(), (byte) 2, recommend.getIntegral() + "", "推荐优惠券赠送", tuijianMember.getBusId(), null, 0,
+            memberCommonService.saveCardRecordNew( tuijianMemberEntity.getMcId(), (byte) 2, recommend.getIntegral() + "", "推荐优惠券赠送", tuijianMemberEntity.getBusId(), null, 0,
                     Double.valueOf(recommend.getIntegral()));
             flag = true;
         }
         if (recommend.getFenbi() > 0) {
 
-            BusUser busUser = busUserDAO.selectById(tuijianMember.getBusId());
-            if (busUser.getFansCurrency().doubleValue() >= recommend.getFenbi()) {
+            BusUserEntity busUserEntity = busUserDAO.selectById( tuijianMemberEntity.getBusId());
+            if ( busUserEntity.getFansCurrency().doubleValue() >= recommend.getFenbi()) {
 
                // 新增粉笔和流量分配表
                 FenbiFlowRecord fenbi = new FenbiFlowRecord();
-                fenbi.setBusUserId( busUser.getId() );
+                fenbi.setBusUserId( busUserEntity.getId() );
                 fenbi.setRecType( 1 );
                 fenbi.setRecCount( new BigDecimal( recommend.getFenbi() ) );
                 fenbi.setRecUseCount(new BigDecimal( recommend.getFenbi() ) );
@@ -1598,24 +1595,24 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 fenbi.setFlowId( 0 );
                 fenbiFlowRecordDAO.insert( fenbi );
 
-                BusUser b = new BusUser();
-                b.setId(busUser.getId());
-                Double fansCurrency = busUser.getFansCurrency().doubleValue() - recommend.getFenbi();
+                BusUserEntity b = new BusUserEntity();
+                b.setId( busUserEntity.getId());
+                Double fansCurrency = busUserEntity.getFansCurrency().doubleValue() - recommend.getFenbi();
                 b.setFansCurrency(BigDecimal.valueOf(fansCurrency));
                 busUserDAO.updateById(b);
 
-                m1.setFansCurrency(tuijianMember.getFansCurrency() + recommend.getFenbi());
+                m1.setFansCurrency( tuijianMemberEntity.getFansCurrency() + recommend.getFenbi());
                 //粉币记录
-                memberCommonService.saveCardRecordNew(tuijianMember.getMcId(), (byte) 3, recommend.getFenbi() + "", "推荐优惠券赠送", tuijianMember.getBusId(), null, 0,
+                memberCommonService.saveCardRecordNew( tuijianMemberEntity.getMcId(), (byte) 3, recommend.getFenbi() + "", "推荐优惠券赠送", tuijianMemberEntity.getBusId(), null, 0,
                         Double.valueOf(recommend.getFenbi()));
                 flag = true;
             }
         }
 
         if (recommend.getFlow() > 0) {
-            m1.setFlow(tuijianMember.getFlow() + recommend.getFlow());
+            m1.setFlow( tuijianMemberEntity.getFlow() + recommend.getFlow());
             //流量记录
-            memberCommonService.saveCardRecordNew(tuijianMember.getMcId(), (byte) 4, recommend.getFlow() + "", "推荐优惠券赠送", tuijianMember.getBusId(), null, 0,
+            memberCommonService.saveCardRecordNew( tuijianMemberEntity.getMcId(), (byte) 4, recommend.getFlow() + "", "推荐优惠券赠送", tuijianMemberEntity.getBusId(), null, 0,
                     Double.valueOf(recommend.getFlow()));
             flag = true;
         }
@@ -1624,13 +1621,13 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
         }
 
         if (recommend.getMoney() > 0) {
-            MemberCard card = cardMapper.selectById(tuijianMember.getMcId());
+            MemberCard card = cardMapper.selectById( tuijianMemberEntity.getMcId());
             MemberCard c = new MemberCard();
             c.setMcId(card.getMcId());
             c.setGiveMoney(card.getGiveMoney() + recommend.getMoney());
             cardMapper.updateById(c);
             //流量记录
-            memberCommonService.saveCardRecordNew(tuijianMember.getMcId(), (byte) 1, recommend.getMoney() + "", "推荐优惠券赠送", tuijianMember.getBusId(), null, 0,
+            memberCommonService.saveCardRecordNew( tuijianMemberEntity.getMcId(), (byte) 1, recommend.getMoney() + "", "推荐优惠券赠送", tuijianMemberEntity.getBusId(), null, 0,
                     Double.valueOf(recommend.getMoney()));
         }
 
@@ -1643,12 +1640,12 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     private Map<String, Object> returnfansCurrency(Integer busId, Double fans_currency) {
         Map<String, Object> map = new HashMap<String, Object>();
         try {
-            BusUser busUser = busUserDAO.selectById(busId);
-            BusUser busUser1 = new BusUser();
-            busUser1.setId(busId);
-            Double fansCurrency = busUser.getFansCurrency().doubleValue() + fans_currency;
-            busUser1.setFansCurrency(BigDecimal.valueOf(fansCurrency));
-            busUserDAO.updateById(busUser1);
+            BusUserEntity busUserEntity = busUserDAO.selectById(busId);
+            BusUserEntity busUserEntity1 = new BusUserEntity();
+            busUserEntity1.setId(busId);
+            Double fansCurrency = busUserEntity.getFansCurrency().doubleValue() + fans_currency;
+            busUserEntity1.setFansCurrency(BigDecimal.valueOf(fansCurrency));
+            busUserDAO.updateById( busUserEntity1 );
             map.put("result", true);
             map.put("message", "归还商户粉币成功");
         } catch (Exception e) {

@@ -294,8 +294,9 @@
 
 
 	<select id="findGradeTyeBybusIdAndctId" resultType="Map">
-		SELECT gt.gt_id as gt_id,gt.gt_name as gt_name,gt.applyType,gt.buyMoney FROM t_member_gradetype gt
+		SELECT gt.gt_id as gt_id,gt.gt_name as gt_name,gt.applyType,gt.buyMoney,gr.gr_discount FROM t_member_gradetype gt
 		INNER JOIN t_member_cardtype ct ON gt.ct_id=ct.ct_id
+		INNER JOIN t_member_giverule  gr ON gr.gt_id=gt.gt_id
 		WHERE gt.busId=#{busId} and gt.ct_id=#{ctId}  AND is_publish=1  and iseasy=0
 	</select>
 

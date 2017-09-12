@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gt.member.dao.MemberGiveconsumeDAO">
-
-	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberGiveconsume">
-		<id column="uc_id" property="ucId" />
+	<!-- 通用查询映射结果 -->
+		<id column="id" property="id" />
+		<result column="uc_id" property="ucId" />
 		<result column="gt_id" property="gtId" />
 		<result column="gc_total" property="gcTotal" />
 		<result column="gt_name" property="gtName" />
@@ -14,10 +14,10 @@
 		<result column="memberId" property="memberId" />
 	</resultMap>
 
-    <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
-        uc_id, gt_id, gc_total , gt_name, gt_unit, sendType, sendDate, memberId
-    </sql>
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+		uc_id, gt_id, gc_total, gt_name, gt_unit, sendType AS sendType, sendDate AS sendDate, memberId AS memberId, id
+	</sql>
 
 	<select id="findByUcId" resultMap="BaseResultMap">
 		select  <include refid="Base_Column_List" />

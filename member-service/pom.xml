@@ -24,13 +24,13 @@
             <version>${project.version}</version>
         </dependency>
         <!--<dependency>
-            <groupId>com.gt.member</groupId>
-            <artifactId>member-generator</artifactId>
+            <groupId>commemberEntitymber</groupId>
+            <artifacmemberEntitymber-generator</artifactId>
             <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.gt.member</groupId>
-            <artifactId>member-web</artifactId>
+            <groupId>commemberEntitymber</groupId>
+            <artifacmemberEntitymber-web</artifactId>
             <version>1.1-SNAPSHOT</version>
         </dependency>-->
 

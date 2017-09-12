@@ -26,12 +26,12 @@ import com.gt.dao.personCenter.PaySuccessLogMapper;
 import com.gt.dao.personCenter.PaySuccessMapper;
 import com.gt.dao.user.FenbiFlowRecordMapper;
 import com.gt.dao.util.DaoUtil;
-import com.gt.entity.member.Member;
+import com.gt.entity.member.MemberEntity;
 import com.gt.entity.personCenter.PaySuccess;
 import com.gt.entity.personCenter.PaySuccessCard;
 import com.gt.entity.personCenter.PaySuccessLog;
 import com.gt.entity.user.FenbiFlowRecord;
-import com.gt.entity.user.WxPublicUsers;
+import com.gt.entity.user.WxPublicUsersEntity;
 import com.gt.util.CommonUtil;
 import com.gt.util.DateTimeKit;
 import com.gt.util.JedisUtil;
@@ -81,7 +81,7 @@ public class PaySuccessServiceImpl implements PaySuccessService{
 			Integer memberId, String orderNo, Date date, Double totalMoney,Integer isSave,Integer isCount) {
 		Map<String, Object> returnMap=new HashMap<String, Object>();
 		try {
-			Member member=memberMapper.selectByPrimaryKey(memberId);
+			MemberEntity member=memberMapper.selectByPrimaryKey(memberId);
 			
 			PaySuccess paysuccess=paySuccessMapper.findBybusIdAndModel(member.getBusid(),model);
 			if(CommonUtil.isEmpty(paysuccess)){

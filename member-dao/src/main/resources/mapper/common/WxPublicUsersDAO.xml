@@ -3,7 +3,7 @@
 <mapper namespace="com.gt.member.dao.common.WxPublicUsersDAO">
 
 	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.gt.common.entity.WxPublicUsers">
+	<resultMap id="BaseResultMap" type="com.gt.common.entity.WxPublicUsersEntity">
 		<id column="id" property="id" />
 		<result column="wx_user_token" property="wxUserToken" />
 		<result column="auth_refresh_token" property="authRefreshToken" />

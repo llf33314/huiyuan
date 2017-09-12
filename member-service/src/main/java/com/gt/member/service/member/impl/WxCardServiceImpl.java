@@ -46,12 +46,12 @@ import com.gt.entity.mall.Store;
 import com.gt.entity.member.Card;
 import com.gt.entity.member.CardRecord;
 import com.gt.entity.member.GiveRule;
-import com.gt.entity.member.Member;
+import com.gt.entity.member.MemberEntity;
 import com.gt.entity.member.PublicParameterSet;
 import com.gt.entity.member.UserConsume;
 import com.gt.entity.set.WxShop;
-import com.gt.entity.user.BusUser;
-import com.gt.entity.user.WxPublicUsers;
+import com.gt.entity.user.BusUserEntity;
+import com.gt.entity.user.WxPublicUsersEntity;
 import com.gt.controller.common.dict.DictService;
 import com.gt.controller.common.wxcard.color.CardState;
 import com.gt.controller.common.wxcard.color.CardStatus;
@@ -224,8 +224,8 @@ public class WxCardServiceImpl implements IWxCardService {
 	}
 
 	@Override
-	public Map<String, Object> saveOrUpdateCard(WxPublicUsers wxPublicUsers,
-			BusUser busUser, String wxcardParam) {
+	public Map<String, Object> saveOrUpdateCard(WxPublicUsersEntity wxPublicUsers,
+			BusUserEntity busUser, String wxcardParam) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
 			JSONObject obj = JSONObject.fromObject(wxcardParam);
@@ -527,7 +527,7 @@ public class WxCardServiceImpl implements IWxCardService {
 	}
 
 	@Override
-	public Map<String, Object> saveShelves(WxPublicUsers wxPublicUsers,
+	public Map<String, Object> saveShelves(WxPublicUsersEntity wxPublicUsers,
 			Map<String, Object> params) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -598,7 +598,7 @@ public class WxCardServiceImpl implements IWxCardService {
 	}
 
 	@Override
-	public Map<String, Object> saveQrcode(WxPublicUsers wxPublicUsers,
+	public Map<String, Object> saveQrcode(WxPublicUsersEntity wxPublicUsers,
 			Map<String, Object> params) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -629,7 +629,7 @@ public class WxCardServiceImpl implements IWxCardService {
 
 	@Override
 	public Map<String, List<Map<String, Object>>> findReceiveCard(
-			WxPublicUsers wxPublicUsers, String openid) {
+			WxPublicUsersEntity wxPublicUsers, String openid) {
 		Map<String, List<Map<String, Object>>> maps = new HashMap<String, List<Map<String, Object>>>();
 		List<Map<String, Object>> cardRecord0 = new ArrayList<Map<String, Object>>(); // 正常
 		List<Map<String, Object>> cardRecord4 = new ArrayList<Map<String, Object>>(); // 已使用
@@ -745,8 +745,8 @@ public class WxCardServiceImpl implements IWxCardService {
 	 * 查询卡券信息
 	 *//*
 	@Override
-	public Map<String, Object> findCardReceive(WxPublicUsers wxPublicUsers,
-			String code, BusUser busUser) {
+	public Map<String, Object> findCardReceive(WxPublicUsersEntity wxPublicUsers,
+			String code, BusUserEntity busUser) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
 			WxCardReceive wcr = wxCardReceiveMapper.findByCode(
@@ -807,7 +807,7 @@ public class WxCardServiceImpl implements IWxCardService {
 				return map;
 			}
 			map.put("shopes", JSONArray.fromObject(shopes));
-			Member member = memberMapper.selectByOpenid(wcr.getOpenid(),wxPublicUsers.getId());
+			MemberEntity member = memberMapper.selectByOpenid(wcr.getOpenid(),wxPublicUsers.getId());
 			if (CommonUtil.isNotEmpty(member.getMcId())) {
 				List<Map<String, Object>> cards = cardMapper
 						.findCardById(member.getMcId());
@@ -825,7 +825,7 @@ public class WxCardServiceImpl implements IWxCardService {
 		return map;
 	}
 
-	public List<Map<String, Object>> findShopes(Integer id,Integer publicId, BusUser busUser) {
+	public List<Map<String, Object>> findShopes(Integer id,Integer publicId, BusUserEntity busUser) {
 		List<Map<String, Object>> poiIds=null;
 		WxCard wxCard = wxCardMapper.selectByPrimaryKey(id);
 		String location_id_list = wxCard.getLocationIdList();
@@ -906,8 +906,8 @@ public class WxCardServiceImpl implements IWxCardService {
 
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public Map<String, Object> cardReceive(HttpServletRequest request,WxPublicUsers wxPublicUsers,
-			String code, Integer storeId,Double money, BusUser bususer,
+	public Map<String, Object> cardReceive(HttpServletRequest request,WxPublicUsersEntity wxPublicUsers,
+			String code, Integer storeId,Double money, BusUserEntity bususer,
 			Integer payType, Integer model,Double jifenmoney,Double fenbimoney) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
@@ -915,7 +915,7 @@ public class WxCardServiceImpl implements IWxCardService {
 					wxPublicUsers.getId(), code);
 			map.put("card_id", wcr.getCardId());
 			map.put("code", code);
-			Member member = memberMapper.selectByOpenid(wcr.getOpenid(),wxPublicUsers.getId());
+			MemberEntity member = memberMapper.selectByOpenid(wcr.getOpenid(),wxPublicUsers.getId());
 			
 			UserConsume uc = new UserConsume();
 			// 添加会员记录
@@ -1033,7 +1033,7 @@ public class WxCardServiceImpl implements IWxCardService {
 			
 			if(CommonUtil.isNotEmpty(member.getMcId())){
 				if(jifen>0 ||fenbi1>0 ){
-					Member m =new Member();
+					MemberEntity m =new MemberEntity();
 					m.setId(member.getId());
 					m.setFansCurrency(member.getFansCurrency()-fenbi1);
 					m.setIntegral(member.getIntegral()-jifen);
@@ -1046,7 +1046,7 @@ public class WxCardServiceImpl implements IWxCardService {
 						//归还到商家账户
 						bususer.setFansCurrency(bususer.getFansCurrency()+fenbi1);
 						CommonUtil.setLoginUser(request, bususer);
-						BusUser b=new BusUser();
+						BusUserEntity b=new BusUserEntity();
 						b.setId(bususer.getId());
 						b.setFansCurrency(bususer.getFansCurrency());
 						busUserMapper.updateByPrimaryKeySelective(b);
@@ -1076,7 +1076,7 @@ public class WxCardServiceImpl implements IWxCardService {
 	
 
 	@Override
-	public Page findWxcardReceive(WxPublicUsers wxPublicUsers, BusUser busUser,
+	public Page findWxcardReceive(WxPublicUsersEntity wxPublicUsers, BusUserEntity busUser,
 			Map<String, Object> params) {
 		try {
 			List<Integer> poids = new ArrayList<Integer>();
@@ -1166,7 +1166,7 @@ public class WxCardServiceImpl implements IWxCardService {
 	 * @param busUser
 	 * @return
 	 *//*
-	public List<Map<String, Object>> findShopes1(Integer publicId,BusUser busUser) {
+	public List<Map<String, Object>> findShopes1(Integer publicId,BusUserEntity busUser) {
 		List<Integer> poids = new ArrayList<Integer>();
 		List<Map<String, Object>> poiIds=null;
 		if(busUser.getPid()==0){
@@ -1238,7 +1238,7 @@ public class WxCardServiceImpl implements IWxCardService {
 	}
 
 	@Override
-	public Map<String, Object> synchro(WxPublicUsers wxPublicUsers, String card_Id) {
+	public Map<String, Object> synchro(WxPublicUsersEntity wxPublicUsers, String card_Id) {
 		Map<String, Object> map=new HashMap<String, Object>();
 		try {
 			String status=wxCardService.cardInfo(card_Id, wxPublicUsers);
@@ -1256,7 +1256,7 @@ public class WxCardServiceImpl implements IWxCardService {
 	
 
 	@Override
-	public Page findWxCardShelve(WxPublicUsers wxPublicUsers,
+	public Page findWxCardShelve(WxPublicUsersEntity wxPublicUsers,
 			Map<String, Object> params) {
 		try {
 			if (CommonUtil.isEmpty(params)) {
@@ -1313,7 +1313,7 @@ public class WxCardServiceImpl implements IWxCardService {
 	//<!-----------卡券对外接口Start------------>
 	@Override
 	public List<Map<String, Object>> findWxCardByShopId(Integer shopId,
-			WxPublicUsers wxPublicUsers,Member member) {
+			WxPublicUsersEntity wxPublicUsers,MemberEntity member) {
 		if(CommonUtil.isEmpty(wxPublicUsers)){
 			return null;
 		}
@@ -1368,7 +1368,7 @@ public class WxCardServiceImpl implements IWxCardService {
 	
 	@Override
 	public List<Map<String, Object>> findWxCardByShopIdAndMoney(Integer shopId,
-			WxPublicUsers wxPublicUsers,Member member,Double money) {
+			WxPublicUsersEntity wxPublicUsers,MemberEntity member,Double money) {
 		if(CommonUtil.isEmpty(wxPublicUsers)){
 			return null;
 		}
@@ -1433,7 +1433,7 @@ public class WxCardServiceImpl implements IWxCardService {
 	
 	@Override
 	@Transactional(rollbackFor=Exception.class,propagation=Propagation.SUPPORTS)
-	public Map<String, Object> wxCardReceive(WxPublicUsers wxPublicUsers,
+	public Map<String, Object> wxCardReceive(WxPublicUsersEntity wxPublicUsers,
 			String code){
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
@@ -1473,7 +1473,7 @@ public class WxCardServiceImpl implements IWxCardService {
 	
 	@Override
 	@Transactional(rollbackFor=Exception.class,propagation=Propagation.SUPPORTS)
-	public Map<String, Object> wxCardReceiveBackName(WxPublicUsers wxPublicUsers,
+	public Map<String, Object> wxCardReceiveBackName(WxPublicUsersEntity wxPublicUsers,
 			String code){
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {

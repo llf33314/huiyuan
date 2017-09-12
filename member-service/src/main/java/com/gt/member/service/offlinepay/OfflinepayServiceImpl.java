@@ -38,14 +38,14 @@ import com.gt.dao.user.WxPublicUsersMapper;
 import com.gt.entity.common.WxCard;
 import com.gt.entity.common.WxCardReceive;
 import com.gt.entity.member.Card;
-import com.gt.entity.member.Member;
+import com.gt.entity.member.MemberEntity;
 import com.gt.entity.member.UserConsume;
 import com.gt.entity.member.card.DuofenCard;
 import com.gt.entity.offlinepay.Offlinepay;
 import com.gt.entity.offlinepay.OfflinepayDetail;
 import com.gt.entity.set.WxShop;
-import com.gt.entity.user.BusUser;
-import com.gt.entity.user.WxPublicUsers;
+import com.gt.entity.user.BusUserEntity;
+import com.gt.entity.user.WxPublicUsersEntity;
 import com.gt.controller.common.dict.DictService;
 import com.gt.controller.common.sms.SmsSpendingService;
 import com.gt.controller.common.wxcard.IWxCardService;
@@ -141,7 +141,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 	private DuofenCardService duofenCardService;
 
 	@Override
-	public List<Map<String, Object>> findOfflinepay(BusUser busUser) {
+	public List<Map<String, Object>> findOfflinepay(BusUserEntity busUser) {
 		try {
 			if (busUser.getPid() == 0) {
 				// 主用户
@@ -169,7 +169,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 	}
 
 	@Override
-	public List<Map<String, Object>> findShop(BusUser busUser) {
+	public List<Map<String, Object>> findShop(BusUserEntity busUser) {
 		try {
 			if (busUser.getPid() == 0) {
 				// 主用户
@@ -199,7 +199,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public Map<String, Object> saveOfflinepay(BusUser busUser, String param) throws Exception {
+	public Map<String, Object> saveOfflinepay(BusUserEntity busUser, String param) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
 			Offlinepay offlinepay = (Offlinepay) JSONObject.toBean(
@@ -240,7 +240,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 		try {
 			// 1支付方式 2储值卡支付不需要调用微信 3 会员需赠送物品
 			JSONObject obj = JSONObject.fromObject(param);
-			Member member = memberMapper.selectByPrimaryKey(CommonUtil
+			MemberEntity member = memberMapper.selectByPrimaryKey(CommonUtil
 					.toInteger(obj.get("memberId")));
 		
 			Double total = CommonUtil.toDouble(obj.get("total"));
@@ -435,7 +435,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 			}
 			
 
-			WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+			WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 					.selectByUserId(member.getBusid());
 			
 			Integer paytype = 1; // 默认储值卡支付
@@ -585,7 +585,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 					if(CommonUtil.isNotEmpty(wxPublicUsers)){
 						params.put("company", wxPublicUsers.getAuthorizerInfo());
 					}else{
-						BusUser bususer=busUserMapper.selectByPrimaryKey(member.getBusid());
+						BusUserEntity bususer=busUserMapper.selectByPrimaryKey(member.getBusid());
 						params.put("company", bususer.getMerchant_name());
 					}
 					
@@ -612,7 +612,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 					// 归还商户粉币
 					memberPayService.returnfansCurrency(
 							wxPublicUsers.getBusUserId(), -uc.getFenbi().doubleValue());
-					Member member1 = new Member();
+					MemberEntity member1 = new MemberEntity();
 					member1.setId(member.getId());
 					member1.setFansCurrency(member.getFansCurrency()
 							- uc.getFenbi());
@@ -623,7 +623,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 						&& CommonUtil.isNotEmpty(obj.get("integralMoney"))
 						&& !"0".equals(obj.get("integralMoney"))) {
 					// 扣除用户积分数量
-					Member member1 = new Member();
+					MemberEntity member1 = new MemberEntity();
 					member1.setId(member.getId());
 					member1.setIntegral(member.getIntegral() - uc.getIntegral());
 					memberMapper.updateByPrimaryKeySelective(member1);
@@ -676,13 +676,13 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 		userConsumeMapper.updateByPrimaryKeySelective(uc);
 
 		// 查询是否是会员
-		Member member = memberMapper.selectByPrimaryKey(CommonUtil
+		MemberEntity member = memberMapper.selectByPrimaryKey(CommonUtil
 				.toInteger(ucs.get(0).get("memberId")));
 
 		// 微信回调处理
 		if (CommonUtil.isNotEmpty(ucs.get(0).get("fenbi"))
 				&& CommonUtil.toDouble(ucs.get(0).get("fenbi")) !=0) {
-			Member member1 = new Member();
+			MemberEntity member1 = new MemberEntity();
 			member1.setId(CommonUtil.toInteger(ucs.get(0).get("memberId")));
 			member1.setFansCurrency(member.getFansCurrency()
 					+ CommonUtil.toDouble(ucs.get(0).get("fenbi")));
@@ -698,7 +698,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 		Integer cardType = CommonUtil.toInteger(ucs.get(0).get("cardType"));
 		// 优惠券优惠
 		if (cardType == 0) {
-			WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+			WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 					.selectByPrimaryKey(member.getPublicId());
 			iwxCardService.wxCardReceive(wxPublicUsers,
 					CommonUtil.toString(ucs.get(0).get("disCountdepict")));
@@ -716,7 +716,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 		if (CommonUtil.isNotEmpty(ucs.get(0).get("integral"))
 				&& CommonUtil.toDouble(ucs.get(0).get("integral")) != 0) {
 			// 扣除用户积分
-			Member member1 = new Member();
+			MemberEntity member1 = new MemberEntity();
 			member1.setId(CommonUtil.toInteger(ucs.get(0).get("memberId")));
 			int integral = new Double(member.getIntegral()
 					+ CommonUtil.toDouble(ucs.get(0).get("integral")))
@@ -754,7 +754,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 					+ ucs.get(0).get("totalMoney") + "元，实付"
 					+ ucs.get(0).get("discountMoney") + "元";
 
-			WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+			WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 					.selectByUserId(member.getBusid());
 
 			Map<String, Object> params = new HashMap<String, Object>();
@@ -770,7 +770,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 			if(CommonUtil.isNotEmpty(wxPublicUsers)){
 				params.put("company", wxPublicUsers.getAuthorizerInfo());
 			}else{
-				BusUser bususer=busUserMapper.selectByPrimaryKey(member.getBusid());
+				BusUserEntity bususer=busUserMapper.selectByPrimaryKey(member.getBusid());
 				params.put("company", bususer.getMerchant_name());
 			}
 			params.put("content", content);
@@ -792,7 +792,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 			// 1支付方式 2储值卡支付不需要调用微信 3 会员需赠送物品
 			JSONObject obj = JSONObject.fromObject(param);
 			Integer checked = CommonUtil.toInteger(obj.get("checked"));
-			Member member = memberMapper.selectByPrimaryKey(CommonUtil
+			MemberEntity member = memberMapper.selectByPrimaryKey(CommonUtil
 					.toInteger(obj.get("memberId")));
 			Double total = CommonUtil.toDouble(obj.get("total"));
 			Double countMoney = CommonUtil.toDouble(obj.get("countMoney"));
@@ -945,7 +945,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 			}
 			pay = countBalance(offlinepay.getBalancetype(),
 					offlinepay.getHoldnum(), (pay + countMoney));
-			WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+			WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 					.selectByUserId(member.getBusid());
 			uc.setBususerid(member.getBusid());
 			uc.setPublicId(member.getPublicId());
@@ -1125,7 +1125,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 					if(CommonUtil.isNotEmpty(wxPublicUsers)){
 						params.put("company", wxPublicUsers.getAuthorizerInfo());
 					}else{
-						BusUser bususer=busUserMapper.selectByPrimaryKey(member.getBusid());
+						BusUserEntity bususer=busUserMapper.selectByPrimaryKey(member.getBusid());
 						params.put("company", bususer.getMerchant_name());
 					}
 					
@@ -1151,7 +1151,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 					// 归还商户粉币
 					memberPayService.returnfansCurrency(
 							wxPublicUsers.getBusUserId(), -uc.getFenbi().doubleValue());
-					Member member1 = new Member();
+					MemberEntity member1 = new MemberEntity();
 					member1.setId(member.getId());
 					member1.setFansCurrency(member.getFansCurrency()
 							- uc.getFenbi());
@@ -1162,7 +1162,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 						&& CommonUtil.isNotEmpty(obj.get("integralMoney"))
 						&& !"0".equals(obj.get("integralMoney"))) {
 					// 扣除用户积分数量
-					Member member1 = new Member();
+					MemberEntity member1 = new MemberEntity();
 					member1.setId(member.getId());
 					member1.setIntegral(member.getIntegral() - uc.getIntegral());
 					memberMapper.updateByPrimaryKeySelective(member1);
@@ -1455,10 +1455,10 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 						params.put("mobiles", offlinepay.getPhone());
 					}
 					
-					WxPublicUsers wxPublicUsers=wxPublicUsersMapper.selectByUserId(busId);
+					WxPublicUsersEntity wxPublicUsers=wxPublicUsersMapper.selectByUserId(busId);
 					
 					if(CommonUtil.isEmpty(wxPublicUsers)){
-						BusUser busUser=busUserMapper.selectByPrimaryKey(busId);
+						BusUserEntity busUser=busUserMapper.selectByPrimaryKey(busId);
 						params.put("company", busUser.getMerchant_name());
 					}else{
 						params.put("company", wxPublicUsers.getAuthorizerInfo());
@@ -1505,7 +1505,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 						+ uc.getTotalmoney() + "元，实付"
 						+ uc.getDiscountmoney() + "元";
 
-				WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+				WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
 						.selectByUserId(uc.getBususerid());
 
 				Map<String, Object> params = new HashMap<String, Object>();
@@ -1520,7 +1520,7 @@ public class OfflinepayServiceImpl implements IofflinepayService {
 				if(CommonUtil.isNotEmpty(wxPublicUsers)){
 					params.put("company", wxPublicUsers.getAuthorizerInfo());
 				}else{
-					BusUser bususer=busUserMapper.selectByPrimaryKey(offlinepay.getBusid());
+					BusUserEntity bususer=busUserMapper.selectByPrimaryKey(offlinepay.getBusid());
 					params.put("company", bususer.getMerchant_name());
 				}
 				

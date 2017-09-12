@@ -1,6 +1,6 @@
 package com.gt.member.dao;
 
-import com.gt.member.entity.Member;
+import com.gt.member.entity.MemberEntity;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
@@ -18,13 +18,13 @@ import java.util.Map;
  * @since 2017-07-25
  */
 @Component
-public interface MemberDAO extends BaseMapper<Member> {
+public interface MemberEntityDAO extends BaseMapper<MemberEntity > {
 
-    Member selectById(Integer id);
+    MemberEntity selectById(Integer id);
 
-    Member selectByOpenid(@Param("openid")String openid,@Param("public_id")Integer public_id);
+    MemberEntity selectByOpenid(@Param("openid")String openid,@Param("public_id")Integer public_id);
 
-    Member selectByPublicIdAndPhone(@Param("public_id")Integer public_id,@Param("phone")String phone);
+    MemberEntity selectByPublicIdAndPhone(@Param("public_id")Integer public_id,@Param("phone")String phone);
 
     /**
      * 查询该商户下的会员信息 条件是手机号或者卡号cz
@@ -54,9 +54,9 @@ public interface MemberDAO extends BaseMapper<Member> {
                                          @Param("search")String search,@Param("ctId")Integer ctId,
                                          @Param("gtId")Integer gtId);
 
-    Member findByMcId(@Param("busId")Integer busId,@Param("phone")String phone,@Param("mcId") Integer mcId);
+    MemberEntity findByMcId(@Param("busId")Integer busId,@Param("phone")String phone,@Param("mcId") Integer mcId);
 
-    Member findByMcIdAndbusId(@Param("busId")Integer busId,@Param("mcId") Integer mcId);
+    MemberEntity findByMcIdAndbusId(@Param("busId")Integer busId,@Param("mcId") Integer mcId);
 
     /**
      * 根据id集合查询
@@ -92,41 +92,41 @@ public interface MemberDAO extends BaseMapper<Member> {
     /**
      * 查询随机的中奖人
      */
-    List<Member> randNumUser(@Param("wxUserId")Integer wxUserId);
+    List<MemberEntity > randNumUser(@Param("wxUserId")Integer wxUserId);
 
     /**
      * 查询对应的用户信息
      */
-    Member selectOpenid(@Param("ids")String ids,@Param("wxUserId")Integer wxUserId);
+    MemberEntity selectOpenid(@Param("ids")String ids,@Param("wxUserId")Integer wxUserId);
 
     /**
      * 查询前台页面指定的中奖人信息数
      */
-    List<Member> randomNum(@Param("numBer")Integer numBer,@Param("wxUserId")Integer wxUserId);
+    List<MemberEntity > randomNum(@Param("numBer")Integer numBer,@Param("wxUserId")Integer wxUserId);
 
     /**
      * 根据指定的openid去查询用户信息
      */
-    Member queryOpenid(@Param("string")String string);
+    MemberEntity queryOpenid(@Param("string")String string);
 
 
 
     /**
      * 查询大屏摇一摇用户
      */
-    List<Member> queryShakeFans(@Param("wxUserId")Integer wxUserId);
+    List<MemberEntity > queryShakeFans(@Param("wxUserId")Integer wxUserId);
 
-    Member queryMax(@Param("openid")String openid);
+    MemberEntity queryMax(@Param("openid")String openid);
 
     /**
      * 查询签到的用户信息
      */
-    List<Member> queryWxUserId(@Param("userId")Integer userId);
+    List<MemberEntity > queryWxUserId(@Param("userId")Integer userId);
 
     /**
      * 查询公众ID下的用户信息
      */
-    List<Member> queryListUser(@Param("wxUserId")Integer wxUserId);
+    List<MemberEntity > queryListUser(@Param("wxUserId")Integer wxUserId);
 
     /**
      * 查询用户所属公众号Id
@@ -136,7 +136,7 @@ public interface MemberDAO extends BaseMapper<Member> {
     /**
      * 根据Id查询摇一摇用户信息
      */
-    Member selectByKey(@Param("id")Integer id);
+    MemberEntity selectByKey(@Param("id")Integer id);
 
 
     int countCommend(@Param("busId")Integer busId,@Param("search")String search,
@@ -154,7 +154,7 @@ public interface MemberDAO extends BaseMapper<Member> {
     /**
      * 根据id去增加用户的(粉币or流量or积分)
      */
-    int updateAddKey(Member member2);
+    int updateAddKey(MemberEntity memberEntity2 );
 
 
     /**
@@ -163,7 +163,7 @@ public interface MemberDAO extends BaseMapper<Member> {
      * @param phone
      * @return
      */
-    List<Member> selectBybusIdAndPhone(@Param("busId")Integer busId,@Param("phone")String phone);
+    List<MemberEntity > selectBybusIdAndPhone(@Param("busId")Integer busId,@Param("phone")String phone);
 
     /**
      *
@@ -172,7 +172,7 @@ public interface MemberDAO extends BaseMapper<Member> {
      * @param pwd
      * @return
      */
-    List<Member> selectByPhoneAndPwd(@Param("busId")Integer busId,@Param("phone")String phone,@Param("pwd")String pwd);
+    List<MemberEntity > selectByPhoneAndPwd(@Param("busId")Integer busId,@Param("phone")String phone,@Param("pwd")String pwd);
 
 
     /**
@@ -181,7 +181,7 @@ public interface MemberDAO extends BaseMapper<Member> {
      * @param phone
      * @return
      */
-    Member findByPhone(@Param("busId")Integer busId,@Param("phone")String phone);
+    MemberEntity findByPhone(@Param("busId")Integer busId,@Param("phone")String phone);
 
     /**
      * 查询粉丝信息
@@ -203,11 +203,11 @@ public interface MemberDAO extends BaseMapper<Member> {
      * @param openid2
      * @return
      */
-    Member getByOpenid2(String openid2);
+    MemberEntity getByOpenid2(String openid2);
 
 
 
-    Member findByMcId1(@Param("mcId") Integer mcId);
+    MemberEntity findByMcId1(@Param("mcId") Integer mcId);
 
     List<Map<String, Object>> findMemberBybusIdAndPhone(@Param("busId")Integer busId,@Param("mcId") Integer mcId);
 
@@ -224,7 +224,7 @@ public interface MemberDAO extends BaseMapper<Member> {
     /**
      * 查询实体卡信息
      */
-    Member findLoginMode2ByPhone(@Param("busId")Integer busId,@Param("phone")String phone);
+    MemberEntity findLoginMode2ByPhone(@Param("busId")Integer busId,@Param("phone")String phone);
 
     /**
      * 查询会员积分卡积分剩余
@@ -250,7 +250,7 @@ public interface MemberDAO extends BaseMapper<Member> {
      */
     List<Map<String, Object>> findMemberIsNotCard(@Param("busId")Integer busId);
 
-    Member selectByOpenidAndBusId(@Param("openid")String openid,@Param("busId")Integer busId);
+    MemberEntity selectByOpenidAndBusId(@Param("openid")String openid,@Param("busId")Integer busId);
 
     /**
      * 根据ids查询粉丝信息

@@ -19,7 +19,7 @@ public class MemberServiceImpl implements MemberService {
     //	 *
     //	 * @param member
     //	 */
-    //	public Member applyCard(Member member) {
+    //	public MemberEntity applyCard(MemberEntity member) {
     //		GradeType gradeType = gradeTypeMapper.findByIsesasy(member.getBusid());
     //		if (CommonUtil.isEmpty(gradeType) || gradeType.getEasyapply() == 0) {
     //			return member;
@@ -27,7 +27,7 @@ public class MemberServiceImpl implements MemberService {
     //		// 判断会员领卡数量
     //		int count = cardMapper.countCardisBinding(member.getBusid());
     //
-    //		BusUser busUser = busUserMapper.selectByPrimaryKey(member.getBusid());
+    //		BusUserEntity busUser = busUserMapper.selectByPrimaryKey(member.getBusid());
     //
     //		int level = busUser.getLevel();
     //
@@ -65,7 +65,7 @@ public class MemberServiceImpl implements MemberService {
     //				card.setIsbinding((byte) 1);
     //				cardMapper.insertSelective(card);
     //
-    //				Member member1 = new Member();
+    //				MemberEntity member1 = new MemberEntity();
     //				member1.setMcId(card.getMcId());
     //				member1.setId(member.getId());
     //				memberMapper.updateByPrimaryKeySelective(member1);
@@ -79,8 +79,8 @@ public class MemberServiceImpl implements MemberService {
     //	}
     //
     //	@Override
-    //	public Map<String, Object> upMemberPhone(Member member) {
-    //		Member is_exist = memberMapper.selectByPublicIdAndPhone(
+    //	public Map<String, Object> upMemberPhone(MemberEntity member) {
+    //		MemberEntity is_exist = memberMapper.selectByPublicIdAndPhone(
     //				member.getPublicId(), member.getPhone());
     //		Map<String, Object> result = new HashMap<String, Object>();
     //		if (CommonUtil.isEmpty(is_exist)) {
@@ -97,7 +97,7 @@ public class MemberServiceImpl implements MemberService {
     //	}
     //
     //	@Override
-    //	public Member findById(Integer id) {
+    //	public MemberEntity findById(Integer id) {
     //		return memberMapper.selectByPrimaryKey(id);
     //	}
     //
@@ -364,11 +364,11 @@ public class MemberServiceImpl implements MemberService {
     //	 *//*
     //	@Override
     //	@Transactional(rollbackFor = Exception.class)
-    //	public List<ErrorWorkbook> upLoadMember(Integer busId, BusUser danbusUser,
+    //	public List<ErrorWorkbook> upLoadMember(Integer busId, BusUserEntity danbusUser,
     //			InputStream input) throws Exception {
     //
     //		List<Card> cards = new ArrayList<Card>();
-    //		List<Member> members = new ArrayList<Member>();
+    //		List<MemberEntity> members = new ArrayList<MemberEntity>();
     //		boolean error = false;
     //		List<String> cardNos = new ArrayList<String>();
     //
@@ -394,7 +394,7 @@ public class MemberServiceImpl implements MemberService {
     //		// 判断会员领卡数量
     //		int count = cardMapper.countCardisBinding(busId);
     //
-    //		BusUser busUser = busUserMapper.selectByPrimaryKey(busId);
+    //		BusUserEntity busUser = busUserMapper.selectByPrimaryKey(busId);
     //
     //		List<Map<String, Object>> wxshops = dictService.shopList(danbusUser);
     //
@@ -597,7 +597,7 @@ public class MemberServiceImpl implements MemberService {
     //
     //					cards.add(card);
     //
-    //					Member member = new Member();
+    //					MemberEntity member = new MemberEntity();
     //					member.setBusid(busId);
     //					member.setIntegral(Integer.parseInt(integral));
     //					member.setPhone(phone);
@@ -620,9 +620,9 @@ public class MemberServiceImpl implements MemberService {
     //				Card c = null;
     //				for (int i = 0; i < cards.size(); i++) {
     //					// 查询导入实体卡之前 用户是否领取了会员卡，领取会员卡合并
-    //					Member member = members.get(i);
+    //					MemberEntity member = members.get(i);
     //					String phone = member.getPhone();
-    //					Member m = memberMapper.findByPhone(busId, phone); // 已经存在的粉丝信息
+    //					MemberEntity m = memberMapper.findByPhone(busId, phone); // 已经存在的粉丝信息
     //					if (CommonUtil.isNotEmpty(m)) {
     //						if (CommonUtil.isNotEmpty(m.getMcId())) {
     //							// 已是会员
@@ -652,7 +652,7 @@ public class MemberServiceImpl implements MemberService {
     //							card.setGrId(c.getGrId());
     //							cardMapper.updateByPrimaryKeySelective(card);
     //
-    //							Member m1 = new Member();
+    //							MemberEntity m1 = new MemberEntity();
     //							m1.setLoginmode((byte) 0);
     //							m1.setId(m.getId());
     //							m1.setIntegral(m.getIntegral()
@@ -666,7 +666,7 @@ public class MemberServiceImpl implements MemberService {
     //							c.setApplytype((byte) 0);
     //							cardMapper.insertSelective(c);
     //
-    //							Member m1 = new Member();
+    //							MemberEntity m1 = new MemberEntity();
     //							m1.setId(m.getId());
     //							m1.setMcId(cards.get(i).getMcId());
     //							m1.setIntegral(m.getIntegral()
@@ -737,7 +737,7 @@ public class MemberServiceImpl implements MemberService {
     //		Map<String, Object> map = new HashMap<String, Object>();
     //		if (CommonUtil.isNotEmpty(param.get("memberId"))) {
     //			// 微信关注的
-    //			Member member = memberMapper.selectByPrimaryKey(Integer
+    //			MemberEntity member = memberMapper.selectByPrimaryKey(Integer
     //					.parseInt(param.get("memberId").toString()));
     //			Card card = cardMapper.selectByPrimaryKey(member.getMcId());
     //
@@ -757,7 +757,7 @@ public class MemberServiceImpl implements MemberService {
     //			}
     //
     //			// 商家导入会员信息
-    //			Member member1 = memberMapper.findByMcId(member.getBusid(), param
+    //			MemberEntity member1 = memberMapper.findByMcId(member.getBusid(), param
     //					.get("phone").toString(), cards.getMcId());
     //			if (CommonUtil.isEmpty(member1)) {
     //				map.put("code", 0);
@@ -798,11 +798,11 @@ public class MemberServiceImpl implements MemberService {
     //		Map<String, Object> map = new HashMap<String, Object>();
     //		try {
     //			// 微信关注的
-    //			Member member = memberMapper.selectByPrimaryKey(memberId);
+    //			MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
     //			Card card = cardMapper.selectByPrimaryKey(member.getMcId());
     //			if (isChecked == 1) {
     //				// 商家导入会员信息
-    //				Member member1 = memberMapper.selectByPrimaryKey(card
+    //				MemberEntity member1 = memberMapper.selectByPrimaryKey(card
     //						.getEntitymemberid());
     //				if (CommonUtil.isEmpty(member1)) {
     //					map.put("result", false);
@@ -857,7 +857,7 @@ public class MemberServiceImpl implements MemberService {
     //
     //	@Override
     //	@Transactional(rollbackFor = Exception.class)
-    //	public void applyMember(Recommend recommend, int applyType, Member member,
+    //	public void applyMember(Recommend recommend, int applyType, MemberEntity member,
     //			Integer ctId, int ischecked, String nominateCode, String phone,
     //			String json) throws Exception {
     //		try {
@@ -917,7 +917,7 @@ public class MemberServiceImpl implements MemberService {
     //				cardMapper.insertSelective(card);
     //
     //				Map<String, Object> mapList = JsonUtil.json2Map(json);
-    //				Member member1 = new Member();
+    //				MemberEntity member1 = new MemberEntity();
     //				member1.setPhone(phone);
     //				member1.setMcId(card.getMcId());
     //				member1.setId(member.getId());
@@ -992,9 +992,9 @@ public class MemberServiceImpl implements MemberService {
     //				// 推荐赠送积分 粉币 流量
     //				if (CommonUtil.isNotEmpty(recommend)) {
     //					boolean bool = false;
-    //					Member member2 = memberMapper.selectByPrimaryKey(recommend
+    //					MemberEntity member2 = memberMapper.selectByPrimaryKey(recommend
     //							.getMemberid());
-    //					Member member3 = new Member();
+    //					MemberEntity member3 = new MemberEntity();
     //					member3.setId(recommend.getMemberid());
     //
     //					if (CommonUtil.isNotEmpty(recommend.getFlow())
@@ -1053,7 +1053,7 @@ public class MemberServiceImpl implements MemberService {
     //				if (ischecked == 0) {
     //					// ischecked==0时会员卡需要审核
     //					if (member != null && member.getBusid() != null) {// 判断商家ID不为空时查询该商家的手机号是否填写
-    //						BusUser busUser = busUserMapper
+    //						BusUserEntity busUser = busUserMapper
     //								.selectByPrimaryKey(member.getBusid());
     //						if (CommonUtil.isNotEmpty(busUser.getPhone())) {// 商家手机号不为空就发送短信提醒商家审核
     //							// 发送短信
@@ -1082,7 +1082,7 @@ public class MemberServiceImpl implements MemberService {
     //	}
     //
     //	@Override
-    //	public Map<String, Object> findMemberCard(BusUser busUser,
+    //	public Map<String, Object> findMemberCard(BusUserEntity busUser,
     //			String cardNoKey, String cardNo) {
     //		Map<String, Object> map = new HashMap<String, Object>();
     //		String cardNodecrypt = "";
@@ -1156,7 +1156,7 @@ public class MemberServiceImpl implements MemberService {
     //			}
     //
     //			if (CommonUtil.isEmpty(card)) {
-    //				Member member = memberMapper.findByPhone(busId, cardNo);
+    //				MemberEntity member = memberMapper.findByPhone(busId, cardNo);
     //				if (CommonUtil.isNotEmpty(member)) {
     //					card = cardMapper.selectByPrimaryKey(member.getMcId());
     //				}
@@ -1175,7 +1175,7 @@ public class MemberServiceImpl implements MemberService {
     //						.getMcId());
     //				GiveRule giveRule = giveRuleMapper.selectByPrimaryKey(card
     //						.getGrId());
-    //				Member member = memberMapper.findByMcIdAndbusId(busId,
+    //				MemberEntity member = memberMapper.findByMcIdAndbusId(busId,
     //						card.getMcId());
     //				map.put("result", true);
     //				map.put("nickName", member.getNickname());
@@ -1207,7 +1207,7 @@ public class MemberServiceImpl implements MemberService {
     ////							.findBusUserShop(busUser.getId());
     ////				}
     //
-    //				WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+    //				WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
     //						.selectByUserId(busId);
     //
     //				if (CommonUtil.isNotEmpty(wxPublicUsers)
@@ -1335,7 +1335,7 @@ public class MemberServiceImpl implements MemberService {
     //		Card card = cardMapper.findCardByCardNo(busId, cardNo);
     //
     //		if (CommonUtil.isEmpty(card)) {
-    //			Member member = memberMapper.findByPhone(busId, cardNo);
+    //			MemberEntity member = memberMapper.findByPhone(busId, cardNo);
     //			if (CommonUtil.isNotEmpty(member)
     //					&& memberPayService.isMemember(member.getId())) {
     //				card = cardMapper.selectByPrimaryKey(member.getMcId());
@@ -1366,7 +1366,7 @@ public class MemberServiceImpl implements MemberService {
     //		List<Map<String, Object>> cards = cardMapper.findCardById(card
     //				.getMcId());
     //		GiveRule giveRule = giveRuleMapper.selectByPrimaryKey(card.getGrId());
-    //		Member member = memberMapper.findByMcIdAndbusId(busId, card.getMcId());
+    //		MemberEntity member = memberMapper.findByMcIdAndbusId(busId, card.getMcId());
     //		map.put("result", true);
     //		map.put("nickName", member.getNickname());
     //		map.put("phone", member.getPhone());
@@ -1408,7 +1408,7 @@ public class MemberServiceImpl implements MemberService {
     //			Byte ischecked, String phone, Map<String, Object> companyMap) {
     //		Map<String, Object> map = new HashMap<String, Object>();
     //		try {
-    //			Member member = memberMapper.selectByPrimaryKey(memberId);
+    //			MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
     //			Card card = cardMapper.selectByPrimaryKey(member.getMcId());
     //			if (card.getIschecked() != 1) {
     //				if (ischecked == 1) {
@@ -1595,7 +1595,7 @@ public class MemberServiceImpl implements MemberService {
     //			throws Exception {
     //		Map<String, Object> returnMap = new HashMap<String, Object>();
     //		try {
-    //			BusUser busUser = busUserMapper.selectByPrimaryKey(busId);
+    //			BusUserEntity busUser = busUserMapper.selectByPrimaryKey(busId);
     //
     //			StringBuffer sb = new StringBuffer(
     //					"update t_wx_bus_member set fans_currency=fans_currency+"
@@ -1684,7 +1684,7 @@ public class MemberServiceImpl implements MemberService {
     //	@Override
     //	public Map<String, Object> changeFlow(Integer id, Integer type) {
     ////		Map<String, Object> map = new HashMap<String, Object>();
-    ////		Member member = memberMapper.selectByPrimaryKey(id);
+    ////		MemberEntity member = memberMapper.selectByPrimaryKey(id);
     ////		if (CommonUtil.isEmpty(member.getPhone())) {
     ////			map.put("result", -2);
     ////			map.put("message", "请完善手机号码");
@@ -1696,7 +1696,7 @@ public class MemberServiceImpl implements MemberService {
     ////			return map;
     ////		}
     ////
-    ////		BusUser busUser = busUserMapper.selectByPrimaryKey(member.getBusid());
+    ////		BusUserEntity busUser = busUserMapper.selectByPrimaryKey(member.getBusid());
     ////
     ////		Card card = cardMapper.selectByPrimaryKey(member.getMcId());
     ////
@@ -1716,7 +1716,7 @@ public class MemberServiceImpl implements MemberService {
     ////		params.put("busId", busUser.getId());
     ////		params.put("prizeCount", type);
     ////		params.put("mobile", member.getPhone());
-    ////		WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+    ////		WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
     ////				.selectByPrimaryKey(member.getPublicId());
     ////		params.put("publicId", wxPublicUsers.getId());
     ////		params.put("memberId", id);
@@ -1791,7 +1791,7 @@ public class MemberServiceImpl implements MemberService {
     //		Map<String, Object> map = new HashMap<String, Object>();
     //		if (CommonUtil.isNotEmpty(param.get("memberId"))) {
     //			// 微信关注的
-    //			Member member = memberMapper.selectByPrimaryKey(Integer
+    //			MemberEntity member = memberMapper.selectByPrimaryKey(Integer
     //					.parseInt(param.get("memberId").toString()));
     //			Card card = cardMapper.selectByPrimaryKey(member.getMcId());
     //
@@ -1830,7 +1830,7 @@ public class MemberServiceImpl implements MemberService {
     //			MemberGift memberGift = memberGiftMapper.findBybusIdAndmodelCode(
     //					member.getBusid(), 0);
     //
-    //			Member member1 = new Member();
+    //			MemberEntity member1 = new MemberEntity();
     //			if (CommonUtil.isNotEmpty(memberGift)) {
     //
     //				member1.setId(member.getId());
@@ -1998,10 +1998,10 @@ public class MemberServiceImpl implements MemberService {
     //			throws Exception {
     //		Map<String, Object> map = new HashMap<String, Object>();
     //		try {
-    //			Member memberOld = memberMapper.selectByPrimaryKey(Integer
+    //			MemberEntity memberOld = memberMapper.selectByPrimaryKey(Integer
     //					.parseInt(parma.get("id").toString()));
     //
-    //			Member member = new Member();
+    //			MemberEntity member = new MemberEntity();
     //
     //			if (CommonUtil.isNotEmpty(parma.get("tel"))) {
     //				member.setPhone(parma.get("tel").toString());
@@ -2141,7 +2141,7 @@ public class MemberServiceImpl implements MemberService {
     //	 * @param memberParameter1
     //	 * @return
     //	 *//*
-    //	public boolean giveMemberGift(Member memberOld,
+    //	public boolean giveMemberGift(MemberEntity memberOld,
     //			MemberParameter memberParameter1) {
     //		try {
     //			MemberOption memberOption = memberOptionMapper
@@ -2206,7 +2206,7 @@ public class MemberServiceImpl implements MemberService {
     //				memberGift = memberGiftMapper.findBybusIdAndmodelCode(
     //						memberOld.getBusid(), modelCode);
     //
-    //				Member member = new Member();
+    //				MemberEntity member = new MemberEntity();
     //				if (CommonUtil.isNotEmpty(memberGift)) {
     //					member.setId(memberOld.getId());
     //					member.setPublicId(memberOld.getPublicId());
@@ -2220,7 +2220,7 @@ public class MemberServiceImpl implements MemberService {
     //					}
     //					boolean isCutFenbi = false; // 标示粉币可以扣除
     //					if (memberGift.getFenbi() > 0) {
-    //						BusUser busUser = busUserMapper
+    //						BusUserEntity busUser = busUserMapper
     //								.selectByPrimaryKey(member.getBusid());
     //						if (busUser.getFansCurrency() > memberGift.getFenbi()) {
     //							memberPayService.saveCardRecordNew(
@@ -2263,7 +2263,7 @@ public class MemberServiceImpl implements MemberService {
     //			String json) throws Exception {
     //		Map<String, Object> map = new HashMap<String, Object>();
     //		try {
-    //			Member member = memberMapper.selectByPrimaryKey(memberId);
+    //			MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
     //
     //			Card card = cardMapper.selectByPrimaryKey(member.getMcId());
     //			if (card.getApplytype() == 4 || "4".equals(card.getApplytype())) {
@@ -2271,7 +2271,7 @@ public class MemberServiceImpl implements MemberService {
     //			}
     //
     //			Map<String, Object> mapList = JsonUtil.json2Map(json);
-    //			Member member1 = new Member();
+    //			MemberEntity member1 = new MemberEntity();
     //			member1.setPhone(phone);
     //			member1.setId(memberId);
     //			if (CommonUtil.isNotEmpty(mapList.get("name"))) {
@@ -2341,7 +2341,7 @@ public class MemberServiceImpl implements MemberService {
     //		if (CommonUtil.isEmpty(memberId) || CommonUtil.isEmpty(ctId)) {
     //			throw new Exception();
     //		}
-    //		Member member = memberMapper.selectByPrimaryKey(memberId);
+    //		MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
     //
     //		GradeType gradeTypes = gradeTypeMapper.selectByPrimaryKey(gtId);
     //		if (CommonUtil.isEmpty(gradeTypes)
@@ -2450,7 +2450,7 @@ public class MemberServiceImpl implements MemberService {
     //
     //		cardMapper.insertSelective(card);
     //
-    //		Member member = new Member();
+    //		MemberEntity member = new MemberEntity();
     //		member.setId(CommonUtil.toInteger(ucs.get(0).get("memberId")));
     //		member.setIsbuy((byte) 1);
     //		member.setMcId(card.getMcId());
@@ -2480,10 +2480,10 @@ public class MemberServiceImpl implements MemberService {
     //		Map<String, Object> map = new HashMap<String, Object>();
     //		try {
     //			// 查询老数据
-    //			Member member = memberMapper.findByPhone(busId, phone);
+    //			MemberEntity member = memberMapper.findByPhone(busId, phone);
     //
     //			// 本数据
-    //			Member m1 = memberMapper.selectByPrimaryKey(memberId);
+    //			MemberEntity m1 = memberMapper.selectByPrimaryKey(memberId);
     //			if (CommonUtil.isEmpty(member)) {
     //				map.put("isCard", 0);
     //				map.put("message", "老会员不存在，请做新增操作");
@@ -2601,10 +2601,10 @@ public class MemberServiceImpl implements MemberService {
     //			throws Exception {
     //		Map<String, Object> map = new HashMap<String, Object>();
     //		try {
-    //			Member memberOld = memberMapper.selectByPrimaryKey(Integer
+    //			MemberEntity memberOld = memberMapper.selectByPrimaryKey(Integer
     //					.parseInt(param.get("id").toString()));
     //
-    //			Member member = new Member();
+    //			MemberEntity member = new MemberEntity();
     //
     //			if (CommonUtil.isNotEmpty(param.get("tel"))) {
     //				member.setPhone(param.get("tel").toString());
@@ -2639,7 +2639,7 @@ public class MemberServiceImpl implements MemberService {
     //			}
     //			Integer memberId = Integer.parseInt(param.get("id").toString());
     //			int count = cardMapper.countCardisBinding(memberOld.getBusid());
-    //			BusUser busUser = busUserMapper.selectByPrimaryKey(memberOld
+    //			BusUserEntity busUser = busUserMapper.selectByPrimaryKey(memberOld
     //					.getBusid());
     //			int level = busUser.getLevel();
     //
@@ -2778,7 +2778,7 @@ public class MemberServiceImpl implements MemberService {
     //					card.setReceivedate(new Date());
     //					card.setIsbinding((byte) 1);
     //
-    //					BusUser busUser1 = (BusUser) param.get("busUser");
+    //					BusUserEntity busUser1 = (BusUserEntity) param.get("busUser");
     //					List<Map<String, Object>> wxshops = dictService
     //							.shopList(busUser1);
     //					if (CommonUtil.isNotEmpty(wxshops) && wxshops.size() > 0) {
@@ -2880,10 +2880,10 @@ public class MemberServiceImpl implements MemberService {
     //				return map;
     //			}
     //
-    //			Member memberOld = memberMapper.selectByPrimaryKey(Integer
+    //			MemberEntity memberOld = memberMapper.selectByPrimaryKey(Integer
     //					.parseInt(param.get("id").toString()));
     //			int count = cardMapper.countCardisBinding(memberOld.getBusid());
-    //			BusUser busUser = busUserMapper.selectByPrimaryKey(memberOld
+    //			BusUserEntity busUser = busUserMapper.selectByPrimaryKey(memberOld
     //					.getBusid());
     //			int level = busUser.getLevel();
     //
@@ -2944,7 +2944,7 @@ public class MemberServiceImpl implements MemberService {
     //				throw new Exception();
     //			}
     //
-    //			Member member = new Member();
+    //			MemberEntity member = new MemberEntity();
     //			if (CommonUtil.isNotEmpty(param.get("pwd"))) {
     //				member.setPwd(SHA1.encode(param.get("pwd").toString()));
     //			}
@@ -3035,9 +3035,9 @@ public class MemberServiceImpl implements MemberService {
     //			Integer id, String phone, Integer flowCount) throws Exception {
     //		Map<String, Object> result = null;
     //		try {
-    //			Member member = memberMapper.selectByPrimaryKey(id);
+    //			MemberEntity member = memberMapper.selectByPrimaryKey(id);
     //			Card card = cardMapper.selectByPrimaryKey(member.getMcId());
-    //			BusUser busUser = busUserMapper.selectByPrimaryKey(member
+    //			BusUserEntity busUser = busUserMapper.selectByPrimaryKey(member
     //					.getBusid());
     //			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
     //			Map<String, Object> params = new HashMap<String, Object>();
@@ -3076,7 +3076,7 @@ public class MemberServiceImpl implements MemberService {
     //				fenbiFlowRecordMapper.updateFlowReduce(busUser.getId(), 1,
     //						flowType, flowCount, card.getCtId());
     //
-    //				Member m = new Member();
+    //				MemberEntity m = new MemberEntity();
     //				m.setId(id);
     //				m.setFlow(member.getFlow() - flowCount);
     //				memberMapper.updateByPrimaryKeySelective(m);
@@ -3117,8 +3117,8 @@ public class MemberServiceImpl implements MemberService {
     //			Integer jifen) throws Exception {
     //		Map<String, Object> map = new HashMap<String, Object>();
     //		try {
-    //			Member member = CommonUtil.getLoginMember(request);
-    //			Member m = new Member();
+    //			MemberEntity member = CommonUtil.getLoginMember(request);
+    //			MemberEntity m = new MemberEntity();
     //			m.setId(id);
     //			m.setIntegral(member.getIntegral() + jifen);
     //			memberMapper.updateByPrimaryKeySelective(m);
@@ -3162,8 +3162,8 @@ public class MemberServiceImpl implements MemberService {
     //			Map<String, Object> parma) {
     //		Integer id = Integer.parseInt(parma.get("id").toString());
     //		Map<String, Object> map = new HashMap<String, Object>();
-    //		Member member = memberMapper.selectByPrimaryKey(id);
-    //		BusUser busUser = busUserMapper.selectByPrimaryKey(member.getBusid());
+    //		MemberEntity member = memberMapper.selectByPrimaryKey(id);
+    //		BusUserEntity busUser = busUserMapper.selectByPrimaryKey(member.getBusid());
     //		if (request instanceof MultipartHttpServletRequest) {
     //			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
     //			List<MultipartFile> userfile = multipartRequest.getFiles("file");
@@ -3255,7 +3255,7 @@ public class MemberServiceImpl implements MemberService {
     //	 * @param wxPublicUsers
     //	 * @return
     //	 *//*
-    //	public String insertTwoCode(String scene_id, WxPublicUsers wxPublicUsers) {
+    //	public String insertTwoCode(String scene_id, WxPublicUsersEntity wxPublicUsers) {
     //		String component_appid = WxConstants.COMPONENT_APPID;
     //		ComponentAccessToken component_access_token = componentAPI
     //				.api_component_token();
@@ -3294,7 +3294,7 @@ public class MemberServiceImpl implements MemberService {
     //					memberIds.append("," + memberId[a]);
     //				}
     //			}
-    //			List<Member> memberList = memberMapper
+    //			List<MemberEntity> memberList = memberMapper
     //					.selectByPrimaryKeys(memberIds.toString());
     //			StringBuffer mcIds = new StringBuffer();
     //			StringBuffer phoneSb = new StringBuffer();
@@ -3357,9 +3357,9 @@ public class MemberServiceImpl implements MemberService {
     //			throws Exception {
     //		Map<String, Object> map1 = new HashMap<String, Object>();
     //		try {
-    //			WxPublicUsers wxPublicUsers = wxPublicUsersMapper
+    //			WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper
     //					.selectByUserId(busId);
-    //			Member member = memberMapper.selectByPrimaryKey(memberId);
+    //			MemberEntity member = memberMapper.selectByPrimaryKey(memberId);
     //			Card card = cardMapper.selectByPrimaryKey(member.getMcId());
     //
     //			GradeType gt = gradeTypeMapper.findGiveMoney(busId, card.getCtId());
@@ -3467,7 +3467,7 @@ public class MemberServiceImpl implements MemberService {
     //				map.put("message", "验证码超时或错误");
     //				return map;
     //			}
-    //			Member member = memberMapper.findLoginMode2ByPhone(busId, phone);
+    //			MemberEntity member = memberMapper.findLoginMode2ByPhone(busId, phone);
     //			if (CommonUtil.isNotEmpty(member)
     //					&& CommonUtil.isNotEmpty(member.getMcId())) {
     //				JedisUtil.del(vcode1); // 实体卡存在就删除验证码
@@ -3492,7 +3492,7 @@ public class MemberServiceImpl implements MemberService {
     //	public void memberTongJi(HttpServletRequest request, Integer ctId,
     //			String startTime) {
     //		try {
-    //			BusUser busUser = CommonUtil.getLoginUser(request);
+    //			BusUserEntity busUser = CommonUtil.getLoginUser(request);
     //			Integer busId = busUser.getId();
     //			if (busUser.getPid() != 0) {
     //				busId = dictService.pidUserId(busUser.getId());
@@ -3719,7 +3719,7 @@ public class MemberServiceImpl implements MemberService {
     ////	 */
     ////	@Transactional(rollbackFor=Exception.class)
     ////	@Override
-    ////	public Map<String, Object> linquMemberCard(BusUser busUser,
+    ////	public Map<String, Object> linquMemberCard(BusUserEntity busUser,
     ////			Map<String, Object> params) throws Exception {
     ////		Map<String, Object> returnMap = new HashMap<>();
     ////		try {
@@ -3735,10 +3735,10 @@ public class MemberServiceImpl implements MemberService {
     ////
     ////			String phone = CommonUtil.toString(params.get("phone"));
     ////
-    ////			Member member=memberMapper.findByPhone(busUser.getId(), phone);
+    ////			MemberEntity member=memberMapper.findByPhone(busUser.getId(), phone);
     ////			if(CommonUtil.isEmpty(member)){
     ////				// 新增用户
-    ////				member = new Member();
+    ////				member = new MemberEntity();
     ////				member.setPhone(phone);
     ////				member.setBusid(busUser.getId());
     ////				member.setLoginmode((byte) 1);
@@ -3793,7 +3793,7 @@ public class MemberServiceImpl implements MemberService {
     ////				card.setOnline((byte) 0);
     ////				cardMapper.insertSelective(card);
     ////
-    ////				Member member1 = new Member();
+    ////				MemberEntity member1 = new MemberEntity();
     ////				member1.setMcId(card.getMcId());
     ////				member1.setId(member.getId());
     ////				memberMapper.updateByPrimaryKeySelective(member1);
@@ -3815,7 +3815,7 @@ public class MemberServiceImpl implements MemberService {
     ////
     ////	@Transactional(rollbackFor=Exception.class)
     ////	@Override
-    ////	public Map<String, Object> buyMemberCard(BusUser busUser,
+    ////	public Map<String, Object> buyMemberCard(BusUserEntity busUser,
     ////			Map<String, Object> params) throws Exception {
     ////		Map<String, Object> returnMap=new HashMap<>();
     ////
@@ -3897,7 +3897,7 @@ public class MemberServiceImpl implements MemberService {
     ////
     ////			cardMapper.insertSelective(card);
     ////
-    ////			Member member = new Member();
+    ////			MemberEntity member = new MemberEntity();
     ////			member.setId(memberId);
     ////			member.setIsbuy((byte) 1);
     ////			member.setMcId(card.getMcId());

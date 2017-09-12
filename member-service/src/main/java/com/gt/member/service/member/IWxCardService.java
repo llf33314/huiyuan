@@ -79,8 +79,8 @@
 //	 * 保存和修改卡片信息
 //	 * @return
 //	 */
-//	public Map<String, Object> saveOrUpdateCard(WxPublicUsers wxPublicUsers,
-//                                                BusUser busUser, String wxcardParam);
+//	public Map<String, Object> saveOrUpdateCard(WxPublicUsersEntity wxPublicUsers,
+//                                                BusUserEntity busUser, String wxcardParam);
 //
 //	public Page findWxCard(Integer publicId, Map<String, Object> params);
 //
@@ -105,7 +105,7 @@
 //	 * @param params
 //	 * @return
 //	 */
-//	public Map<String, Object> saveShelves(WxPublicUsers wxPublicUsers, Map<String, Object> params);
+//	public Map<String, Object> saveShelves(WxPublicUsersEntity wxPublicUsers, Map<String, Object> params);
 //
 //	/**
 //	 * 二维码投放
@@ -113,13 +113,13 @@
 //	 * @param params
 //	 * @return
 //	 */
-//	public Map<String,Object> saveQrcode(WxPublicUsers wxPublicUsers, Map<String, Object> params);
+//	public Map<String,Object> saveQrcode(WxPublicUsersEntity wxPublicUsers, Map<String, Object> params);
 //
 //	/**
 //	 * 查询正常的卡片信息
 //	 * @return
 //	 */
-//	public Map<String,List<Map<String, Object>>> findReceiveCard(WxPublicUsers wxPublicUsers, String openid);
+//	public Map<String,List<Map<String, Object>>> findReceiveCard(WxPublicUsersEntity wxPublicUsers, String openid);
 //
 //	/**
 //	 * 查询卡券适用门店信息
@@ -134,7 +134,7 @@
 //	 * @param code
 //	 * @return
 //	 */
-//	public Map<String, Object> findCardReceive(WxPublicUsers wxPublicUsers, String code, BusUser busUser);
+//	public Map<String, Object> findCardReceive(WxPublicUsersEntity wxPublicUsers, String code, BusUserEntity busUser);
 //
 //	/**
 //	 * 卡券核销
@@ -143,8 +143,8 @@
 //	 * @param money
 //	 * @return
 //	 */
-//	public Map<String, Object> cardReceive(HttpServletRequest request, WxPublicUsers wxPublicUsers, String code, Integer storeId,
-//                                           Double money, BusUser bususer, Integer payType, Integer model, Double jifenmoney, Double fenbimoney) throws Exception;
+//	public Map<String, Object> cardReceive(HttpServletRequest request, WxPublicUsersEntity wxPublicUsers, String code, Integer storeId,
+//                                           Double money, BusUserEntity bususer, Integer payType, Integer model, Double jifenmoney, Double fenbimoney) throws Exception;
 //
 //	/**
 //	 * 卡券核销记录查询
@@ -152,13 +152,13 @@
 //	 * @param params
 //	 * @return
 //	 */
-//	public Page findWxcardReceive(WxPublicUsers wxPublicUsers, BusUser busUser, Map<String, Object> params);
+//	public Page findWxcardReceive(WxPublicUsersEntity wxPublicUsers, BusUserEntity busUser, Map<String, Object> params);
 //
 //
-//	public Map<String,Object> synchro(WxPublicUsers wxPublicUsers, String card_Id);
+//	public Map<String,Object> synchro(WxPublicUsersEntity wxPublicUsers, String card_Id);
 //
 //
-//	public Page findWxCardShelve(WxPublicUsers wxPublicUsers, Map<String, Object> params);
+//	public Page findWxCardShelve(WxPublicUsersEntity wxPublicUsers, Map<String, Object> params);
 //
 //
 //}

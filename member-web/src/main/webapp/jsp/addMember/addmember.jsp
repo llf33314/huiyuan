@@ -12,27 +12,27 @@ pageEncoding="UTF-8" %>
     <!-- 引入样式 -->
 
     <link rel="stylesheet" href="/js/elementui/elementui.css">
-    <link rel="stylesheet" href="/css/member/common.css">
-    <link rel="stylesheet" href="/css/member/member.css">
+    <link rel="stylesheet" href="/css/memberEntity/common.css">
+    <link rel="stylesheet" href="/css/memberEntity/memberEntity.css">
 
 </head>
 <body>
-    <div id="member">
+    <div id="memberEntity">
         <input type="hidden" value="${shopId}" id="shopId"/>
         <input type="hidden" value="${busId}" id="busId"/>
 
 
-        <el-breadcrumb separator="/" class="member-brand">
+        <el-breadcrumb separator="/" class="memberEntity-brand">
             <el-breadcrumb-item :to="{ path: '/' }">工作台</el-breadcrumb-item>
             <el-breadcrumb-item>新增会员</el-breadcrumb-item>
         </el-breadcrumb>
-        <div class="member-search">
+        <div class="memberEntity-search">
             <label>会员查询</label>
             <el-input placeholder="会员卡号/手机号" icon="search" size="small" v-model="search" :on-icon-click="handleIconClick">
             </el-input>
         </div>
 
-        <div class="add-member-box pl60 clearfix">
+        <div class="add-memberEntity-box pl60 clearfix">
             <label class="fl el-form-item__label">新增会员</label>
             <div class="add-main">
                 <el-form :model="ruleForm" :rules="rules" :label-position="labelPosition" ref="ruleForm" label-width="130px" class="demo-ruleForm">
@@ -76,7 +76,7 @@ pageEncoding="UTF-8" %>
 
             <!-- 右侧出现二维码 -->
             <transition name="el-fade-in-linear">
-                <div class="qrCode right-box" v-show="codeShow"  >
+                <div class="qrCode right-box guanzhuShow" v-show="codeShow"  >
                     <h2> 扫描二维码关注办理新增会员</h2>
                     <div class="code-detail textcenter">
                         <div class="code-pic">
@@ -96,19 +96,10 @@ pageEncoding="UTF-8" %>
 
             <!-- 右侧粉丝列表 -->
             <transition name="el-fade-in-linear" >
-                <div class="right-box member-list" style="display:none">
+                <div class="right-box memberEntity-list memberShow" style="display:none">
                     <h2>今日新增粉丝信息，点击对应头像可与会员手机号绑定</h2>
                     <ul class="scrollBar">
-                        <li class="list-item cur-list">
-                            <img :src="qrcode" alt="粉丝头像" title="粉丝头像">
-                            <div class="list-item-name">
-                                <p>粉丝微信昵称</p>
-                                <p class="color999 martop20">时间： 2017-05-14 00:00:00</p>
-                            </div>
-                            <label  class="list-item-status">
-                                <i class="list-item-check iconfont disnone">&#xe669;</i>
-                            </label>
-                        </li>
+
                     </ul>
                 </div>
             </transition>
@@ -147,20 +138,12 @@ pageEncoding="UTF-8" %>
     <script src="/js/elementui/elementui.js"></script>
     <script src="/js/jquery-2.2.2.js"></script>
     <script type="text/javascript" src="/js/socket.io/socket.io.js"></script>
-    <script type="text/javascript">
-        $(function () {
-            $('.scrollBar li').click(function () {
-                console.log(this);
-                $(this).addClass("cur-list").siblings().removeClass('cur-list');
-            })
-        });
-    </script>
 
     <script>
         const TIME_COUNT = 60;
 
         var vm = new Vue({
-            el: '#member',
+            el: '#memberEntity',
             data(){
                 var validateCardPhone = (rule, value, callback) => {
                     if (value === '') {
@@ -188,12 +171,12 @@ pageEncoding="UTF-8" %>
                     dialogVisible2: false,
                     dialogVisible3:false,
                     dialogTableVisible4:false,
-                    cardPriceVisible:${gradeTypes[0].applyType==3},
-                    options:${mapList},
-                    cardType:${mapList[0].ctId},
-                    gradeTypesOption:${gradeTypes},
-                    cardRank:'${gradeTypes[0].gt_name}',
-                    carID:${gradeTypes[0].gt_id},
+                    cardPriceVisible:false,
+                    options:'',
+                    cardType:'',
+                    gradeTypesOption:'',
+                    cardRank:'',
+                    carID:'',
                     ruleForm: {
                         follow:false ,
                         phone:'',
@@ -209,6 +192,26 @@ pageEncoding="UTF-8" %>
                         ]
                     }
                 }
+            },
+            mounted(){
+                var gradeTypes=${gradeTypes};
+                var mapList=${mapList};
+                if(mapList!=""){
+                    this.options=mapList;
+                    this.cardType=mapList[0].ctId;
+                }
+
+                if(gradeTypes!=""){
+                    if(gradeTypes[0].applyType==3) {
+                        this.cardPriceVisible =true;
+                    }
+                    this.gradeTypesOption=gradeTypes;
+                    this.cardRank=gradeTypes[0].gt_name;
+                    this.carID=gradeTypes[0].gt_id;
+                }
+
+
+
             },
             methods: {
                 handleIconClick: function (ev) {
@@ -373,8 +376,8 @@ pageEncoding="UTF-8" %>
                 },
 
                 fnGradeTypeBuy:function(){
-                    var applyTyper=vm.cardRank.applyType;
-                    if(applyTyper==3){
+                    var applyType=vm.cardRank.applyType;
+                    if(applyType==3){
                         vm.cardPriceVisible=true;
                         vm.$nextTick(function () {
                            $(".buyMoneyHtml").html(vm.cardRank.buyMoney);
@@ -495,15 +498,34 @@ pageEncoding="UTF-8" %>
         });
 
         socket.on('chatevent', function(data) {
-            sendMessage();
+            sendMessage(data.message);
         });
 
         socket.on('disconnect', function() {
             output('<span class="disconnect-msg">The client has disconnected!</span>');
         });
 
-        function sendMessage() {
+        function sendMessage(data) {
+            data=eval('(' + data + ')');
+            var newDate = new Date();
+            var html="";
+            html+="<li class='list-item' onclick='selli(this)'>";
+            html+="    <img src='"+data.headimgurl+"' alt='粉丝头像' title='粉丝头像'>";
+            html+="    <div class='list-item-name'>";
+            html+="   <p>"+data.nickname+"</p>";
+            html+="    <p class='color999 martop20'>时间： "+newDate.toLocaleTimeString()+"</p>";
+            html+="</div>";
+            html+=" <label  class='list-item-status'>";
+            html+="   <i class='list-item-check iconfont disnone'>&#xe669;</i>";
+            html+="</label>";
+            html+=" </li>";
+            $(html).appendTo(".scrollBar");
+            $(".guanzhuShow").hide();
+            $(".memberShow").show();
+        }
 
+        function selli(obj){
+            $(obj).addClass("cur-list").siblings().removeClass('cur-list');
         }
 
 

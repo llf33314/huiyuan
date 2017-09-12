@@ -1,7 +1,7 @@
 package com.gt.member.dao.common;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.gt.common.entity.BusUser;
+import com.gt.common.entity.BusUserEntity;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.gt.common.entity.BusUser;
  * @author pengjiangli
  * @since 2017-07-26
  */
-public interface BusUserDAO extends BaseMapper<BusUser> {
+public interface BusUserDAO extends BaseMapper<BusUserEntity > {
 
 }

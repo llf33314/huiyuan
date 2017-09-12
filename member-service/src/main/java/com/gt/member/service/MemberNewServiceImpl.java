@@ -1,8 +1,8 @@
 package com.gt.member.service;
 
 import com.gt.member.dao.MemberCardrecordDAO;
-import com.gt.member.dao.MemberDAO;
-import com.gt.member.entity.Member;
+import com.gt.member.dao.MemberEntityDAO;
+import com.gt.member.entity.MemberEntity;
 import com.gt.member.entity.MemberCardrecord;
 import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.CommonUtil;
@@ -25,7 +25,7 @@ public class MemberNewServiceImpl implements  MemberNewService {
     private MemberCardrecordDAO memberCardrecordDAO;
 
     @Autowired
-    private MemberDAO memberDAO;
+    private MemberEntityDAO memberDAO;
 
     @Autowired
     private SystemMsgService systemMsgService;
@@ -51,9 +51,9 @@ public class MemberNewServiceImpl implements  MemberNewService {
 	try {
 	    memberCardrecordDAO.insert(cr);
 	    if (recordType == 2) {
-		Member member = memberDAO.findByMcId1(cardId);
+		MemberEntity memberEntity = memberDAO.findByMcId1(cardId);
 		// 积分变动通知
-		systemMsgService.jifenMsg(cr, member);
+		systemMsgService.jifenMsg(cr, memberEntity );
 
 	    }
 	} catch (Exception e) {

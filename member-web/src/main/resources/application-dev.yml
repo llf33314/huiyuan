@@ -76,22 +76,32 @@ server:
     timeout: 30
 
 web:
- webHome: http://192.168.2.240
- wxmp_home: http://yifriend.net/
- wxmpsignKey: WXMP2017
- cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6
- sms_name: 多粉平台
- socket_url: ws://183.47.242.2:8881
+ webHome: http://192.168.2.240  #本项目域名
+ wxmp_home: http://yifriend.net/  #wxmp
+ wxmpsignKey: WXMP2017   #wxmp 秘钥
+ cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6  #会员卡秘钥
+ sms_name: 多粉平台  #短信发送名称
+ socket_url: https://socket.deeptel.com.cn
  redis_ip: 113.106.202.51
  redis_port: 6379
  redis_password: gt@123456
  redis_database: 3
+ res_image_path: /HUAMAO-SERVER/upload/image  #图片存放路径
+
+  #图片资源ftp ip
+ static_source_ftp_ip: 120.25.154.127
+  #图片资源ftp端口
+ static_source_ftp_port: 21
+ #图片资源ftp用户名
+ static_source_ftp_user: gt123456
+ #图片资源ftp密码
+ static_source_ftp_password: gt12345612
 
 
 redisSession:
  domainName: .example.com
  cookiePath: /
- cookieName: JSESSIONID
+ cookieName: WXMPJSESSIONID
 
 
 

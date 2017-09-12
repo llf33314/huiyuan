@@ -6,7 +6,7 @@
 //import java.util.List;
 //import java.util.Map;
 //
-//import com.gt.entity.common.BusUser;
+//import com.gt.entity.common.BusUserEntity;
 //
 //
 ///**
@@ -33,7 +33,7 @@
 //	 */
 //	public Map<String, Object> upOrDownModule(Integer oneId, Integer twoId);
 //
-//	public List<Map<String,Object>> findOption(BusUser busUser);
+//	public List<Map<String,Object>> findOption(BusUserEntity busUser);
 //
 //	/**
 //	 * 添加模块
@@ -49,7 +49,7 @@
 //	 * @param wxPublicUsers
 //	 * @return
 //	 */
-//	public List<Map<String, Object>> findModel(BusUser busUser);
+//	public List<Map<String, Object>> findModel(BusUserEntity busUser);
 //
 //	/**
 //	 * 查询省市区

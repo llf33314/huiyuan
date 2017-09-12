@@ -1,7 +1,7 @@
 package com.gt.member.dao;
 
-import com.gt.member.entity.MemberGiveconsume;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.gt.member.entity.MemberGiveconsume;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -14,7 +14,8 @@ import java.util.List;
  * @author pengjiangli
  * @since 2017-07-25
  */
-public interface MemberGiveconsumeDAO extends BaseMapper<MemberGiveconsume> {
+public interface MemberGiveconsumeDAO  extends BaseMapper<MemberGiveconsume > {
+
 
     /**
      * 根据订单查询赠送物品详细

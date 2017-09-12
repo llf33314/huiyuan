@@ -1,7 +1,6 @@
 package com.gt.member.service.memberApi;
 
-import com.gt.common.entity.BusUser;
-import com.gt.member.dto.ServerResponse;
+import com.gt.common.entity.BusUserEntity;
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.entityBo.PaySuccessBo;
@@ -27,7 +26,7 @@ public interface MemberApiService {
      *
      * @return
      */
-    public Member findByMemberId( Integer memberId ) throws BusinessException;
+    public MemberEntity findByMemberId( Integer memberId ) throws BusinessException;
 
     /**
      * 当前立即赠送物品
@@ -169,19 +168,19 @@ public interface MemberApiService {
 
     /*
      * 判断会员是否购买了会员卡
-     * @param member
+     * @param memberEntity
      * @return
      */
-    public Map< String,Object > findBuyCard( Member member );
+    public Map< String,Object > findBuyCard( MemberEntity memberEntity );
 
     /*
      * 购买会员卡成功调用
-     * @param member
+     * @param memberEntity
      * @param money
      * @param ctId
      * @return
      */
-    public Map< String,Object > buyCard( Member member, Double money, Integer ctId );
+    public Map< String,Object > buyCard( MemberEntity memberEntity, Double money, Integer ctId );
 
     /*
      * 归还商家粉币
@@ -207,22 +206,22 @@ public interface MemberApiService {
     /*
      * 粉币抵扣
      * @param request
-     * @param member
+     * @param memberEntity
      * @param busId
      * @param Fenbimoney 粉币抵扣金额
      * @return
      */
-    public Map< String,Object > reduceFansCurrencyMoney( Member member, Integer busId, Double Fenbimoney ) throws Exception;
+    public Map< String,Object > reduceFansCurrencyMoney( MemberEntity memberEntity, Integer busId, Double Fenbimoney ) throws Exception;
 
     /*
      * 粉币抵扣
      * @param request
-     * @param member
+     * @param memberEntity
      * @param busId
      * @param Fenbi 粉币
      * @return
      */
-    public void reduceFansCurrency( Member member, Integer busId, Double fenbi ) throws BusinessException;
+    public void reduceFansCurrency( MemberEntity memberEntity, Integer busId, Double fenbi ) throws BusinessException;
 
     /*
      * 查询卡片页面信息
@@ -296,7 +295,7 @@ public interface MemberApiService {
      * 小程序绑定手机号码
      * @return
      */
-    public Member bingdingPhone( Integer memberId, String phone, String code, Integer busId ) throws BusinessException;
+    public MemberEntity bingdingPhone( Integer memberId, String phone, String code, Integer busId ) throws BusinessException;
 
     /*
      *
@@ -475,7 +474,7 @@ public interface MemberApiService {
 	 * @return
 	 */
 
-    public boolean isMememberByApplet( BusUser busUser, String cardNoKey, String cardNo );
+    public boolean isMememberByApplet( BusUserEntity busUserEntity, String cardNoKey, String cardNo );
 
     /**
      * 统计门店线上和线下会员数量
@@ -643,4 +642,16 @@ public interface MemberApiService {
      */
     public void linquMemberCard(Map<String, Object> params) throws BusinessException;
 
+    /**
+     * 魔盒充值成功接口
+     * @param params
+     * @throws BusinessException
+     */
+    public void successChongZhi(Map<String, Object> params) throws BusinessException;
+
+    /**
+     * (商城）评论修改会员积分或粉币
+     * @param params
+     */
+    public void updateJifenAndFenBiByPinglu(Map<String, Object> params);
  }

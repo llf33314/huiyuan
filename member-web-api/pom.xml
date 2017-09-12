@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>parent</artifactId>
-        <groupId>com.gt.member</groupId>
+        <groupId>com.gt.memberEntity</groupId>
         <version>1.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -21,8 +21,8 @@
 
 
         <dependency>
-            <groupId>com.gt.member</groupId>
-            <artifactId>member-service</artifactId>
+            <groupId>com.gt.memberEntity</groupId>
+            <artifactId>memberEntity-service</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

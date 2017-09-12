@@ -13,10 +13,10 @@
 //import com.gt.entity.member.CardRecord;
 //import com.gt.entity.member.CardType;
 //import com.gt.entity.member.GradeType;
-//import com.gt.entity.member.Member;
+//import com.gt.entity.member.MemberEntity;
 //import com.gt.entity.member.MemberDate;
 //import com.gt.entity.member.PublicParameterSet;
-//import com.gt.entity.user.BusUser;
+//import com.gt.entity.user.BusUserEntity;
 //import com.gt.util.Page;
 //
 ///**
@@ -80,7 +80,7 @@
 //	 * @param itemName 记录描述 (会员消费、会员充值、)  必填
 //	 * @throws Exception
 //	 */
-//	public Map<String, Object> memberConsume(HttpServletRequest request, Integer publicId, BusUser busUser, String cardNo, double money,
+//	public Map<String, Object> memberConsume(HttpServletRequest request, Integer publicId, BusUserEntity busUser, String cardNo, double money,
 //                                             Byte recordType, Byte type, Integer integral, Integer fenbi,
 //                                             Integer uccount, Integer discount, Double discountmoney,
 //                                             Integer orderid, String uctable, Byte paymenttype, Byte paystatus,
@@ -282,7 +282,7 @@
 //	 * @param member
 //	 * @return
 //	 */
-//	public Map<String, Object> findBuyCard(Member member);
+//	public Map<String, Object> findBuyCard(MemberEntity member);
 //
 //	/**
 //	 * 购买会员卡成功调用
@@ -291,7 +291,7 @@
 //	 * @param ctId
 //	 * @return
 //	 */
-//	public Map<String, Object> buyCard(Member member, Double money, Integer ctId);
+//	public Map<String, Object> buyCard(MemberEntity member, Double money, Integer ctId);
 //
 //	/**
 //	 * 归还商家粉币
@@ -333,7 +333,7 @@
 //	 * @param Fenbimoney 粉币抵扣金额
 //	 * @return
 //	 */
-//	public Map<String, Object> reduceFansCurrencyMoney(HttpServletRequest request, Member member, Integer busId, Double Fenbimoney) throws Exception;
+//	public Map<String, Object> reduceFansCurrencyMoney(HttpServletRequest request, MemberEntity member, Integer busId, Double Fenbimoney) throws Exception;
 //
 //	/**
 //	 * 粉币抵扣
@@ -343,7 +343,7 @@
 //	 * @param Fenbi 粉币
 //	 * @return
 //	 */
-//	public Map<String, Object> reduceFansCurrency(HttpServletRequest request, Member member, Integer busId, Double fenbi) throws Exception;
+//	public Map<String, Object> reduceFansCurrency(HttpServletRequest request, MemberEntity member, Integer busId, Double fenbi) throws Exception;
 //
 //	/**
 //	 * 查询卡片页面信息
