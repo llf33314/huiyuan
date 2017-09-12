@@ -38,7 +38,7 @@
     <!-- 开发模式 console -->
     <springProfile name="dev">
         <!-- 日志logger(包.类)的输出级别 -->
-        <logger name="com.gt.memberEntity" level="DEBUG" additivity="false">
+        <logger name="com.gt.member" level="DEBUG" additivity="false">
             <appender-ref ref="console"/>
         </logger>
 

@@ -76,7 +76,7 @@ server:
     timeout: 30
 
 web:
- webHome: https://memberEntity.deeptel.com.cn
+ webHome: https://member.deeptel.com.cn
  wxmp_home: https://deeptel.com.cn/
  wxmpsignKey: WXMP2017
  cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6

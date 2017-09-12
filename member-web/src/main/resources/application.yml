@@ -44,11 +44,11 @@ spring:
 # 注：二者不能同时使用，如若同时使用，则只有logging.file生效
 # path: logs #日志文件目录
 # 默认情况下，日志文件的大小达到10MB时会切分一次，产生新的日志文件，默认级别为：ERROR、WARN、INFO
-# file: logs/memberEntity.log #日志文件名
+# file: logs/member.log #日志文件名
 # mybatis 路径
 #mybatis:
 # mapperLocations: classpath*:mapper/*.xml
-# type-aliases-package: com.gt.memberEntity.entity
+# type-aliases-package: com.gt.member.entity
 #mybatis
 mybatis-plus:
   mapper-locations: classpath:mapper/**/*.xml

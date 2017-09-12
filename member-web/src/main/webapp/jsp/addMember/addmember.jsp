@@ -12,27 +12,27 @@ pageEncoding="UTF-8" %>
     <!-- 引入样式 -->
 
     <link rel="stylesheet" href="/js/elementui/elementui.css">
-    <link rel="stylesheet" href="/css/memberEntity/common.css">
-    <link rel="stylesheet" href="/css/memberEntity/memberEntity.css">
+    <link rel="stylesheet" href="/css/member/common.css">
+    <link rel="stylesheet" href="/css/member/member.css">
 
 </head>
 <body>
-    <div id="memberEntity">
+    <div id="member">
         <input type="hidden" value="${shopId}" id="shopId"/>
         <input type="hidden" value="${busId}" id="busId"/>
 
 
-        <el-breadcrumb separator="/" class="memberEntity-brand">
+        <el-breadcrumb separator="/" class="member-brand">
             <el-breadcrumb-item :to="{ path: '/' }">工作台</el-breadcrumb-item>
             <el-breadcrumb-item>新增会员</el-breadcrumb-item>
         </el-breadcrumb>
-        <div class="memberEntity-search">
+        <div class="member-search">
             <label>会员查询</label>
             <el-input placeholder="会员卡号/手机号" icon="search" size="small" v-model="search" :on-icon-click="handleIconClick">
             </el-input>
         </div>
 
-        <div class="add-memberEntity-box pl60 clearfix">
+        <div class="add-member-box pl60 clearfix">
             <label class="fl el-form-item__label">新增会员</label>
             <div class="add-main">
                 <el-form :model="ruleForm" :rules="rules" :label-position="labelPosition" ref="ruleForm" label-width="130px" class="demo-ruleForm">
@@ -96,7 +96,7 @@ pageEncoding="UTF-8" %>
 
             <!-- 右侧粉丝列表 -->
             <transition name="el-fade-in-linear" >
-                <div class="right-box memberEntity-list memberShow" style="display:none">
+                <div class="right-box member-list memberShow" style="display:none">
                     <h2>今日新增粉丝信息，点击对应头像可与会员手机号绑定</h2>
                     <ul class="scrollBar">
 
@@ -143,7 +143,7 @@ pageEncoding="UTF-8" %>
         const TIME_COUNT = 60;
 
         var vm = new Vue({
-            el: '#memberEntity',
+            el: '#member',
             data(){
                 var validateCardPhone = (rule, value, callback) => {
                     if (value === '') {

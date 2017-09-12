@@ -16,12 +16,12 @@
     </modules>
     <packaging>pom</packaging>
     <name>parent</name>
-    <url>http://memberEntity.duofee.com</url>
+    <url>http://member.duofee.com</url>
     <!-- 开发人员列表 -->
     <developers>
         <developer>
-            <id>zhangmz0223</id>
-            <name>zhangmz</name>
+            <id>pengjiangli</id>
+            <name>pengjiangli</name>
             <email>2398590854@qq.com</email>
         </developer>
     </developers>
@@ -47,9 +47,6 @@
         <dev.lib.vue>2.1.3</dev.lib.vue>
         <dev.lib.fastjson>1.2.33</dev.lib.fastjson>
         <dev.lib.jjwt>0.7.0</dev.lib.jjwt>
-        <!-- Mybatis Generator -->
-        <!--<entity.target.dir>src/main/java/</entity.target.dir>-->
-        <!--<commemberEntitymber.dao.resources.dir>src/main/resources/</commemberEntitymber.dao.resources.dir>-->
         <dev.lib.lombok>1.16.18</dev.lib.lombok>
     </properties>
 
@@ -160,6 +157,7 @@
             <artifactId>commons-httpclient</artifactId>
             <version>3.0</version>
         </dependency>
+
 
         <dependency>
             <groupId>com.gt.api</groupId>
