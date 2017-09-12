@@ -6,13 +6,13 @@ body{
 }
 
 
-@font-face {  font-family: "iconfont";
-  src: url('/css/iconfont/iconfont.eot');
-  src: url('/css/iconfont/iconfont.eot'),
-  url('/css/iconfont/iconfont.woff') format('woff'),
-  url('/css/iconfont/iconfont.ttf') format('ttf'),
-  url('/css/iconfont/iconfont.svg') format('svg');
-}
+/*@font-face {  font-family: "iconfont";*/
+  /*src: url('/css/iconfont/iconfont.eot');*/
+  /*src: url('/css/iconfont/iconfont.eot'),*/
+  /*url('/css/iconfont/iconfont.woff') format('woff'),*/
+  /*url('/css/iconfont/iconfont.ttf') format('ttf'),*/
+  /*url('/css/iconfont/iconfont.svg') format('svg');*/
+/*}*/
 /* @font-face {
 	font-family: 'iconfont';  
 	src: url('//at.alicdn.com/t/font_243520_09qcq0txhr02uik9.eot');

@@ -14,12 +14,14 @@ pageEncoding="UTF-8" %>
     <link rel="stylesheet" href="/js/elementui/elementui.css">
     <link rel="stylesheet" href="/css/member/common.css">
     <link rel="stylesheet" href="/css/member/member.css">
+    <link rel="stylesheet" href="/css/iconfont/iconfont.css">
 
 </head>
 <body>
     <div id="member">
         <input type="hidden" value="${shopId}" id="shopId"/>
         <input type="hidden" value="${busId}" id="busId"/>
+        <input type="hidden" value="" id="memberId"/>
 
 
         <el-breadcrumb separator="/" class="member-brand">
@@ -423,6 +425,7 @@ pageEncoding="UTF-8" %>
                             params["gtId"]=gtId;
                             params["vcode"]=vcode;
                             params["busId"]=$("#busId").val();
+                            params["memberId"]=$("#memberId").val();
                             $.ajax({
                                 url:"/addMember/liquMemberCard.do",
                                 data:params,
@@ -509,14 +512,14 @@ pageEncoding="UTF-8" %>
             data=eval('(' + data + ')');
             var newDate = new Date();
             var html="";
-            html+="<li class='list-item' onclick='selli(this)'>";
+            html+="<li class='list-item' onclick='selli(this,"+data.id+")'>";
             html+="    <img src='"+data.headimgurl+"' alt='粉丝头像' title='粉丝头像'>";
             html+="    <div class='list-item-name'>";
             html+="   <p>"+data.nickname+"</p>";
             html+="    <p class='color999 martop20'>时间： "+newDate.toLocaleTimeString()+"</p>";
             html+="</div>";
             html+=" <label  class='list-item-status'>";
-            html+="   <i class='list-item-check iconfont disnone'>&#xe669;</i>";
+            html+="   <i class='list-item-check iconfont disnone icon-wancheng'></i>";
             html+="</label>";
             html+=" </li>";
             $(html).appendTo(".scrollBar");
@@ -524,8 +527,9 @@ pageEncoding="UTF-8" %>
             $(".memberShow").show();
         }
 
-        function selli(obj){
+        function selli(obj,memberId) {
             $(obj).addClass("cur-list").siblings().removeClass('cur-list');
+            $("#memberId").val(memberId);
         }
 
 

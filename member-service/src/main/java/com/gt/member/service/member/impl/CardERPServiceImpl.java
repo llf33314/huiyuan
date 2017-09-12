@@ -115,8 +115,14 @@ public class CardERPServiceImpl implements CardERPService {
 	    }
 
 	    String phone = CommonUtil.toString( params.get( "phone" ) );
+	    MemberEntity memberEntity=null;
+	    if(CommonUtil.isNotEmpty( params.get( "memberId" ) )){
+		Integer memberId=CommonUtil.toInteger(  params.get( "memberId" ));
+		memberEntity = memberMapper.selectById(memberId);
+	    }else{
+		memberEntity = memberMapper.findByPhone( busUserEntity.getId(), phone );
+	    }
 
-	    MemberEntity memberEntity = memberMapper.findByPhone( busUserEntity.getId(), phone );
 	    if ( CommonUtil.isEmpty( memberEntity ) ) {
 		// 新增用户
 		memberEntity = new MemberEntity();
@@ -171,6 +177,7 @@ public class CardERPServiceImpl implements CardERPService {
 		MemberEntity memberEntity1 = new MemberEntity();
 		memberEntity1.setMcId( card.getMcId() );
 		memberEntity1.setId( memberEntity.getId() );
+		memberEntity1.setPhone( phone );
 		memberMapper.updateById( memberEntity1 );
 
 		// 新增会员短信通知
@@ -202,6 +209,12 @@ public class CardERPServiceImpl implements CardERPService {
 		String notityUrl = PropertiesUtil.getWebHome() + "/addMember/79B4DE7C/successPayBuyCard";
 		WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersDAO.selectByUserId( busUserEntity.getId() );
 
+
+		MemberEntity memberEntity1 = new MemberEntity();
+		memberEntity1.setId( memberEntity.getId() );
+		memberEntity1.setPhone( phone );
+		memberMapper.updateById( memberEntity1 );
+
 		String url = PropertiesUtil.getWxmp_home() + "/pay/B02A45A5/79B4DE7C/createPayQR.do" + "?totalFee=" + gradeType.getBuyMoney() + "&model=13&busId=" + busUserEntity.getId()
 				+ "&orderNum=" + orderCode + "&memberId=" + memberEntity.getId() + "&desc=支付&notifyUrl=" + notityUrl + "&appid=" + wxPublicUsersEntity.getAppid()
 				+ "&appidType=0&isSendMessage=0&payWay=0&sourceType=1";
@@ -222,7 +235,6 @@ public class CardERPServiceImpl implements CardERPService {
     @Override
     public Map< String,Object > buyMemberCard( Map< String,Object > params ) throws Exception {
 	Map< String,Object > returnMap = new HashMap<>();
-
 	try {
 	    String orderCode = CommonUtil.toString( params.get( "out_trade_no" ) );
 	    UserConsume uc = userConsumeMapper.findByOrderCode1( orderCode );

@@ -156,7 +156,7 @@ public class AddMemberController {
 	    Integer busId = SessionUtil.getPidBusId( request );
 	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, cardType );
 	    if(gradeTypes.size()>0 ) {
-		if("3".equals( gradeTypes.get( 0 ).get( "applyType" ) )){
+		if("3".equals( CommonUtil.toString(  gradeTypes.get( 0 ).get( "applyType" ) ))){
 		    map.put( "gradeTypes",gradeTypes );
 		}else{
 		    List< Map< String,Object > > gts=new ArrayList<>(  );
@@ -181,46 +181,50 @@ public class AddMemberController {
      */
     @RequestMapping( value = "/sendMsgerp" )
     public void sendMsgerp( @RequestParam String telNo,@RequestParam Integer busId, HttpServletResponse response, HttpServletRequest request ) throws IOException {
-	if ( LOG.isDebugEnabled() ) {
-	    // 验证类型
-	    LOG.debug( "进入短信发送,手机号:" + telNo );
-	}
-	Map< String,Object > map = new HashMap< String,Object >();
-	MemberEntity memberEntity = memberMapper.findByPhone( busId, telNo );
-	if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-	    map.put( "result", false );
-	    map.put( "msg", "用户已是会员" );
-	    CommonUtil.write( response, map );
-	    return;
-	}
-
-	String url = propertiesUtil.getWxmp_home() + "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do";
-	Map< String,Object > obj = new HashMap<>();
-	String no = CommonUtil.getPhoneCode();
-	redisCacheUtil.set( no, no, 5 * 60 );
-	LOG.debug( "进入短信发送,手机号:" + no );
-	obj.put( "busId", busId );
-	obj.put( "telNo", telNo );
-	obj.put( "content", "会员短信校验码：" + no );
-	obj.put( "company", propertiesUtil.getSms_name() );
-	obj.put( "model", 9 );
 	try {
-	    String smsStr = SignHttpUtils.WxmppostByHttp( url, obj, propertiesUtil.getWxmpsignKey() );
-	    JSONObject smsJSON = JSONObject.parseObject( smsStr );
-	    if ( "0".equals( smsJSON.get( "code" ) ) ) {
-		map.put( "result", true );
-		map.put( "msg", "发送成功" );
-	    } else {
+	    if ( LOG.isDebugEnabled() ) {
+		// 验证类型
+		LOG.debug( "进入短信发送,手机号:" + telNo );
+	    }
+	    Map< String,Object > map = new HashMap< String,Object >();
+	    MemberEntity memberEntity = memberMapper.findByPhone( busId, telNo );
+	    if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
 		map.put( "result", false );
-		map.put( "msg", "发送失败" );
+		map.put( "msg", "用户已是会员" );
+		CommonUtil.write( response, map );
+		return;
 	    }
 
-	} catch ( Exception e ) {
-	    LOG.error( "短信发送失败", e );
-	    map.put( "result", false );
-	    map.put( "msg", "获取短信验证码失败" );
+	    String url = propertiesUtil.getWxmp_home() + "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do";
+	    Map< String,Object > obj = new HashMap<>();
+	    String no = CommonUtil.getPhoneCode();
+	    redisCacheUtil.set( no, no, 5 * 60 );
+	    LOG.debug( "进入短信发送,手机号:" + no );
+	    obj.put( "busId", busId );
+	    obj.put( "telNo", telNo );
+	    obj.put( "content", "会员短信校验码：" + no );
+	    obj.put( "company", propertiesUtil.getSms_name() );
+	    obj.put( "model", 9 );
+	    try {
+		String smsStr = SignHttpUtils.WxmppostByHttp( url, obj, propertiesUtil.getWxmpsignKey() );
+		JSONObject smsJSON = JSONObject.parseObject( smsStr );
+		if ( "0".equals( smsJSON.get( "code" ) ) ) {
+		    map.put( "result", true );
+		    map.put( "msg", "发送成功" );
+		} else {
+		    map.put( "result", false );
+		    map.put( "msg", "发送失败" );
+		}
+
+	    } catch ( Exception e ) {
+		LOG.error( "短信发送失败", e );
+		map.put( "result", false );
+		map.put( "msg", "获取短信验证码失败" );
+	    }
+	    CommonUtil.write( response, map );
+	}catch ( Exception e ){
+	    e.printStackTrace();
 	}
-	CommonUtil.write( response, map );
 
     }
 

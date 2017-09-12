@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gt.member.dao.memberDAO">
+<mapper namespace="com.gt.member.dao.MemberEntityDAO">
 
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberEntity">
@@ -530,11 +530,6 @@
 		pwd=#{pwd}
 	</select>
 
-	<select id="findByPhone" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List" />
-		from t_wx_bus_member where busId=#{busId} and phone =#{phone}
-	</select>
 
 
 	<select id="findMemberBymcIds" resultType="Map">
@@ -650,7 +645,12 @@
 
 	<select id="findMemberByPhoneAndBusId" resultType="Map">
 		select id,nickname,phone,headimgurl from t_wx_bus_member where  busId=#{busId} and phone=#{phone}
+	</select>
 
+	<select id="findByPhone" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_wx_bus_member where busId=#{busId} and phone =#{phone}
 	</select>
 
 </mapper>
