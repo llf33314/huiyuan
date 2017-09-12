@@ -529,7 +529,8 @@ pageEncoding="UTF-8" %>
                 $(".memberShow").show();
             }else{
                 vm.dialogVisible=false;
-                vm.dialogVisible2=false;
+                vm.dialogVisible2=true;
+                $("#memberId").val("");
             }
 
         }
