@@ -1,5 +1,6 @@
 package com.gt.member.service.member.impl;
 
+import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.member.dao.*;
@@ -245,7 +246,11 @@ public class CardERPServiceImpl implements CardERPService {
 	    }
 	    Integer payType = CommonUtil.toInteger( params.get( "payType" ) );
 	    uc.setPayStatus( 1 );
-	    uc.setPaymentType( payType );
+	    if(payType==0){
+		uc.setPaymentType( 1 );
+	    }else if(payType==1) {
+		uc.setPaymentType( 0 );
+	    }
 	    userConsumeMapper.insert( uc );
 
 	    // 添加会员卡
@@ -299,6 +304,15 @@ public class CardERPServiceImpl implements CardERPService {
 	    // 新增会员短信通知
 	    memberEntity = memberMapper.selectById( uc.getMemberId() );
 	    systemMsgService.sendNewMemberMsg( memberEntity );
+
+	    String wxmpsignKey= PropertiesUtil.getWxmpsignKey();
+	    String socketUrl= PropertiesUtil.getWxmp_home()+"/8A5DA52E/socket/getSocketApi.do";
+
+	    Map<String,Object> socketMap=new HashMap<>(  );
+	    socketMap.put( "pushName","member_count_"+orderCode );
+	    socketMap.put( "pushMsg","支付成功" );
+	    socketMap.put( "pushStyle","1" );
+	    SignHttpUtils.WxmppostByHttp( socketUrl, socketMap, wxmpsignKey );  //推送
 
 	    returnMap.put( "code", 0 );
 	    returnMap.put( "message", "领取成功" );

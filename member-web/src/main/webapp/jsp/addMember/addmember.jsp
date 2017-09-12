@@ -117,7 +117,7 @@ pageEncoding="UTF-8" %>
         <el-dialog  title="提示" :visible.sync="dialogVisible2" size="small" class="success">
             <div class="textcenter font34"><i class="el-icon-circle-check"></i></div>
             <div class="textcenter success-txt">会员新增成功</div>
-            <div class="textcenter color999">3s后自动关闭该弹窗……</div>
+            <div class="textcenter color999"></div>
         </el-dialog>
 
 
@@ -501,30 +501,36 @@ pageEncoding="UTF-8" %>
         });
 
         socket.on('chatevent', function(data) {
-            sendMessage(data.message);
+            sendMessage(data.message,data.style);
         });
 
         socket.on('disconnect', function() {
             output('<span class="disconnect-msg">The client has disconnected!</span>');
         });
 
-        function sendMessage(data) {
-            data=eval('(' + data + ')');
-            var newDate = new Date();
-            var html="";
-            html+="<li class='list-item' onclick='selli(this,"+data.id+")'>";
-            html+="    <img src='"+data.headimgurl+"' alt='粉丝头像' title='粉丝头像'>";
-            html+="    <div class='list-item-name'>";
-            html+="   <p>"+data.nickname+"</p>";
-            html+="    <p class='color999 martop20'>时间： "+newDate.toLocaleTimeString()+"</p>";
-            html+="</div>";
-            html+=" <label  class='list-item-status'>";
-            html+="   <i class='list-item-check iconfont disnone icon-wancheng'></i>";
-            html+="</label>";
-            html+=" </li>";
-            $(html).appendTo(".scrollBar");
-            $(".guanzhuShow").hide();
-            $(".memberShow").show();
+        function sendMessage(data,style) {
+            if(style==2){
+                data=eval('(' + data + ')');
+                var newDate = new Date();
+                var html="";
+                html+="<li class='list-item' onclick='selli(this,"+data.id+")'>";
+                html+="    <img src='"+data.headimgurl+"' alt='粉丝头像' title='粉丝头像'>";
+                html+="    <div class='list-item-name'>";
+                html+="   <p>"+data.nickname+"</p>";
+                html+="    <p class='color999 martop20'>时间： "+newDate.toLocaleTimeString()+"</p>";
+                html+="</div>";
+                html+=" <label  class='list-item-status'>";
+                html+="   <i class='list-item-check iconfont disnone icon-wancheng'></i>";
+                html+="</label>";
+                html+=" </li>";
+                $(html).appendTo(".scrollBar");
+                $(".guanzhuShow").hide();
+                $(".memberShow").show();
+            }else{
+                vm.dialogVisible=false;
+                vm.dialogVisible2=false;
+            }
+
         }
 
         function selli(obj,memberId) {
