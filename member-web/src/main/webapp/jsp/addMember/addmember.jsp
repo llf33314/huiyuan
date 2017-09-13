@@ -22,6 +22,7 @@ pageEncoding="UTF-8" %>
         <input type="hidden" value="${shopId}" id="shopId"/>
         <input type="hidden" value="${busId}" id="busId"/>
         <input type="hidden" value="" id="memberId"/>
+        <input type="hidden" value="${memberUser}" id="memberUser"/>
 
 
         <el-breadcrumb separator="/" class="member-brand">
@@ -31,7 +32,9 @@ pageEncoding="UTF-8" %>
         <div class="member-search">
             <label>会员查询</label>
             <el-input placeholder="会员卡号/手机号" icon="search" size="small" v-model="search" :on-icon-click="handleIconClick">
+
             </el-input>
+            <span class="findMemberMsg colorfe5"></span>
         </div>
 
         <div class="add-member-box pl60 clearfix">
@@ -227,6 +230,7 @@ pageEncoding="UTF-8" %>
                         type:"POST",
                         dataType:"JSON",
                         success:function (data) {
+                            $(".findMemberMsg").html("");
                             if(data.result==true){
                                 vm.dialogTableVisible4=true;
                                 var html="<div class='flex dialog-item'>";
@@ -296,6 +300,8 @@ pageEncoding="UTF-8" %>
                                     $(".memberHtml").html(html);
                                 })
 
+                            }else{
+                                $(".findMemberMsg").html(data.message);
                             }
                         }
                     })
@@ -426,6 +432,7 @@ pageEncoding="UTF-8" %>
                             params["vcode"]=vcode;
                             params["busId"]=$("#busId").val();
                             params["memberId"]=$("#memberId").val();
+                            params["memberUser"]=$("#memberUser").val();
                             $.ajax({
                                 url:"/addMember/liquMemberCard.do",
                                 data:params,
@@ -532,27 +539,7 @@ pageEncoding="UTF-8" %>
                 vm.dialogVisible2=true;
                 $("#memberId").val("");
             }
-
         }
-
-
-        //推送
-        var userId1 = '${addmember}';
-        var socket1 =  io.connect('${host}');
-
-        socket1.on('connect', function() {
-            var jsonObject = {userId: userId1,
-                message: "0"};
-            socket1.emit('auth', jsonObject);
-        });
-
-        socket1.on('chatevent', function(data) {
-            sendMessage(data.message,data.style);
-        });
-
-        socket1.on('disconnect', function() {
-            output('<span class="disconnect-msg">The client has disconnected!</span>');
-        });
 
         function selli(obj,memberId) {
             $(obj).addClass("cur-list").siblings().removeClass('cur-list');

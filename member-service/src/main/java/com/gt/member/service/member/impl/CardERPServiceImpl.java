@@ -11,10 +11,7 @@ import com.gt.member.service.common.MemberCommonService;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.member.CardERPService;
 import com.gt.member.service.member.SystemMsgService;
-import com.gt.member.util.CommonUtil;
-import com.gt.member.util.DateTimeKit;
-import com.gt.member.util.EncryptUtil;
-import com.gt.member.util.PropertiesUtil;
+import com.gt.member.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +64,9 @@ public class CardERPServiceImpl implements CardERPService {
 
     @Autowired
     private BusUserDAO busUserDAO;
+
+    @Autowired
+    private RedisCacheUtil redisCacheUtil;
 
     @Override
     public List< Map< String,Object > > findMemberIsNotCard( Integer busId, Map< String,Object > params ) {
@@ -223,7 +223,8 @@ public class CardERPServiceImpl implements CardERPService {
 		returnMap.put( "code", 2 );
 		returnMap.put( "message", "未支付" );
 		returnMap.put( "url", url );
-		returnMap.put( "orderCode",orderCode );
+		String memberUser=CommonUtil.toString( params.get( "memberUser" ) );
+		redisCacheUtil.set(orderCode,memberUser,300  );
 	    }
 
 	} catch ( Exception e ) {
@@ -313,7 +314,9 @@ public class CardERPServiceImpl implements CardERPService {
 
 	    Map<String,Object> socketMap=new HashMap<>(  );
 
-	    socketMap.put( "pushName","addmember_"+uc.getBusUserId()+"_"+uc.getStoreId() );
+	   String pushName=  redisCacheUtil.get( orderCode );
+
+	    socketMap.put( "pushName",pushName );
 	    socketMap.put( "pushMsg","支付成功" );
 	    socketMap.put( "pushStyle","1" );
 	    SignHttpUtils.WxmppostByHttp( socketUrl, socketMap, wxmpsignKey );  //推送
