@@ -54,7 +54,7 @@ public class AuthorizeOrLoginController {
 	    }
 
 	    Object remoteUcLogin = json.get( "remoteUcLogin" );
-	    if ( CommonUtil.isNotEmpty( uclogin ) || CommonUtil.isNotEmpty( remoteUcLogin ) ) {
+	    if (browser==99 && (CommonUtil.isNotEmpty( uclogin ) || CommonUtil.isNotEmpty( remoteUcLogin )) ) {
 		return "";
 	    }
 	}

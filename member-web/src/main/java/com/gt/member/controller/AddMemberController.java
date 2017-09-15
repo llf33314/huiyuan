@@ -81,20 +81,16 @@ public class AddMemberController {
     private RedisCacheUtil redisCacheUtil;
 
     @Autowired
-    private PropertiesUtil propertiesUtil;
-
-    @Autowired
     private WxShopDAO wxShopDAO;
 
     @ApiOperation( value = "新增会员统一页面", notes = "新增会员统一页面" )
     @ApiImplicitParam( name = "shopId", value = "门店id(没有门店请传主门店id)", paramType = "query", required = true, dataType = "int" )
     @RequestMapping( "/erpAddMember" )
     public String erpAddMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	SessionUtil.setLoginStyle( request,1 );
-	BusUserEntity busUserEntity =busUserMapper.selectById( 42 );
-	SessionUtil.setLoginUser( request, busUserEntity );
-	SessionUtil.setPidBusId(request,42);
-
+//       SessionUtil.setLoginStyle( request,1 );
+//       BusUserEntity busUserEntity=busUserMapper.selectById( 42 );
+//       SessionUtil.setLoginUser( request,busUserEntity );
+//       SessionUtil.setPidBusId( request,42 );
 
         Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
 	Integer loginStyle = SessionUtil.getLoginStyle( request );
@@ -136,7 +132,7 @@ public class AddMemberController {
 	request.setAttribute( "shopId", shopId );
 	request.setAttribute( "memberUser", "member_" +loginStyle+"_"+ userId );
 	request.setAttribute( "addmember", "addmember_" +busId+"_"+shopId );
-	request.setAttribute( "host", propertiesUtil.getSocket_url() );
+	request.setAttribute( "host", PropertiesUtil.getSocket_url() );
 
 	return "addMember/addmember";
     }
@@ -197,20 +193,22 @@ public class AddMemberController {
 		return;
 	    }
 
-	    String url = propertiesUtil.getWxmp_home() + "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do";
+	    String url = PropertiesUtil.getWxmp_home() + "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do";
 	    Map< String,Object > obj = new HashMap<>();
+	    RequestUtils requestUtils=new RequestUtils(  );
 	    String no = CommonUtil.getPhoneCode();
 	    redisCacheUtil.set( no, no, 5 * 60 );
 	    LOG.debug( "进入短信发送,手机号:" + no );
 	    obj.put( "busId", busId );
-	    obj.put( "telNo", telNo );
+	    obj.put( "mobiles", telNo );
 	    obj.put( "content", "会员短信校验码：" + no );
-	    obj.put( "company", propertiesUtil.getSms_name() );
+	    obj.put( "company", PropertiesUtil.getSms_name() );
 	    obj.put( "model", 9 );
+	    requestUtils.setReqdata( obj );
 	    try {
-		String smsStr = SignHttpUtils.WxmppostByHttp( url, obj, propertiesUtil.getWxmpsignKey() );
-		JSONObject smsJSON = JSONObject.parseObject( smsStr );
-		if ( "0".equals( smsJSON.get( "code" ) ) ) {
+		System.out.println(PropertiesUtil.getWxmpsignKey());
+		Map<String,Object> smsStr = HttpClienUtils.reqPostUTF8(JSON.toJSONString( requestUtils ), url,Map.class, PropertiesUtil.getWxmpsignKey() );
+		if ( "0".equals( CommonUtil.toString(smsStr.get( "code" )  ) ) ) {
 		    map.put( "result", true );
 		    map.put( "msg", "发送成功" );
 		} else {
@@ -388,8 +386,8 @@ public class AddMemberController {
 	      querymap.put( "scene_id", scene_id );
 	    querymap.put( "publicId", wxPublicUsersEntity.getId() );
 	    requestUtils.setReqdata( querymap );
-	    String url = propertiesUtil.getWxmp_home() + "/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/qrcodeCreateFinal.do";
-	    Map<String,Object> jsonMap= HttpClienUtils.reqPostUTF8( JSON.toJSONString( requestUtils ),url,Map.class, propertiesUtil.getWxmpsignKey() );
+	    String url = PropertiesUtil.getWxmp_home() + "/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/qrcodeCreateFinal.do";
+	    Map<String,Object> jsonMap= HttpClienUtils.reqPostUTF8( JSON.toJSONString( requestUtils ),url,Map.class, PropertiesUtil.getWxmpsignKey() );
 
 	    if ( "0".equals( CommonUtil.toString( jsonMap.get( "code" ) ) )  ) {
 		imgUrl=CommonUtil.toString( jsonMap.get( "data" ) );
