@@ -16,6 +16,11 @@ pageEncoding="UTF-8" %>
     <link rel="stylesheet" href="/css/member/member.css">
     <link rel="stylesheet" href="/css/iconfont/iconfont.css">
 
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div id="member">
@@ -25,10 +30,10 @@ pageEncoding="UTF-8" %>
         <input type="hidden" value="${memberUser}" id="memberUser"/>
 
 
-        <el-breadcrumb separator="/" class="member-brand">
+       <%-- <el-breadcrumb separator="/" class="member-brand">
             <el-breadcrumb-item :to="{ path: '/' }">工作台</el-breadcrumb-item>
             <el-breadcrumb-item>新增会员</el-breadcrumb-item>
-        </el-breadcrumb>
+        </el-breadcrumb>--%>
         <div class="member-search">
             <label>会员查询</label>
             <el-input placeholder="会员卡号/手机号" icon="search" size="small" v-model="search" :on-icon-click="handleIconClick">
@@ -111,28 +116,26 @@ pageEncoding="UTF-8" %>
         </div>
 
         <!-- 付款二维码 -->
-        <el-dialog  title="付款" :visible.sync="dialogVisible" size="small" class="payCode">
+        <el-dialog  title="付款" :visible.sync="dialogVisible" size="small" class="payCode" :modal="false" v-cloak top="5%">
             <div class="paycode-pic"><img :src="qrcode" alt="付款二维码"></div>
             <div class="textcenter martop20">请使用微信或者支付宝扫描该二维码付款</div>
         </el-dialog>
 
         <!-- 会员新增成功提示 -->
-        <el-dialog  title="提示" :visible.sync="dialogVisible2" size="small" class="success">
+        <el-dialog  title="提示" :visible.sync="dialogVisible2" size="small" class="success" :modal="false" v-cloak top="5%">
             <div class="textcenter font34"><i class="el-icon-circle-check"></i></div>
             <div class="textcenter success-txt">会员新增成功</div>
             <div class="textcenter color999"></div>
         </el-dialog>
 
 
-        <el-dialog  title="提示" :visible.sync="dialogVisible3" size="small" class="success">
+        <el-dialog  title="提示" :visible.sync="dialogVisible3" size="tiny" class="success" :modal="false" v-cloak top="5%">
             <div class="textcenter font34"><i class="el-icon-circle-close"></i></div>
             <div class="textcenter error-txt success-txt"></div>
         </el-dialog>
 
-
-
         <!-- 会员信息弹出层 -->
-        <el-dialog title="会员信息" :visible.sync="dialogTableVisible4" size="tiny"  :modal="false" >
+        <el-dialog title="会员信息" :visible.sync="dialogTableVisible4" size="tiny"  :modal="false" v-cloak top="5%" >
             <div class="memberHtml"></div>
         </el-dialog>
 
@@ -145,7 +148,7 @@ pageEncoding="UTF-8" %>
     <script type="text/javascript" src="/js/socket.io/socket.io.js"></script>
 
     <script>
-        const TIME_COUNT = 60;
+        const TIME_COUNT = 120;
 
         var vm = new Vue({
             el: '#member',
@@ -189,7 +192,7 @@ pageEncoding="UTF-8" %>
                     },
                     rules:{
                         verification: [
-                            { required: true, message: '请输入手机验证码', trigger: 'blur' }
+                            { required: true, message: '请输入短信验证码', trigger: 'blur' }
 
                         ],
                         phone:[
@@ -311,6 +314,7 @@ pageEncoding="UTF-8" %>
                 fnGuanZhu: function (e) {
                     if(e == true){
                         vm.codeShow = true;
+                        $(".memberShow").hide();
                         $.ajax({
                             url:"/addMember/guanzhuiQcode.do",
                             type:"POST",
@@ -324,8 +328,8 @@ pageEncoding="UTF-8" %>
                         })
                     }
                     if(e == false){
-                        console.log(2);
-                        this.codeShow = false
+                        vm.codeShow = false;
+                        $(".memberShow").hide();
                     }
                 },
 
@@ -446,6 +450,8 @@ pageEncoding="UTF-8" %>
                                         })
                                     }else if(data.code==1){
                                         vm.dialogVisible2=true;
+                                        $("#memberId").val("");
+                                        $(".cur-list").remove();
                                     }else if(data.code==2){
                                         userId1="addMember_"+data.orderCode;
                                         //跳转支付页面
@@ -513,7 +519,7 @@ pageEncoding="UTF-8" %>
         });
 
         socket.on('disconnect', function() {
-            output('<span class="disconnect-msg">The client has disconnected!</span>');
+
         });
 
         function sendMessage(data,style) {
@@ -521,7 +527,7 @@ pageEncoding="UTF-8" %>
                 data=eval('(' + data + ')');
                 var newDate = new Date();
                 var html="";
-                html+="<li class='list-item' onclick='selli(this,"+data.id+")'>";
+                html+="<li class='list-item' onclick='selli(this,"+data.id+","+data.phone+")'>";
                 html+="    <img src='"+data.headimgurl+"' alt='粉丝头像' title='粉丝头像'>";
                 html+="    <div class='list-item-name'>";
                 html+="   <p>"+data.nickname+"</p>";
@@ -534,16 +540,19 @@ pageEncoding="UTF-8" %>
                 $(html).appendTo(".scrollBar");
                 $(".guanzhuShow").hide();
                 $(".memberShow").show();
+
             }else{
                 vm.dialogVisible=false;
                 vm.dialogVisible2=true;
                 $("#memberId").val("");
+                $(".cur-list").remove();
             }
         }
 
-        function selli(obj,memberId) {
+        function selli(obj,memberId,phone) {
             $(obj).addClass("cur-list").siblings().removeClass('cur-list');
             $("#memberId").val(memberId);
+            vm.ruleForm.phone=phone;
         }
 
 
