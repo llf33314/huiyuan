@@ -379,7 +379,7 @@
 	</select>
 
 	<select id="findUserConsumeByBusIdAndOrderCode" resultMap="BaseResultMap">
-		select id,refundMoney from t_wx_user_consume where busUserId=#{busId}  and orderCode=#{orderCode} and isend=0
+		select id,refundMoney,memberId,paymentType from t_wx_user_consume where busUserId=#{busId}  and orderCode=#{orderCode} and isend=0
 
 	</select>
 
