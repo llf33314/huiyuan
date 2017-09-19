@@ -3963,10 +3963,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    }
 		}
 	    }
-
-	    //关注公众好接口
-	    String imgUrl = memberCommonService.findWxQcode( busId, 0, "" );
-	    returnMap.put( "imgUrl", imgUrl );
 	    return returnMap;
 	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR );
@@ -4257,8 +4253,17 @@ public class MemberApiServiceImpl implements MemberApiService {
         MemberEntity memberEntity=memberDAO.selectById( memberId );
 	MemberEntity m1=new MemberEntity();
 	m1.setId( memberId );
-	m1.setIntegral(  memberEntity.getIntegral()+jifen);
-	m1.setFansCurrency( memberEntity.getFansCurrency()+fenbi );
-	memberDAO.updateById( m1 );
+	boolean bool=false;
+	if(CommonUtil.isNotEmpty( jifen ) && jifen>0) {
+	    m1.setIntegral( memberEntity.getIntegral() + jifen );
+	    bool=true;
+	}
+	if(CommonUtil.isNotEmpty( fenbi ) && fenbi>0) {
+	    m1.setFansCurrency( memberEntity.getFansCurrency() + fenbi );
+	    bool=true;
+	}
+	if(bool) {
+	    memberDAO.updateById( m1 );
+	}
     }
 }
