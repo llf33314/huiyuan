@@ -2,13 +2,8 @@ package com.gt.member.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.gt.api.bean.sign.SignBean;
-import com.gt.api.dto.ResponseUtils;
 import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.RequestUtils;
-import com.gt.api.util.httpclient.LocalHttpClient;
-import com.gt.api.util.sign.SignHttpUtils;
-import com.gt.api.util.sign.SignUtils;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.TCommonStaffEntity;
 import com.gt.common.entity.WxPublicUsersEntity;
@@ -27,12 +22,6 @@ import com.gt.util.entity.param.sms.OldApiSms;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import org.apache.http.Header;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.methods.RequestBuilder;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +36,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -211,30 +199,27 @@ public class AddMemberController {
 	    String no = CommonUtil.getPhoneCode();
 	    redisCacheUtil.set( no, no, 5 * 60 );
 	    LOG.debug( "进入短信发送,手机号:" + no );
+
 	    OldApiSms oldApiSms=new OldApiSms();
 	    oldApiSms.setMobiles(telNo);
-	    oldApiSms.setContent( "会员短信校验码："+no);
-	    oldApiSms.setCompany("多粉平台");
+	    oldApiSms.setContent( "会员短信校验码:"+no);
+	    oldApiSms.setCompany(PropertiesUtil.getSms_name());
 	    oldApiSms.setBusId(busId);
 	    oldApiSms.setModel(9);
-//	    oldApiSms.setBusId( 42 );
-//	    oldApiSms.setContent( "hahah" );
-//	    oldApiSms.setCompany( "5" );
-//	    oldApiSms.setMobiles( "15017934717" );
-//	    oldApiSms.setModel( 9 );
 
 	    requestUtils.setReqdata( oldApiSms );
 	    try {
 		System.out.println(PropertiesUtil.getWxmpsignKey());
 		System.out.println(JSONObject.toJSON( requestUtils ));
-		Map<String,Object> smsStr = HttpClienUtils.reqPostUTF8(JSONObject.toJSONString( requestUtils ), url,Map.class, PropertiesUtil.getWxmpsignKey() );
+		String smsStr = HttpClienUtils.reqPostUTF8(JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
 		System.out.println(smsStr);
-		if ( "0".equals( CommonUtil.toString(smsStr.get( "code" )  ) ) ) {
+		JSONObject json=JSONObject.parseObject( smsStr );
+		if ( "0".equals( CommonUtil.toString(json.get( "code" )  ) ) ) {
 		    map.put( "result", true );
 		    map.put( "msg", "发送成功" );
 		} else {
 		    map.put( "result", false );
-		    map.put( "msg", "发送失败:"+smsStr.get( "msg" ) );
+		    map.put( "msg", "发送失败:"+json.get( "msg" ) );
 		}
 
 	    } catch ( Exception e ) {
