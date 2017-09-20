@@ -3974,7 +3974,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	Integer ctId = CommonUtil.toInteger( map.get( "ctId" ) );
 	List< Map< String,Object > > gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, ctId );
 	if ( gradeTypes.size() > 0 ) {
-	    if ( "3".equals( gradeTypes.get( 0 ).get( "applyType" ) ) ) {
+	    if ( "3".equals( CommonUtil.toString(gradeTypes.get( 0 ).get( "applyType" ) ) )) {
 		return gradeTypes;
 	    } else {
 		List< Map< String,Object > > returnMap = new ArrayList<>();
@@ -4079,14 +4079,14 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    memberParameterDAO.insert( mp );
 		}
 	    }
-	    Integer applyType = CommonUtil.toInteger( params.get( "applyType" ) );
+
 	    Integer ctId = CommonUtil.toInteger( params.get( "ctId" ) );
 	    Integer gtId = CommonUtil.toInteger( params.get( "gtId" ) );
 	    Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
 
 	    // 根据卡片类型 查询第一等级
 	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findBybusIdAndCtId3( busId, ctId );
-
+	    Integer applyType =CommonUtil.toInteger( gradeTypes.get( 0 ).get( "applyType" ) );
 	    if ( applyType != 3 ) {
 		//非购买会员卡  直接分配会员卡
 		MemberCard card = new MemberCard();
