@@ -81,7 +81,7 @@ web:
  wxmpsignKey: WXMP2017
  cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6
  sms_name: 多粉平台
- socket_url: ws://113.106.202.51:8881
+ socket_url: https://socket.deeptel.com.cn
  redis_ip: 113.106.202.51
  redis_port: 6379
  redis_password: gt@123456

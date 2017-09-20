@@ -1,0 +1,237 @@
+*{
+    padding:0;
+    margin: 0;
+}
+body{
+    font-family: "Microsoft Yahei",-apple-system, BlinkMacSystemFont, "PingFang SC","Helvetica Neue",STHeiti,Tahoma,Simsun,sans-serif;
+}
+/*public*/
+.fr{
+    float: right;
+}
+.fl{
+    float: left;
+}
+.font{
+    font-size: 14px;
+    color: #333;
+    font-weight: normal;
+    padding: 0;
+    margin: 0;
+}
+.text{
+    font-size: 14px;
+    color: #999;
+}
+.btn{
+    height: 35px;
+    min-width: 75px;
+    border: 0;
+    outline: none;
+    border: 1px solid #bfcbd9;
+    border-radius: 3px;
+    background-color: #fff;
+    cursor: pointer;
+    padding: 0 10px;
+}
+.btn:hover{
+    opacity:0.9;
+}
+.bg{
+    background-color: #20a0ff;
+    border: 1px solid #20a0ff;
+    color: #fff;
+}
+.bg2{
+    background-color: #fcba65;
+    border: 1px solid #fcba65;
+    color: #fff;
+}
+.color{
+    color: #20a0ff;
+}
+.box-nomsg{
+    height: 127px;
+    text-align: center;
+    border:1px solid #dfe6ec;
+}
+.box-nomsg p{
+    font-size: 14px;
+    color: #999;
+}
+.box-nomsg .icon{
+    color: #cecece;
+    font-size: 30px;
+    padding: 27px 0 18px;
+}
+.smzf-dialogs-box{
+    font-size: 14px;
+    color: #333;
+    padding-bottom: 18px;
+    overflow: hidden;
+}
+.el-dialog__body {
+    padding: 30px 40px;
+    color: #48576a;
+    font-size: 14px;
+}
+.el-dialog__title {
+    line-height: 1;
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+}
+.smzf-dialogs-box .title{
+    padding-bottom: 30px;
+    text-align: center;
+}
+.el-dialog--559px{
+    width: 559px;
+}
+.el-dialog--400px .el-dialog__header {
+    padding: 0;
+    border: 0;
+}
+.el-dialog__header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eeeeee;
+}
+/*public*/
+.el-tabs__nav {
+    height: 50px;
+    line-height: 50px;
+}
+.el-tabs__header {
+    border-bottom: 1px solid #eee;
+    padding: 0;
+    position: relative;
+    margin: 0 0 30px;
+}
+.content{
+    padding: 0 67px;
+}
+.title-dps{
+    height: 97px;
+    background-color: #f5f5f5;
+}
+.title-dps .left {
+    padding-left: 40px;
+}
+.title-dps .left h2{
+    padding-top: 29px;
+    padding-bottom: 10px;
+}
+.title-dps .right{
+    padding-right: 40px;
+    padding-top: 38px;
+}
+.first-content .no-count-set{
+    padding-top: 40px;
+}
+.first-content .no-count-set .row{
+    padding-bottom: 30px;
+}
+.first-content .no-count-set .left{
+    width: 123px;
+    text-align: right;
+    padding-right: 25px;
+}
+.first-content .no-count-set .right.dps{
+    color: #999;
+    font-size: 13px;
+    width: 315px;
+    overflow: hidden;
+    line-height: 1.7;
+}
+.second-content .btns-box{
+    padding: 30px 0;
+    overflow: hidden;
+}
+.el-dialog--789px{
+    width: 789px;
+}
+.el-dialog--670px{
+    width:  670px;
+}
+.el-dialog--670px .el-form-item__label{
+    color: #333;
+}
+.changePriceSetAddState .el-dialog__body{
+    padding: 20px 30px 0;
+}
+.changePriceSetAddState .left{
+    float: left;
+}
+.changePriceSetAddState .right{
+    float: left;
+    border:1px solid #dfe6ec;
+    margin-left: 17px;
+    width: 230px;
+    box-sizing: border-box;
+    height: 442px;
+    text-indent: 20px;
+    position: relative;
+}
+.changePriceSetAddState .right ul{
+    list-style-type: none;
+    padding-top: 40px;
+    height: 389px;
+    overflow-y:auto ;
+    margin-bottom: 30px;
+}
+.changePriceSetAddState .right ul li{
+    height: 40px;
+    line-height: 40px;
+    overflow: hidden;
+    width: 100%;
+
+}
+.changePriceSetAddState .right .title{
+    text-align: left;
+    font-size: 14px;
+    color: #333;
+    height: 39px;
+    line-height: 39px;
+    margin: 0;
+    padding: 0;
+    border-bottom:1px solid #dfe6ec;
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 100%;
+    background-color: #eef1f6;
+}
+.changePriceSetAddState .right .delete{
+    float: right;
+    font-size: 14px;
+    color: #20a0ff;
+    padding: 0 15px;
+    cursor: pointer;
+}
+.changePriceSetAddState .right .delete:hover{
+    opacity:0.9;
+}
+.changePriceSetAddState .right .name{
+    display: inline-block;
+    width: 110px;
+    overflow: hidden;
+    background-color: #fff;
+    text-indent:0;
+    text-overflow:ellipsis;overflow:hidden;white-space:nowrap;
+}
+/*定义滚动条宽高及背景，宽高分别对应横竖滚动条的尺寸*/
+.changePriceSetAddState .right ul::-webkit-scrollbar{
+    width: 5px;
+    background-color: #fff;
+}
+/*定义滚动条的轨道，内阴影及圆角*/
+.changePriceSetAddState .right ul::-webkit-scrollbar-track{
+    background-color: #fff;
+}
+/*定义滑块，内阴影及圆角*/
+.changePriceSetAddState .right ul::-webkit-scrollbar-thumb{
+    /*width: 10px;*/
+    height: 10px;
+    border-radius: 3px;
+    background-color: #e6e9ee;
+}

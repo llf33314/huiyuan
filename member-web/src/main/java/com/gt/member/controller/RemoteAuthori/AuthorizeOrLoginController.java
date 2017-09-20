@@ -66,6 +66,7 @@ public class AuthorizeOrLoginController {
 	queryMap.put( "browser", browser );
 	queryMap.put( "busId", busId );
 	queryMap.put( "uclogin", uclogin );
+
 	String url = "redirect:"+ propertiesUtil.getWxmp_home()+"/remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString(  queryMap);
 	return url;
     }

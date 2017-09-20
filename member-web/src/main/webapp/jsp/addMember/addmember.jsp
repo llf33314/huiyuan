@@ -330,6 +330,7 @@ pageEncoding="UTF-8" %>
                     if(e == false){
                         vm.codeShow = false;
                         $(".memberShow").hide();
+                        $("#memberId").val("");
                     }
                 },
 

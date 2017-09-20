@@ -87,10 +87,10 @@ public class AddMemberController {
     @ApiImplicitParam( name = "shopId", value = "门店id(没有门店请传主门店id)", paramType = "query", required = true, dataType = "int" )
     @RequestMapping( "/erpAddMember" )
     public String erpAddMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-       SessionUtil.setLoginStyle( request,1 );
-       BusUserEntity busUserEntity=busUserMapper.selectById( 42 );
-       SessionUtil.setLoginUser( request,busUserEntity );
-       SessionUtil.setPidBusId( request,42 );
+//       SessionUtil.setLoginStyle( request,1 );
+//       BusUserEntity busUserEntity=busUserMapper.selectById( 42 );
+//       SessionUtil.setLoginUser( request,busUserEntity );
+//       SessionUtil.setPidBusId( request,42 );
 
         Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
 	Integer loginStyle = SessionUtil.getLoginStyle( request );
@@ -179,12 +179,12 @@ public class AddMemberController {
      */
     @RequestMapping( value = "/sendMsgerp" )
     public void sendMsgerp( @RequestParam String telNo,@RequestParam Integer busId, HttpServletResponse response, HttpServletRequest request ) throws IOException {
-	try {
+	Map< String,Object > map = new HashMap< String,Object >();
+        try {
 	    if ( LOG.isDebugEnabled() ) {
 		// 验证类型
 		LOG.debug( "进入短信发送,手机号:" + telNo );
 	    }
-	    Map< String,Object > map = new HashMap< String,Object >();
 	    MemberEntity memberEntity = memberMapper.findByPhone( busId, telNo );
 	    if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
 		map.put( "result", false );
@@ -193,7 +193,7 @@ public class AddMemberController {
 		return;
 	    }
 
-	    String url = PropertiesUtil.getWxmp_home() + "8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do";
+	    String url = PropertiesUtil.getWxmp_home() + "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do";
 
 	    RequestUtils<OldApiSms> requestUtils=new RequestUtils<OldApiSms>(  );
 	    String no = CommonUtil.getPhoneCode();
@@ -230,8 +230,10 @@ public class AddMemberController {
 	    CommonUtil.write( response, map );
 	}catch ( Exception e ){
 	    e.printStackTrace();
+	    LOG.error( "短信发送失败", e );
+	    map.put( "result", false );
+	    map.put( "msg", "获取短信验证码失败" );
 	}
-
     }
 
     /**

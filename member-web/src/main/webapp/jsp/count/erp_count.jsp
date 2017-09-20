@@ -161,26 +161,27 @@
 
                     </div>
 
+
                     <li @click="xinjinPayMent($event)" class="item erp-billing-bg-color erp-billing-border xianjinItem" payType="10">
-                        <p class="icon-p"><i class="iconfont">&#xe62b;</i></p>
+                        <p class="icon-p"><i class="iconfont icon-zhifu-01"></i></p>
                         <p>现金支付</p>
                     </li>
 
 
                     <li @click="scanCodePayMent($event)" class="item erp-billing-border erp-billing-color">
-                        <p class="icon-p"><i class="iconfont">&#xe630;</i></p>
+                        <p class="icon-p"><i class="iconfont icon-saoma"></i></p>
                         <p>扫码支付</p>
                     </li>
                     <%-- <li class="item erp-billing-border erp-billing-color">
-                         <p class="icon-p"><i class="iconfont">&#xe61d;</i></p>
+                         <p class="icon-p"><i class="iconfont icon-shiminqia"></i></p>
                          <p>POS机支付</p>
                      </li>
                      <li @click="moBoxPay()" class="item erp-billing-border erp-billing-color">
-                         <p class="icon-p"><i class="iconfont">&#xe682;</i></p>
+                         <p class="icon-p"><i class="iconfont icon-hezixiangzi"></i></p>
                          <p>魔盒支付</p>
                      </li>
                      <li @click="billingOrder()" class="item erp-billing-border erp-billing-color">
-                         <p class="icon-p"><i class="iconfont">&#xe737;</i></p>
+                         <p class="icon-p"><i class="iconfont icon-shouyintai-richangshouzhi-zhichu-gongzijiangjin"></i></p>
                          <p>挂账</p>
                      </li>--%>
                 </ul>
