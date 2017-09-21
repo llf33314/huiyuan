@@ -1,6 +1,7 @@
-package com.gt.member.exception;
+package com.gt.member.config;
 
 import com.gt.member.dto.ErrorInfo;
+import com.gt.member.exception.ResponseEntityException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;

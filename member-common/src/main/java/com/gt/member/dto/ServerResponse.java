@@ -144,6 +144,11 @@ public class ServerResponse<T> implements Serializable {
         return new ServerResponse<>(errorCode, errorMessage);
     }
 
+
+    public static <T> T getDate(ServerResponse serverResponse){
+        return (T)serverResponse.getData();
+    }
+
     //使之不在json序列化结果当中，作用用于判断
     @JsonIgnore
     public boolean isSuccess() {
@@ -161,5 +166,7 @@ public class ServerResponse<T> implements Serializable {
     public String getMsg() {
         return msg;
     }
+
+
 
 }

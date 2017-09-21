@@ -19,7 +19,7 @@ public class MallEntityQuery {
 
     private Integer userJifen = 0;  //是否使用积分 0不参与 1参与
 
-    private Integer useLeague = 1;     //商品是否能使用联盟卡 0不参与 1参与
+    private Integer useLeague = 0;     //商品是否能使用联盟卡 0不参与 1参与
 
     public Integer getMallId() {
         return mallId;

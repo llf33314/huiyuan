@@ -6,55 +6,70 @@ package com.gt.member.service.member;
 import java.util.List;
 import java.util.Map;
 
-
 import com.gt.member.entity.MemberCardmodel;
 import com.gt.member.entity.MemberCardrecord;
 
 /**
  * 会员卡业务处理
- * @author pengjiangli
- * @version
- * 创建时间:2016年3月8日
  *
+ * @author pengjiangli
+ * @version 创建时间:2016年3月8日
  */
 public interface MemberCardService {
 
-	/**
-	 * 分组查询卡片信息
-	 * @return
-	 */
-	List<MemberCardmodel> findGroupByType(Integer busId);
 
-	/**
-     * 根据类型查询模板
-     * @param cmType
+    /**
+     * 分组查询卡片信息
+     *
      * @return
      */
-	List<MemberCardmodel>	findByType(Integer cmType);
+    List< MemberCardmodel > findGroupByType( Integer busId );
 
-	/**
-	 * 根据商户id和模板id 查询同一类型模板
-	 * @param publicId
-	 * @param ctId
-	 * @return
-	 */
-	List<MemberCardmodel > findCmType(Integer publicId, Integer ctId);
+    /**
+     * 根据类型查询模板
+     *
+     * @param cmType
+     *
+     * @return
+     */
+    List< MemberCardmodel > findByType( Integer cmType );
 
-	Map<String, Object> saveCardModel(Integer busId, String param)throws Exception;
+    /**
+     * 根据商户id和模板id 查询同一类型模板
+     *
+     * @param publicId
+     * @param ctId
+     *
+     * @return
+     */
+    List< MemberCardmodel > findCmType( Integer publicId, Integer ctId );
+
+    Map< String,Object > saveCardModel( Integer busId, String param ) throws Exception;
 
 
 
+    /**
+     * 查询会员卡信息
+     *
+     * @param busId
+     * @param ctId
+     *
+     * @return
+     */
+    public Map< String,Object > findGradeType( Integer busId, Integer ctId );
 
 
-	 /**
-	  * 积分清0
-	  * @param busIds
-	  */
-	 void clearJifen(String busIds);
+    /**
+     * 积分清0
+     *
+     * @param busIds
+     */
+    void clearJifen( String busIds );
 
-	 /**
-	  * 添加积分记录
-	  * @param str
-	  */
-	 void jifenLog(String str);
+    /**
+     * 添加积分记录
+     *
+     * @param str
+     */
+    void jifenLog( String str );
 }

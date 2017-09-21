@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
  * @author zhangmz
  * @create 2017/6/20
  */
-@Configuration
+//@Configuration
 public class ServletConfig {
     // 设置默认错误 401 404 500 错误页
     private static final String UNAUTHORIZED          = "/401.html";

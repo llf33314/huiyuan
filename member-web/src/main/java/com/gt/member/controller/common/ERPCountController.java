@@ -1,4 +1,4 @@
-package com.gt.member.controller;
+package com.gt.member.controller.common;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -54,13 +54,13 @@ public class ERPCountController extends BaseController {
     public String aa( HttpServletRequest request, HttpServletResponse response,@RequestParam String orderCode ) {
 	MallAllEntityQuery m = new MallAllEntityQuery();
 	m.setOrderCode( orderCode );  //订单号
-	m.setTotalMoney( 12000.01 ); //订单总金额
+	m.setTotalMoney( 0.01 ); //订单总金额
 	List< MallEntityQuery > list = new ArrayList<>();
 	MallEntityQuery m1 = new MallEntityQuery();
 	m1.setMallId( 1 );  //商品id or 生成序列号
 	m1.setNumber( 1 );  // 商品数量
-	m1.setTotalMoneyOne( 3000.0 );  //商品应付单价格
-	m1.setTotalMoneyAll( 3000.0 ); //商品订单总价格
+	m1.setTotalMoneyOne( 0.01 );  //商品应付单价格
+	m1.setTotalMoneyAll( 0.01 ); //商品订单总价格
 	m1.setUserCard( 1 );  //是否能用会员卡打折  0不参与 1参与
 	m1.setUseCoupon( 1 );    //是否使用优惠券 0不参与 1参与
 	m1.setUseFenbi( 1 );    //是否使用粉币 0不参与 1参与
@@ -69,29 +69,29 @@ public class ERPCountController extends BaseController {
 	list.add( m1 );
 
 
-	MallEntityQuery m2 = new MallEntityQuery();
-	m2.setMallId( 2 );  //商品id or 生成序列号
-	m2.setNumber( 2 );  // 商品数量
-	m2.setTotalMoneyOne( 4500.0 );  //商品应付单价格
-	m2.setTotalMoneyAll( 9000.0 ); //商品订单总价格
-	m2.setUserCard( 1 );  //是否能用会员卡打折  0不参与 1参与
-	m2.setUseCoupon( 1 );    //是否使用优惠券 0不参与 1参与
-	m2.setUseFenbi( 1 );    //是否使用粉币 0不参与 1参与
-	m2.setUserJifen( 1 );  //是否使用积分 0不参与 1参与
-	m2.setUseLeague( 1 );     //商品是否能使用联盟卡 0不参与 1参与
-	list.add( m2 );
-
-	MallEntityQuery m3 = new MallEntityQuery();
-	m3.setMallId( 3);  //商品id or 生成序列号
-	m3.setNumber( 1);  // 商品数量
-	m3.setTotalMoneyOne( 0.01 );  //商品应付单价格
-	m3.setTotalMoneyAll( 0.01 ); //商品订单总价格
-	m3.setUserCard( 1 );  //是否能用会员卡打折  0不参与 1参与
-	m3.setUseCoupon( 1 );    //是否使用优惠券 0不参与 1参与
-	m3.setUseFenbi( 1 );    //是否使用粉币 0不参与 1参与
-	m3.setUserJifen( 1 );  //是否使用积分 0不参与 1参与
-	m3.setUseLeague( 1 );     //商品是否能使用联盟卡 0不参与 1参与
-	list.add( m3 );
+//	MallEntityQuery m2 = new MallEntityQuery();
+//	m2.setMallId( 2 );  //商品id or 生成序列号
+//	m2.setNumber( 2 );  // 商品数量
+//	m2.setTotalMoneyOne( 4500.0 );  //商品应付单价格
+//	m2.setTotalMoneyAll( 9000.0 ); //商品订单总价格
+//	m2.setUserCard( 1 );  //是否能用会员卡打折  0不参与 1参与
+//	m2.setUseCoupon( 1 );    //是否使用优惠券 0不参与 1参与
+//	m2.setUseFenbi( 1 );    //是否使用粉币 0不参与 1参与
+//	m2.setUserJifen( 1 );  //是否使用积分 0不参与 1参与
+//	m2.setUseLeague( 1 );     //商品是否能使用联盟卡 0不参与 1参与
+//	list.add( m2 );
+//
+//	MallEntityQuery m3 = new MallEntityQuery();
+//	m3.setMallId( 3);  //商品id or 生成序列号
+//	m3.setNumber( 1);  // 商品数量
+//	m3.setTotalMoneyOne( 0.01 );  //商品应付单价格
+//	m3.setTotalMoneyAll( 0.01 ); //商品订单总价格
+//	m3.setUserCard( 1 );  //是否能用会员卡打折  0不参与 1参与
+//	m3.setUseCoupon( 1 );    //是否使用优惠券 0不参与 1参与
+//	m3.setUseFenbi( 1 );    //是否使用粉币 0不参与 1参与
+//	m3.setUserJifen( 1 );  //是否使用积分 0不参与 1参与
+//	m3.setUseLeague( 1 );     //商品是否能使用联盟卡 0不参与 1参与
+//	list.add( m3 );
 
 
 
@@ -102,7 +102,7 @@ public class ERPCountController extends BaseController {
 	m.setSuccessNoticeUrl( "http://www.baid.com" );  //支付成功 通知地址
 	m.setJumpUrl( "http://www.baid.com" );  //支付成功跳转地址
 	m.setJumphttpPOST( 0 );
-	m.setDerateMoney( 100.0 );
+	m.setDerateMoney( 0.0 );
 
 	m.setMalls( list );
 	redisCacheUtil.set( m.getOrderCode(), JSONObject.toJSONString( m ),600);
