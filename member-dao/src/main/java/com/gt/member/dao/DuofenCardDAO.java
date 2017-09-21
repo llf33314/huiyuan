@@ -27,7 +27,7 @@ public interface DuofenCardDAO extends BaseMapper<DuofenCard> {
      * @param cardIds
      * @return
      */
-    List<Map<String, Object>> findByCardIds(Integer busId,@Param( "cardIds" ) List<Integer> cardIds);
+    List<Map<String, Object>> findByCardIds(@Param( "busId" )Integer busId,@Param( "cardIds" ) List<Integer> cardIds);
 
 
     /**
