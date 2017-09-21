@@ -24,17 +24,46 @@ public interface MemberGradetypeDAO extends BaseMapper<MemberGradetype> {
      */
     List<Map<String,Object>> findBybusId(@Param("busId") Integer busId);
 
+    /**
+     * 查询商家创建的会员卡片
+     * @param busId
+     * @param ctId
+     * @return
+     */
     List<Map<String,Object>> findBybusIdAndCtId(@Param("busId") Integer busId,@Param("ctId")Integer ctId);
 
+    /**
+     * 商家未设置赠送规则的卡片信息
+     * @param busId
+     * @param ctId
+     * @return
+     */
     List<Map<String,Object>> findBybusIdAndCtId1(@Param("busId") Integer busId,@Param("ctId")Integer ctId);
 
+    /**
+     * 新版不用了
+     * @param busId
+     * @param cmType
+     * @return
+     */
     List<Map<String,Object>> findBybusIdAndCmType(@Param("busId") Integer busId,@Param("cmType")Integer cmType);
 
 
     List<Map<String, Object>> findByPulicIdAndCtId2(@Param("busId") Integer busId,@Param("ctId")Integer ctId);
 
+    /**
+     * 根据商家和卡片类型删除卡片信息
+     * @param busId
+     * @param ctId
+     * @return
+     */
     int deleteBybusIdAndCtId(@Param("busId") Integer busId,@Param("ctId")Integer ctId);
 
+    /**
+     * 查询商家已经发布的卡片信息
+     * @param busId
+     * @return
+     */
     List<Map<String, Object>> findBybusId1(@Param("busId")Integer busId);
 
     /**
@@ -50,12 +79,33 @@ public interface MemberGradetypeDAO extends BaseMapper<MemberGradetype> {
 
     List<Map<String, Object>> findByCtId(@Param("busId")Integer busId,@Param("ctId")Integer ctId);
 
+    /**
+     * 修改卡片发布方式
+     * @param busId
+     * @param ctId
+     * @param isChecked
+     * @param applyType
+     * @param giveIntegral
+     * @param isView
+     * @param givefenbi
+     * @param giveflow
+     * @param isUploadImg
+     * @param imgExplain
+     * @param giveMoney
+     * @param pickMoney
+     * @return
+     */
     int updateByCtId(@Param("busId")Integer busId,@Param("ctId")Integer ctId,@Param("isChecked")Byte isChecked,
                      @Param("applyType")Byte applyType,@Param("giveIntegral") Integer giveIntegral,@Param("isView") Byte isView,
                      @Param("givefenbi") Integer givefenbi,@Param("giveflow") Integer giveflow,
                      @Param("isUploadImg") Byte isUploadImg,@Param("imgExplain") String imgExplain,
                      @Param("giveMoney") Double giveMoney,@Param("pickMoney") Double pickMoney);
 
+    /**
+     * 查询非购买的卡片
+     * @param busId
+     * @return
+     */
     List<Map<String, Object>> findByApplyType(@Param("busId")Integer busId);
 
     /**

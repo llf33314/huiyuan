@@ -100,6 +100,16 @@ public interface DuofenCardReceiveDAO extends BaseMapper<DuofenCardReceive> {
 
 
     /**
+     * 根据商家查询商家拥有的卡券信息
+     * @param busUserId
+     * @return
+     */
+    List<Map<String, Object>> findToMallByBusUserId(@Param("busUserId")Integer busUserId,@Param("date") Date date);
+
+
+
+
+    /**
      * 统计该会员还有没有领取的卡券信息
      * @param publicId
      * @param memberId

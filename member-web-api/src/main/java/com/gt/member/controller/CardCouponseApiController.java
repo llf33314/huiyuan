@@ -132,7 +132,19 @@ public class CardCouponseApiController {
     }
 
 
-    @ApiOperation(value = "查询商家拥有的卡包信息", notes = "根据商家id查询商家拥有的卡包信息")
+    @ApiOperation(value = "查询商家拥有的卡包信息(商城调用)", notes = "根据商家id查询商家拥有的卡包信息")
+    @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
+    @ResponseBody
+    @RequestMapping (value = "/findReceiveToMallByBusUserId",method = RequestMethod.POST)
+    public ServerResponse findReceiveToMallByBusUserId(HttpServletRequest request,
+                    HttpServletResponse response,@RequestBody Map<String,Object> requestBody ){
+        Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
+        List<Map<String,Object>> cardList=cardCouponsApiService.findReceiveToMallByBusUserId(busId);
+        return ServerResponse.createBySuccess(cardList);
+    }
+
+
+    @ApiOperation(value = "查询商家拥有的卡包信息(ERP调用)", notes = "根据商家id查询商家拥有的卡包信息")
     @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
     @ResponseBody
     @RequestMapping (value = "/findReceiveByBusUserId",method = RequestMethod.POST)

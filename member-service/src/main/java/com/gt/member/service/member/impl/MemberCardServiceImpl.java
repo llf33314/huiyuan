@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.gt.member.dao.MemberCardmodelDAO;
-import com.gt.member.dao.MemberCardrecordDAO;
-import com.gt.member.dao.MemberEntityDAO;
-import com.gt.member.dao.MemberGradetypeDAO;
+import com.gt.member.dao.*;
 import com.gt.member.entity.MemberCardmodel;
+import com.gt.member.entity.MemberCardtype;
+import com.gt.member.entity.MemberDate;
+import com.gt.member.entity.MemberGradetype;
 import com.gt.member.service.common.MemberCommonService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.util.CommonUtil;
@@ -47,6 +47,12 @@ public class MemberCardServiceImpl implements MemberCardService {
 
     @Autowired
     private MemberGradetypeDAO memberGradetypeDAO;
+
+    @Autowired
+    private MemberCardtypeDAO memberCardtypeDAO;
+
+    @Autowired
+    private MemberDateDAO memberDateDAO;
 
     /**
      * 分组查询卡片信息
@@ -110,7 +116,39 @@ public class MemberCardServiceImpl implements MemberCardService {
      * @return
      */
     public Map< String,Object > findGradeType( Integer busId, Integer ctId ) {
-	List<Map<String,Object>> gradeTypes= memberGradetypeDAO.findBuyGradeType( busId );
+        if(CommonUtil.isNotEmpty( ctId ) && ctId>0) {
+	    MemberGradetype gradeType = memberGradetypeDAO.findIsmemberDateByCtId( busId, ctId );
+	    MemberCardtype cardtype=memberCardtypeDAO.selectById( ctId );
+	    if(gradeType.getIsmemberDate()==0){
+		MemberDate memberdate = memberDateDAO.findByBusIdAndCtId( busId, ctId );
+
+	    }
+	}else{
+            //新增会员卡
+	    List<MemberCardtype > cardTypes=memberCardtypeDAO.findByBusId( busId );
+
+	}
+
+	String ctIds=findCtId(ctId);
+
+	return null;
+    }
+
+
+
+    public String findCtId(Integer ctId){
+	switch ( ctId ){
+	    case 1:
+	        return "2,3,4,5";
+	    case 2:
+		break;
+	    case 3:
+		break;
+	    case 4:
+		break;
+	    case 5:
+		break;
+	}
 	return null;
     }
 

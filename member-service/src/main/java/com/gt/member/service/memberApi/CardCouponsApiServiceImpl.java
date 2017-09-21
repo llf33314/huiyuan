@@ -536,6 +536,34 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     }
 
     /**
+     * 根据商家查询商家拥有的卡包信息（商城调用）
+     */
+    @Override
+    public List<Map<String, Object>> findReceiveToMallByBusUserId(Integer busId) {
+
+        List<Map<String, Object>> receives = duofenCardReceiveMapper.findToMallByBusUserId(busId, new Date());
+
+        List<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>();
+        for (Map<String, Object> map : receives) {
+            if ("1".equals(CommonUtil.toString(map.get("cardType")))) {
+                // 如果是礼券
+                DuofenCard duofenCard = duofenCardMapper.selectById(CommonUtil.toInteger(map.get("lqId")));
+                List<Map<String, Object>> moneys = JsonReflectUtil.json2List(duofenCard.getDateTimeSet());
+                double money = CommonUtil.toDouble(moneys.get(0).get("money"));
+                for (Map<String, Object> map2 : moneys) {
+                    if (money > CommonUtil.toDouble(map2.get("money"))) {
+                        money = CommonUtil.toDouble(map2.get("money"));
+                    }
+                }
+                map.put("buyMoney", money);
+            }
+            returnList.add(map);
+        }
+        return returnList;
+    }
+
+
+    /**
      * 根据商家 查询商家拥有的卡包信息(新版本)
      */
     @Override
@@ -1065,18 +1093,19 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             return null;
         }
 
-        List<Map<String, Object>> duofencards = duofenCardMapper.findByCardIds(busId, cardIdList);
 
-        List<Map<String, Object>> receiveList = new ArrayList<Map<String, Object>>();
-        List<Map<String, Object>> dList = new ArrayList<Map<String, Object>>();
-        for (Map<String, Object> r : receives) {
-            for (Map<String, Object> d : duofencards) {
-                if (CommonUtil.toString(r.get("cardIds")).contains(CommonUtil.toString(d.get("id")))) {
-                    dList.add(d);
+        List< Map< String,Object > > duofencards = duofenCardMapper.findByCardIds( busId, cardIdList );
+
+        List< Map< String,Object > > receiveList = new ArrayList< Map< String,Object > >();
+        List< Map< String,Object > > dList = new ArrayList< Map< String,Object > >();
+        for ( Map< String,Object > r : receives ) {
+            for ( Map< String,Object > d : duofencards ) {
+                if ( CommonUtil.toString( r.get( "cardIds" ) ).contains( CommonUtil.toString( d.get( "id" ) ) ) ) {
+                    dList.add( d );
                 }
             }
-            r.put("duofencard", dList);
-            receiveList.add(r);
+            r.put( "duofencard", dList );
+            receiveList.add( r );
         }
         return receiveList;
     }

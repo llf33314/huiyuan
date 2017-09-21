@@ -98,6 +98,13 @@ public interface CardCouponsApiService {
      */
     public List<Map<String, Object>> findReceiveByBusUserId(Integer busId);
 
+
+    /**
+     * 根据商家查询商家拥有的卡包信息（商城调用）
+     */
+    public List<Map<String, Object>> findReceiveToMallByBusUserId(Integer busId);
+
+
     /**
      * 根据商家 查询商家拥有的卡包信息(新版本)
      *
