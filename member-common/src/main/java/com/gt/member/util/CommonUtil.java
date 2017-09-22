@@ -535,9 +535,9 @@ public class CommonUtil {
 	 * @return
 	 */
 	public static String getCode() {
-		Long date = new Date().getTime();
-		String cardNo = date.toString().substring(1);
-		return cardNo;
+	    Long date = new Date().getTime();
+	    String cardNo = date.toString().substring(1);
+	    return cardNo;
 	}
 
 	/**

@@ -91,6 +91,7 @@ public class MemberGradetype extends Model<MemberGradetype> {
 	private Integer iseasy;
 	private Integer easyApply;
 	private Integer busId;
+	private Integer assistantCard;
     /**
      * 推荐送钱
      */

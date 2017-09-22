@@ -1,6 +1,6 @@
 package com.gt.member.config;
 
-import com.gt.member.config.filter.MyInterceptor;
+import com.gt.member.config.filter.ApiInterceptor;
 import com.gt.member.config.filter.SysLogInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -30,9 +30,9 @@ public class MyWebAppConfigurer extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors( InterceptorRegistry registry ) {
         // 针对 memberAPI 的拦截器
-	registry.addInterceptor( new MyInterceptor() ).addPathPatterns( "/memberAPI/**" );
+	registry.addInterceptor( new ApiInterceptor() ).addPathPatterns( "/memberAPI/**" );
         // 定义多个 拦截器
-//        registry.addInterceptor( new SysLogInterceptor() ).addPathPatterns( "/memberAPI*" );
+        registry.addInterceptor( new SysLogInterceptor() ).addPathPatterns( "/memberPc/**" );
 	super.addInterceptors( registry );
     }
 

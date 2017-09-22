@@ -23,6 +23,13 @@
             <artifactId>member-dao</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.gt.member</groupId>
+            <artifactId>Member_bo</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
         <!--<dependency>
             <groupId>commemberEntitymber</groupId>
             <artifacmemberEntitymber-generator</artifactId>

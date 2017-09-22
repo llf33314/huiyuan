@@ -1,7 +1,6 @@
 package com.gt.member.service.count;
 
 import com.gt.member.exception.BusinessException;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 

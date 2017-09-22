@@ -44,19 +44,47 @@ public interface MemberCardService {
      */
     List< MemberCardmodel > findCmType( Integer publicId, Integer ctId );
 
-    Map< String,Object > saveCardModel( Integer busId, String param ) throws Exception;
+    /**
+     * 保存卡片背景模板
+     * @param busId
+     * @param param
+     */
+    void saveCardModel( Integer busId, String param );
 
 
 
     /**
-     * 查询会员卡信息
+     * 新增会员第1步信息pc
      *
      * @param busId
      * @param ctId
      *
      * @return
      */
-    public Map< String,Object > findGradeType( Integer busId, Integer ctId );
+    public Map< String,Object > editGradeTypeFrist( Integer busId, Integer ctId );
+
+    /**
+     * 新增会员第2步信息pc
+     * @param busId
+     * @param ctId
+     */
+    public Map< String,Object > editGradeTypeSecond(Integer busId,Integer ctId);
+
+
+
+    /**
+     * 新增会员第3步信息pc
+     * @param busId
+     * @param ctId
+     */
+    public Map< String,Object > editGradeTypeThird(Integer busId,Integer ctId);
+
+    /**
+     * 商家卡片背景模板
+     * @param busId
+     * @return
+     */
+    public List< MemberCardmodel >  findCardModel(Integer busId);
 
 
     /**

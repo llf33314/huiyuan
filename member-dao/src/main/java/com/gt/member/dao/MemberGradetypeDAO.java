@@ -49,7 +49,6 @@ public interface MemberGradetypeDAO extends BaseMapper<MemberGradetype> {
     List<Map<String,Object>> findBybusIdAndCmType(@Param("busId") Integer busId,@Param("cmType")Integer cmType);
 
 
-    List<Map<String, Object>> findByPulicIdAndCtId2(@Param("busId") Integer busId,@Param("ctId")Integer ctId);
 
     /**
      * 根据商家和卡片类型删除卡片信息
@@ -203,5 +202,13 @@ public interface MemberGradetypeDAO extends BaseMapper<MemberGradetype> {
      * @return
      */
     List<Map<String,Object>> findGradeTyeBybusIdAndctId(@Param( "busId" )Integer busId,@Param("ctId")Integer ctId);
+
+    /**
+     * 查询商家创建的模板等级
+     * @param busId
+     * @param ctId
+     * @return
+     */
+    int countGradeTypeByBusIdAndctId(@Param( "busId" )Integer busId,@Param("ctId")Integer ctId);
 
 }

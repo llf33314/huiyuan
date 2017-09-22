@@ -9,13 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.gt.member.dao.*;
-import com.gt.member.entity.MemberCardmodel;
-import com.gt.member.entity.MemberCardtype;
-import com.gt.member.entity.MemberDate;
-import com.gt.member.entity.MemberGradetype;
+import com.gt.member.entity.*;
 import com.gt.member.service.common.MemberCommonService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.util.CommonUtil;
+import com.gt.member.util.PropertiesUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -54,6 +52,18 @@ public class MemberCardServiceImpl implements MemberCardService {
     @Autowired
     private MemberDateDAO memberDateDAO;
 
+    @Autowired
+    private MemberFindDAO memberFindDAO;
+
+    @Autowired
+    private MemberCardmodelDAO memberCardmodelDAO;
+
+    @Autowired
+    private MemberGiveruleDAO memberGiveruleDAO;
+
+    @Autowired
+    private MemberGiverulegoodstypeDAO	memberGiverulegoodstypeDAO;
+
     /**
      * 分组查询卡片信息
      */
@@ -79,32 +89,23 @@ public class MemberCardServiceImpl implements MemberCardService {
 	return findByType( cmType );
     }
 
-    @Transactional( rollbackFor = Exception.class )
+    @Transactional
     @Override
-    public Map< String,Object > saveCardModel( Integer busId, String param ) throws Exception {
-	Map< String,Object > map = new HashMap< String,Object >();
-	try {
-	    JSONArray json = JSONArray.fromObject( param );
-	    MemberCardmodel cardModel = cardModelMapper.findCardModel();
-	    int i = 0;
-	    for ( Object object : json ) {
-		i++;
-		JSONObject obj = JSONObject.fromObject( object );
-		MemberCardmodel cm = new MemberCardmodel();
-		cm.setCmUrl( obj.getString( "url" ).split( "upload" )[1] );
-		cm.setCmType( cardModel.getCmType() + 1 );
-		cm.setCmSort( i );
-		cm.setBusId( busId );
-		cardModelMapper.insert( cm );
-	    }
-	    map.put( "result", true );
-	    map.put( "message", "保存卡片模板异常" );
-	} catch ( Exception e ) {
-	    map.put( "result", false );
-	    map.put( "message", "保存卡片模板异常" );
-	    throw new Exception();
+    public void saveCardModel( Integer busId, String param ) {
+	JSONArray json = JSONArray.fromObject( param );
+	MemberCardmodel cardModel = cardModelMapper.findCardModel();
+	int i = 0;
+	for ( Object object : json ) {
+	    i++;
+	    JSONObject obj = JSONObject.fromObject( object );
+	    MemberCardmodel cm = new MemberCardmodel();
+	    cm.setCmUrl( obj.getString( "url" ).split( "upload" )[1] );
+	    cm.setCmType( cardModel.getCmType() + 1 );
+	    cm.setCmSort( i );
+	    cm.setBusId( busId );
+	    cardModelMapper.insert( cm );
 	}
-	return map;
+
     }
 
     /**
@@ -115,41 +116,103 @@ public class MemberCardServiceImpl implements MemberCardService {
      *
      * @return
      */
-    public Map< String,Object > findGradeType( Integer busId, Integer ctId ) {
-        if(CommonUtil.isNotEmpty( ctId ) && ctId>0) {
-	    MemberGradetype gradeType = memberGradetypeDAO.findIsmemberDateByCtId( busId, ctId );
-	    MemberCardtype cardtype=memberCardtypeDAO.selectById( ctId );
-	    if(gradeType.getIsmemberDate()==0){
-		MemberDate memberdate = memberDateDAO.findByBusIdAndCtId( busId, ctId );
-
+    public Map< String,Object > editGradeTypeFrist( Integer busId, Integer ctId ) {
+	Map< String,Object > map = new HashMap<>();
+	if ( CommonUtil.isNotEmpty( ctId ) && ctId > 0 ) {
+	    MemberCardtype memberCardtype = memberCardtypeDAO.selectById( ctId );  //会员卡类型
+	    List< MemberCardtype > list = new ArrayList<>();
+	    list.add( memberCardtype );
+	    map.put( "cardTypes", memberCardtype );
+	    List< Map< String,Object > > gradeTypes = memberGradetypeDAO.findAllByBusIdAndCtId( busId, ctId );
+	    if ( ctId == 2 || ctId == 3 ) {
+		map.put( "fuka", 1 );
 	    }
-	}else{
-            //新增会员卡
-	    List<MemberCardtype > cardTypes=memberCardtypeDAO.findByBusId( busId );
-
+	    if ( CommonUtil.isNotEmpty( gradeTypes ) && gradeTypes.size() > 0 ) {
+		map.put( "fanhuiyuan", gradeTypes.get( 0 ).get( "iseasy" ) );
+		map.put( "shenhe", gradeTypes.get( 0 ).get( "isCheck" ) );
+		map.put( "assistantCard", gradeTypes.get( 0 ).get( "assistantCard" ) );
+		map.put( "ismemberDate", gradeTypes.get( 0 ).get( "ismemberDate" ) );
+		if ( "0".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "ismemberDate" ) ) ) ) {
+		    MemberDate memberdate = memberDateDAO.findByBusIdAndCtId( busId, ctId );
+		    map.put( "cardTypes", memberdate );
+		}
+		//员卡模板创建的等级
+		if ( "1".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "iseasy" ) ) ) ) {
+		    map.put( "dengji", gradeTypes.size() - 1 );
+		} else {
+		    map.put( "dengji", gradeTypes.size() );
+		}
+	    }
+	} else {
+	    //新增会员卡
+	    List< MemberCardtype > cardTypes = memberCardtypeDAO.findByBusId( busId );
+	    map.put( "cardTypes", cardTypes );
 	}
+	String ctIds = findCtId( ctId );
+	MemberFind memberFind = memberFindDAO.findByQianDao( busId );
+	if ( CommonUtil.isNotEmpty( memberFind ) ) {
+	    map.put( "qiandaojifen", memberFind.getIntegral() );
+	}
+	return map;
+    }
 
-	String ctIds=findCtId(ctId);
+    /**
+     * @param busId
+     * @param ctId
+     */
+    public Map< String,Object > editGradeTypeSecond( Integer busId, Integer ctId ) {
+	Map< String,Object > map = new HashMap<>();
+	List< Map< String,Object > > gradeTypes = memberGradetypeDAO.findAllByBusIdAndCtId( busId, ctId );
+	if ( CommonUtil.isNotEmpty( gradeTypes ) && gradeTypes.size() > 0 ) {
+	    map.put( "isleft", gradeTypes.get( 0 ).get( "isleft" ) );
+	    map.put( "gradeTypes", gradeTypes );
+	    map.put( "imagePaht", PropertiesUtil.getRes_web_path() );
+	}
+	return map;
+    }
 
+    public String findCtId( Integer ctId ) {
+	switch ( ctId ) {
+	    case 2:
+		return "4,5";
+	    case 3:
+		return "2,4,5";
+	}
 	return null;
     }
 
-
-
-    public String findCtId(Integer ctId){
-	switch ( ctId ){
-	    case 1:
-	        return "2,3,4,5";
-	    case 2:
-		break;
-	    case 3:
-		break;
-	    case 4:
-		break;
-	    case 5:
-		break;
+    /**
+     * 新增会员第3步信息pc
+     * @param busId
+     * @param ctId
+     */
+    public Map< String,Object > editGradeTypeThird(Integer busId,Integer ctId){
+	Map< String,Object > map = new HashMap<>();
+	List< Map< String,Object > > gradeTypes = memberGradetypeDAO.findAllByBusIdAndCtId( busId, ctId );
+	if ( CommonUtil.isNotEmpty( gradeTypes ) && gradeTypes.size() > 0 ) {
+	    map.put( "gradeTypes", gradeTypes );
+	    List<Map<String, Object>> giveRules=memberGiveruleDAO.findByBusIdAndCtId( busId, ctId );
+	    map.put( "giveRules", giveRules );
+	    if(CommonUtil.isNotEmpty( giveRules ) && giveRules.size()>0){
+	        Integer gr_id=CommonUtil.toInteger(giveRules.get( 0 ).get( "gr_id" ));
+		List<Map<String, Object>>  goodTypes=memberGiverulegoodstypeDAO.findByGrId( gr_id );
+		map.put( "goodTypes",goodTypes );
+	    }
 	}
-	return null;
+	return map;
+    }
+
+
+    /**
+     * 商家卡片背景模板
+     *
+     * @param busId
+     *
+     * @return
+     */
+    public List< MemberCardmodel > findCardModel( Integer busId ) {
+	List< MemberCardmodel > cardmodels = memberCardmodelDAO.findBybusId( busId );
+	return cardmodels;
     }
 
     @Override

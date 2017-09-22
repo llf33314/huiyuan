@@ -34,6 +34,7 @@
         <result column="busId" property="busId"/>
         <result column="giveMoney" property="giveMoney"/>
         <result column="pickMoney" property="pickMoney"/>
+		<result column="assistantCard" property="assistantCard"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -41,7 +42,7 @@
         gt_id , gt_grade_name , gt_name , gt_name_color , gt_login_url , cm_id , gt_text_color , ct_id ,
          public_id , is_publish , isCheck, applyType, buyMoney, buyModel, costMoney, balance, giveflow,
          givefenbi, giveIntegral, url, isView, ismemberDate, isUploadImg, imgExplain, isleft, iseasy,
-         easyApply, busId, giveMoney, pickMoney
+         easyApply, busId, giveMoney, pickMoney,assistantCard
     </sql>
 
 
@@ -209,7 +210,7 @@
 		gt.ct_id AS ctId, gt.public_id AS pulicId,
 		ct.ct_name AS ctName,cm.cm_url AS cmUrl,cm.cm_Type AS cmType,gt.cm_id AS cmId,gt.buyModel as buyModel, gt.buyMoney as buyMoney,
 		gt.costMoney as costMoney, gt.balance as balance,
-		gt.is_publish as ispulish,gt.ismemberDate,gt.isView,gt.isleft,gt.iseasy
+		gt.is_publish as ispulish,gt.ismemberDate,gt.isView,gt.isleft,gt.iseasy,gt.isCheck,gt.assistantCard
 		FROM t_member_gradetype gt
 		INNER JOIN t_member_cardtype  ct ON gt.ct_id=ct.ct_id
 		INNER JOIN t_member_cardmodel cm ON cm.cm_id=gt.cm_id
@@ -300,4 +301,9 @@
 		WHERE gt.busId=#{busId} and gt.ct_id=#{ctId}  AND is_publish=1  and iseasy=0
 	</select>
 
+
+
+	<select id="countGradeTypeByBusIdAndctId" resultType="java.lang.Integer">
+		select count(gt.gt_id) from t_member_gradetype gt  WHERE gt.busId=#{busId} and AND ct_id=#{ctId}
+	</select>
 </mapper>

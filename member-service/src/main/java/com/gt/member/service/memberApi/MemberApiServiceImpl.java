@@ -9,6 +9,7 @@ import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.FenbiFlowRecord;
 import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.common.entity.WxShop;
+import com.gt.entityBo.PaySuccessBo;
 import com.gt.member.dao.*;
 import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.common.FenbiFlowRecordDAO;
@@ -19,7 +20,6 @@ import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.MemberCommonService;
 import com.gt.member.service.common.dict.DictService;
-import com.gt.member.service.entityBo.PaySuccessBo;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.*;
@@ -3658,7 +3658,25 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    ids.add( CommonUtil.toInteger( str[i] ) );
 		}
 	    }
-	    return memberDAO.findByMemberIds( busId, ids );
+	    List<Map<String, Object>> list = memberDAO.findByMemberIds( busId, ids );
+
+	    List<Map<String, Object>> memberList = new ArrayList<Map<String, Object>>();
+
+	    for (Map<String, Object> map : list) {
+		if (map.containsKey("nickname")) {
+		    try {
+			byte[] bytes = (byte[]) map.get("nickname");
+			map.put("nickname", new String(bytes, "UTF-8"));
+		    } catch (Exception e) {
+			map.put("nickname", null);
+		    }
+		    memberList.add(map);
+		} else {
+		    memberList.add(map);
+		}
+	    }
+
+	    return memberList;
 	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
@@ -3919,7 +3937,25 @@ public class MemberApiServiceImpl implements MemberApiService {
 		}
 	    }
 	    if ( list.size() > 0 ) {
-		return memberDAO.findMemberByIds( busId, list );
+
+		List<Map<String, Object>> membertS = memberDAO.findMemberByIds( busId, list );
+		List<Map<String, Object>> memberList = new ArrayList<Map<String, Object>>();
+		for (Map<String, Object> memberMap : membertS) {
+		    if (memberMap.containsKey("nickname")) {
+			try {
+			    byte[] bytes = (byte[]) memberMap.get("nickname");
+			    memberMap.put("nickname", new String(bytes, "UTF-8"));
+			} catch (Exception e) {
+			    memberMap.put("nickname", null);
+			}
+			memberList.add(memberMap);
+		    } else {
+			memberList.add(memberMap);
+		    }
+
+		}
+
+
 	    }
 	    return null;
 	} catch ( Exception e ) {
@@ -3939,7 +3975,25 @@ public class MemberApiServiceImpl implements MemberApiService {
 	try {
 	    Integer busId = CommonUtil.toInteger( map.get( "busId" ) );
 	    String phone = CommonUtil.toString( map.get( "phone" ) );
-	    return memberDAO.findMemberByPhoneAndBusId( busId, phone );
+
+	    List<Map<String, Object>> list =memberDAO.findMemberByPhoneAndBusId( busId, phone );
+	    List<Map<String, Object>> memberList = new ArrayList<Map<String, Object>>();
+	    for (Map<String, Object> memberMap : list) {
+		if (memberMap.containsKey("nickname")) {
+		    try {
+			byte[] bytes = (byte[]) memberMap.get("nickname");
+			memberMap.put("nickname", new String(bytes, "UTF-8"));
+		    } catch (Exception e) {
+			memberMap.put("nickname", null);
+		    }
+		    memberList.add(memberMap);
+		} else {
+		    memberList.add(memberMap);
+		}
+
+	    }
+	    return memberList;
+
 	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
@@ -4047,7 +4101,7 @@ public class MemberApiServiceImpl implements MemberApiService {
     }
 
     /**
-     * uc端注册并领取会员卡
+     * 领取会员卡
      */
     @Transactional
     public void linquMemberCard( Map< String,Object > params ) throws BusinessException {
@@ -4061,9 +4115,20 @@ public class MemberApiServiceImpl implements MemberApiService {
 		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_COUNT );
 	    }
 
-	    String phone = CommonUtil.toString( params.get( "phone" ) );
+	    MemberEntity memberEntity=null;
+	    if(CommonUtil.isNotEmpty( params.get( "memberId" ) )){
+		Integer memberId=CommonUtil.toInteger( params.get( "memberId" ) );
+		memberEntity = memberDAO.selectById( memberId );
+		if ( CommonUtil.isNotEmpty( memberEntity )  && CommonUtil.isNotEmpty( memberEntity.getMcId() )) {
+		    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
+		}
 
-	    MemberEntity memberEntity = memberDAO.findByPhone( busId, phone );
+	    }
+	    String phone = CommonUtil.toString( params.get( "phone" ) );
+	    if(CommonUtil.isEmpty( memberEntity )) {
+		memberEntity = memberDAO.findByPhone( busId, phone );
+	    }
+
 	    if ( CommonUtil.isEmpty( memberEntity ) ) {
 		// 新增用户
 		memberEntity = new MemberEntity();
@@ -4077,6 +4142,10 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    MemberParameter mp = new MemberParameter();
 		    mp.setMemberId( memberEntity.getId() );
 		    memberParameterDAO.insert( mp );
+		}
+	    }else{
+		if(CommonUtil.isNotEmpty( memberEntity.getMcId() )){
+		    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
 		}
 	    }
 
@@ -4114,6 +4183,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 		MemberEntity memberEntity1 = new MemberEntity();
 		memberEntity1.setMcId( card.getMcId() );
+		memberEntity1.setPhone( phone );
 		memberEntity1.setId( memberEntity.getId() );
 		memberDAO.updateById( memberEntity1 );
 

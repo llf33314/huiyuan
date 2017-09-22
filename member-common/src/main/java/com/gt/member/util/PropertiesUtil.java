@@ -43,6 +43,8 @@ public class PropertiesUtil {
 
     private static String static_source_ftp_password;
 
+    private static String res_web_path;
+
     public static String getWebHome() {
 	return webHome;
     }
@@ -161,5 +163,13 @@ public class PropertiesUtil {
 
     public void setStatic_source_ftp_password( String static_source_ftp_password ) {
 	PropertiesUtil.static_source_ftp_password = static_source_ftp_password;
+    }
+
+    public static String getRes_web_path() {
+	return res_web_path;
+    }
+
+    public  void setRes_web_path( String res_web_path ) {
+	PropertiesUtil.res_web_path = res_web_path;
     }
 }

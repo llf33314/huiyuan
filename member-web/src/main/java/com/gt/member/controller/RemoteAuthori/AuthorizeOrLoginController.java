@@ -42,7 +42,7 @@ public class AuthorizeOrLoginController {
 	Map< String,Object > getWxPublicMap = new HashMap<>();
 	getWxPublicMap.put( "busId", busId );
 	//判断商家信息 1是否过期 2公众号是否变更过
-	String wxpublic = SignHttpUtils.postByHttp( propertiesUtil.getWxmp_home()+GETWXPULICMSG, getWxPublicMap, propertiesUtil.getWxmpsignKey() );
+	String wxpublic = SignHttpUtils.WxmppostByHttp( propertiesUtil.getWxmp_home()+GETWXPULICMSG, getWxPublicMap, propertiesUtil.getWxmpsignKey() );
 	JSONObject json = JSONObject.parseObject( wxpublic );
 	Integer code = CommonUtil.toInteger( json.get( "code" ) );
 	if ( code == 0 ) {
@@ -60,7 +60,14 @@ public class AuthorizeOrLoginController {
 	}
 	String requestUrl = CommonUtil.toString( map.get( "requestUrl" ) );
 	String otherRedisKey = CommonUtil.getCode();
-	redisCacheUtil.set( otherRedisKey, requestUrl, 5 * 60 );
+
+	//redis公用要调wxmp接口
+	Map< String,Object > redisMap = new HashMap<>();
+	redisMap.put( "redisKey", otherRedisKey );
+	redisMap.put( "redisValue", requestUrl );
+	redisMap.put( "setime", 300 );
+	SignHttpUtils.WxmppostByHttp( propertiesUtil.getWxmp_home()+"/8A5DA52E/redis/SetExApi.do", redisMap, propertiesUtil.getWxmpsignKey() );
+
 	Map< String,Object > queryMap = new HashMap< String,Object >();
 	queryMap.put( "otherRedisKey", otherRedisKey );
 	queryMap.put( "browser", browser );
