@@ -488,7 +488,7 @@ public class MemberApiController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "（魔盒）会员卡充值 支付方式 0支付包 1微信 10现金", notes = "（魔盒）会员卡充值" )
+    @ApiOperation( value = "（魔盒）会员卡充值 支付方式 0支付宝 1微信 10现金", notes = "（魔盒）会员卡充值" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "money", value = "充值金额", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "paymentType", value = "支付方式", paramType = "query", required = true, dataType = "int" ),
@@ -498,6 +498,22 @@ public class MemberApiController extends BaseController {
     public ServerResponse successChongZhi( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
 	try {
 	    memberApiService.successChongZhi( requestBody );
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+    @ApiOperation( value = "修改粉丝手机号码", notes = "修改粉丝手机号码" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "string" ),
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/updateMemberPhoneByMemberId", method = RequestMethod.POST )
+    public ServerResponse updateMemberPhoneByMemberId( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    memberApiService.updateMemberPhoneByMemberId( requestBody );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );

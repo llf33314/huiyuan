@@ -588,12 +588,12 @@ public interface MemberApiService {
     public Map< String,Object > findMemberCardByMemberIdAndshopIds( Integer memberId, String shopIds ) throws BusinessException;
 
     /**
-     * 教育家长端合并数据
+     * 修改粉丝手机号码
      * @param map
      * @return
      * @throws BusinessException
      */
-    public void updateMemberByTeach(Map<String,Object> map) throws BusinessException;
+    public void updateMemberPhoneByMemberId(Map<String,Object> map) throws BusinessException;
 
     /**
      * 根据ids集合查询粉丝信息

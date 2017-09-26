@@ -3910,12 +3910,21 @@ public class MemberApiServiceImpl implements MemberApiService {
     }
 
     @Transactional
-    public void updateMemberByTeach( Map< String,Object > map ) throws BusinessException {
+    public void updateMemberPhoneByMemberId( Map< String,Object > map ) throws BusinessException {
 	try {
 	    Map< String,Object > returnMap = new HashMap<>();
-	    MemberEntity m = new MemberEntity();
+
 	    Integer memberId = CommonUtil.toInteger( map.get( "memberId" ) );
 	    String phone = CommonUtil.toString( map.get( "phone" ) );
+	    Integer busId = CommonUtil.toInteger( map.get( "busId" ) );
+
+	    MemberEntity memberEntity=memberDAO.findByPhone( busId,phone );
+	    if(!memberEntity.getId().equals( memberId )){
+	        throw new BusinessException(ResponseMemberEnums.IS_BINDING_PHONE);
+	    }
+
+
+	    MemberEntity m = new MemberEntity();
 	    m.setId( memberId );
 	    m.setPhone( phone );
 	    memberDAO.updateById( m );
