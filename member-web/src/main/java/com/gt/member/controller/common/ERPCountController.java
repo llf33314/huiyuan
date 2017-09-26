@@ -2,6 +2,7 @@ package com.gt.member.controller.common;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.member.base.BaseController;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.count.ERPCountService;
@@ -10,6 +11,7 @@ import com.gt.entityBo.queryBo.MallEntityQuery;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.PropertiesUtil;
 import com.gt.member.util.RedisCacheUtil;
+import com.sun.xml.bind.v2.TODO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -68,41 +70,13 @@ public class ERPCountController extends BaseController {
 	m1.setUseLeague( 1 );     //商品是否能使用联盟卡 0不参与 1参与
 	list.add( m1 );
 
-
-//	MallEntityQuery m2 = new MallEntityQuery();
-//	m2.setMallId( 2 );  //商品id or 生成序列号
-//	m2.setNumber( 2 );  // 商品数量
-//	m2.setTotalMoneyOne( 4500.0 );  //商品应付单价格
-//	m2.setTotalMoneyAll( 9000.0 ); //商品订单总价格
-//	m2.setUserCard( 1 );  //是否能用会员卡打折  0不参与 1参与
-//	m2.setUseCoupon( 1 );    //是否使用优惠券 0不参与 1参与
-//	m2.setUseFenbi( 1 );    //是否使用粉币 0不参与 1参与
-//	m2.setUserJifen( 1 );  //是否使用积分 0不参与 1参与
-//	m2.setUseLeague( 1 );     //商品是否能使用联盟卡 0不参与 1参与
-//	list.add( m2 );
-//
-//	MallEntityQuery m3 = new MallEntityQuery();
-//	m3.setMallId( 3);  //商品id or 生成序列号
-//	m3.setNumber( 1);  // 商品数量
-//	m3.setTotalMoneyOne( 0.01 );  //商品应付单价格
-//	m3.setTotalMoneyAll( 0.01 ); //商品订单总价格
-//	m3.setUserCard( 1 );  //是否能用会员卡打折  0不参与 1参与
-//	m3.setUseCoupon( 1 );    //是否使用优惠券 0不参与 1参与
-//	m3.setUseFenbi( 1 );    //是否使用粉币 0不参与 1参与
-//	m3.setUserJifen( 1 );  //是否使用积分 0不参与 1参与
-//	m3.setUseLeague( 1 );     //商品是否能使用联盟卡 0不参与 1参与
-//	list.add( m3 );
-
-
-
-
 	m.setUcType( 103 );   //消费类型  请查看A003消费类型  没有请添加
 	m.setBusId( 42 );  //商家主账户id
 	m.setShopId( 17 );  //门店订单
 	m.setSuccessNoticeUrl( "http://www.baid.com" );  //支付成功 通知地址
 	m.setJumpUrl( "http://www.baid.com" );  //支付成功跳转地址
-	m.setJumphttpPOST( 0 );
-	m.setDerateMoney( 0.0 );
+	m.setJumphttpPOST( 0 );   //支付成功回调地址   0代表SignHttpUtils.postByHttp   1代表 SignHttpUtils.WxmppostByHttp()
+	m.setDerateMoney( 0.0 );   //减免金额
 
 	m.setMalls( list );
 	redisCacheUtil.set( m.getOrderCode(), JSONObject.toJSONString( m ),600);
@@ -114,6 +88,9 @@ public class ERPCountController extends BaseController {
     @RequestMapping( value = "/countErpIndex")
     public String countErpIndex( HttpServletRequest request, HttpServletResponse response, @RequestParam String orderCodeKey ) {
 	try {
+
+	    //TODO 缺少获取redis值
+
 	    String obj=redisCacheUtil.get( orderCodeKey );
 	    MallAllEntityQuery mallAllEntityQuery= JSON.parseObject(obj ,MallAllEntityQuery.class);
 	    request.setAttribute( "mallAllEntityQueryStr", obj );

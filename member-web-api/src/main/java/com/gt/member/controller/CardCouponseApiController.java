@@ -51,7 +51,7 @@ public class CardCouponseApiController {
       }
     }
 
-    @ApiOperation(value = "查询商户下所有用的卡券信息 card_type:判断卡片类型 card_type=DISCOUNT折扣券 discount=值 折扣数\n" + "     * card_type=CASH 代金券 cash_least_cost=值 条件值 reduce_cost=值 减免金额\n"
+    @ApiOperation(value = "查询粉丝在商户下拥有的卡券信息 card_type:判断卡片类型 card_type=DISCOUNT折扣券 discount=值 折扣数\n" + "     * card_type=CASH 代金券 cash_least_cost=值 条件值 reduce_cost=值 减免金额\n"
                     + " user_card_code 卡券code image 卡券图标", notes = "")
     @ApiImplicitParams( {
                     @ApiImplicitParam(name = "publicId", value = "公众号id", paramType = "query", required = true, dataType = "int"),
@@ -231,20 +231,6 @@ public class CardCouponseApiController {
         }
     }
 
-    @ApiOperation(value = "卡包投放", notes = "根据卡包id卡包投放")
-    @ApiImplicitParam(name = "receiveId", value = "卡包id", paramType = "query", required = true, dataType = "int")
-    @ResponseBody
-    @RequestMapping (value = "/publishShelve",method = RequestMethod.POST)
-    public ServerResponse publishShelve(HttpServletRequest request,
-                                        HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
-        try {
-            Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
-            Map<String, Object> map = cardCouponsApiService.findDuofenCardByReceiveId(receiveId);
-            return ServerResponse.createBySuccess(map);
-        }catch (BusinessException e){
-            return ServerResponse.createByError(e.getCode(), e.getMessage());
-        }
-    }
 
     @ApiOperation(value = "优惠券商城购买领取优惠券", notes = "优惠券商城购买领取优惠券")
     @ApiImplicitParams({
@@ -334,7 +320,7 @@ public class CardCouponseApiController {
     }
 
 
-    @ApiOperation(value = "(汽车ERP) 购买 或免费领取 pc端", notes = "(汽车ERP) 购买 或免费领取 pc端")
+    @ApiOperation(value = "(汽车ERP) 粉丝购买或免费领取 pc端", notes = "(汽车ERP) 购买 或免费领取 pc端")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int"),
             @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int"),

@@ -2930,18 +2930,18 @@ public class MemberApiServiceImpl implements MemberApiService {
 			map.put( "cardList", JSONArray.fromObject( list ) );
 		    }
 		}
-	    }
+		// 查询能使用的多粉优惠券
+		List< Map< String,Object > > duofenCards = findDuofenCardByMemberId( memberEntity.getId(), shopId );
+		map.put( "duofenCards", duofenCards );
 
-	    // 查询能使用的多粉优惠券
-	    List< Map< String,Object > > duofenCards = findDuofenCardByMemberId( memberEntity.getId(), shopId );
-	    map.put( "duofenCards", duofenCards );
-
-	    MemberDate memberDate = memberCommonService.findMemeberDate( memberEntity.getBusId(), card.getCtId() );
-	    if ( card.getCtId() == 2 ) {
-		if ( CommonUtil.isNotEmpty( memberDate ) ) {
-		    map.put( "memberDiscount", memberDate.getDiscount() );
-		    map.put( "memberDate", true );
+		MemberDate memberDate = memberCommonService.findMemeberDate( memberEntity.getBusId(), card.getCtId() );
+		if ( card.getCtId() == 2 ) {
+		    if ( CommonUtil.isNotEmpty( memberDate ) ) {
+			map.put( "memberDiscount", memberDate.getDiscount()*giveRule.getGrDiscount() / 10 );
+			map.put( "memberDate", 1 );
+		    }
 		}
+
 	    }
 
 	    return map;
@@ -3882,22 +3882,21 @@ public class MemberApiServiceImpl implements MemberApiService {
 			}
 		    }
 		}
-	    }
 
-	    String[] str = shopIds.split( "," );
-	    for ( int i = 0; i < str.length; i++ ) {
-		if ( CommonUtil.isEmpty( str[i] ) ) continue;
-		Integer shopId = CommonUtil.toInteger( str[i] );
-		// 查询能使用的多粉优惠券
-		List< Map< String,Object > > duofenCards = findDuofenCardByMemberId( memberEntity.getId(), shopId );
-		map.put( "duofenCards" + shopId, duofenCards );
-	    }
+		for ( int i = 0; i < str.length; i++ ) {
+		    if ( CommonUtil.isEmpty( str[i] ) ) continue;
+		    Integer shopId = CommonUtil.toInteger( str[i] );
+		    // 查询能使用的多粉优惠券
+		    List< Map< String,Object > > duofenCards = findDuofenCardByMemberId( memberEntity.getId(), shopId );
+		    map.put( "duofenCards" + shopId, duofenCards );
+		}
 
-	    MemberDate memberDate = memberCommonService.findMemeberDate( memberEntity.getBusId(), card.getCtId() );
-	    if ( card.getCtId() == 2 ) {
-		if ( CommonUtil.isNotEmpty( memberDate ) ) {
-		    map.put( "memberDiscount", memberDate.getDiscount() );
-		    map.put( "memberDate", true );
+		MemberDate memberDate = memberCommonService.findMemeberDate( memberEntity.getBusId(), card.getCtId() );
+		if ( card.getCtId() == 2 ) {
+		    if ( CommonUtil.isNotEmpty( memberDate ) ) {
+			map.put( "memberDiscount", memberDate.getDiscount()*giveRule.getGrDiscount() / 10.0 );
+			map.put( "memberDate", true );
+		    }
 		}
 	    }
 
@@ -4065,7 +4064,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    } else {
 		List< Map< String,Object > > cards = cardMapper.findCardById( card.getMcId() );
 		MemberGiverule giveRule = giveRuleMapper.selectById( card.getGrId() );
-		map.put( "result", true );
 		map.put( "nickName", memberEntity.getNickname() );
 		map.put( "phone", memberEntity.getPhone() );
 		map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
@@ -4150,7 +4148,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 
 	    Integer ctId = CommonUtil.toInteger( params.get( "ctId" ) );
-	    Integer gtId = CommonUtil.toInteger( params.get( "gtId" ) );
 	    Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
 
 	    // 根据卡片类型 查询第一等级

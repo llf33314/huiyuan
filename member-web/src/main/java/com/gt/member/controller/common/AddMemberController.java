@@ -87,10 +87,10 @@ public class AddMemberController {
     @ApiImplicitParam( name = "shopId", value = "门店id(没有门店请传主门店id)", paramType = "query", required = true, dataType = "int" )
     @RequestMapping( "/erpAddMember" )
     public String erpAddMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-//       SessionUtil.setLoginStyle( request,1 );
-//       BusUserEntity busUserEntity=busUserMapper.selectById( 42 );
-//       SessionUtil.setLoginUser( request,busUserEntity );
-//       SessionUtil.setPidBusId( request,42 );
+       SessionUtil.setLoginStyle( request,1 );
+       BusUserEntity busUserEntity=busUserMapper.selectById( 42 );
+       SessionUtil.setLoginUser( request,busUserEntity );
+       SessionUtil.setPidBusId( request,42 );
 
         Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
 	Integer loginStyle = SessionUtil.getLoginStyle( request );

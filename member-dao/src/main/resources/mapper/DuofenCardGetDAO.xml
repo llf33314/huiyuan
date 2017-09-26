@@ -300,7 +300,7 @@
 
 	<select id="findMeiRongCardGetByMemberId" resultType="Map">
 		select
-		c.id as cId, c.brand_name, c.card_type, deal_detail, c.cash_least_cost,
+		c.id as cId, c.brand_name, c.card_type, c.deal_detail, c.cash_least_cost,
 		c.reduce_cost, c.discount, c.gift, c.default_detail, c.title, c.sub_title, c.color,
 		c.type, c.begin_timestamp, c.end_timestamp, c.fixed_term, c.fixed_begin_term,
 		c.least_cost,c.time_limit,

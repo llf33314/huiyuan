@@ -138,6 +138,12 @@ public class CardERPServiceImpl implements CardERPService {
 		    mp.setMemberId( memberEntity.getId() );
 		    memberParameterMapper.insert( mp );
 		}
+	    }else{
+	        if(CommonUtil.isNotEmpty( memberEntity.getMcId() )){
+		    returnMap.put( "code", -1 );
+		    returnMap.put( "message", "粉丝已成为会员" );
+		    return returnMap;
+		}
 	    }
 
 

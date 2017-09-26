@@ -43,7 +43,7 @@ pageEncoding="UTF-8" %>
         </div>
 
         <div class="add-member-box pl60 clearfix">
-            <label class="fl el-form-item__label">新增会员</label>
+            <label class="fl el-form-item__label" style="font-weight: bold">新增会员</label>
             <div class="add-main">
                 <el-form :model="ruleForm" :rules="rules" :label-position="labelPosition" ref="ruleForm" label-width="130px" class="demo-ruleForm">
                     <c:if test="${gongzhong==1}">
@@ -79,7 +79,7 @@ pageEncoding="UTF-8" %>
                     </el-form-item>
                     <el-form-item class="pt50">
                         <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
-                        <el-button @click="resetForm('ruleForm')">取消</el-button>
+                       <%-- <el-button @click="resetForm('ruleForm')">取消</el-button>--%>
                     </el-form-item>
                 </el-form>
             </div>
@@ -157,13 +157,15 @@ pageEncoding="UTF-8" %>
                     if (value === '') {
                         callback(new Error('不能为空！'));
                     }
-                    var phone = value.replace(/(^\s*)|(\s*$)/g, "");//去空格
+                    //var phone = value.replace(/(^\s*)|(\s*$)/g, "");//去空格
+                    var phone = value;//去空格
                     var regPhone = /^0?(13[0-9]|15[012356789]|17[0678]|18[0123456789]|14[57])[0-9]{8}$/;
                      if (!regPhone.test(phone)) {
                         callback(new Error('手机号码不正确！'));
                     }else{
                          callback();
                     }
+                    callback()
                 };
                 return{
                     search: '',
@@ -335,7 +337,7 @@ pageEncoding="UTF-8" %>
                 },
 
                 validphone: function (str){//手机验证
-                    var phone = str.replace(/(^\s*)|(\s*$)/g, "");//去空格
+                    var phone = str.toString().replace(/(^\s*)|(\s*$)/g, "");//去空格
                     var regPhone = /^0?(13[0-9]|15[012356789]|17[0678]|18[0123456789]|14[57])[0-9]{8}$/;
                     if (phone == '') {
                         return false;
@@ -348,7 +350,6 @@ pageEncoding="UTF-8" %>
                   },
 
                 getCode: function (ruleForm) {
-                    //发送验证码
                         var phone = vm.ruleForm.phone;
                         if(phone==null || phone==""){
                             return null;
@@ -538,7 +539,7 @@ pageEncoding="UTF-8" %>
                 html+="   <i class='list-item-check iconfont disnone icon-wancheng'></i>";
                 html+="</label>";
                 html+=" </li>";
-                $(html).appendTo(".scrollBar");
+                $(".scrollBar").prepend(html);
                 $(".guanzhuShow").hide();
                 $(".memberShow").show();
 
@@ -551,9 +552,16 @@ pageEncoding="UTF-8" %>
         }
 
         function selli(obj,memberId,phone) {
-            $(obj).addClass("cur-list").siblings().removeClass('cur-list');
-            $("#memberId").val(memberId);
-            vm.ruleForm.phone=phone;
+            if(!$(obj).hasClass("cur-list")){
+                $(obj).addClass("cur-list").siblings().removeClass('cur-list');
+                $("#memberId").val(memberId);
+                vm.ruleForm.phone=phone;
+            }else{
+                $(obj).removeClass('cur-list');
+                $("#memberId").val("");
+                vm.ruleForm.phone="";
+            }
+
         }
 
 

@@ -275,14 +275,12 @@ public class MemberApiController extends BaseController {
 		    @ApiImplicitParam( name = "payStatus", value = "支付状态", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/updateUserConsume", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ServerResponse updateUserConsume(@RequestBody String body ) {
+    public ServerResponse updateUserConsume(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
 	try {
-	    logger.info( "进来了 ,参数：{}", body );
-	    //	    requestBody
-	   /* String orderNo = CommonUtil.toString( requestBody.get( "orderNo" ) );
+	    String orderNo = CommonUtil.toString( requestBody.get( "orderNo" ) );
 	    Integer payType = CommonUtil.toInteger( requestBody.get( "payType" ) );
 	    Integer payStatus = CommonUtil.toInteger( requestBody.get( "payStatus" ) );
-	    memberApiService.updateUserConsume(orderNo,payType,payStatus);*/
+	    memberApiService.updateUserConsume(orderNo,payType,payStatus);
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -358,9 +356,6 @@ public class MemberApiController extends BaseController {
     @RequestMapping( value = "/updateJifenAndFenBiByPinglu", method = RequestMethod.POST )
     public ServerResponse updateJifenAndFenBiByPinglu( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
 	try {
-	    Integer mcId = CommonUtil.toInteger( requestBody.get( "mcId" ) );
-	    Integer page = CommonUtil.toInteger( requestBody.get( "page" ) );
-	    Integer pageSize = CommonUtil.toInteger( requestBody.get( "pageSize" ) );
 	    memberApiService.updateJifenAndFenBiByPinglu( requestBody );
 	    return ServerResponse.createBySuccess();
 	} catch ( Exception e ) {
@@ -463,8 +458,7 @@ public class MemberApiController extends BaseController {
 		    @ApiImplicitParam( name = "ctId", value = "会员卡类型", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "phone", value = "手机号", paramType = "query", required = true, dataType = "String" ),
 		    @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "shopId", value = "门店", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "gtId", value = "会员卡等级", paramType = "query", required = false, dataType = "int" )
+		    @ApiImplicitParam( name = "shopId", value = "门店", paramType = "query", required = true, dataType = "int" )
 
     } )
     @ResponseBody
@@ -485,8 +479,6 @@ public class MemberApiController extends BaseController {
     @RequestMapping( value = "/findMemberAndChongZhi", method = RequestMethod.POST )
     public ServerResponse findMemberAndChongZhi( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
 	try {
-	    String cardNo = CommonUtil.toString( requestBody.get( "cardNo" ) );
-	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
 	    Map< String,Object > map = memberApiService.findMemberAndChongZhi( requestBody );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
