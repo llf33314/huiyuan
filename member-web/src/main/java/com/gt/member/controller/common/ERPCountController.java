@@ -79,7 +79,15 @@ public class ERPCountController extends BaseController {
 	m.setDerateMoney( 0.0 );   //减免金额
 
 	m.setMalls( list );
-	redisCacheUtil.set( m.getOrderCode(), JSONObject.toJSONString( m ),600);
+	Map< String,Object > redisMap = new HashMap<>();
+	redisMap.put( "redisKey", orderCode );
+	redisMap.put( "redisValue", m );
+	redisMap.put( "setime", 300 );
+	try {
+	    SignHttpUtils.WxmppostByHttp( propertiesUtil.getWxmp_home() + "/8A5DA52E/redis/SetExApi.do", redisMap, propertiesUtil.getWxmpsignKey() );
+	}catch ( Exception e ){
+	    LOG.error( "存储redis值异常",e );
+	}
 	request.setAttribute( "orderCodeKey", m.getOrderCode() );
 	return "index";
     }
@@ -90,6 +98,10 @@ public class ERPCountController extends BaseController {
 	try {
 
 	    //TODO 缺少获取redis值
+	    Map< String,Object > redisMap = new HashMap<>();
+	    redisMap.put( "redisKey", orderCodeKey );
+	    SignHttpUtils.WxmppostByHttp( propertiesUtil.getWxmp_home()+"/8A5DA52E/redis/getExApi.do", redisMap, propertiesUtil.getWxmpsignKey() );
+
 
 	    String obj=redisCacheUtil.get( orderCodeKey );
 	    MallAllEntityQuery mallAllEntityQuery= JSON.parseObject(obj ,MallAllEntityQuery.class);
