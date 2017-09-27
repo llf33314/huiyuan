@@ -96,15 +96,13 @@ public class ERPCountController extends BaseController {
     @RequestMapping( value = "/countErpIndex")
     public String countErpIndex( HttpServletRequest request, HttpServletResponse response, @RequestParam String orderCodeKey ) {
 	try {
-
-	    //TODO 缺少获取redis值
 	    Map< String,Object > redisMap = new HashMap<>();
 	    redisMap.put( "redisKey", orderCodeKey );
-	    SignHttpUtils.WxmppostByHttp( propertiesUtil.getWxmp_home()+"/8A5DA52E/redis/getExApi.do", redisMap, propertiesUtil.getWxmpsignKey() );
+	    String obj=SignHttpUtils.WxmppostByHttp( propertiesUtil.getWxmp_home()+"/8A5DA52E/redis/getExApi.do", redisMap, propertiesUtil.getWxmpsignKey() );
 
+	    JSONObject json=JSONObject.parseObject(obj  );
 
-	    String obj=redisCacheUtil.get( orderCodeKey );
-	    MallAllEntityQuery mallAllEntityQuery= JSON.parseObject(obj ,MallAllEntityQuery.class);
+	    MallAllEntityQuery mallAllEntityQuery= JSON.parseObject(json.getString( "data" ) ,MallAllEntityQuery.class);
 	    request.setAttribute( "mallAllEntityQueryStr", obj );
 	    request.setAttribute( "mallAllEntityQuery", mallAllEntityQuery );
 	    request.setAttribute( "member_count","member_count_"+mallAllEntityQuery.getOrderCode() );
