@@ -204,6 +204,11 @@ pageEncoding="UTF-8" %>
                 }
             },
             mounted(){
+
+                setTimeout(function () {
+                    vm.dialogVisible2 = false
+                },3000);
+
                 var gradeTypes=${gradeTypes};
                 var mapList=${mapList};
                 if(mapList!=""){
@@ -342,7 +347,6 @@ pageEncoding="UTF-8" %>
                     if (phone == '') {
                         return false;
                     } else if (!regPhone.test(phone)) {
-
                         return false;
                     }else{
                         return true;
@@ -454,6 +458,7 @@ pageEncoding="UTF-8" %>
                                         vm.dialogVisible2=true;
                                         $("#memberId").val("");
                                         $(".cur-list").remove();
+                                        setTimeout();
                                     }else if(data.code==2){
                                         userId1="addMember_"+data.orderCode;
                                         //跳转支付页面
@@ -548,6 +553,7 @@ pageEncoding="UTF-8" %>
                 vm.dialogVisible2=true;
                 $("#memberId").val("");
                 $(".cur-list").remove();
+                setTimeout();
             }
         }
 

@@ -2871,7 +2871,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
 		map.put( "cardNo", card.getCardNo() );
 		map.put( "ctId", card.getCtId() );
-		map.put( "discount", giveRule.getGrDiscount() / 10 );
+		map.put( "discount", giveRule.getGrDiscount() / 10.0 );
 		map.put( "money", card.getMoney() );
 		map.put( "frequency", card.getFrequency() );
 		map.put( "fans_currency", memberEntity.getFansCurrency() );
@@ -2937,7 +2937,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		MemberDate memberDate = memberCommonService.findMemeberDate( memberEntity.getBusId(), card.getCtId() );
 		if ( card.getCtId() == 2 ) {
 		    if ( CommonUtil.isNotEmpty( memberDate ) ) {
-			map.put( "memberDiscount", memberDate.getDiscount()*giveRule.getGrDiscount() / 10 );
+			map.put( "memberDiscount", memberDate.getDiscount()*giveRule.getGrDiscount() / 100.0 );
 			map.put( "memberDate", 1 );
 		    }
 		}
@@ -3035,7 +3035,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
 		map.put( "cardNo", card.getCardNo() );
 		map.put( "ctId", card.getCtId() );
-		map.put( "discount", giveRule.getGrDiscount() / 10 );
+		map.put( "discount", giveRule.getGrDiscount() / 10.0 );
 		map.put( "money", card.getMoney() );
 		map.put( "frequency", card.getFrequency() );
 		map.put( "fans_currency", memberEntity.getFansCurrency() );
@@ -3093,19 +3093,21 @@ public class MemberApiServiceImpl implements MemberApiService {
 			map.put( "cardList", JSONArray.fromObject( list ) );
 		    }
 		}
-	    }
 
-	    // 查询能使用的多粉优惠券
-	    List< Map< String,Object > > duofenCards = findDuofenCardByMemberId( memberEntity.getId(), shopId );
-	    map.put( "duofenCards", duofenCards );
+		// 查询能使用的多粉优惠券
+		List< Map< String,Object > > duofenCards = findDuofenCardByMemberId( memberEntity.getId(), shopId );
+		map.put( "duofenCards", duofenCards );
 
-	    MemberDate memberDate = memberCommonService.findMemeberDate( busId, card.getCtId() );
-	    if ( card.getCtId() == 2 ) {
-		if ( CommonUtil.isNotEmpty( memberDate ) ) {
-		    map.put( "memberDiscount", memberDate.getDiscount() );
-		    map.put( "memberDate", true );
+		MemberDate memberDate = memberCommonService.findMemeberDate( busId, card.getCtId() );
+		if ( card.getCtId() == 2 ) {
+		    if ( CommonUtil.isNotEmpty( memberDate ) ) {
+			map.put( "memberDiscount", memberDate.getDiscount()*giveRule.getGrDiscount() / 100.0 );
+			map.put( "memberDate", 1 );
+		    }
 		}
 	    }
+
+
 	    return map;
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
@@ -3399,7 +3401,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	recommendMapper.updateById( r );
     }
 
-    @Transactional( rollbackFor = Exception.class )
+    @Transactional
     @Override
     public void paySuccess( PaySuccessBo paySuccessBo ) throws BusinessException {
 	try {
@@ -3500,10 +3502,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    MemberLog m = new MemberLog();
-	    m.setLogtxt( "方法paySuccess支付成功回调异常,请求参数" + JSONObject.fromObject( paySuccessBo ) );
-	    memberLogDAO.insert( m );
-	    LOG.error( "支付成功回调异常", e );
+	    LOG.error( "支付成功回调异常"+JSONObject.fromObject( paySuccessBo ) , e );
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
 
@@ -3894,8 +3893,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 		MemberDate memberDate = memberCommonService.findMemeberDate( memberEntity.getBusId(), card.getCtId() );
 		if ( card.getCtId() == 2 ) {
 		    if ( CommonUtil.isNotEmpty( memberDate ) ) {
-			map.put( "memberDiscount", memberDate.getDiscount()*giveRule.getGrDiscount() / 10.0 );
-			map.put( "memberDate", true );
+			map.put( "memberDiscount", memberDate.getDiscount()*giveRule.getGrDiscount() / 100.0 );
+			map.put( "memberDate", 1 );
 		    }
 		}
 	    }
