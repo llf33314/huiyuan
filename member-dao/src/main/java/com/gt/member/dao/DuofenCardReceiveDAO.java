@@ -126,6 +126,15 @@ public interface DuofenCardReceiveDAO extends BaseMapper<DuofenCardReceive> {
 
 
     /**
+     * 查询商户下ERP下 免费 或购买的卡包信息
+     * @param busId
+     * @return
+     */
+    int countCardReceiveBydeliveryType1(@Param("busId")Integer busId,@Param("receiveDate")Date receiveDate,@Param("deliveryType1")Integer deliveryType1);
+
+
+
+    /**
      * 根据商家查询商家拥有的卡券信息
      * @param busUserId
      * @return

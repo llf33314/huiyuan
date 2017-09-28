@@ -131,6 +131,11 @@
 		select <include refid="Base_Column_List" />  from t_duofen_card_receive where busId=#{busId} and state=1 and deliveryAddr=2 and deliveryType1=#{deliveryType1} and (receiveDate <![CDATA[>=]]> #{receiveDate} or receiveDate is null) order by id desc  limit #{first},#{pageSize}
 	</select>
 
+
+	<select id="countCardReceiveBydeliveryType1" resultType="java.lang.Integer">
+		select count(id)  from t_duofen_card_receive where busId=#{busId} and state=1 and deliveryAddr=2 and deliveryType1=#{deliveryType1} and (receiveDate <![CDATA[>=]]> #{receiveDate} or receiveDate is null) order by id desc
+	</select>
+
 	<select id="findByBusUserIdAndTime" resultType="Map">
 		select <include refid="Base_Column_List" />  from t_duofen_card_receive where busId=#{busUserId} and deliveryType=3 and state=1 and (receiveDate <![CDATA[>=]]> #{receiveDate} or receiveDate is null)
 	</select>
