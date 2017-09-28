@@ -9,6 +9,7 @@ import com.gt.member.entity.WxCard;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.memberApi.CardCouponsApiService;
 import com.gt.member.util.CommonUtil;
+import com.gt.member.util.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -306,7 +307,7 @@ public class CardCouponseApiController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int"),
             @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int"),
-            @ApiImplicitParam(name = "page", value = "页数", paramType = "query", required = true, dataType = "int")
+            @ApiImplicitParam(name = "page", value = "页数 从0开始", paramType = "query", required = true, dataType = "int")
     })
     @ResponseBody
     @RequestMapping (value = "/findCardReceiveBuy",method = RequestMethod.POST)
@@ -315,8 +316,8 @@ public class CardCouponseApiController {
         Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
         Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
         Integer page=CommonUtil.toInteger( requestBody.get( "page" ) );
-        List<Map<String,Object>> maps=cardCouponsApiService.findCardReceive1(busId,memberId,page);
-        return ServerResponse.createBySuccess(maps);
+        Page pageList=cardCouponsApiService.findCardReceive1(busId,memberId,page);
+        return ServerResponse.createBySuccess(pageList);
     }
 
 

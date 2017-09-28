@@ -104,7 +104,7 @@ public class ERPCountController extends BaseController {
 	    JSONObject json=JSONObject.parseObject(obj  );
 
 	    MallAllEntityQuery mallAllEntityQuery= JSONObject.parseObject(json.getString( "data" ) ,MallAllEntityQuery.class);
-	    request.setAttribute( "mallAllEntityQueryStr", obj );
+	    request.setAttribute( "mallAllEntityQueryStr", json.getString( "data" ) );
 	    request.setAttribute( "mallAllEntityQuery", mallAllEntityQuery );
 	    request.setAttribute( "member_count","member_count_"+mallAllEntityQuery.getOrderCode() );
 	    request.setAttribute("member_socketHost", propertiesUtil.getSocket_url());
