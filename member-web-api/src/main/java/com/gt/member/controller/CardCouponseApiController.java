@@ -299,8 +299,8 @@ public class CardCouponseApiController {
         Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
         Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
         Integer page=CommonUtil.toInteger( requestBody.get( "page" ) );
-        List<Map<String,Object>> maps=cardCouponsApiService.findCardReceive(busId,memberId,page);
-        return ServerResponse.createBySuccess(maps);
+        Page pageList =cardCouponsApiService.findCardReceive(busId,memberId,page);
+        return ServerResponse.createBySuccess(pageList);
     }
 
     @ApiOperation(value = "查询能赠送的卡包信息(购买领取) (汽车ERP)", notes = "根据商家id和粉丝id查询能赠送的卡包信息(购买领取) (汽车ERP)")

@@ -214,7 +214,7 @@ public interface CardCouponsApiService {
      * @param memberId
      * @return
      */
-    public List<Map<String, Object>> findCardReceive(Integer busId, Integer memberId, Integer page);
+    public Page findCardReceive(Integer busId, Integer memberId, Integer page);
 
     /**
      * 查询能赠送的卡包信息(商城购买) (汽车ERP)

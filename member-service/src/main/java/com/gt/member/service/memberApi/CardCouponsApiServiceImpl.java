@@ -1079,12 +1079,16 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     }
 
     @Override
-    public List<Map<String, Object>> findCardReceive(Integer busId, Integer memberId1, Integer page) {
-        if (CommonUtil.isEmpty(page)) {
-            page = 0;
+    public Page findCardReceive(Integer busId, Integer memberId1, Integer curPage) {
+        if (CommonUtil.isEmpty(curPage)) {
+            curPage = 0;
         }
-        Integer firstResult = 5 * page;
+        Integer firstResult = 5 * curPage;
         Integer pageSize = 10;
+
+        int rowCount = duofenCardReceiveMapper.countCardReceiveBydeliveryType1( busId, new Date(), 0 );
+
+        Page page = new Page( curPage+1, pageSize, rowCount, "" );
 
         // 查询卡包下卡券信息
         List<Map<String, Object>> receives = duofenCardReceiveMapper.findCardReceiveBydeliveryType1(busId, new Date(), 0, firstResult, pageSize);
@@ -1122,7 +1126,8 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             r.put( "duofencard", dList );
             receiveList.add( r );
         }
-        return receiveList;
+        page.setSubList( receiveList );
+        return page;
     }
 
     @Override
