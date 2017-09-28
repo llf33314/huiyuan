@@ -5,6 +5,7 @@ import com.gt.member.entity.DuofenCardGet;
 import com.gt.member.entity.DuofenCardReceive;
 import com.gt.member.entity.WxCard;
 import com.gt.member.exception.BusinessException;
+import com.gt.member.util.Page;
 
 import java.util.List;
 import java.util.Map;
@@ -222,7 +223,7 @@ public interface CardCouponsApiService {
      * @param memberId
      * @return
      */
-    public List<Map<String, Object>> findCardReceive1(Integer busId, Integer memberId, Integer page);
+    public Page findCardReceive1(Integer busId, Integer memberId, Integer page);
 
     /**
      * (汽车ERP) 购买 或免费领取 pc端
