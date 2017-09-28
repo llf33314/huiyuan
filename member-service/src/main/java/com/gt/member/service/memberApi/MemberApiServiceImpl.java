@@ -4057,6 +4057,24 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    try {
 		// 如果手动输入 会出现异常
 		cardNodecrypt = EncryptUtil.decrypt(PropertiesUtil.getCardNoKey(), phone);
+
+		if (CommonUtil.isNotEmpty( cardNodecrypt ) && cardNodecrypt.contains("?time")) {
+		    // 查询卡号是否存在
+		    Long time = Long.parseLong(cardNodecrypt.substring(cardNodecrypt
+				    .indexOf("?time=") + 6));
+
+		    String cardNo = cardNodecrypt.substring(0, cardNodecrypt.indexOf("?time"));
+		    card = cardMapper.findCardByCardNo(busId, cardNo);
+		    if (card.getCtId() == 3) {
+			// 2分钟后为超时
+			if (DateTimeKit.secondBetween(new Date(time), new Date()) > 120) {
+			    // 二维码已超时
+			    throw new BusinessException( ResponseMemberEnums.ERROR_QR_CODE );
+			}
+		    }
+		    memberEntity = memberDAO.findByMcIdAndbusId( busId, card.getMcId() );
+		}
+
 	    } catch (Exception e) {
 		// 如果不是扫码 判断商家是否允许不扫码
 //		List<Map< String,Object >> list = dictService.getDict("A001");
@@ -4069,22 +4087,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 //		if(true){
 //		    throw new BusinessException( ResponseMemberEnums. )
 //		}
+		card = cardMapper.findCardByCardNo(busId, phone);
 	    }
-
-	    if (CommonUtil.isNotEmpty( cardNodecrypt ) && cardNodecrypt.contains("?time")) {
-		// 查询卡号是否存在
-		Long time = Long.parseLong(cardNodecrypt.substring(cardNodecrypt
-				.indexOf("?time=") + 6));
-
-		String cardNo = cardNodecrypt.substring(0, cardNodecrypt.indexOf("?time"));
-		card = cardMapper.findCardByCardNo(busId, cardNo);
-		if (card.getCtId() == 3) {
-		    // 2分钟后为超时
-		    if (DateTimeKit.secondBetween(new Date(time), new Date()) > 120) {
-			// 二维码已超时
-			throw new BusinessException( ResponseMemberEnums.ERROR_QR_CODE );
-		    }
-		}
+	    if(CommonUtil.isNotEmpty( card )) {
 		memberEntity = memberDAO.findByMcIdAndbusId( busId, card.getMcId() );
 	    }else{
 		memberEntity = memberDAO.findByPhone( busId, phone );
