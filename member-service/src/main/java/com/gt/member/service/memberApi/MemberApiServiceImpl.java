@@ -89,9 +89,6 @@ public class MemberApiServiceImpl implements MemberApiService {
     private PublicParametersetDAO publicParameterSetMapper;
 
     @Autowired
-    private DictService dictService;
-
-    @Autowired
     private SystemMsgService systemMsgService;
 
     @Autowired
@@ -121,8 +118,6 @@ public class MemberApiServiceImpl implements MemberApiService {
     @Autowired
     private RedisCacheUtil redisCacheUtil;
 
-    @Autowired
-    private MemberLogDAO memberLogDAO;
 
     @Autowired
     private MemberGradetypeDAO memberGradetypeDAO;
@@ -141,6 +136,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 
     @Autowired
     private MemberParameterDAO memberParameterDAO;
+
+    private DictService dictService;
 
     /**
      * 查询粉丝信息
@@ -3616,10 +3613,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    MemberLog m = new MemberLog();
-	    m.setLogtxt( "方法refundMoney退款异常,请求参数商家：" + busId + "订单号:" + orderNo + "退款金额:" + refundMoney );
-	    memberLogDAO.insert( m );
-	    LOG.error( "退款异常", e );
+	    LOG.error( "方法refundMoney退款异常,请求参数商家：" + busId + "订单号:" + orderNo + "退款金额:" + refundMoney , e );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
@@ -3778,10 +3772,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    MemberLog m = new MemberLog();
-	    m.setLogtxt( "方法refundMoneyAndJifenAndFenbi退款异常,请求参数商家：" + map );
-	    memberLogDAO.insert( m );
-	    LOG.error( "退款异常", e );
+	    LOG.error(  "方法refundMoneyAndJifenAndFenbi退款异常,请求参数商家：" + JSON.toJSONString( map ) , e );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
@@ -4061,9 +4052,48 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    // 查询卡号是否存在
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    String phone = CommonUtil.toString( params.get( "phone" ) );
-	    memberEntity = memberDAO.findByPhone( busId, phone );
+
+	    String cardNodecrypt=null;
+	    try {
+		// 如果手动输入 会出现异常
+		cardNodecrypt = EncryptUtil.decrypt(PropertiesUtil.getCardNoKey(), phone);
+	    } catch (Exception e) {
+		// 如果不是扫码 判断商家是否允许不扫码
+//		List<Map< String,Object >> list = dictService.getDict("A001");
+//		boolean saomao=false;
+//		for (Map<String, Object> map2 : list) {
+//		    if(busId.equals( map2.get( "item_key" ) )){
+//			saomao=true;
+//		    }
+//		}
+//		if(true){
+//		    throw new BusinessException( ResponseMemberEnums. )
+//		}
+	    }
+
+	    if (CommonUtil.isNotEmpty( cardNodecrypt ) && cardNodecrypt.contains("?time")) {
+		// 查询卡号是否存在
+		Long time = Long.parseLong(cardNodecrypt.substring(cardNodecrypt
+				.indexOf("?time=") + 6));
+
+		String cardNo = cardNodecrypt.substring(0, cardNodecrypt.indexOf("?time"));
+		card = cardMapper.findCardByCardNo(busId, cardNo);
+		if (card.getCtId() == 3) {
+		    // 2分钟后为超时
+		    if (DateTimeKit.secondBetween(new Date(time), new Date()) > 120) {
+			// 二维码已超时
+			throw new BusinessException( ResponseMemberEnums.ERROR_QR_CODE );
+		    }
+		}
+		memberEntity = memberDAO.findByMcIdAndbusId( busId, card.getMcId() );
+	    }else{
+		memberEntity = memberDAO.findByPhone( busId, phone );
+	    }
+
 	    if ( CommonUtil.isNotEmpty( memberEntity ) ) {
-		card = cardMapper.selectById( memberEntity.getMcId() );
+	        if(CommonUtil.isEmpty( card )) {
+		    card = cardMapper.selectById( memberEntity.getMcId() );
+		}
 	    }
 	    if ( CommonUtil.isEmpty( card ) ) {
 		throw new BusinessException( ResponseMemberEnums.NO_DATA.getCode(), ResponseMemberEnums.NO_DATA.getMsg() );
@@ -4309,10 +4339,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}catch ( BusinessException e ){
 	    throw e;
 	}catch ( Exception e ) {
-	    LOG.error( "充值调用异常",e );
-	    MemberLog ml = new MemberLog();
-	    ml.setLogtxt( "充值调用异常:" + com.alibaba.fastjson.JSONObject.toJSONString( params ) );
-	    memberLogDAO.insert( ml );
+	    LOG.error("充值调用异常:" + com.alibaba.fastjson.JSONObject.toJSONString( params ) ,e );
 	    throw new BusinessException(ResponseEnums.ERROR);
 	}
     }
