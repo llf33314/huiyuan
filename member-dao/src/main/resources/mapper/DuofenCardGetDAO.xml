@@ -297,7 +297,6 @@
 		</foreach>
 	</delete>
 
-
 	<select id="findMeiRongCardGetByMemberId" resultType="Map">
 		select
 		c.id as cId, c.brand_name, c.card_type, c.deal_detail, c.cash_least_cost,
@@ -308,7 +307,7 @@
 		c.timeType,g.id as gId, g.getType, g.code, g.state, g.getDate, g.cardReceiveId,g.startTime,
 		g.endTime
 		from t_duofen_card_get g inner join t_duofen_card c on c.id=g.cardId
-		where  g.cardReceiveId=#{receiceId} and g.memberId
+		where  g.cardReceiveId=#{receiceId} and state=0 and g.memberId
 		in
 		<foreach close=")" collection="memberIds" item="m" open="(" separator=",">
 			#{m}
