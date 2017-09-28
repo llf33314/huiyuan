@@ -136,11 +136,11 @@
 		)
 		values
 		<foreach collection="duofencardGets" item="c" separator=",">
-			(#{c.cardid,jdbcType=INTEGER}, #{c.gettype,jdbcType=TINYINT},
-			#{c.code,jdbcType=VARCHAR}, #{c.state,jdbcType=TINYINT}, #{c.getdate},
-			#{c.cardreceiveid,jdbcType=INTEGER}, #{c.memberid,jdbcType=INTEGER}, #{c.publicid,jdbcType=INTEGER},
-			#{c.starttime}, #{c.endtime}, #{c.friendmemberid,jdbcType=VARCHAR},
-			#{c.busid,jdbcType=INTEGER})
+			(#{c.cardId,jdbcType=INTEGER}, #{c.getType,jdbcType=TINYINT},
+			#{c.code,jdbcType=VARCHAR}, #{c.state,jdbcType=TINYINT}, #{c.getDate},
+			#{c.cardReceiveId,jdbcType=INTEGER}, #{c.memberId,jdbcType=INTEGER}, #{c.publicId,jdbcType=INTEGER},
+			#{c.startTime}, #{c.endTime}, #{c.friendMemberId,jdbcType=VARCHAR},
+			#{c.busId,jdbcType=INTEGER})
 		</foreach>
 	</insert>
 
