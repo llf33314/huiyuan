@@ -80,7 +80,6 @@ public class ERPCountController extends BaseController {
 
 	m.setMalls( list );
 
-
 	Map< String,Object > redisMap = new HashMap<>();
 	redisMap.put( "redisKey", orderCode );
 	redisMap.put( "redisValue", JSONObject.toJSONString( m ) );

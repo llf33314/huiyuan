@@ -209,10 +209,7 @@ public class AddMemberController {
 
 	    requestUtils.setReqdata( oldApiSms );
 	    try {
-		System.out.println(PropertiesUtil.getWxmpsignKey());
-		System.out.println(JSONObject.toJSON( requestUtils ));
 		String smsStr = HttpClienUtils.reqPostUTF8(JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
-		System.out.println(smsStr);
 		JSONObject json=JSONObject.parseObject( smsStr );
 		if ( "0".equals( CommonUtil.toString(json.get( "code" )  ) ) ) {
 		    map.put( "result", true );

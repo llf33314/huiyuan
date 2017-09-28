@@ -126,6 +126,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    List< Map< String,Object > > gradeTypes = memberGradetypeDAO.findAllByBusIdAndCtId( busId, ctId );
 	    if ( ctId == 2 || ctId == 3 ) {
 		map.put( "fuka", 1 );
+
+
 	    }
 	    if ( CommonUtil.isNotEmpty( gradeTypes ) && gradeTypes.size() > 0 ) {
 		map.put( "fanhuiyuan", gradeTypes.get( 0 ).get( "iseasy" ) );
@@ -148,7 +150,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    List< MemberCardtype > cardTypes = memberCardtypeDAO.findByBusId( busId );
 	    map.put( "cardTypes", cardTypes );
 	}
-	String ctIds = findCtId( ctId );
+	List<Integer> fukaList = findCtId( ctId );
+	map.put( "fukaList",fukaList );
 	MemberFind memberFind = memberFindDAO.findByQianDao( busId );
 	if ( CommonUtil.isNotEmpty( memberFind ) ) {
 	    map.put( "qiandaojifen", memberFind.getIntegral() );
@@ -171,14 +174,20 @@ public class MemberCardServiceImpl implements MemberCardService {
 	return map;
     }
 
-    public String findCtId( Integer ctId ) {
+    public List<Integer> findCtId( Integer ctId ) {
+	List<Integer> list=new ArrayList<>(  );
 	switch ( ctId ) {
 	    case 2:
-		return "4,5";
+		list.add( 4 );
+		list.add( 5 );
+		return list;
 	    case 3:
-		return "2,4,5";
+		list.add( 2 );
+		list.add( 4 );
+		list.add( 5 );
+		return list;
 	}
-	return null;
+	return list;
     }
 
     /**

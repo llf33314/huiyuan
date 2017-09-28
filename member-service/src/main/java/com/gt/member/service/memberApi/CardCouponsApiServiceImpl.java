@@ -3,6 +3,8 @@ package com.gt.member.service.memberApi;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
+import com.gt.api.util.HttpClienUtils;
+import com.gt.api.util.RequestUtils;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.FenbiFlowRecord;
@@ -24,6 +26,7 @@ import com.gt.member.service.common.MemberCommonService;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.util.*;
+import com.gt.util.entity.param.sms.OldApiSms;
 import net.sf.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -666,14 +669,22 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 // 短信通知
                 if (receives.getIsCallSms() == 1) {
                     try {
-			Map< String,Object > params = new HashMap< String,Object >();
-			params.put( "busId", memberEntity.getBusId() );
-			params.put( "model", 12 );
-			params.put( "mobiles", receives.getMobilePhone() );
-			params.put( "content", "用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券" );
-			params.put( "company", PropertiesUtil.getSms_name() );
-			String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
-			SignHttpUtils.postByHttp( url, params, PropertiesUtil.getWxmpsignKey() );
+                        String url=PropertiesUtil.getWxmp_home()+SEND_SMS;
+                        RequestUtils<OldApiSms> requestUtils=new RequestUtils<OldApiSms>(  );
+
+                        OldApiSms oldApiSms=new OldApiSms();
+                        oldApiSms.setMobiles(receives.getMobilePhone() );
+                        oldApiSms.setContent( "用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券");
+                        oldApiSms.setCompany(PropertiesUtil.getSms_name());
+                        oldApiSms.setBusId(memberEntity.getBusId());
+                        oldApiSms.setModel(12);
+                        requestUtils.setReqdata( oldApiSms );
+                        try {
+                            String smsStr = HttpClienUtils.reqPostUTF8(JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
+                        } catch ( Exception e ) {
+                            LOG.error( "短信发送失败", e );
+                        }
+
 		    }catch ( Exception e ){
                         LOG.error( "短信发送失败",e );
 		    }
@@ -1002,17 +1013,21 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             // 短信通知
             if (dfcr.getIsCallSms() == 1) {
                 try {
-		    Map< String,Object > params = new HashMap< String,Object >();
-		    params.put( "busId", memberEntity.getBusId() );
-		    params.put( "model", 12 );
-		    params.put( "mobiles", dfcr.getMobilePhone() );
-		    params.put( "content", "用户领取一个包,包名：" + dfcr.getCardsName() );
-		    params.put( "company", PropertiesUtil.getSms_name() );
-		    String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
-		    SignHttpUtils.postByHttp( url, params, PropertiesUtil.getWxmpsignKey() );
-		}catch ( Exception e ){
-                    LOG.error( "短信过期",e );
-		}
+                    RequestUtils<OldApiSms> requestUtils=new RequestUtils<OldApiSms>(  );
+                    String url=PropertiesUtil.getWxmp_home()+SEND_SMS;
+                    OldApiSms oldApiSms=new OldApiSms();
+                    oldApiSms.setMobiles(dfcr.getMobilePhone()  );
+                    oldApiSms.setContent( "用户领取一个包,包名：" + dfcr.getCardsName() );
+                    oldApiSms.setCompany(PropertiesUtil.getSms_name());
+                    oldApiSms.setBusId(memberEntity.getBusId());
+                    oldApiSms.setModel(12);
+                    requestUtils.setReqdata( oldApiSms );
+                    String smsStr = HttpClienUtils.reqPostUTF8(JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
+
+                }catch ( Exception e ){
+                    LOG.error( "短信发送失败",e );
+                }
+
             }
 
             int type = 0;
@@ -1249,17 +1264,21 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             // 短信通知
             if (dfcr.getIsCallSms() == 1) {
                 try {
-		    Map< String,Object > params = new HashMap< String,Object >();
-		    params.put( "busId", busId );
-		    params.put( "model", 12 );
-		    params.put( "mobiles", dfcr.getMobilePhone() );
-		    params.put( "content", "用户领取一个包,包名：" + dfcr.getCardsName() );
-		    params.put( "company", PropertiesUtil.getSms_name() );
-		    String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
-		    SignHttpUtils.postByHttp( url, params, PropertiesUtil.getWxmpsignKey() );
-		}catch ( Exception e ){
+                    RequestUtils<OldApiSms> requestUtils=new RequestUtils<OldApiSms>(  );
+                    String url=PropertiesUtil.getWxmp_home()+SEND_SMS;
+                    OldApiSms oldApiSms=new OldApiSms();
+                    oldApiSms.setMobiles(dfcr.getMobilePhone()  );
+                    oldApiSms.setContent( "用户领取一个包,包名：" + dfcr.getCardsName() );
+                    oldApiSms.setCompany(PropertiesUtil.getSms_name());
+                    oldApiSms.setBusId(busId);
+                    oldApiSms.setModel(12);
+                    requestUtils.setReqdata( oldApiSms );
+                    String smsStr = HttpClienUtils.reqPostUTF8(JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
+
+                }catch ( Exception e ){
                     LOG.error( "短信发送失败",e );
-		}
+                }
+
             }
         } catch (BusinessException e) {
             throw new BusinessException(e.getCode(), e.getMessage());
@@ -1328,18 +1347,22 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
                 // 短信通知
                 if (receives.getIsCallSms() == 1) {
-		    try {
-			Map< String,Object > params = new HashMap< String,Object >();
-			params.put( "busId", memberEntity.getBusId() );
-			params.put( "model", 12 );
-			params.put( "mobiles", receives.getMobilePhone() );
-			params.put( "content", "用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券");
-			params.put( "company", PropertiesUtil.getSms_name() );
-			String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
-			SignHttpUtils.postByHttp( url, params, PropertiesUtil.getWxmpsignKey() );
-		    }catch ( Exception e ){
-			LOG.error( "短信发送失败",e );
-		    }
+                    try {
+                        RequestUtils<OldApiSms> requestUtils=new RequestUtils<OldApiSms>(  );
+                        String url=PropertiesUtil.getWxmp_home()+SEND_SMS;
+                        OldApiSms oldApiSms=new OldApiSms();
+                        oldApiSms.setMobiles(receives.getMobilePhone()  );
+                        oldApiSms.setContent( "用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券" );
+                        oldApiSms.setCompany(PropertiesUtil.getSms_name());
+                        oldApiSms.setBusId( memberEntity.getBusId() );
+                        oldApiSms.setModel(12);
+                        requestUtils.setReqdata( oldApiSms );
+                        String smsStr = HttpClienUtils.reqPostUTF8(JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
+
+                    }catch ( Exception e ){
+                        LOG.error( "短信发送失败",e );
+                    }
+
 
                 }
             }
@@ -1508,18 +1531,21 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
                 // 短信通知
                 if (receives.getIsCallSms() == 1) {
-		    try {
-			Map< String,Object > params = new HashMap< String,Object >();
-			params.put( "busId", memberEntity.getBusId() );
-			params.put( "model", 12 );
-			params.put( "mobiles", receives.getMobilePhone() );
-			params.put( "content","用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券");
-			params.put( "company", PropertiesUtil.getSms_name() );
-			String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
-			SignHttpUtils.postByHttp( url, params, PropertiesUtil.getWxmpsignKey() );
-		    }catch ( Exception e ){
-			LOG.error( "短信发送失败",e );
-		    }
+                    try {
+                        RequestUtils<OldApiSms> requestUtils=new RequestUtils<OldApiSms>(  );
+                        String url=PropertiesUtil.getWxmp_home()+SEND_SMS;
+                        OldApiSms oldApiSms=new OldApiSms();
+                        oldApiSms.setMobiles(receives.getMobilePhone()  );
+                        oldApiSms.setContent( "用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券" );
+                        oldApiSms.setCompany(PropertiesUtil.getSms_name());
+                        oldApiSms.setBusId( memberEntity.getBusId() );
+                        oldApiSms.setModel(12);
+                        requestUtils.setReqdata( oldApiSms );
+                        String smsStr = HttpClienUtils.reqPostUTF8(JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
+
+                    }catch ( Exception e ){
+                        LOG.error( "短信发送失败",e );
+                    }
                 }
             }
         } catch (Exception e) {
