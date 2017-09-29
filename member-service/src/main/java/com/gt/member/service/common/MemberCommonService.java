@@ -2,6 +2,7 @@ package com.gt.member.service.common;
 
 import com.gt.member.entity.MemberCardrecord;
 import com.gt.member.entity.MemberDate;
+import com.gt.member.entity.MemberEntity;
 import com.gt.member.entity.PublicParameterset;
 import com.gt.member.exception.BusinessException;
 
@@ -94,6 +95,14 @@ public interface MemberCommonService {
      * 关注公众号的接口
      */
     public String findWxQcode(Integer busId,Integer busType,String scene_id);
+
+    /**
+     * 新增会员处理数据合并问题
+     * @param member
+     * @param busId
+     * @param phone
+     */
+    public void newMemberMerge(MemberEntity member,Integer busId,String phone)throws BusinessException;
 
 
 }

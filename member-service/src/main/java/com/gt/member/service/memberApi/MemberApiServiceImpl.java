@@ -4159,59 +4159,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
 		Integer memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 		memberEntity = memberDAO.selectById( memberId );
-		if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-		    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
-		}
-
-		MemberEntity m1 = memberDAO.findByPhone( busId, phone );
-		if ( CommonUtil.isNotEmpty( m1 ) && !memberId.equals( m1.getId() ) ) {
-		    // 合并member数据
-		    m1.setFlow( m1.getFlow() + memberEntity.getFlow() );
-		    m1.setIntegral( m1.getIntegral() + memberEntity.getIntegral() );
-		    m1.setFansCurrency( m1.getFansCurrency() + memberEntity.getFansCurrency() );
-		    if ( CommonUtil.isNotEmpty( memberEntity.getPwd() ) ) {
-			m1.setPwd( memberEntity.getPwd() );
-		    }
-
-		    if ( CommonUtil.isNotEmpty( m1.getOldId() ) ) {
-			m1.setOldId( m1.getOldId() + "," + memberEntity.getId() );
-		    } else {
-			m1.setOldId( m1.getId() + "," + memberEntity.getId() );
-		    }
-
-		    if ( CommonUtil.isNotEmpty( memberEntity.getOpenid() ) && CommonUtil.isEmpty( m1.getOpenid() ) ) {
-			m1.setOpenid( memberEntity.getOpenid() );
-		    }
-
-		    m1.setPhone( phone );
-		    m1.setMcId( memberEntity.getMcId() );
-		    m1.setNickname( memberEntity.getNickname() );
-		    m1.setHeadimgurl( memberEntity.getHeadimgurl() );
-		    m1.setTotalMoney( memberEntity.getTotalMoney() + m1.getTotalMoney() );
-		    m1.setTotalIntegral( memberEntity.getTotalIntegral() + m1.getTotalIntegral() );
-		    m1.setRemark( memberEntity.getRemark() );
-		    m1.setLoginMode( 0 );
-
-		    // 删除数据做移出到memberold
-		    MemberOld old = (MemberOld) JSONObject.toBean( JSONObject.fromObject( memberEntity ), MemberOld.class );
-		    memberOldMapper.insert( old );
-
-		    memberDAO.deleteById( memberEntity.getId() );
-
-		    memberDAO.updateById( m1 );
-
-		    MemberParameter mp = memberParameterDAO.findByMemberId( memberEntity.getId() );
-		    if ( CommonUtil.isNotEmpty( mp ) ) {
-			memberParameterDAO.deleteById( mp.getId() );
-		    }
-		    // 修改小程序之前openId对应的memberId
-		    memberAppletOpenidMapper.updateMemberId( m1.getId(), memberEntity.getId() );
-		}
-
-		if (CommonUtil.isNotEmpty( m1 ) &&  CommonUtil.isNotEmpty( m1.getMcId() ) ) {
-		    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
-		}
-
+		memberCommonService.newMemberMerge(memberEntity,busId,phone);
 	    }
 
 	    if ( CommonUtil.isEmpty( memberEntity ) ) {

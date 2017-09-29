@@ -1,5 +1,6 @@
 package com.gt.member.service.common;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.sign.SignHttpUtils;
@@ -9,6 +10,7 @@ import com.gt.member.dao.*;
 import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.common.WxPublicUsersDAO;
 import com.gt.member.entity.*;
+import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.member.SystemMsgService;
@@ -69,6 +71,15 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
     @Autowired
     private WxPublicUsersDAO wxPublicUsersDAO;
+
+    @Autowired
+    private MemberOldDAO memberOldDao;
+
+    @Autowired
+    private MemberParameterDAO memberParameterDAO;
+
+    @Autowired
+    private MemberAppletOpenidDAO memberAppletOpenidDAO;
 
 
 
@@ -390,5 +401,69 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    throw  new BusinessException( ResponseEnums.ERROR);
 	}
     }
+
+
+    /**
+     * 新增会员处理数据合并问题
+     * @param member
+     * @param busId
+     * @param phone
+     */
+    public void newMemberMerge(MemberEntity memberEntity,Integer busId,String phone)throws BusinessException{
+	if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
+	    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
+	}
+
+	MemberEntity m1 = memberDao.findByPhone( busId, phone );
+	if ( CommonUtil.isNotEmpty( m1 ) && !memberEntity.getId().equals( m1.getId() ) ) {
+	    // 合并member数据
+	    m1.setFlow( m1.getFlow() + memberEntity.getFlow() );
+	    m1.setIntegral( m1.getIntegral() + memberEntity.getIntegral() );
+	    m1.setFansCurrency( m1.getFansCurrency() + memberEntity.getFansCurrency() );
+	    if ( CommonUtil.isNotEmpty( memberEntity.getPwd() ) ) {
+		m1.setPwd( memberEntity.getPwd() );
+	    }
+
+	    if ( CommonUtil.isNotEmpty( m1.getOldId() ) ) {
+		m1.setOldId( m1.getOldId() + "," + memberEntity.getId() );
+	    } else {
+		m1.setOldId( m1.getId() + "," + memberEntity.getId() );
+	    }
+
+	    if ( CommonUtil.isNotEmpty( memberEntity.getOpenid() ) && CommonUtil.isEmpty( m1.getOpenid() ) ) {
+		m1.setOpenid( memberEntity.getOpenid() );
+	    }
+
+	    m1.setPhone( phone );
+	    m1.setMcId( memberEntity.getMcId() );
+	    m1.setNickname( memberEntity.getNickname() );
+	    m1.setHeadimgurl( memberEntity.getHeadimgurl() );
+	    m1.setTotalMoney( memberEntity.getTotalMoney() + m1.getTotalMoney() );
+	    m1.setTotalIntegral( memberEntity.getTotalIntegral() + m1.getTotalIntegral() );
+	    m1.setRemark( memberEntity.getRemark() );
+	    m1.setLoginMode( 0 );
+	    MemberOld old =  JSONObject.toJavaObject( JSON.parseObject( JSONObject.toJSONString( memberEntity ) ), MemberOld.class  );
+
+	    // 删除数据做移出到memberold
+	//    MemberOld old = (MemberOld) net.sf.json.JSONObject.toBean( net.sf.json.JSONObject.fromObject( memberEntity ), MemberOld.class );
+	    memberOldDao.insert( old );
+
+	    memberDao.deleteById( memberEntity.getId() );
+
+	    memberDao.updateById( m1 );
+
+	    MemberParameter mp = memberParameterDAO.findByMemberId( memberEntity.getId() );
+	    if ( CommonUtil.isNotEmpty( mp ) ) {
+		memberParameterDAO.deleteById( mp.getId() );
+	    }
+	    // 修改小程序之前openId对应的memberId
+	    memberAppletOpenidDAO.updateMemberId( m1.getId(), memberEntity.getId() );
+	}
+
+	if (CommonUtil.isNotEmpty( m1 ) &&  CommonUtil.isNotEmpty( m1.getMcId() ) ) {
+	    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
+	}
+    }
+
 
 }
