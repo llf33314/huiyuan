@@ -462,7 +462,7 @@ public class MemberApiController extends BaseController {
 
     } )
     @ResponseBody
-    @RequestMapping( value = "/receiveMemberCard", method = RequestMethod.POST )
+    @RequestMapping( value = "/linquMemberCard", method = RequestMethod.POST )
     public ServerResponse linquMemberCard( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
 	try {
 	    memberApiService.linquMemberCard( requestBody );

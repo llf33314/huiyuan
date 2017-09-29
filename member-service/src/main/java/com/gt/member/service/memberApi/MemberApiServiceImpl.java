@@ -137,6 +137,7 @@ public class MemberApiServiceImpl implements MemberApiService {
     @Autowired
     private MemberParameterDAO memberParameterDAO;
 
+    @Autowired
     private DictService dictService;
 
     /**
