@@ -118,7 +118,6 @@ public class MemberApiServiceImpl implements MemberApiService {
     @Autowired
     private RedisCacheUtil redisCacheUtil;
 
-
     @Autowired
     private MemberGradetypeDAO memberGradetypeDAO;
 
@@ -2935,7 +2934,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		MemberDate memberDate = memberCommonService.findMemeberDate( memberEntity.getBusId(), card.getCtId() );
 		if ( card.getCtId() == 2 ) {
 		    if ( CommonUtil.isNotEmpty( memberDate ) ) {
-			map.put( "memberDiscount", memberDate.getDiscount()*giveRule.getGrDiscount() / 100.0 );
+			map.put( "memberDiscount", memberDate.getDiscount() * giveRule.getGrDiscount() / 100.0 );
 			map.put( "memberDate", 1 );
 		    }
 		}
@@ -3099,12 +3098,11 @@ public class MemberApiServiceImpl implements MemberApiService {
 		MemberDate memberDate = memberCommonService.findMemeberDate( busId, card.getCtId() );
 		if ( card.getCtId() == 2 ) {
 		    if ( CommonUtil.isNotEmpty( memberDate ) ) {
-			map.put( "memberDiscount", memberDate.getDiscount()*giveRule.getGrDiscount() / 100.0 );
+			map.put( "memberDiscount", memberDate.getDiscount() * giveRule.getGrDiscount() / 100.0 );
 			map.put( "memberDate", 1 );
 		    }
 		}
 	    }
-
 
 	    return map;
 	} catch ( BusinessException e ) {
@@ -3500,7 +3498,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    LOG.error( "支付成功回调异常"+JSONObject.fromObject( paySuccessBo ) , e );
+	    LOG.error( "支付成功回调异常" + JSONObject.fromObject( paySuccessBo ), e );
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
 
@@ -3614,7 +3612,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    LOG.error( "方法refundMoney退款异常,请求参数商家：" + busId + "订单号:" + orderNo + "退款金额:" + refundMoney , e );
+	    LOG.error( "方法refundMoney退款异常,请求参数商家：" + busId + "订单号:" + orderNo + "退款金额:" + refundMoney, e );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
@@ -3652,21 +3650,21 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    ids.add( CommonUtil.toInteger( str[i] ) );
 		}
 	    }
-	    List<Map<String, Object>> list = memberDAO.findByMemberIds( busId, ids );
+	    List< Map< String,Object > > list = memberDAO.findByMemberIds( busId, ids );
 
-	    List<Map<String, Object>> memberList = new ArrayList<Map<String, Object>>();
+	    List< Map< String,Object > > memberList = new ArrayList< Map< String,Object > >();
 
-	    for (Map<String, Object> map : list) {
-		if (map.containsKey("nickname")) {
+	    for ( Map< String,Object > map : list ) {
+		if ( map.containsKey( "nickname" ) ) {
 		    try {
-			byte[] bytes = (byte[]) map.get("nickname");
-			map.put("nickname", new String(bytes, "UTF-8"));
-		    } catch (Exception e) {
-			map.put("nickname", null);
+			byte[] bytes = (byte[]) map.get( "nickname" );
+			map.put( "nickname", new String( bytes, "UTF-8" ) );
+		    } catch ( Exception e ) {
+			map.put( "nickname", null );
 		    }
-		    memberList.add(map);
+		    memberList.add( map );
 		} else {
-		    memberList.add(map);
+		    memberList.add( map );
 		}
 	    }
 
@@ -3773,7 +3771,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    LOG.error(  "方法refundMoneyAndJifenAndFenbi退款异常,请求参数商家：" + JSON.toJSONString( map ) , e );
+	    LOG.error( "方法refundMoneyAndJifenAndFenbi退款异常,请求参数商家：" + JSON.toJSONString( map ), e );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
@@ -3885,7 +3883,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		MemberDate memberDate = memberCommonService.findMemeberDate( memberEntity.getBusId(), card.getCtId() );
 		if ( card.getCtId() == 2 ) {
 		    if ( CommonUtil.isNotEmpty( memberDate ) ) {
-			map.put( "memberDiscount", memberDate.getDiscount()*giveRule.getGrDiscount() / 100.0 );
+			map.put( "memberDiscount", memberDate.getDiscount() * giveRule.getGrDiscount() / 100.0 );
 			map.put( "memberDate", 1 );
 		    }
 		}
@@ -3909,11 +3907,10 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    String phone = CommonUtil.toString( map.get( "phone" ) );
 	    Integer busId = CommonUtil.toInteger( map.get( "busId" ) );
 
-	    MemberEntity memberEntity=memberDAO.findByPhone( busId,phone );
-	    if(!memberEntity.getId().equals( memberId )){
-	        throw new BusinessException(ResponseMemberEnums.IS_BINDING_PHONE);
+	    MemberEntity memberEntity = memberDAO.findByPhone( busId, phone );
+	    if ( !memberEntity.getId().equals( memberId ) ) {
+		throw new BusinessException( ResponseMemberEnums.IS_BINDING_PHONE );
 	    }
-
 
 	    MemberEntity m = new MemberEntity();
 	    m.setId( memberId );
@@ -3937,23 +3934,22 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 	    if ( list.size() > 0 ) {
 
-		List<Map<String, Object>> membertS = memberDAO.findMemberByIds( busId, list );
-		List<Map<String, Object>> memberList = new ArrayList<Map<String, Object>>();
-		for (Map<String, Object> memberMap : membertS) {
-		    if (memberMap.containsKey("nickname")) {
+		List< Map< String,Object > > membertS = memberDAO.findMemberByIds( busId, list );
+		List< Map< String,Object > > memberList = new ArrayList< Map< String,Object > >();
+		for ( Map< String,Object > memberMap : membertS ) {
+		    if ( memberMap.containsKey( "nickname" ) ) {
 			try {
-			    byte[] bytes = (byte[]) memberMap.get("nickname");
-			    memberMap.put("nickname", new String(bytes, "UTF-8"));
-			} catch (Exception e) {
-			    memberMap.put("nickname", null);
+			    byte[] bytes = (byte[]) memberMap.get( "nickname" );
+			    memberMap.put( "nickname", new String( bytes, "UTF-8" ) );
+			} catch ( Exception e ) {
+			    memberMap.put( "nickname", null );
 			}
-			memberList.add(memberMap);
+			memberList.add( memberMap );
 		    } else {
-			memberList.add(memberMap);
+			memberList.add( memberMap );
 		    }
 
 		}
-
 
 	    }
 	    return null;
@@ -3975,19 +3971,19 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    Integer busId = CommonUtil.toInteger( map.get( "busId" ) );
 	    String phone = CommonUtil.toString( map.get( "phone" ) );
 
-	    List<Map<String, Object>> list =memberDAO.findMemberByPhoneAndBusId( busId, phone );
-	    List<Map<String, Object>> memberList = new ArrayList<Map<String, Object>>();
-	    for (Map<String, Object> memberMap : list) {
-		if (memberMap.containsKey("nickname")) {
+	    List< Map< String,Object > > list = memberDAO.findMemberByPhoneAndBusId( busId, phone );
+	    List< Map< String,Object > > memberList = new ArrayList< Map< String,Object > >();
+	    for ( Map< String,Object > memberMap : list ) {
+		if ( memberMap.containsKey( "nickname" ) ) {
 		    try {
-			byte[] bytes = (byte[]) memberMap.get("nickname");
-			memberMap.put("nickname", new String(bytes, "UTF-8"));
-		    } catch (Exception e) {
-			memberMap.put("nickname", null);
+			byte[] bytes = (byte[]) memberMap.get( "nickname" );
+			memberMap.put( "nickname", new String( bytes, "UTF-8" ) );
+		    } catch ( Exception e ) {
+			memberMap.put( "nickname", null );
 		    }
-		    memberList.add(memberMap);
+		    memberList.add( memberMap );
 		} else {
-		    memberList.add(memberMap);
+		    memberList.add( memberMap );
 		}
 
 	    }
@@ -4027,7 +4023,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	Integer ctId = CommonUtil.toInteger( map.get( "ctId" ) );
 	List< Map< String,Object > > gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, ctId );
 	if ( gradeTypes.size() > 0 ) {
-	    if ( "3".equals( CommonUtil.toString(gradeTypes.get( 0 ).get( "applyType" ) ) )) {
+	    if ( "3".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "applyType" ) ) ) ) {
 		return gradeTypes;
 	    } else {
 		List< Map< String,Object > > returnMap = new ArrayList<>();
@@ -4054,21 +4050,20 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    String phone = CommonUtil.toString( params.get( "phone" ) );
 
-	    String cardNodecrypt=null;
+	    String cardNodecrypt = null;
 	    try {
 		// 如果手动输入 会出现异常
-		cardNodecrypt = EncryptUtil.decrypt(PropertiesUtil.getCardNoKey(), phone);
+		cardNodecrypt = EncryptUtil.decrypt( PropertiesUtil.getCardNoKey(), phone );
 
-		if (CommonUtil.isNotEmpty( cardNodecrypt ) && cardNodecrypt.contains("?time")) {
+		if ( CommonUtil.isNotEmpty( cardNodecrypt ) && cardNodecrypt.contains( "?time" ) ) {
 		    // 查询卡号是否存在
-		    Long time = Long.parseLong(cardNodecrypt.substring(cardNodecrypt
-				    .indexOf("?time=") + 6));
+		    Long time = Long.parseLong( cardNodecrypt.substring( cardNodecrypt.indexOf( "?time=" ) + 6 ) );
 
-		    String cardNo = cardNodecrypt.substring(0, cardNodecrypt.indexOf("?time"));
-		    card = cardMapper.findCardByCardNo(busId, cardNo);
-		    if (card.getCtId() == 3) {
+		    String cardNo = cardNodecrypt.substring( 0, cardNodecrypt.indexOf( "?time" ) );
+		    card = cardMapper.findCardByCardNo( busId, cardNo );
+		    if ( card.getCtId() == 3 ) {
 			// 2分钟后为超时
-			if (DateTimeKit.secondBetween(new Date(time), new Date()) > 120) {
+			if ( DateTimeKit.secondBetween( new Date( time ), new Date() ) > 120 ) {
 			    // 二维码已超时
 			    throw new BusinessException( ResponseMemberEnums.ERROR_QR_CODE );
 			}
@@ -4076,28 +4071,28 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    memberEntity = memberDAO.findByMcIdAndbusId( busId, card.getMcId() );
 		}
 
-	    } catch (Exception e) {
+	    } catch ( Exception e ) {
 		// 如果不是扫码 判断商家是否允许不扫码
-//		List<Map< String,Object >> list = dictService.getDict("A001");
-//		boolean saomao=false;
-//		for (Map<String, Object> map2 : list) {
-//		    if(busId.equals( map2.get( "item_key" ) )){
-//			saomao=true;
-//		    }
-//		}
-//		if(true){
-//		    throw new BusinessException( ResponseMemberEnums. )
-//		}
-		card = cardMapper.findCardByCardNo(busId, phone);
+		//		List<Map< String,Object >> list = dictService.getDict("A001");
+		//		boolean saomao=false;
+		//		for (Map<String, Object> map2 : list) {
+		//		    if(busId.equals( map2.get( "item_key" ) )){
+		//			saomao=true;
+		//		    }
+		//		}
+		//		if(true){
+		//		    throw new BusinessException( ResponseMemberEnums. )
+		//		}
+		card = cardMapper.findCardByCardNo( busId, phone );
 	    }
-	    if(CommonUtil.isNotEmpty( card )) {
+	    if ( CommonUtil.isNotEmpty( card ) ) {
 		memberEntity = memberDAO.findByMcIdAndbusId( busId, card.getMcId() );
-	    }else{
+	    } else {
 		memberEntity = memberDAO.findByPhone( busId, phone );
 	    }
 
 	    if ( CommonUtil.isNotEmpty( memberEntity ) ) {
-	        if(CommonUtil.isEmpty( card )) {
+		if ( CommonUtil.isEmpty( card ) ) {
 		    card = cardMapper.selectById( memberEntity.getMcId() );
 		}
 	    }
@@ -4157,25 +4152,69 @@ public class MemberApiServiceImpl implements MemberApiService {
 		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_COUNT );
 	    }
 
-	    MemberEntity memberEntity=null;
+	    MemberEntity memberEntity = null;
 
 	    String phone = CommonUtil.toString( params.get( "phone" ) );
 
-	    if(CommonUtil.isNotEmpty( params.get( "memberId" ) )){
-		Integer memberId=CommonUtil.toInteger( params.get( "memberId" ) );
+	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
+		Integer memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 		memberEntity = memberDAO.selectById( memberId );
-		if ( CommonUtil.isNotEmpty( memberEntity )  && CommonUtil.isNotEmpty( memberEntity.getMcId() )) {
+		if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
 		    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
 		}
 
-		MemberEntity member1 = memberDAO.findByPhone( busId, phone );
-		if(CommonUtil.isNotEmpty( member1 ) && !memberId.equals( member1.getId() )){
-		    throw new BusinessException( ResponseMemberEnums.IS_BINDING_PHONE );
+		MemberEntity m1 = memberDAO.findByPhone( busId, phone );
+		if ( CommonUtil.isNotEmpty( m1 ) && !memberId.equals( m1.getId() ) ) {
+		    // 合并member数据
+		    m1.setFlow( m1.getFlow() + memberEntity.getFlow() );
+		    m1.setIntegral( m1.getIntegral() + memberEntity.getIntegral() );
+		    m1.setFansCurrency( m1.getFansCurrency() + memberEntity.getFansCurrency() );
+		    if ( CommonUtil.isNotEmpty( memberEntity.getPwd() ) ) {
+			m1.setPwd( memberEntity.getPwd() );
+		    }
+
+		    if ( CommonUtil.isNotEmpty( m1.getOldId() ) ) {
+			m1.setOldId( m1.getOldId() + "," + memberEntity.getId() );
+		    } else {
+			m1.setOldId( m1.getId() + "," + memberEntity.getId() );
+		    }
+
+		    if ( CommonUtil.isNotEmpty( memberEntity.getOpenid() ) && CommonUtil.isEmpty( m1.getOpenid() ) ) {
+			m1.setOpenid( memberEntity.getOpenid() );
+		    }
+
+		    m1.setPhone( phone );
+		    m1.setMcId( memberEntity.getMcId() );
+		    m1.setNickname( memberEntity.getNickname() );
+		    m1.setHeadimgurl( memberEntity.getHeadimgurl() );
+		    m1.setTotalMoney( memberEntity.getTotalMoney() + m1.getTotalMoney() );
+		    m1.setTotalIntegral( memberEntity.getTotalIntegral() + m1.getTotalIntegral() );
+		    m1.setRemark( memberEntity.getRemark() );
+		    m1.setLoginMode( 0 );
+
+		    // 删除数据做移出到memberold
+		    MemberOld old = (MemberOld) JSONObject.toBean( JSONObject.fromObject( memberEntity ), MemberOld.class );
+		    memberOldMapper.insert( old );
+
+		    memberDAO.deleteById( memberEntity.getId() );
+
+		    memberDAO.updateById( m1 );
+
+		    MemberParameter mp = memberParameterDAO.findByMemberId( memberEntity.getId() );
+		    if ( CommonUtil.isNotEmpty( mp ) ) {
+			memberParameterDAO.deleteById( mp.getId() );
+		    }
+		    // 修改小程序之前openId对应的memberId
+		    memberAppletOpenidMapper.updateMemberId( m1.getId(), memberEntity.getId() );
+		}
+
+		if (CommonUtil.isNotEmpty( m1 ) &&  CommonUtil.isNotEmpty( m1.getMcId() ) ) {
+		    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
 		}
 
 	    }
 
-	    if(CommonUtil.isEmpty( memberEntity )) {
+	    if ( CommonUtil.isEmpty( memberEntity ) ) {
 		memberEntity = memberDAO.findByPhone( busId, phone );
 	    }
 
@@ -4193,8 +4232,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    mp.setMemberId( memberEntity.getId() );
 		    memberParameterDAO.insert( mp );
 		}
-	    }else{
-		if(CommonUtil.isNotEmpty( memberEntity.getMcId() )){
+	    } else {
+		if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
 		    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
 		}
 	    }
@@ -4204,7 +4243,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 	    // 根据卡片类型 查询第一等级
 	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findBybusIdAndCtId3( busId, ctId );
-	    Integer applyType =CommonUtil.toInteger( gradeTypes.get( 0 ).get( "applyType" ) );
+	    Integer applyType = CommonUtil.toInteger( gradeTypes.get( 0 ).get( "applyType" ) );
 	    if ( applyType != 3 ) {
 		//非购买会员卡  直接分配会员卡
 		MemberCard card = new MemberCard();
@@ -4347,38 +4386,39 @@ public class MemberApiServiceImpl implements MemberApiService {
 		}
 		cardMapper.updateById( card );
 
-		memberCommonService.saveCardRecordNew( member.getMcId(),(byte)1,totalMoney+"元","会员卡充值",member.getBusId(),card.getMoney()+"",card.getCtId(),0.0 );
+		memberCommonService.saveCardRecordNew( member.getMcId(), (byte) 1, totalMoney + "元", "会员卡充值", member.getBusId(), card.getMoney() + "", card.getCtId(), 0.0 );
 
 	    }
-	}catch ( BusinessException e ){
+	} catch ( BusinessException e ) {
 	    throw e;
-	}catch ( Exception e ) {
-	    LOG.error("充值调用异常:" + com.alibaba.fastjson.JSONObject.toJSONString( params ) ,e );
-	    throw new BusinessException(ResponseEnums.ERROR);
+	} catch ( Exception e ) {
+	    LOG.error( "充值调用异常:" + com.alibaba.fastjson.JSONObject.toJSONString( params ), e );
+	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
 
     /**
      * (商城）评论修改会员积分或粉币
+     *
      * @param params
      */
-    public void updateJifenAndFenBiByPinglu(Map<String, Object> params){
-        Integer memberId=CommonUtil.toInteger( params.get( "memberId" ) );
-        Integer jifen=CommonUtil.toInteger( params.get( "jifen" ) );
-        Integer fenbi=CommonUtil.toInteger( params.get( "fenbi" ) );
-        MemberEntity memberEntity=memberDAO.selectById( memberId );
-	MemberEntity m1=new MemberEntity();
+    public void updateJifenAndFenBiByPinglu( Map< String,Object > params ) {
+	Integer memberId = CommonUtil.toInteger( params.get( "memberId" ) );
+	Integer jifen = CommonUtil.toInteger( params.get( "jifen" ) );
+	Integer fenbi = CommonUtil.toInteger( params.get( "fenbi" ) );
+	MemberEntity memberEntity = memberDAO.selectById( memberId );
+	MemberEntity m1 = new MemberEntity();
 	m1.setId( memberId );
-	boolean bool=false;
-	if(CommonUtil.isNotEmpty( jifen ) && jifen>0) {
+	boolean bool = false;
+	if ( CommonUtil.isNotEmpty( jifen ) && jifen > 0 ) {
 	    m1.setIntegral( memberEntity.getIntegral() + jifen );
-	    bool=true;
+	    bool = true;
 	}
-	if(CommonUtil.isNotEmpty( fenbi ) && fenbi>0) {
+	if ( CommonUtil.isNotEmpty( fenbi ) && fenbi > 0 ) {
 	    m1.setFansCurrency( memberEntity.getFansCurrency() + fenbi );
-	    bool=true;
+	    bool = true;
 	}
-	if(bool) {
+	if ( bool ) {
 	    memberDAO.updateById( m1 );
 	}
     }
