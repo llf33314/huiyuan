@@ -4158,6 +4158,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 
 	    MemberEntity memberEntity=null;
+
+	    String phone = CommonUtil.toString( params.get( "phone" ) );
+
 	    if(CommonUtil.isNotEmpty( params.get( "memberId" ) )){
 		Integer memberId=CommonUtil.toInteger( params.get( "memberId" ) );
 		memberEntity = memberDAO.selectById( memberId );
@@ -4165,8 +4168,13 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
 		}
 
+		MemberEntity member1 = memberDAO.findByPhone( busId, phone );
+		if(CommonUtil.isNotEmpty( member1 ) && !memberId.equals( member1.getId() )){
+		    throw new BusinessException( ResponseMemberEnums.IS_BINDING_PHONE );
+		}
+
 	    }
-	    String phone = CommonUtil.toString( params.get( "phone" ) );
+
 	    if(CommonUtil.isEmpty( memberEntity )) {
 		memberEntity = memberDAO.findByPhone( busId, phone );
 	    }
