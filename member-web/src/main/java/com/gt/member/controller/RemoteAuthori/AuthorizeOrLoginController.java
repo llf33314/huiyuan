@@ -22,8 +22,6 @@ import com.alibaba.fastjson.JSONObject;
  *
  * @author Administrator
  */
-@Controller
-@RequestMapping( "authorizeOrLoginController" )
 public class AuthorizeOrLoginController {
 
     private static final String GETWXPULICMSG="/8A5DA52E/busUserApi/getWxPulbicMsg.do";
@@ -34,7 +32,6 @@ public class AuthorizeOrLoginController {
     @Autowired
     private PropertiesUtil propertiesUtil;
 
-    @RequestMapping( value = "/79B4DE7C/authorizeMember" )
     public String authorizeMember( HttpServletRequest request, HttpServletResponse response, Map< String,Object > map ) throws Exception {
 	Integer busId = CommonUtil.toInteger( map.get( "busId" ) );
 	Integer browser = CommonUtil.judgeBrowser( request );

@@ -76,7 +76,7 @@ server:
     timeout: 30
 
 web:
- webHome: http://192.168.2.240  #本项目域名
+ webHome: http://192.168.2.241  #本项目域名
  wxmp_home: http://yifriend.net/  #wxmp
  wxmpsignKey: WXMP2017   #wxmp 秘钥
  cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6  #会员卡秘钥
@@ -87,6 +87,8 @@ web:
  redis_password: gt@123456
  redis_database: 3
  res_image_path: /home/server/project/staticSource/upload  #图片存放路径
+
+ res_web_path: https://192.168.2.240   #图片域名
 
   #图片资源ftp ip
  static_source_ftp_ip: 120.25.154.127
