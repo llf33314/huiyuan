@@ -185,13 +185,13 @@ public class AddMemberController {
 		// 验证类型
 		LOG.debug( "进入短信发送,手机号:" + telNo );
 	    }
-	    MemberEntity memberEntity = memberMapper.findByPhone( busId, telNo );
-	    if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-		map.put( "result", false );
-		map.put( "msg", "用户已是会员" );
-		CommonUtil.write( response, map );
-		return;
-	    }
+//	    MemberEntity memberEntity = memberMapper.findByPhone( busId, telNo );
+//	    if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
+//		map.put( "result", false );
+//		map.put( "msg", "用户已是会员" );
+//		CommonUtil.write( response, map );
+//		return;
+//	    }
 
 	    String url = PropertiesUtil.getWxmp_home() + "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do";
 

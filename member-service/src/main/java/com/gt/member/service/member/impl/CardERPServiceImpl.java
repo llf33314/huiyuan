@@ -1,5 +1,6 @@
 package com.gt.member.service.member.impl;
 
+import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.WxPublicUsersEntity;
@@ -7,11 +8,14 @@ import com.gt.member.dao.*;
 import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.common.WxPublicUsersDAO;
 import com.gt.member.entity.*;
+import com.gt.member.enums.ResponseMemberEnums;
+import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.MemberCommonService;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.member.CardERPService;
 import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.*;
+import org.apache.ibatis.builder.BuilderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,13 +104,13 @@ public class CardERPServiceImpl implements CardERPService {
      * @throws Exception
      */
     @Transactional
-    public Map< String,Object > linquMemberCard( Integer busId, Map< String,Object > params ) throws Exception {
+    public Map< String,Object > linquMemberCard( Integer busId, Map< String,Object > params ) throws BusinessException  {
 	Map< String,Object > returnMap = new HashMap<>();
 	try {
 
 	    int count = cardMapper.countCardisBinding( busId );
 
-	    BusUserEntity busUserEntity = busUserDAO.selectById(busId  );
+	    BusUserEntity busUserEntity = busUserDAO.selectById( busId );
 
 	    String dictNum = dictService.dictBusUserNum( busId, busUserEntity.getLevel(), 4, "1093" ); // 多粉 翼粉
 	    if ( CommonUtil.toInteger( dictNum ) < count ) {
@@ -116,11 +120,12 @@ public class CardERPServiceImpl implements CardERPService {
 	    }
 
 	    String phone = CommonUtil.toString( params.get( "phone" ) );
-	    MemberEntity memberEntity=null;
-	    if(CommonUtil.isNotEmpty( params.get( "memberId" ) )){
-		Integer memberId=CommonUtil.toInteger(  params.get( "memberId" ));
-		memberEntity = memberMapper.selectById(memberId);
-	    }else{
+	    MemberEntity memberEntity = null;
+	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
+		Integer memberId = CommonUtil.toInteger( params.get( "memberId" ) );
+		memberEntity = memberMapper.selectById( memberId );
+		memberCommonService.newMemberMerge( memberEntity, busId, phone );
+	    } else {
 		memberEntity = memberMapper.findByPhone( busUserEntity.getId(), phone );
 	    }
 
@@ -138,14 +143,13 @@ public class CardERPServiceImpl implements CardERPService {
 		    mp.setMemberId( memberEntity.getId() );
 		    memberParameterMapper.insert( mp );
 		}
-	    }else{
-	        if(CommonUtil.isNotEmpty( memberEntity.getMcId() )){
+	    } else {
+		if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
 		    returnMap.put( "code", -1 );
 		    returnMap.put( "message", "粉丝已成为会员" );
 		    return returnMap;
 		}
 	    }
-
 
 	    Integer ctId = CommonUtil.toInteger( params.get( "ctId" ) );
 	    Integer gtId = CommonUtil.toInteger( params.get( "gtId" ) );
@@ -153,7 +157,7 @@ public class CardERPServiceImpl implements CardERPService {
 
 	    // 根据卡片类型 查询第一等级
 	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findBybusIdAndCtId3( memberEntity.getBusId(), ctId );
-	    if ( CommonUtil.toInteger(gradeTypes.get( 0 ).get("applyType")) != 3 ) {
+	    if ( CommonUtil.toInteger( gradeTypes.get( 0 ).get( "applyType" ) ) != 3 ) {
 		//非购买会员卡  直接分配会员卡
 		MemberCard card = new MemberCard();
 		card.setIsChecked( 1 );
@@ -165,7 +169,6 @@ public class CardERPServiceImpl implements CardERPService {
 
 		card.setSystemcode( CommonUtil.getNominateCode() );
 		card.setApplyType( 0 );
-
 
 		if ( gradeTypes != null && gradeTypes.size() > 0 ) {
 		    card.setGtId( Integer.parseInt( gradeTypes.get( 0 ).get( "gt_id" ).toString() ) );
@@ -223,19 +226,19 @@ public class CardERPServiceImpl implements CardERPService {
 		memberMapper.updateById( memberEntity1 );
 
 		String url = PropertiesUtil.getWxmp_home() + "/pay/B02A45A5/79B4DE7C/createPayQR.do" + "?totalFee=" + gradeType.getBuyMoney() + "&model=13&busId=" + busUserEntity.getId()
-				+ "&orderNum=" + orderCode + "&memberId=" + memberEntity.getId() + "&desc=支付&notifyUrl=" + notityUrl + "&appid=" + wxPublicUsersEntity.getAppid()
-				+ "&appidType=0&isSendMessage=0&payWay=0&sourceType=1";
+				+ "&orderNum=" + orderCode + "&memberId=" + memberEntity.getId() + "&desc=支付&notifyUrl=" + notityUrl + "&appid=" + wxPublicUsersEntity.getAppid() + "&appidType=0&isSendMessage=0&payWay=0&sourceType=1";
 		returnMap.put( "memberId", memberEntity.getId() );
 		returnMap.put( "code", 2 );
 		returnMap.put( "message", "未支付" );
 		returnMap.put( "url", url );
-		String memberUser=CommonUtil.toString( params.get( "memberUser" ) );
-		redisCacheUtil.set(orderCode,memberUser,300  );
+		String memberUser = CommonUtil.toString( params.get( "memberUser" ) );
+		redisCacheUtil.set( orderCode, memberUser, 300 );
 	    }
-
+	}catch ( BuilderException e ){
+	   throw e;
 	} catch ( Exception e ) {
 	    LOG.error( "erp 领取会员卡异常", e );
-	    throw new Exception();
+	    throw new BusinessException( ResponseEnums.ERROR);
 	}
 	return returnMap;
     }

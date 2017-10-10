@@ -26,7 +26,7 @@
 
         <dependency>
             <groupId>com.gt.member</groupId>
-            <artifactId>Member_bo</artifactId>
+            <artifactId>member_bo</artifactId>
             <version>1.0.0</version>
         </dependency>
 

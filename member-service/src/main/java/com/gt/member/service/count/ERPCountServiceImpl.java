@@ -91,8 +91,6 @@ public class ERPCountServiceImpl implements ERPCountService {
     @Autowired
     private RedisCacheUtil redisCacheUtil;
 
-    @Autowired
-    private MemberLogDAO memberLogDAO;
 
     @Override
     public Map< String,Object > findMemberByERP( Integer busId, Integer shopId, String cardNo ) {
@@ -391,9 +389,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 		}
 		JSONObject tongzhiJson=JSONObject.parseObject( tongzhi );
 		if(CommonUtil.toInteger( tongzhiJson.get( "code" ) )!=0){
-		    MemberLog ml=new MemberLog();
-		    ml.setLogtxt( "ERP计算通知回调异常:"+ JSONObject.toJSONString( mallNotShopEntity ));
-		    memberLogDAO.insert( ml );
+		    LOG.error("ERP计算通知回调异常:"+ JSONObject.toJSONString( mallNotShopEntity ) );
 		}
 		return;
 	    }
@@ -543,9 +539,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    }
 	    JSONObject tongzhiJson=JSONObject.parseObject( tongzhi );
 	    if(CommonUtil.toInteger( tongzhiJson.get( "code" ) )!=0){
-		MemberLog ml=new MemberLog();
-		ml.setLogtxt( "ERP计算通知回调异常:"+ JSONObject.toJSONString( mallNotShopEntity ));
-		memberLogDAO.insert( ml );
+		LOG.error("ERP计算通知回调异常:"+ JSONObject.toJSONString( mallNotShopEntity ) );
 	    }
 
 	} catch ( BusinessException e ) {
@@ -829,9 +823,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 		}
 		JSONObject tongzhiJson=JSONObject.parseObject( tongzhi );
 		if(CommonUtil.toInteger( tongzhiJson.get( "code" ) )!=0){
-		    MemberLog ml=new MemberLog();
-		    ml.setLogtxt( "ERP计算通知回调异常:"+ JSONObject.toJSONString( mallNotShopEntity ));
-		    memberLogDAO.insert( ml );
+		    LOG.error("ERP计算通知回调异常:"+ JSONObject.toJSONString( mallNotShopEntity ) );
 		}
 	    }else{
 	        throw new BusinessException(CommonUtil.toInteger(json.get( "code" )),CommonUtil.toString(json.get( "msg" )));
@@ -943,9 +935,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 		}
 		JSONObject tongzhiJson=JSONObject.parseObject( tongzhi );
 		if(CommonUtil.toInteger( tongzhiJson.get( "code" ) )!=0) {
-		    MemberLog ml = new MemberLog();
-		    ml.setLogtxt( "ERP计算通知回调异常:" + JSONObject.toJSONString( mallNotShopEntity ) );
-		    memberLogDAO.insert( ml );
+		    LOG.error("ERP计算通知回调异常:"+ JSONObject.toJSONString( mallNotShopEntity ) );
 		}
 		redisCacheUtil.del( "Memeber_ERP_" + orderCode );
 	    }
