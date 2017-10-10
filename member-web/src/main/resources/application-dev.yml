@@ -18,7 +18,7 @@ spring:
   host: 113.106.202.51
   port: 6379
   password: gt@123456
-  database: 3
+  database: 4
 
  session:
   store-type: redis

@@ -26,7 +26,7 @@ spring:
 
 datasource:
  druid:
-   url: jdbc:mysql://113.106.202.51:3306/gt_aliyuan?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
+   url: jdbc:mysql://113.106.202.51:3306/gt_ceshi?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
    username: root
    password: gt123456
    driver-class-name: com.mysql.jdbc.Driver
@@ -76,8 +76,8 @@ server:
     timeout: 30
 
 web:
- webHome: http://member.deeptel.com.cn/
- wxmp_home: http://nb.deeptel.com.cn
+ webHome: https://member.deeptel.com.cn/
+ wxmp_home: https://deeptel.com.cn
  wxmpsignKey: WXMP2017
  cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6
  sms_name: 多粉平台

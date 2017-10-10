@@ -313,6 +313,9 @@ pageEncoding="UTF-8" %>
                             }else{
                                 $(".findMemberMsg").html(data.message);
                             }
+                        },
+                        error:function (d) {
+                            console.log("1111"+d);
                         }
                     })
                     console.log(ev);
