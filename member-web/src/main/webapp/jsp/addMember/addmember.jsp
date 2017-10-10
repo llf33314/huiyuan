@@ -538,7 +538,11 @@ pageEncoding="UTF-8" %>
                 var newDate = new Date();
                 var html="";
                 html+="<li class='list-item' onclick='selli(this,"+data.id+","+data.phone+")'>";
-                html+="    <img src='"+data.headimgurl+"' alt='粉丝头像' title='粉丝头像'>";
+                if(data.headimgurl==null || data.headimgurl==""){
+                    html+="    <img src='/images/addmember/headImage.png' alt='粉丝头像' title='粉丝头像'>";
+                }else{
+                    html+="    <img src='"+data.headimgurl+"' alt='粉丝头像' title='粉丝头像'>";
+                }
                 html+="    <div class='list-item-name'>";
                 html+="   <p>"+data.nickname+"</p>";
                 html+="    <p class='color999 martop20'>时间： "+newDate.toLocaleTimeString()+"</p>";

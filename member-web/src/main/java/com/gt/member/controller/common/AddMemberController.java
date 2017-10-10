@@ -87,10 +87,10 @@ public class AddMemberController {
     @ApiImplicitParam( name = "shopId", value = "门店id(没有门店请传主门店id)", paramType = "query", required = true, dataType = "int" )
     @RequestMapping( "/erpAddMember" )
     public String erpAddMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-//       SessionUtil.setLoginStyle( request,1 );
-//       BusUserEntity busUserEntity=busUserMapper.selectById( 36 );
-//       SessionUtil.setLoginUser( request,busUserEntity );
-//       SessionUtil.setPidBusId( request,36 );
+       SessionUtil.setLoginStyle( request,1 );
+       BusUserEntity busUserEntity=busUserMapper.selectById( 36 );
+       SessionUtil.setLoginUser( request,busUserEntity );
+       SessionUtil.setPidBusId( request,36 );
 
         Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
 	Integer loginStyle = SessionUtil.getLoginStyle( request );
@@ -209,6 +209,7 @@ public class AddMemberController {
 
 	    requestUtils.setReqdata( oldApiSms );
 	    try {
+		System.out.println(PropertiesUtil.getWxmpsignKey());
 		String smsStr = HttpClienUtils.reqPostUTF8(JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
 		JSONObject json=JSONObject.parseObject( smsStr );
 		if ( "0".equals( CommonUtil.toString(json.get( "code" )  ) ) ) {

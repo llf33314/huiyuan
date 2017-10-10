@@ -77,7 +77,7 @@ server:
 
 web:
  webHome: https://member.deeptel.com.cn/
- wxmp_home: https://deeptel.com.cn
+ wxmp_home: https://deeptel.com.cn/
  wxmpsignKey: WXMP2017
  cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6
  sms_name: 多粉平台
@@ -85,8 +85,8 @@ web:
  redis_ip: 113.106.202.51
  redis_port: 6379
  redis_password: gt@123456
- redis_database: 0
- res_image_path: /home/server/project/staticSource/upload  #图片存放路径
+ redis_database: 3
+ res_image_path: /HUAMAO-SERVER/upload/image  #图片存放路径
  #图片资源ftp ip
  static_source_ftp_ip: 120.25.154.127
  #图片资源ftp端口
@@ -95,8 +95,6 @@ web:
  static_source_ftp_user: gt123456
  #图片资源ftp密码
  static_source_ftp_password: gt12345612
-
-
 redisSession:
  domainName: .deeptel.com.cn
  cookiePath: /
