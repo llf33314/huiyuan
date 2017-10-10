@@ -2998,7 +2998,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 		map.put( "jie", 1 );
 		map.put( "lentMoney", c.getLentMoney() );
-		map.put( "clId", c.getId() );
+		map.put( "clId", c.getId() );  //用于处理借款状态
 	    }
 
 	    MemberEntity memberEntity = null;
@@ -3042,9 +3042,14 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 		Double fenbiMoeny = memberCommonService.currencyCount( null, memberEntity.getFansCurrency() );
 		map.put( "fenbiMoeny", fenbiMoeny );
+		map.put( "getFenbiMoeny", 10 );
 
 		Double jifenMoeny = memberCommonService.integralCount( null, new Double( memberEntity.getIntegral() ), busId );
 		map.put( "jifenMoeny", jifenMoeny );
+		PublicParameterset ps = publicParameterSetMapper.findBybusId( busId );
+		if(CommonUtil.isNotEmpty( ps )) {
+		    map.put( "getJifenMoeny", ps.getStartMoney());
+		}
 
 		WxShop wxShop = wxShopDAO.selectById( shopId );
 
