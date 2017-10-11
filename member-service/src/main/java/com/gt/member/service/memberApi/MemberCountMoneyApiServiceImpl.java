@@ -266,7 +266,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    Integer couponNumByShopId = 1;  //门店使用优惠券数量
 	    Integer canUseConponByShopId = 0;  //门店是否能用优惠券
 	    Double discountConponMoneyByShopId = 0.0;   //门店优惠券优惠券金额
-	    Map< Integer,MallEntity > mallList = mallShopEntity.getMalls();  //门店下商品信息
+	    Map< Object,MallEntity > mallList = mallShopEntity.getMalls();  //门店下商品信息
 	    Integer useCoupon = mallShopEntity.getUseCoupon(); //是否使用了优惠券
 	    Integer couponType = mallShopEntity.getCouponType();  //优惠券类型 0微信 1多粉
 	    Integer coupondId = mallShopEntity.getCoupondId();   //优惠券id
@@ -557,7 +557,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    if ( fenbiMoney > 0 ) {
 		Double fenbiBanlance = 0.0;  //订单金额
 		for ( MallShopEntity mallShopEntity : mallShopMap.values() ) {
-		    Map< Integer,MallEntity > mallEntityMap = mallShopEntity.getMalls();
+		    Map< Object,MallEntity > mallEntityMap = mallShopEntity.getMalls();
 		    for ( MallEntity mallEntity : mallEntityMap.values() ) {
 			//判断能使用粉币的商品信息
 			if ( mallEntity.getUseFenbi() == 1 ) {
@@ -569,7 +569,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 		if ( fenbiBanlance >= 10 )
 		    //计算粉币分摊结果
 		    for ( MallShopEntity mallShopEntity : mallShopMap.values() ) {
-			Map< Integer,MallEntity > mallEntityMap = mallShopEntity.getMalls();
+			Map< Object,MallEntity > mallEntityMap = mallShopEntity.getMalls();
 			for ( MallEntity mallEntity : mallEntityMap.values() ) {
 			    if ( mallEntity.getUseFenbi() == 1 ) {
 				Double fenbiFenTan = 0.0;
@@ -639,7 +639,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    Double jifenFenTanAll = 0.0;
 
 	    for ( MallShopEntity mallShopEntity : mallShopMap.values() ) {
-		Map< Integer,MallEntity > mallEntityMap = mallShopEntity.getMalls();
+		Map< Object,MallEntity > mallEntityMap = mallShopEntity.getMalls();
 		for ( MallEntity mallEntity : mallEntityMap.values() ) {
 		    //判断能使用粉币的商品信息
 		    if ( mallEntity.getUserJifen() == 1 ) {
@@ -653,7 +653,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    if ( jifenMoney > 0 ) {
 		//计算积分分摊结果
 		for ( MallShopEntity mallShopEntity : mallShopMap.values() ) {
-		    Map< Integer,MallEntity > mallEntityMap = mallShopEntity.getMalls();
+		    Map< Object,MallEntity > mallEntityMap = mallShopEntity.getMalls();
 		    for ( MallEntity mallEntity : mallEntityMap.values() ) {
 			if ( mallEntity.getUserJifen() == 1 ) {
 			    Double jifenFenTan = 0.0;
@@ -713,7 +713,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	Double balanceMoneyByAll = 0.0;
 	for ( MallShopEntity mallShopEntity : mallShopMap.values() ) {
 	    Double balanceMoneyByShopId = 0.0;
-	    Map< Integer,MallEntity > mallEntitys = mallShopEntity.getMalls();
+	    Map< Object,MallEntity > mallEntitys = mallShopEntity.getMalls();
 	    for ( MallEntity mallEntity : mallEntitys.values() ) {
 		//未任何优惠商品支付金额重新赋值一次
 		if ( mallEntity.getBalanceMoney() <= 0 ) {
@@ -762,7 +762,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    Integer couponNumByShopId = 1;  //门店使用优惠券数量
 	    Integer canUseConponByShopId = 0;  //门店是否能用优惠券
 	    Double discountConponMoneyByShopId = 0.0;   //门店优惠券优惠券金额
-	    Map< Integer,MallEntity > mallList = mallShopEntity.getMalls();  //门店下商品信息
+	    Map< Object,MallEntity > mallList = mallShopEntity.getMalls();  //门店下商品信息
 	    Integer useCoupon = mallShopEntity.getUseCoupon(); //是否使用了优惠券
 	    Integer couponType = mallShopEntity.getCouponType();  //优惠券类型 0微信 1多粉
 	    Integer coupondId = mallShopEntity.getCoupondId();   //优惠券id
@@ -1014,7 +1014,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    Double leaguejifenFenTanAll = 0.0;
 
 	    for ( MallShopEntity mallShopEntity : mallShopMap.values() ) {
-		Map< Integer,MallEntity > mallEntityMap = mallShopEntity.getMalls();
+		Map< Object,MallEntity > mallEntityMap = mallShopEntity.getMalls();
 		for ( MallEntity mallEntity : mallEntityMap.values() ) {
 		    //判断能使用积分的商品信息
 		    if ( mallEntity.getUseLeague() == 1 ) {
@@ -1029,7 +1029,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    if ( jifenMoney > 0 ) {
 		//计算积分分摊结果
 		for ( MallShopEntity mallShopEntity : mallShopMap.values() ) {
-		    Map< Integer,MallEntity > mallEntityMap = mallShopEntity.getMalls();
+		    Map< Object,MallEntity > mallEntityMap = mallShopEntity.getMalls();
 		    for ( MallEntity mallEntity : mallEntityMap.values() ) {
 			if ( mallEntity.getUseLeague() == 1 ) {
 			    Double jifenFenTan = 0.0;
@@ -1077,7 +1077,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	Double leagueJifenNumAll = 0.0;
 	for ( MallShopEntity mallShopEntity : mallShopMap.values() ) {
 	    Double balanceMoneyByShopId = 0.0;
-	    Map< Integer,MallEntity > mallEntitys = mallShopEntity.getMalls();
+	    Map< Object,MallEntity > mallEntitys = mallShopEntity.getMalls();
 	    for ( MallEntity mallEntity : mallEntitys.values() ) {
 		//未任何优惠商品支付金额重新赋值一次
 		if ( mallEntity.getBalanceMoney() <= 0 ) {
@@ -1156,7 +1156,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    Double totalMoneys = 0.0;
 	    Integer jianmainCount = 0;
 	    Integer jianmainCount1 = 0;
-	    Map< Integer,MallEntity > mallMap=mallNotShopEntity.getMalls();
+	    Map< Object,MallEntity > mallMap=mallNotShopEntity.getMalls();
 	    for ( MallEntity mallEntity : mallMap.values() ) {
 		totalMoneys += mallEntity.getTotalMoneyAll();
 		jianmainCount++;
@@ -1216,7 +1216,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	Integer couponNumByShopId = 1;  //门店使用优惠券数量
 	Integer canUseConponByShopId = 0;  //门店是否能用优惠券
 	Double discountConponMoneyByShopId = 0.0;   //门店优惠券优惠券金额
-	Map< Integer,MallEntity > mallList = mallNotShopEntity.getMalls();  //门店下商品信息
+	Map< Object,MallEntity > mallList = mallNotShopEntity.getMalls();  //门店下商品信息
 	Integer useCoupon = mallNotShopEntity.getUseCoupon(); //是否使用了优惠券
 	Integer couponType = mallNotShopEntity.getCouponType();  //优惠券类型 0微信 1多粉
 	Integer coupondId = mallNotShopEntity.getCoupondId();   //优惠券id
@@ -1483,7 +1483,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    Double balanceMoneyByShopId = 0.0;
 	    Double fenbiBanlance = 0.0;  //订单金额
 	    if ( fenbiMoney > 0 ) {
-		Map< Integer,MallEntity > mallEntityMap = mallNotShopEntity.getMalls();
+		Map< Object,MallEntity > mallEntityMap = mallNotShopEntity.getMalls();
 		for ( MallEntity mallEntity : mallEntityMap.values() ) {
 		    //判断能使用粉币的商品信息
 		    if ( mallEntity.getUseFenbi() == 1 ) {
@@ -1554,7 +1554,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	    Integer jcount1 = 0; //能抵扣的粉币商品数量
 	    Double jifenFenTanAll = 0.0;
 
-	    Map< Integer,MallEntity > mallEntityMap = mallNotShopEntity.getMalls();
+	    Map< Object,MallEntity > mallEntityMap = mallNotShopEntity.getMalls();
 	    for ( MallEntity mallEntity : mallEntityMap.values() ) {
 		//判断能使用粉币的商品信息
 		if ( mallEntity.getUserJifen() == 1 ) {
@@ -1619,7 +1619,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 
 	Double balanceMoneyByAll = 0.0;
 	Double balanceMoneyByShopId = 0.0;
-	Map< Integer,MallEntity > mallEntitys = mallNotShopEntity.getMalls();
+	Map< Object,MallEntity > mallEntitys = mallNotShopEntity.getMalls();
 	for ( MallEntity mallEntity : mallEntitys.values() ) {
 	    //未任何优惠商品支付金额重新赋值一次
 	    if ( mallEntity.getBalanceMoney() <= 0 ) {
@@ -1660,7 +1660,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	Integer couponNumByShopId = 1;  //门店使用优惠券数量
 	Integer canUseConponByShopId = 0;  //门店是否能用优惠券
 	Double discountConponMoneyByShopId = 0.0;   //门店优惠券优惠券金额
-	Map< Integer,MallEntity > mallList = mallNotShopEntity.getMalls();  //门店下商品信息
+	Map< Object,MallEntity > mallList = mallNotShopEntity.getMalls();  //门店下商品信息
 	Integer useCoupon = mallNotShopEntity.getUseCoupon(); //是否使用了优惠券
 	Integer couponType = mallNotShopEntity.getCouponType();  //优惠券类型 0微信 1多粉
 	Integer coupondId = mallNotShopEntity.getCoupondId();   //优惠券id
@@ -1895,7 +1895,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 		Integer jcount1 = 0; //能抵扣的联盟积分商品数量
 		Double leaguejifenFenTanAll = 0.0;
 
-		Map< Integer,MallEntity > mallEntityMap = mallNotShopEntity.getMalls();
+		Map< Object,MallEntity > mallEntityMap = mallNotShopEntity.getMalls();
 		for ( MallEntity mallEntity : mallEntityMap.values() ) {
 		    //判断能使用积分的商品信息
 		    if ( mallEntity.getUseLeague() == 1 ) {
@@ -1954,7 +1954,7 @@ public class MemberCountMoneyApiServiceImpl implements MemberCountMoneyApiServic
 	Double leagueJifenNumAll = 0.0;
 
 	Double balanceMoneyByShopId = 0.0;
-	Map< Integer,MallEntity > mallEntitys = mallNotShopEntity.getMalls();
+	Map< Object,MallEntity > mallEntitys = mallNotShopEntity.getMalls();
 	for ( MallEntity mallEntity : mallEntitys.values() ) {
 	    //未任何优惠商品支付金额重新赋值一次
 	    if ( mallEntity.getBalanceMoney() <= 0 ) {

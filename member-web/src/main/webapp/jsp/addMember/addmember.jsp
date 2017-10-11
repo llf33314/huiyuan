@@ -145,6 +145,7 @@ pageEncoding="UTF-8" %>
     <!-- 引入组件库 -->
     <script src="/js/elementui/elementui.js"></script>
     <script src="/js/jquery-2.2.2.js"></script>
+    <script src="/js/phone.js"></script>
     <script type="text/javascript" src="/js/socket.io/socket.io.js"></script>
 
     <script>
@@ -159,8 +160,7 @@ pageEncoding="UTF-8" %>
                     }
                     //var phone = value.replace(/(^\s*)|(\s*$)/g, "");//去空格
                     var phone = value;//去空格
-                    var regPhone = /^0?(13[0-9]|15[012356789]|17[0678]|18[0123456789]|14[57])[0-9]{8}$/;
-                     if (!regPhone.test(phone)) {
+                     if (!Mobilephone(phone)) {
                         callback(new Error('手机号码不正确！'));
                     }else{
                          callback();
@@ -204,11 +204,6 @@ pageEncoding="UTF-8" %>
                 }
             },
             mounted(){
-
-                setTimeout(function () {
-                    vm.dialogVisible2 = false
-                },3000);
-
                 var gradeTypes=${gradeTypes};
                 var mapList=${mapList};
                 if(mapList!=""){
@@ -344,24 +339,12 @@ pageEncoding="UTF-8" %>
                     }
                 },
 
-                validphone: function (str){//手机验证
-                    var phone = str.toString().replace(/(^\s*)|(\s*$)/g, "");//去空格
-                    var regPhone = /^0?(13[0-9]|15[012356789]|17[0678]|18[0123456789]|14[57])[0-9]{8}$/;
-                    if (phone == '') {
-                        return false;
-                    } else if (!regPhone.test(phone)) {
-                        return false;
-                    }else{
-                        return true;
-                    }
-                  },
-
                 getCode: function (ruleForm) {
                         var phone = vm.ruleForm.phone;
                         if(phone==null || phone==""){
                             return null;
                         }
-                        var validphone= vm.validphone(phone);
+                        var validphone= Mobilephone(phone);
                         if(validphone==true) {
                             $.get("/addMember/sendMsgerp.do", {
                                 telNo: phone,
@@ -461,7 +444,7 @@ pageEncoding="UTF-8" %>
                                         vm.dialogVisible2=true;
                                         $("#memberId").val("");
                                         $(".cur-list").remove();
-                                        setTimeout();
+                                        setTime();
                                     }else if(data.code==2){
                                         userId1="addMember_"+data.orderCode;
                                         //跳转支付页面
@@ -514,6 +497,13 @@ pageEncoding="UTF-8" %>
         })
 
 
+        function setTime() {
+            setTimeout(function () {
+                vm.dialogVisible2 = false
+            },3000);
+        }
+
+
         //推送
         var userId = '${memberUser}';
         var socket =  io.connect('${host}');
@@ -560,7 +550,7 @@ pageEncoding="UTF-8" %>
                 vm.dialogVisible2=true;
                 $("#memberId").val("");
                 $(".cur-list").remove();
-                setTimeout();
+                setTime();
             }
         }
 

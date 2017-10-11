@@ -202,7 +202,6 @@ public interface MemberApiService {
      */
     public void saveGiveConsume( String phone, String orderId ) throws Exception;
 
-
     /*
      * 粉币抵扣
      * @param request
@@ -332,29 +331,13 @@ public interface MemberApiService {
      */
     public Map< String,Object > findMemberByCardNo( String cardNo );
 
-	/*
-	 * 查询积分规则对象
-	 * @param busId
-	 * @return  返回对象中 能用的参数有:integralRatio 积分比例   changeMoney 多少积分抵扣多少金额值   startMoney 启兑金额
-	 * 算法   integralRatio*startMoney大于用户积分  可以使用
-	 * 用户积分兑换钱算法   用户积分/积分比例*抵扣金额
-	 *
-	 */
 
-    public PublicParameterset findjifenRule( Integer busId );
 
     /*
-     * 粉币抵扣规则
-     * @param busId
-     * @return  map中  ratio 比例 1元:粉币 startMoney   最低10元才能使用粉币兑换
+     * 根据memberId 查询member之前所有id
+     * @param memberId
+     * @return
      */
-    public Map< String,Object > fenbiRule( Integer busId );
-
-	/*
-	 * 根据memberId 查询member之前所有id
-	 * @param memberId
-	 * @return
-	 */
 
     public List< Integer > findMemberIds( Integer memberId );
 
@@ -570,11 +553,12 @@ public interface MemberApiService {
 
     /**
      * 查询会员卡信息
+     *
      * @param mcId
+     *
      * @return
      */
-    public MemberCard findMemberCardByMcId(Integer mcId);
-
+    public MemberCard findMemberCardByMcId( Integer mcId );
 
     /**
      * 跨门店 多个门店根据粉丝id获取优惠券信息
@@ -589,69 +573,104 @@ public interface MemberApiService {
 
     /**
      * 修改粉丝手机号码
+     *
      * @param map
+     *
      * @return
      * @throws BusinessException
      */
-    public void updateMemberPhoneByMemberId(Map<String,Object> map) throws BusinessException;
+    public void updateMemberPhoneByMemberId( Map< String,Object > map ) throws BusinessException;
 
     /**
      * 根据ids集合查询粉丝信息
+     *
      * @param map
+     *
      * @return
      * @throws BusinessException
      */
-    public List<Map<String,Object>> findMemberByIds(Map<String,Object> map) throws BusinessException;
+    public List< Map< String,Object > > findMemberByIds( Map< String,Object > map ) throws BusinessException;
 
     /**
      * 根据手机号查询粉丝信息
+     *
      * @param map
+     *
      * @return
      * @throws BusinessException
      */
-    public List<Map<String,Object>> findMemberByPhoneAndBusId(Map<String,Object> map) throws BusinessException;
+    public List< Map< String,Object > > findMemberByPhoneAndBusId( Map< String,Object > map ) throws BusinessException;
 
     /**
      * 查询商家发布的卡片类型
+     *
      * @param map
+     *
      * @return
      * @throws BusinessException
      */
-    public Map<String,Object> findMemberCardTypeByBusId(Map<String,Object> map) throws BusinessException;
+    public Map< String,Object > findMemberCardTypeByBusId( Map< String,Object > map ) throws BusinessException;
 
     /**
      * 查询会员卡等级
+     *
      * @param map
+     *
      * @return
      * @throws BusinessException
      */
-    public List<Map<String,Object>> findMemberGradeTypeByctId(Map<String,Object> map) throws BusinessException;
+    public List< Map< String,Object > > findMemberGradeTypeByctId( Map< String,Object > map ) throws BusinessException;
 
     /**
      * 墨盒会员卡充值接口
+     *
      * @param map
+     *
      * @return
      * @throws BusinessException
      */
-    public Map<String ,Object> findMemberAndChongZhi(Map<String,Object> map)throws BusinessException;
+    public Map< String,Object > findMemberAndChongZhi( Map< String,Object > map ) throws BusinessException;
+
     /**
      * 墨盒领取会员卡
+     *
      * @param params
+     *
      * @return
      * @throws BusinessException
      */
-    public void linquMemberCard(Map<String, Object> params) throws BusinessException;
+    public void linquMemberCard( Map< String,Object > params ) throws BusinessException;
 
     /**
      * 魔盒充值成功接口
+     *
      * @param params
+     *
      * @throws BusinessException
      */
-    public void successChongZhi(Map<String, Object> params) throws BusinessException;
+    public void successChongZhi( Map< String,Object > params ) throws BusinessException;
 
     /**
      * (商城）评论修改会员积分或粉币
+     *
      * @param params
      */
-    public void updateJifenAndFenBiByPinglu(Map<String, Object> params);
- }
+    public void updateJifenAndFenBiByPinglu( Map< String,Object > params );
+
+    /**
+     * 粉币，积分抵扣规则
+     *
+     * @param busId
+     *
+     * @return map中  ratio 比例 1元:粉币 startMoney   最低10元才能使用粉币兑换
+     * 返回对象中 能用的参数有:integralRatio 积分比例   changeMoney 多少积分抵扣多少金额值   startMoney 启兑金额
+     */
+    public Map< String,Object > jifenAndFenbiRule( Integer busId ) throws BusinessException;
+
+    /**
+     * erp计算 会员卡核销接口（包括储值卡扣款 、 借款、优惠券核销 、积分、粉币）
+     *
+     * @param paySuccessBo
+     */
+    public void paySuccessByErpBalance( String erpPaySuccessBo ) throws BusinessException;
+}

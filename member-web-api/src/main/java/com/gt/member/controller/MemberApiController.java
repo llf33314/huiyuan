@@ -274,13 +274,13 @@ public class MemberApiController extends BaseController {
 		    @ApiImplicitParam( name = "payType", value = "支付方式", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "payStatus", value = "支付状态", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
-    @RequestMapping( value = "/updateUserConsume", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ServerResponse updateUserConsume(HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+    @RequestMapping( value = "/updateUserConsume", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse updateUserConsume( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
 	try {
 	    String orderNo = CommonUtil.toString( requestBody.get( "orderNo" ) );
 	    Integer payType = CommonUtil.toInteger( requestBody.get( "payType" ) );
 	    Integer payStatus = CommonUtil.toInteger( requestBody.get( "payStatus" ) );
-	    memberApiService.updateUserConsume(orderNo,payType,payStatus);
+	    memberApiService.updateUserConsume( orderNo, payType, payStatus );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -507,8 +507,7 @@ public class MemberApiController extends BaseController {
     @ApiOperation( value = "修改粉丝手机号码", notes = "修改粉丝手机号码" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "string" ),
-		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
-    })
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/updateMemberPhoneByMemberId", method = RequestMethod.POST )
     public ServerResponse updateMemberPhoneByMemberId( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
@@ -518,6 +517,28 @@ public class MemberApiController extends BaseController {
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
+    }
+
+    @ApiOperation( value = "查询会员的积分和粉币规则", notes = "查询会员的积分和粉币规则" )
+    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
+    @ResponseBody
+    @RequestMapping( value = "/updateMemberPhoneByMemberId", method = RequestMethod.POST )
+    public ServerResponse jifenAndFenbiRule( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
+	try {
+	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
+	    Map< String,Object > map = memberApiService.jifenAndFenbiRule( busId );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+    @ApiOperation( value = "erp结算支付成功会员处理", notes = "erp结算支付成功会员处理（包括储值卡扣款、卡券核销、积分粉币扣除、赠送物品）" )
+    @ApiImplicitParam( name = "erpPaySuccessBo", value = "erp结算核销对象 实体类ErpPaySuccessBo", paramType = "query", required = true, dataType = "String" )
+    @ResponseBody
+    @RequestMapping( value = "/paySuccessByErpBalance", method = RequestMethod.POST )
+    public ServerResponse paySuccessByErpBalance( HttpServletRequest request, HttpServletResponse response, @RequestBody String erpPaySuccessBo ) {
+	return null;
     }
 
 }

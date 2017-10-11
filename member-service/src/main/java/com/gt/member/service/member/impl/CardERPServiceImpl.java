@@ -226,7 +226,7 @@ public class CardERPServiceImpl implements CardERPService {
 		memberMapper.updateById( memberEntity1 );
 
 		String url = PropertiesUtil.getWxmp_home() + "/pay/B02A45A5/79B4DE7C/createPayQR.do" + "?totalFee=" + gradeType.getBuyMoney() + "&model=13&busId=" + busUserEntity.getId()
-				+ "&orderNum=" + orderCode + "&memberId=" + memberEntity.getId() + "&desc=支付&notifyUrl=" + notityUrl + "&appid=" + wxPublicUsersEntity.getAppid() + "&appidType=0&isSendMessage=0&payWay=0&sourceType=1";
+				+ "&orderNum=" + orderCode +"&desc=支付&notifyUrl=" + notityUrl + "&appid=" + wxPublicUsersEntity.getAppid() + "&appidType=0&isSendMessage=0&payWay=0&sourceType=1";
 		returnMap.put( "memberId", memberEntity.getId() );
 		returnMap.put( "code", 2 );
 		returnMap.put( "message", "未支付" );

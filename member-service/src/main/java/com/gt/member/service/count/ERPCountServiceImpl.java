@@ -314,7 +314,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 		mallNotShopEntity.setUserJifen( CommonUtil.toInteger( jsonObject.get( "userJifen" ) ) );
 	    }
 
-	    Map< Integer,MallEntity > mallMap = new HashMap<>();
+	    Map< Object,MallEntity > mallMap = new HashMap<>();
 	    MallEntity mall = null;
 	    for ( MallEntityQuery m : mallQuery.getMalls() ) {
 		mall = new MallEntity();
@@ -407,7 +407,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 	    mallNotShopEntity.setUseFenbi( CommonUtil.toInteger( jsonObject.get( "useFenbi" ) ) );
 	    mallNotShopEntity.setUserJifen( CommonUtil.toInteger( jsonObject.get( "userJifen" ) ) );
 
-	    Map< Integer,MallEntity > mallMap = new HashMap<>();
+	    Map< Object,MallEntity > mallMap = new HashMap<>();
 	    MallEntity mall = null;
 	    for ( MallEntityQuery m : mallQuery.getMalls() ) {
 		mall = new MallEntity();
@@ -586,7 +586,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 		mallNotShopEntity.setUserJifen( CommonUtil.toInteger( jsonObject.get( "userJifen" ) ) );
 	    }
 
-	    Map< Integer,MallEntity > mallMap = new HashMap<>();
+	    Map< Object,MallEntity > mallMap = new HashMap<>();
 	    MallEntity mall = null;
 	    for ( MallEntityQuery m : mallQuery.getMalls() ) {
 		mall = new MallEntity();
@@ -704,7 +704,7 @@ public class ERPCountServiceImpl implements ERPCountService {
 		mallNotShopEntity.setUserJifen( CommonUtil.toInteger( jsonObject.get( "userJifen" ) ) );
 	    }
 
-	    Map< Integer,MallEntity > mallMap = new HashMap<>();
+	    Map< Object,MallEntity > mallMap = new HashMap<>();
 	    MallEntity mall = null;
 	    for ( MallEntityQuery m : mallQuery.getMalls() ) {
 		mall = new MallEntity();

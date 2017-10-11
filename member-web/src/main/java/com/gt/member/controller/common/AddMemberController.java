@@ -87,10 +87,10 @@ public class AddMemberController {
     @ApiImplicitParam( name = "shopId", value = "门店id(没有门店请传主门店id)", paramType = "query", required = true, dataType = "int" )
     @RequestMapping( "/erpAddMember" )
     public String erpAddMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-       SessionUtil.setLoginStyle( request,1 );
-       BusUserEntity busUserEntity=busUserMapper.selectById( 36 );
-       SessionUtil.setLoginUser( request,busUserEntity );
-       SessionUtil.setPidBusId( request,36 );
+//       SessionUtil.setLoginStyle( request,1 );
+//       BusUserEntity busUserEntity=busUserMapper.selectById( 36 );
+//       SessionUtil.setLoginUser( request,busUserEntity );
+//       SessionUtil.setPidBusId( request,36 );
 
         Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
 	Integer loginStyle = SessionUtil.getLoginStyle( request );
@@ -185,19 +185,10 @@ public class AddMemberController {
 		// 验证类型
 		LOG.debug( "进入短信发送,手机号:" + telNo );
 	    }
-//	    MemberEntity memberEntity = memberMapper.findByPhone( busId, telNo );
-//	    if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-//		map.put( "result", false );
-//		map.put( "msg", "用户已是会员" );
-//		CommonUtil.write( response, map );
-//		return;
-//	    }
-
 	    String url = PropertiesUtil.getWxmp_home() + "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do";
-
 	    RequestUtils<OldApiSms> requestUtils=new RequestUtils<OldApiSms>(  );
 	    String no = CommonUtil.getPhoneCode();
-	    redisCacheUtil.set( no, no, 5 * 60 );
+	    redisCacheUtil.set( telNo+"_"+no, no, 5 * 60 );
 	    LOG.debug( "进入短信发送,手机号:" + no );
 
 	    OldApiSms oldApiSms=new OldApiSms();
@@ -209,7 +200,6 @@ public class AddMemberController {
 
 	    requestUtils.setReqdata( oldApiSms );
 	    try {
-		System.out.println(PropertiesUtil.getWxmpsignKey());
 		String smsStr = HttpClienUtils.reqPostUTF8(JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
 		JSONObject json=JSONObject.parseObject( smsStr );
 		if ( "0".equals( CommonUtil.toString(json.get( "code" )  ) ) ) {
@@ -254,7 +244,8 @@ public class AddMemberController {
 	    return;
 	}
 	String vcode = CommonUtil.toString( params.get( "vcode" ) );
-	String vcode1 = redisCacheUtil.get( vcode );
+	String phone = CommonUtil.toString( params.get( "phone" ) );
+	String vcode1 = redisCacheUtil.get( phone+"_"+vcode );
 	if ( CommonUtil.isEmpty( vcode1 ) ) {
 	    map.put( "code", -1 );
 	    map.put( "message", "验证码超时或错误" );
@@ -284,6 +275,7 @@ public class AddMemberController {
 	busId = dictService.pidUserId( busId );
 	try {
 	    map = cardERPService.linquMemberCard( busId, params );
+	    redisCacheUtil.del( phone+"_"+vcode );
 	} catch ( Exception e ) {
 	    map.put( "code", -1 );
 	    map.put( "message", "领取失败" );
