@@ -125,7 +125,7 @@ pageEncoding="UTF-8" %>
         <el-dialog  title="提示" :visible.sync="dialogVisible2" size="small" class="success" :modal="false" v-cloak top="5%">
             <div class="textcenter font34"><i class="el-icon-circle-check"></i></div>
             <div class="textcenter success-txt">会员新增成功</div>
-            <div class="textcenter color999"></div>
+            <div class="textcenter color999">3秒后自动关闭弹窗</div>
         </el-dialog>
 
 
@@ -502,7 +502,6 @@ pageEncoding="UTF-8" %>
                 vm.dialogVisible2 = false
             },3000);
         }
-
 
         //推送
         var userId = '${memberUser}';
