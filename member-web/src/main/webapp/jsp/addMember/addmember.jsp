@@ -446,7 +446,7 @@ pageEncoding="UTF-8" %>
                                         $(".cur-list").remove();
                                         setTime();
                                     }else if(data.code==2){
-                                        userId1="addMember_"+data.orderCode;
+                                        userId="addMember_"+data.orderCode;
                                         //跳转支付页面
                                         vm.dialogVisible=true;
                                         vm.$nextTick(function () {
