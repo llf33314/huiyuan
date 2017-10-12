@@ -323,13 +323,15 @@ public class CardERPServiceImpl implements CardERPService {
 
 	    Map<String,Object> socketMap=new HashMap<>(  );
 
-	   String pushName=  redisCacheUtil.get( orderCode );
+	    String pushName=  redisCacheUtil.get( orderCode );
 
+	    LOG.error( "调用推送地址："+pushName );
 	    socketMap.put( "pushName",pushName );
-	    socketMap.put( "pushMsg","支付成功" );
+	    socketMap.put( "pushMsg",11 );
 	    socketMap.put( "pushStyle","1" );
-	    SignHttpUtils.WxmppostByHttp( socketUrl, socketMap, wxmpsignKey );  //推送
+	    String returnMsg= SignHttpUtils.WxmppostByHttp( socketUrl, socketMap, wxmpsignKey );  //推送
 
+	    LOG.error( "调用推送信息："+returnMsg );
 	    returnMap.put( "code", 0 );
 	    returnMap.put( "msg", "领取成功" );
 	    return returnMap;

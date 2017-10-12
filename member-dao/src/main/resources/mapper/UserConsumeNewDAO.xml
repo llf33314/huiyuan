@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.UserConsumeNewDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.UserConsumeNew">
+		<id column="id" property="id" />
+		<result column="busId" property="busId" />
+		<result column="memberId" property="memberId" />
+		<result column="ctId" property="ctId" />
+		<result column="gtId" property="gtId" />
+		<result column="recordType" property="recordType" />
+		<result column="ucType" property="ucType" />
+		<result column="totalMoney" property="totalMoney" />
+		<result column="integral" property="integral" />
+		<result column="fenbi" property="fenbi" />
+		<result column="uccount" property="uccount" />
+		<result column="discountMoney" property="discountMoney" />
+		<result column="discountAfterMoney" property="discountAfterMoney" />
+		<result column="changeFlow" property="changeFlow" />
+		<result column="dvId" property="dvId" />
+		<result column="disCountdepict" property="disCountdepict" />
+		<result column="cardType" property="cardType" />
+		<result column="balance" property="balance" />
+		<result column="flowState" property="flowState" />
+		<result column="dataSource" property="dataSource" />
+		<result column="isend" property="isend" />
+		<result column="ischongzhi" property="ischongzhi" />
+		<result column="isendDate" property="isendDate" />
+		<result column="refundMoney" property="refundMoney" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, busId AS busId, memberId AS memberId, ctId AS ctId, gtId AS gtId, recordType AS recordType, ucType AS ucType, totalMoney AS totalMoney, integral, fenbi, uccount, discountMoney AS discountMoney, discountAfterMoney AS discountAfterMoney, changeFlow AS changeFlow, dvId AS dvId, disCountdepict AS disCountdepict, cardType AS cardType, balance, flowState AS flowState, dataSource AS dataSource, isend, ischongzhi, isendDate AS isendDate, refundMoney AS refundMoney
+    </sql>
+
+</mapper>

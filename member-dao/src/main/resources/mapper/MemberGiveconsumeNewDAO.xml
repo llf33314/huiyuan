@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberGiveconsumeNewDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberGiveconsumeNew">
+		<id column="id" property="id" />
+		<result column="ucId" property="ucId" />
+		<result column="gtId" property="gtId" />
+		<result column="gcTotal" property="gcTotal" />
+		<result column="gtName" property="gtName" />
+		<result column="gtUnit" property="gtUnit" />
+		<result column="sendType" property="sendType" />
+		<result column="sendDate" property="sendDate" />
+		<result column="memberId" property="memberId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, ucId AS ucId, gtId AS gtId, gcTotal AS gcTotal, gtName AS gtName, gtUnit AS gtUnit, sendType AS sendType, sendDate AS sendDate, memberId AS memberId
+    </sql>
+
+</mapper>

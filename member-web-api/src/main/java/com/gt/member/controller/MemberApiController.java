@@ -1,6 +1,7 @@
 package com.gt.member.controller;
 
 import com.gt.api.enums.ResponseEnums;
+import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.member.base.BaseController;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.entity.MemberEntity;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -522,7 +524,7 @@ public class MemberApiController extends BaseController {
     @ApiOperation( value = "查询会员的积分和粉币规则", notes = "查询会员的积分和粉币规则" )
     @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
     @ResponseBody
-    @RequestMapping( value = "/updateMemberPhoneByMemberId", method = RequestMethod.POST )
+    @RequestMapping( value = "/jifenAndFenbiRule", method = RequestMethod.POST )
     public ServerResponse jifenAndFenbiRule( HttpServletRequest request, HttpServletResponse response, @RequestBody Map requestBody ) {
 	try {
 	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
@@ -540,5 +542,6 @@ public class MemberApiController extends BaseController {
     public ServerResponse paySuccessByErpBalance( HttpServletRequest request, HttpServletResponse response, @RequestBody String erpPaySuccessBo ) {
 	return null;
     }
+
 
 }

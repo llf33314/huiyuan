@@ -15,10 +15,10 @@ spring:
    cache: false
   #redis配置
  redis:
-  host: 113.106.202.51
+  host: 10.10.242.2
   port: 6379
   password: gt@123456
-  database: 3
+  database: 2
 
  session:
   store-type: redis
@@ -26,9 +26,9 @@ spring:
 
 datasource:
  druid:
-   url: jdbc:mysql://113.106.202.51:3306/gt_ceshi?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
+   url: jdbc:mysql://183.47.242.2:3306/gt?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
    username: root
-   password: gt123456
+   password: gt26609632
    driver-class-name: com.mysql.jdbc.Driver
    platform: mysql
    type: com.alibaba.druid.pool.DruidDataSource
@@ -76,33 +76,30 @@ server:
     timeout: 30
 
 web:
- webHome: https://member.deeptel.com.cn/
- wxmp_home: https://deeptel.com.cn/
+ webHome: http://member.duofriend.com/
+ wxmp_home: http://duofriend.com/
  wxmpsignKey: WXMP2017
  cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6
  sms_name: 多粉平台
- socket_url: https://socket.deeptel.com.cn
- redis_ip: 113.106.202.51
+ socket_url: http://183.47.242.2:8881
+ redis_ip: 10.10.242.2
  redis_port: 6379
  redis_password: gt@123456
  redis_database: 0
- res_image_path: /HUAMAO-SERVER/upload/image  #图片存放路径
+ res_image_path: /home/server/project/staticSource/upload  #图片存放路径
  #图片资源ftp ip
- static_source_ftp_ip: 120.25.154.127
+ static_source_ftp_ip: 10.10.242.3
  #图片资源ftp端口
  static_source_ftp_port: 21
  #图片资源ftp用户名
  static_source_ftp_user: gt123456
  #图片资源ftp密码
- static_source_ftp_password: gt12345612
+ static_source_ftp_password: gt123456
+
+
 redisSession:
- domainName: .deeptel.com.cn
+ domainName: .duofriend.com
  cookiePath: /
  cookieName: WXMPJSESSIONID
-
-
-
-
-
 
 
