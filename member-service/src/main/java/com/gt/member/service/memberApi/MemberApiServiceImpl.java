@@ -10,9 +10,7 @@ import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.FenbiFlowRecord;
 import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.common.entity.WxShop;
-import com.gt.entityBo.MallEntity;
-import com.gt.entityBo.MallNotShopEntity;
-import com.gt.entityBo.PaySuccessBo;
+import com.gt.entityBo.*;
 import com.gt.entityBo.queryBo.MallAllEntityQuery;
 import com.gt.entityBo.queryBo.MallEntityQuery;
 import com.gt.member.dao.*;
@@ -143,6 +141,12 @@ public class MemberApiServiceImpl implements MemberApiService {
 
     @Autowired
     private DictService dictService;
+
+    @Autowired
+    private DuofenCardDAO duofenCardDAO;
+
+    @Autowired
+    private MemberCardLentDAO memberCardLentDAO;
 
     /**
      * 查询粉丝信息
@@ -4380,7 +4384,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	try {
 	    Map< String,Object > map = new HashMap< String,Object >();
 	    List< Map< String,Object > > dict = dictService.getDict( "1058" );
-	    Double ratio = CommonUtil.toDouble( dict.get( 0 ).get( "1" ) );
+	    Double ratio = CommonUtil.toDouble( dict.get( 0 ).get( "item_key" ) );
 	    map.put( "fenbiRatio", ratio );
 	    map.put( "fenbiStartMoney", 10 );
 
@@ -4402,111 +4406,141 @@ public class MemberApiServiceImpl implements MemberApiService {
      * @param erpPaySuccessBo
      */
     public void paySuccessByErpBalance(String erpPaySuccessBo) throws BusinessException {
-	//ErpPaySuccessBo erpPaySuccess = JSON.toJavaObject( JSON.parseObject( erpPaySuccessBo ), ErpPaySuccessBo.class );
+	try {
+	    ErpPaySuccessBo erpPaySuccess = JSON.toJavaObject( JSON.parseObject( erpPaySuccessBo ), ErpPaySuccessBo.class );
+	    UserConsumeNew uc = new UserConsumeNew();
+	    MemberEntity memberEntity = memberDAO.selectById( erpPaySuccess.getMemberId() );
 
-	//	//增加会员交易记录
-	//	MemberEntity memberEntity = memberDAO.selectById( erpPaySuccess.getMemberId() );
-	//
-	//	UserConsume uc = new UserConsume();
-	//	uc.setBusUserId( memberEntity.getBusId() );
-	//	uc.setMemberId( memberEntity.getId() );
-	//	if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-	//	    uc.setMcId( memberEntity.getMcId() );
-	//	    MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
-	//	    uc.setCtId( card.getCtId() );
-	//	    uc.setGtId( card.getGtId() );
-	//
-	//	    if ( erpPaySuccess.getPayType() == 5 ) {
-	//		//储值卡支付
-	//		if ( card.getMoney() < erpPaySuccess.getPay() ) {
-	//		    throw new BusinessException( ResponseMemberEnums.MEMBER_LESS_MONEY );
-	//		}
-	//		//修改
-	//		MemberCard upCard = new MemberCard();
-	//		upCard.setMcId( card.getMcId() );
-	//		Double balance = card.getMoney() - erpPaySuccess.getPay();
-	//		upCard.setMoney( balance );
-	//		memberCardDAO.updateById( upCard );
-	//		uc.setBalance( balance );
-	//		uc.setPayStatus( 1 );
-	//	    }
-	//	}
-	//	uc.setRecordType( 2 );
-	//	uc.setUcType( erpPaySuccess.getUcType() );
-	//	uc.setTotalMoney( erpPaySuccess.getTotalMoney() );
-	//	uc.setIntegral( erpPaySuccess.getJifenNum() );
-	//	uc.setFenbi( erpPaySuccess.getFenbiNum() );
-	//	uc.setDiscountMoney( mallNotShopEntity.getBalanceMoney() );
-	//	uc.setPaymentType( payType );
-	//
-	//	uc.setOrderCode( mallQuery.getOrderCode() );
-	//	uc.setStoreId( mallNotShopEntity.getShopId() );
-	//	if ( mallNotShopEntity.getUseCoupon() == 1 ) {
-	//	    uc.setCardType( mallNotShopEntity.getCouponType() );
-	//	    uc.setDisCountdepict( mallNotShopEntity.getCodes() );
-	//	    //优惠券核销
-	//	    if ( mallNotShopEntity.getCouponType() == 0 ) {
-	//		//微信优惠券
-	//		WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersMapper.selectByUserId( memberEntity.getBusId() );
-	//		cardCouponsApiService.wxCardReceive( wxPublicUsersEntity.getId(), mallNotShopEntity.getCodes() );
-	//	    } else {
-	//		//多粉优惠券
-	//		Map< String,Object > params = new HashMap<>();
-	//		params.put( "codes", mallNotShopEntity.getCodes() );
-	//		params.put( "storeId", mallNotShopEntity.getShopId() );
-	//		cardCouponsApiService.verificationCard_2( params );
-	//	    }
-	//	}
-	//	uc.setDataSource( 0 );
-	//	uc.setIsend( 1 );
-	//	uc.setIsendDate( new Date() );
-	//
-	//	boolean flag = false;
-	//	MemberEntity m1 = new MemberEntity();
-	//	m1.setId( memberEntity.getId() );
-	//	//粉币
-	//	if ( mallNotShopEntity.getCanUsefenbi() == 1 ) {
-	//	    Double fansCurrency = memberEntity.getFansCurrency() - mallNotShopEntity.getFenbiNum();
-	//	    m1.setFansCurrency( fansCurrency );
-	//	    memberNewService.saveCardRecordNew( memberEntity.getMcId(), 3, mallNotShopEntity.getFenbiNum() + "粉币", "消费抵扣粉币", memberEntity.getBusId(), fansCurrency + "", 0, 0 );
-	//	    flag = true;
-	//
-	//	    //归还商家粉币
-	//	    memberCommonService.guihuiBusUserFenbi( memberEntity.getBusId(), mallNotShopEntity.getFenbiNum() );
-	//	}
-	//	//积分
-	//	if ( mallNotShopEntity.getCanUseJifen() == 1 ) {
-	//	    Integer jifen = memberEntity.getIntegral() - mallNotShopEntity.getJifenNum();
-	//	    m1.setIntegral( jifen );
-	//	    memberNewService.saveCardRecordNew( memberEntity.getMcId(), 2, mallNotShopEntity.getJifenNum() + "积分", "消费抵扣积分", memberEntity.getBusId(), jifen + "", 0,
-	//			    mallNotShopEntity.getJifenNum() );
-	//	    flag = true;
-	//	}
-	//	if ( flag ) {
-	//	    memberDAO.updateById( m1 );
-	//	}
-	//
-	//	//添加会员交易记录
-	//	if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-	//	    memberNewService.saveCardRecordNew( memberEntity.getMcId(), 1, mallNotShopEntity.getBalanceMoney() + "元", "消费", memberEntity.getBusId(), uc.getBalance() + "", 0, 0 );
-	//	}
-	//	UserConsume u=userConsumeDAO.findByOrderCode1( uc.getOrderCode() );
-	//	if(CommonUtil.isEmpty( u )){
-	//	    userConsumeDAO.insert( uc );
-	//	}else{
-	//	    uc.setId( u.getId() );
-	//	    userConsumeDAO.updateById( uc );
-	//	}
-	//
-	//	//赠送
-	//	//TODO
-	//
-	//    } catch ( BusinessException e ) {
-	//	throw new BusinessException( e.getCode(), e.getMessage() );
-	//    } catch ( Exception e ) {
-	//	LOG.error( "ERP计算失败", e );
-	//	throw new BusinessException( ResponseEnums.ERROR );
-	//    }
+	    //会员消费记录添加
+	    uc.setBusId( memberEntity.getBusId() );
+	    uc.setMemberId( memberEntity.getId() );
+	    uc.setRecordType( 2 );
+	    uc.setUcType( erpPaySuccess.getUcType() );
+	    uc.setTotalMoney( erpPaySuccess.getTotalMoney() );
+	    uc.setDiscountMoney( erpPaySuccess.getDiscountMoney() );
+	    uc.setDiscountAfterMoney( erpPaySuccess.getDiscountAfterMoney() );
+
+	    uc.setIntegral( erpPaySuccess.getJifenNum() );
+	    uc.setFenbi( erpPaySuccess.getFenbiNum() );
+	    if(erpPaySuccess.getUseCoupon()==1) {
+		//优惠券
+		if ( erpPaySuccess.getCouponType() == 0 ) {
+		    //微信
+		    Integer publicId = wxPublicUsersMapper.selectByUserId( memberEntity.getBusId() ).getId();
+		    //微信
+		    WxCardReceive wxCardReceive=wxCardReceiveMapper.selectById( erpPaySuccess.getCardId() );
+		    cardCouponsApiService.wxCardReceive( publicId, wxCardReceive.getUserCardCode() );
+
+		    uc.setDisCountdepict( wxCardReceive.getUserCardCode() );
+		} else {
+		    //多粉
+		    DuofenCardGet dfget = duofenCardGetMapper.selectById( erpPaySuccess.getCardId() );
+		    DuofenCard dfcard = duofenCardDAO.selectById( dfget.getCardId() );
+		    List< Map< String,Object > > dfcg = duofenCardGetMapper.findByCardId( dfcard.getId(), erpPaySuccess.getMemberId(), erpPaySuccess.getNumber() );
+		    if ( dfcg.size() > 0 ) {
+			String duofenCode = "";
+			for ( Map< String,Object > map : dfcg ) {
+			    duofenCode += map.get( "code" ) + ",";
+			}
+			Map< String,Object > duofenMap = new HashMap<>();
+			duofenMap.put( "codes", duofenCode );
+			duofenMap.put( "storeId", erpPaySuccess.getStoreId() );
+			cardCouponsApiService.verificationCard_2( duofenMap );
+			uc.setDisCountdepict( duofenCode);
+		    }
+		}
+		uc.setCardType( erpPaySuccess.getCouponType() );
+
+	    }
+	    uc.setOrderCode( erpPaySuccess.getOrderCode() );
+	    uc.setShopId( erpPaySuccess.getStoreId() );
+	    uc.setDataSource( 5 );
+	    uc.setIsend( 0 );
+
+	    MemberCard card = null;
+	    if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
+		card = cardMapper.selectById( memberEntity.getMcId() );
+		if ( CommonUtil.isNotEmpty( card ) ) {
+		    throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
+		}
+		uc.setCtId( card.getCtId() );
+		uc.setGtId( card.getGtId() );
+		List<ErpPayType> erpPayTypes=erpPaySuccess.getErpPayTyps();
+		for(ErpPayType erpPayType:erpPayTypes){
+		    if ( erpPayType.getPayType() == 5 ) {
+			if ( card.getCtId() == 3 ) {
+			    if(erpPayType.getJie()==1){
+			        //借款消费
+				MemberCardLent memberCardLent=memberCardLentDAO.selectById( erpPayType.getClId() );
+				if(memberCardLent.getLentMoney()>0 && memberCardLent.getLentMoney()<erpPayType.getPayMoney()){
+				    throw new BusinessException( ResponseMemberEnums.LESS_THAN_CARD );
+				}
+
+				MemberCardLent memberCardLent1=new MemberCardLent();
+				memberCardLent1.setId( erpPayType.getClId() );
+				memberCardLent1.setUsestate( 1 );
+				memberCardLentDAO.updateById( memberCardLent1 );
+			    }
+
+			    if ( card.getMoney() < erpPayType.getPayMoney() ) {
+				throw new BusinessException( ResponseMemberEnums.MEMBER_LESS_MONEY );
+			    }
+
+			    double banlan = card.getMoney() - erpPayType.getPayMoney();
+
+			    MemberCard updateCard=new MemberCard();
+			    updateCard.setMcId( card.getMcId() );
+			    updateCard.setMoney( banlan );
+			    cardMapper.updateById( updateCard );
+
+			    memberCommonService.saveCardRecordNew( card.getMcId(), (byte) 1,  erpPayType.getPayMoney() + "元", "储值卡消费", memberEntity.getBusId(), banlan + "元", 0, 0 );
+			    systemMsgService.sendChuzhiXiaofei( memberEntity, erpPayType.getPayMoney() );
+
+			    uc.setBalance( banlan );
+			} else {
+			    throw new BusinessException( ResponseMemberEnums.MEMBER_CHUZHI_CARD );
+			}
+		    }
+		}
+
+	//	memberCommonService.saveCardRecordNew( card.getMcId(), (byte) 1, "-" + totalMoney + "元", "消费", memberEntity.getBusId(), null, 0, -totalMoney );
+
+	    }
+
+
+
+
+	    //粉币使用
+//	    if ( paySuccessBo.isUserFenbi() && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
+//		reduceFansCurrency( memberEntity, memberEntity.getBusId(), paySuccessBo.getFenbiNum() );
+//	    }
+//	    //积分使用
+//	    if ( paySuccessBo.isUserJifen() && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
+//		MemberEntity memberEntity1 = new MemberEntity();
+//		memberEntity1.setId( memberEntity.getId() );
+//		memberEntity1.setIntegral( memberEntity.getIntegral() - paySuccessBo.getJifenNum() );
+//		memberDAO.updateById( memberEntity1 );
+//		memberCommonService.saveCardRecordNew( memberEntity.getMcId(), (byte) 2, paySuccessBo.getJifenNum() + "积分", "消费积分", memberEntity.getBusId(), "", null,
+//				paySuccessBo.getJifenNum() );
+//	    }
+//	    uc.setPayStatus( 1 );
+//	    userConsumeMapper.insert( uc );
+//
+//	    if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
+//		//会员立即送 和 延迟送
+//		if ( paySuccessBo.getDelay() == 0 ) {
+//		    findGiveRuleDelay( paySuccessBo.getOrderCode() );  //延迟送
+//		} else if ( paySuccessBo.getDelay() == 1 ) {
+//		    findGiveRule( paySuccessBo.getOrderCode(), "消费会员赠送", (byte) 1 );
+//		}
+//	    }
+
+	} catch ( BusinessException e ) {
+	    throw new BusinessException( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    LOG.error( "支付成功回调异常", e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	    	}
 
     }
 }
