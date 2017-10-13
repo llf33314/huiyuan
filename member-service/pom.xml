@@ -25,11 +25,7 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>com.gt.member</groupId>
-            <artifactId>Member_bo</artifactId>
-            <version>1.0.3</version>
-        </dependency>
+
 
         <!--<dependency>
             <groupId>commemberEntitymber</groupId>

@@ -28,11 +28,13 @@
 		<result column="ischongzhi" property="ischongzhi" />
 		<result column="isendDate" property="isendDate" />
 		<result column="refundMoney" property="refundMoney" />
+		<result column="orderCode" property="orderCode" />
+		<result column="shopId" property="shopId" />
 	</resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, busId AS busId, memberId AS memberId, ctId AS ctId, gtId AS gtId, recordType AS recordType, ucType AS ucType, totalMoney AS totalMoney, integral, fenbi, uccount, discountMoney AS discountMoney, discountAfterMoney AS discountAfterMoney, changeFlow AS changeFlow, dvId AS dvId, disCountdepict AS disCountdepict, cardType AS cardType, balance, flowState AS flowState, dataSource AS dataSource, isend, ischongzhi, isendDate AS isendDate, refundMoney AS refundMoney
+        id, busId AS busId, memberId AS memberId, ctId AS ctId, gtId AS gtId, recordType AS recordType, ucType AS ucType, totalMoney AS totalMoney, integral, fenbi, uccount, discountMoney AS discountMoney, discountAfterMoney AS discountAfterMoney, changeFlow AS changeFlow, dvId AS dvId, disCountdepict AS disCountdepict, cardType AS cardType, balance, flowState AS flowState, dataSource AS dataSource, isend, ischongzhi, isendDate AS isendDate, refundMoney AS refundMoney, orderCode AS orderCode, shopId AS shopId
     </sql>
 
 </mapper>

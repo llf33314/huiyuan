@@ -670,7 +670,7 @@ public interface MemberApiService {
     /**
      * erp计算 会员卡核销接口（包括储值卡扣款 、 借款、优惠券核销 、积分、粉币）
      *
-     * @param paySuccessBo
+     * @param erpPaySuccessBo
      */
     public void paySuccessByErpBalance( String erpPaySuccessBo ) throws BusinessException;
 }

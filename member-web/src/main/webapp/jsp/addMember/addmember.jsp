@@ -34,7 +34,7 @@ pageEncoding="UTF-8" %>
             <el-breadcrumb-item :to="{ path: '/' }">工作台</el-breadcrumb-item>
             <el-breadcrumb-item>新增会员</el-breadcrumb-item>
         </el-breadcrumb>--%>
-        <div class="member-search">
+        <div class="member-search" v-cloak>
             <label>会员查询</label>
             <el-input placeholder="会员卡号/手机号" icon="search" size="small" v-model="search" :on-icon-click="handleIconClick">
 
@@ -42,10 +42,10 @@ pageEncoding="UTF-8" %>
             <span class="findMemberMsg colorfe5"></span>
         </div>
 
-        <div class="add-member-box pl60 clearfix">
+        <div class="add-member-box pl60 clearfix" v-cloak>
             <label class="fl el-form-item__label" style="font-weight: bold">新增会员</label>
             <div class="add-main">
-                <el-form :model="ruleForm" :rules="rules" :label-position="labelPosition" ref="ruleForm" label-width="130px" class="demo-ruleForm">
+                <el-form :model="ruleForm" :rules="rules" :label-position="labelPosition" ref="ruleForm" label-width="130px" class="demo-ruleForm"  >
                     <c:if test="${gongzhong==1}">
                         <el-form-item label="关注公众号办理：" prop="follow">
                             <el-switch on-text="" off-text="" v-model="ruleForm.follow" @change="fnGuanZhu"></el-switch>
@@ -63,7 +63,7 @@ pageEncoding="UTF-8" %>
                         <span class="grey-warning"></span>
                     </el-form-item>
 
-                    <el-form-item label="会员卡等级：" prop="cardPrice" v-if="cardPriceVisible">
+                    <el-form-item label="会员卡价格：" prop="cardPrice" v-if="cardPriceVisible" >
                         <div class="colorfe5 font18">￥<span class="buyMoneyHtml">${gradeTypes[0].buyMoney}</span></div>
                     </el-form-item>
 

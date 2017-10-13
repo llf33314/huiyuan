@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author pengjiangli
- * @since 2017-10-12
+ * @since 2017-10-13
  */
 @Data
 @Accessors(chain = true)
@@ -80,7 +80,7 @@ public class UserConsumeNew extends Model<UserConsumeNew> {
      * 优惠金额
      */
 	@TableField("discountMoney")
-	private Integer discountMoney;
+	private Double discountMoney;
     /**
      * 优惠后金额
      */
@@ -138,6 +138,16 @@ public class UserConsumeNew extends Model<UserConsumeNew> {
      */
 	@TableField("refundMoney")
 	private Double refundMoney;
+    /**
+     * 订单号
+     */
+	@TableField("orderCode")
+	private String orderCode;
+    /**
+     * 门店
+     */
+	@TableField("shopId")
+	private Integer shopId;
 
 
 	@Override
@@ -172,6 +182,8 @@ public class UserConsumeNew extends Model<UserConsumeNew> {
 			", ischongzhi=" + ischongzhi +
 			", isendDate=" + isendDate +
 			", refundMoney=" + refundMoney +
+			", orderCode=" + orderCode +
+			", shopId=" + shopId +
 			"}";
 	}
 }

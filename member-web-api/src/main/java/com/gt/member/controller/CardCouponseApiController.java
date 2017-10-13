@@ -1,5 +1,6 @@
 package com.gt.member.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.entity.DuofenCard;
@@ -16,7 +17,10 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,8 +46,9 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findWxCard",method = RequestMethod.POST)
     public ServerResponse findWxCard(HttpServletRequest request,
-                                     HttpServletResponse response,@RequestBody Map<String,Object> requestBody) {
+                                     HttpServletResponse response,@RequestBody String param) {
       try {
+          Map<String,Object> requestBody= JSONObject.parseObject(param);
           Integer publicId = CommonUtil.toInteger( requestBody.get( "publicId" ) );
           List< Map< String,Object > > cardList = cardCouponsApiService.findWxCard( publicId );
           return ServerResponse.createBySuccess( cardList );
@@ -62,8 +67,9 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findWxCardByShopId",method = RequestMethod.POST)
     public ServerResponse findWxCardByShopId(HttpServletRequest request,
-                    HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+                    HttpServletResponse response,@RequestBody String param){
         try {
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
             Integer publicId = CommonUtil.toInteger( requestBody.get( "publicId" ) );
             Integer shopId = CommonUtil.toInteger( requestBody.get( "shopId" ) );
             Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
@@ -83,8 +89,9 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/wxCardReceiveBackName",method = RequestMethod.POST)
     public ServerResponse wxCardReceiveBackName(HttpServletRequest request,
-                                                HttpServletResponse response,@RequestBody Map<String,Object> requestBody) {
+                                                HttpServletResponse response,@RequestBody String param) {
         try {
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
             Integer publicId= CommonUtil.toInteger(requestBody.get( "publicId" ));
             String code= CommonUtil.toString(requestBody.get( "code" ));
             Map<String, Object> map = cardCouponsApiService.wxCardReceiveBackName(publicId, code);
@@ -101,7 +108,8 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findWxCardById",method = RequestMethod.POST)
     public ServerResponse findWxCardById(HttpServletRequest request,
-                                         HttpServletResponse response, @RequestBody Map<String,Object> requestBody) {
+                                         HttpServletResponse response, @RequestBody String param) {
+        Map<String,Object> requestBody= JSONObject.parseObject(param);
         Integer cardId= CommonUtil.toInteger(requestBody.get( "cardId" ));
         WxCard wxCard=cardCouponsApiService.findWxCardById(cardId);
         return ServerResponse.createBySuccess(wxCard);
@@ -120,8 +128,9 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findDuofenCardByMemberIdAndMoney",method = RequestMethod.POST)
     public ServerResponse findDuofenCardByMemberIdAndMoney(HttpServletRequest request,
-                                                           HttpServletResponse response,@RequestBody Map<String,Object> requestBody ){
+                                                           HttpServletResponse response,@RequestBody String param ){
         try {
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
             Integer memberId= CommonUtil.toInteger(requestBody.get( "memberId" ));
             Integer wxshopId= CommonUtil.toInteger(requestBody.get( "wxshopId" ));
             Double money= CommonUtil.toDouble(requestBody.get( "money" ));
@@ -138,8 +147,9 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findReceiveToMallByBusUserId",method = RequestMethod.POST)
     public ServerResponse findReceiveToMallByBusUserId(HttpServletRequest request,
-                    HttpServletResponse response,@RequestBody Map<String,Object> requestBody ){
-        Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
+                    HttpServletResponse response,@RequestBody String param  ){
+        Map<String,Object> requestBody= JSONObject.parseObject(param);
+        Integer busId= CommonUtil.toInteger( requestBody.get( "busId" ) );
         List<Map<String,Object>> cardList=cardCouponsApiService.findReceiveToMallByBusUserId(busId);
         return ServerResponse.createBySuccess(cardList);
     }
@@ -150,8 +160,9 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findReceiveByBusUserId",method = RequestMethod.POST)
     public ServerResponse findReceiveByBusUserId(HttpServletRequest request,
-                                                 HttpServletResponse response,@RequestBody Map<String,Object> requestBody ){
-        Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
+                                                 HttpServletResponse response,@RequestBody String param  ){
+        Map<String,Object> requestBody= JSONObject.parseObject(param);
+        Integer busId= CommonUtil.toInteger( requestBody.get( "busId" ) );
         List<Map<String,Object>> cardList=cardCouponsApiService.findReceiveByBusUserId(busId);
         return ServerResponse.createBySuccess(cardList);
     }
@@ -162,9 +173,10 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findReceiveBybusId",method = RequestMethod.POST)
     public ServerResponse findReceiveBybusId(HttpServletRequest request,
-                                             HttpServletResponse response, @RequestBody Map<String,Object> requestBody){
-        Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
-        List<DuofenCardReceive> duofenCardReceives=cardCouponsApiService.findReceiveBybusId(busId);
+                                             HttpServletResponse response, @RequestBody String param  ){
+        Map<String,Object> requestBody= JSONObject.parseObject(param);
+        Integer busId= CommonUtil.toInteger( requestBody.get( "busId" ) );
+        List<DuofenCardReceive > duofenCardReceives=cardCouponsApiService.findReceiveBybusId(busId);
         return ServerResponse.createBySuccess(duofenCardReceives);
     }
 
@@ -174,8 +186,9 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findCardByReceiveId",method = RequestMethod.POST)
     public ServerResponse findCardByReceiveId(HttpServletRequest request,
-                                              HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
-        Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
+                                              HttpServletResponse response,@RequestBody String param){
+        Map<String,Object> requestBody= JSONObject.parseObject(param);
+        Integer receiveId= CommonUtil.toInteger( requestBody.get( "receiveId" ) );
         Map<String,Object> map=cardCouponsApiService.findCardByReceiveId(receiveId);
         return ServerResponse.createBySuccess(map);
     }
@@ -189,9 +202,10 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findByThreeMemberId",method = RequestMethod.POST)
     public ServerResponse findByThreeMemberId(HttpServletRequest request,
-                                              HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
-        Integer threeMemberId=CommonUtil.toInteger( requestBody.get( "threeMemberId" ) );
-        Integer page=CommonUtil.toInteger( requestBody.get( "page" ) );
+                                              HttpServletResponse response,@RequestBody String param){
+        Map<String,Object> requestBody= JSONObject.parseObject(param);
+        Integer threeMemberId= CommonUtil.toInteger( requestBody.get( "threeMemberId" ) );
+        Integer page= CommonUtil.toInteger( requestBody.get( "page" ) );
         Map<String, Object> map=cardCouponsApiService.findByThreeMemberId(threeMemberId,page);
         return ServerResponse.createBySuccess(map);
     }
@@ -205,11 +219,12 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/successPayBack",method = RequestMethod.POST)
     public ServerResponse successPayBack(HttpServletRequest request,
-                                         HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+                                         HttpServletResponse response,@RequestBody  String param){
         try {
-            Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
-            Integer num=CommonUtil.toInteger( requestBody.get( "num" ) );
-            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer receiveId= CommonUtil.toInteger( requestBody.get( "receiveId" ) );
+            Integer num= CommonUtil.toInteger( requestBody.get( "num" ) );
+            Integer memberId= CommonUtil.toInteger( requestBody.get( "memberId" ) );
             cardCouponsApiService.successPayBack(receiveId, num, memberId);
             return ServerResponse.createBySuccess();
         }catch (BusinessException e){
@@ -222,9 +237,10 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findDuofenCardByReceiveId",method = RequestMethod.POST)
     public ServerResponse findDuofenCardByReceiveId(HttpServletRequest request,
-                                                    HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+                                                    HttpServletResponse response,@RequestBody String param){
         try {
-            Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer receiveId= CommonUtil.toInteger( requestBody.get( "receiveId" ) );
             Map<String, Object> map = cardCouponsApiService.findDuofenCardByReceiveId(receiveId);
             return ServerResponse.createBySuccess(map);
         }catch (BusinessException e){
@@ -243,12 +259,13 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/threeShopGetCard",method = RequestMethod.POST)
     public ServerResponse threeShopGetCard(HttpServletRequest request,
-                                           HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+                                           HttpServletResponse response,@RequestBody String param){
         try {
-            Integer threeMemberId=CommonUtil.toInteger( requestBody.get( "threeMemberId" ) );
-            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
-            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
-            Integer bagId=CommonUtil.toInteger( requestBody.get( "bagId" ) );
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer threeMemberId= CommonUtil.toInteger( requestBody.get( "threeMemberId" ) );
+            Integer memberId= CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            Integer busId= CommonUtil.toInteger( requestBody.get( "busId" ) );
+            Integer bagId= CommonUtil.toInteger( requestBody.get( "bagId" ) );
             cardCouponsApiService.threeShopGetCard(threeMemberId,memberId,busId,bagId);
             return ServerResponse.createBySuccess();
         }catch (BusinessException e){
@@ -264,10 +281,11 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findUserCardByReceiveId",method = RequestMethod.POST)
     public ServerResponse findUserCardByReceiveId(HttpServletRequest request,
-                                                  HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
-        Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
-        Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
-       List<DuofenCardGet> duofenCardGets=cardCouponsApiService.findUserCardByReceiveId(memberId,receiveId);
+                                                  HttpServletResponse response,@RequestBody String param){
+        Map<String,Object> requestBody= JSONObject.parseObject(param);
+        Integer memberId= CommonUtil.toInteger( requestBody.get( "memberId" ) );
+        Integer receiveId= CommonUtil.toInteger( requestBody.get( "receiveId" ) );
+       List<DuofenCardGet > duofenCardGets=cardCouponsApiService.findUserCardByReceiveId(memberId,receiveId);
        return ServerResponse.createBySuccess(duofenCardGets);
     }
 
@@ -280,10 +298,11 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findCardOverTime",method = RequestMethod.POST)
     public ServerResponse findCardOverTime(HttpServletRequest request,
-                                           HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
-        Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
-        Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
-        List<DuofenCard> duofenCards=cardCouponsApiService.findCardOverTime(memberId,receiveId);
+                                           HttpServletResponse response,@RequestBody String param){
+        Map<String,Object> requestBody= JSONObject.parseObject(param);
+        Integer memberId= CommonUtil.toInteger( requestBody.get( "memberId" ) );
+        Integer receiveId= CommonUtil.toInteger( requestBody.get( "receiveId" ) );
+        List<DuofenCard > duofenCards=cardCouponsApiService.findCardOverTime(memberId,receiveId);
         return ServerResponse.createBySuccess(duofenCards);
     }
     @ApiOperation(value = "查询能赠送的卡包信息(免费领取) (汽车ERP)", notes = "根据商家id和粉丝id查询能赠送的卡包信息(免费领取) (汽车ERP)")
@@ -295,10 +314,11 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findCardReceive",method = RequestMethod.POST)
     public ServerResponse findCardReceive(HttpServletRequest request,
-                                          HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
-        Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
-        Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
-        Integer page=CommonUtil.toInteger( requestBody.get( "page" ) );
+                                          HttpServletResponse response,@RequestBody String param){
+        Map<String,Object> requestBody= JSONObject.parseObject(param);
+        Integer busId= CommonUtil.toInteger( requestBody.get( "busId" ) );
+        Integer memberId= CommonUtil.toInteger( requestBody.get( "memberId" ) );
+        Integer page= CommonUtil.toInteger( requestBody.get( "page" ) );
         Page pageList =cardCouponsApiService.findCardReceive(busId,memberId,page);
         return ServerResponse.createBySuccess(pageList);
     }
@@ -312,10 +332,11 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findCardReceiveBuy",method = RequestMethod.POST)
     public ServerResponse findCardReceiveBuy(HttpServletRequest request,
-                                             HttpServletResponse response,@RequestBody Map requestBody){
-        Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
-        Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
-        Integer page=CommonUtil.toInteger( requestBody.get( "page" ) );
+                                             HttpServletResponse response,@RequestBody String param){
+        Map<String,Object> requestBody= JSONObject.parseObject(param);
+        Integer busId= CommonUtil.toInteger( requestBody.get( "busId" ) );
+        Integer memberId= CommonUtil.toInteger( requestBody.get( "memberId" ) );
+        Integer page= CommonUtil.toInteger( requestBody.get( "page" ) );
         Page pageList=cardCouponsApiService.findCardReceive1(busId,memberId,page);
         return ServerResponse.createBySuccess(pageList);
     }
@@ -330,11 +351,12 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/pcBuyReceive",method = RequestMethod.POST)
     public ServerResponse pcBuyReceive(HttpServletRequest request,
-                                       HttpServletResponse response,@RequestBody Map<String,Object> requestBody ){
+                                       HttpServletResponse response,@RequestBody String param ){
         try {
-            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
-            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
-            Integer cardreceiveId=CommonUtil.toInteger( requestBody.get( "cardreceiveId" ) );
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer memberId= CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            Integer busId= CommonUtil.toInteger( requestBody.get( "busId" ) );
+            Integer cardreceiveId= CommonUtil.toInteger( requestBody.get( "cardreceiveId" ) );
             cardCouponsApiService.pcBuyReceive(memberId, busId, cardreceiveId);
             return ServerResponse.createBySuccess();
         }catch (BusinessException e){
@@ -351,11 +373,12 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/successBuyReceive",method = RequestMethod.POST)
     public ServerResponse successBuyReceive(HttpServletRequest request,
-                                            HttpServletResponse response,@RequestBody Map<String,Object> requestBody ){
+                                            HttpServletResponse response,@RequestBody String param ){
         try {
-            Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
-            Integer num=CommonUtil.toInteger( requestBody.get( "num" ) );
-            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer receiveId= CommonUtil.toInteger( requestBody.get( "receiveId" ) );
+            Integer num= CommonUtil.toInteger( requestBody.get( "num" ) );
+            Integer memberId= CommonUtil.toInteger( requestBody.get( "memberId" ) );
             cardCouponsApiService.successBuyReceive(receiveId, num, memberId);
             return ServerResponse.createBySuccess();
         }catch (BusinessException e){
@@ -368,9 +391,10 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findReceiveByMeiRong",method = RequestMethod.POST)
     public ServerResponse findReceiveByMeiRong(HttpServletRequest request,
-                                      HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+                                      HttpServletResponse response,@RequestBody String param){
         try {
-            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer busId= CommonUtil.toInteger( requestBody.get( "busId" ) );
             List<Map<String, Object>> mapList=cardCouponsApiService.findReceive(busId);
             return ServerResponse.createBySuccess(mapList);
         }catch (Exception e){
@@ -386,10 +410,11 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findDuofenCardByMeiRong",method = RequestMethod.POST)
     public ServerResponse findDuofenCardByMeiRong(HttpServletRequest request,
-                                                  HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+                                                  HttpServletResponse response,@RequestBody String param){
         try {
-            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
-            Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer busId= CommonUtil.toInteger( requestBody.get( "busId" ) );
+            Integer receiveId= CommonUtil.toInteger( requestBody.get( "receiveId" ) );
             List<Map<String, Object>> mapList=cardCouponsApiService.findDuofenCard(busId,receiveId);
             return ServerResponse.createBySuccess(mapList);
         }catch (Exception e){
@@ -404,10 +429,11 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findReceviceAllByMeiRong",method = RequestMethod.POST)
     public ServerResponse findReceviceAllByMeiRong(HttpServletRequest request,
-                                          HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+                                          HttpServletResponse response,@RequestBody String param){
         try {
-            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
-            Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer busId= CommonUtil.toInteger( requestBody.get( "busId" ) );
+            Integer receiveId= CommonUtil.toInteger( requestBody.get( "receiveId" ) );
             List<Map<String, Object>> mapList=cardCouponsApiService.findReceviceAll(busId,receiveId);
             return ServerResponse.createBySuccess(mapList);
         }catch (BusinessException e){
@@ -425,10 +451,11 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/backDuofenCardGet",method = RequestMethod.POST)
     public ServerResponse backDuofenCardGet(HttpServletRequest request,
-                                            HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+                                            HttpServletResponse response,@RequestBody String param){
         try {
-            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
-            Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer memberId= CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            Integer receiveId= CommonUtil.toInteger( requestBody.get( "receiveId" ) );
             cardCouponsApiService.backDuofenCardGet(memberId,receiveId);
             return ServerResponse.createBySuccess();
         }catch (BusinessException e){
@@ -441,9 +468,10 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/gameDuofenCardRecevice",method = RequestMethod.POST)
     public ServerResponse gameDuofenCardRecevice(HttpServletRequest request,
-                                                 HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+                                                 HttpServletResponse response,@RequestBody String param){
         try {
-            Integer busId=CommonUtil.toInteger( requestBody.get( "busId" ) );
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer busId= CommonUtil.toInteger( requestBody.get( "busId" ) );
             List<Map<String, Object>> map=cardCouponsApiService.gameDuofenCardRecevice(busId);
             return ServerResponse.createBySuccess(map);
         }catch (Exception e){
@@ -460,11 +488,12 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/getDuofenCardByGame",method = RequestMethod.POST)
     public ServerResponse getDuofenCardByGame(HttpServletRequest request,
-                                              HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+                                              HttpServletResponse response,@RequestBody String param){
         try {
-            Integer receiveId=CommonUtil.toInteger( requestBody.get( "receiveId" ) );
-            Integer num=CommonUtil.toInteger( requestBody.get( "num" ) );
-            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer receiveId= CommonUtil.toInteger( requestBody.get( "receiveId" ) );
+            Integer num= CommonUtil.toInteger( requestBody.get( "num" ) );
+            Integer memberId= CommonUtil.toInteger( requestBody.get( "memberId" ) );
             cardCouponsApiService.getDuofenCardGame(receiveId,num,memberId);
             return ServerResponse.createBySuccess();
         }catch (BusinessException e){
@@ -481,7 +510,8 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/verificationCardReturnName",method = RequestMethod.POST)
     public ServerResponse verificationCardReturnName(HttpServletRequest request,
-                                             HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+                                             HttpServletResponse response,@RequestBody String param){
+        Map<String,Object> requestBody= JSONObject.parseObject(param);
         Map<String,Object> params=new HashMap<>();
         params.put("codes",requestBody.get( "codes" ));
         params.put("storeId",requestBody.get( "storeId" ));
@@ -498,9 +528,10 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findMeiRongDuofenCardByMemberId",method = RequestMethod.POST)
     public ServerResponse findMeiRongDuofenCardByMemberId(HttpServletRequest request,
-                    HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+                    HttpServletResponse response,@RequestBody String param){
         try {
-            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer memberId= CommonUtil.toInteger( requestBody.get( "memberId" ) );
             List<Map<String,Object>> list=cardCouponsApiService.findMeiRongDuofenCardByMemberId( memberId );
             return ServerResponse.createBySuccess(list);
         }catch ( Exception e ){
@@ -516,10 +547,11 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findMeiRongDuofenCardGetByReceiveId",method = RequestMethod.POST)
     public ServerResponse findMeiRongDuofenCardGetByReceiveId(HttpServletRequest request,
-                    HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+                    HttpServletResponse response,@RequestBody String param){
         try {
-            Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
-            Integer receiceId=CommonUtil.toInteger( requestBody.get( "receiceId" ) );
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer memberId= CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            Integer receiceId= CommonUtil.toInteger( requestBody.get( "receiceId" ) );
             List<Map<String,Object>> list=cardCouponsApiService.findMeiRongCardGetByMemberId( memberId,receiceId );
             return ServerResponse.createBySuccess(list);
         }catch ( Exception e ){
@@ -532,9 +564,10 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findDuofenCardOne",method = RequestMethod.POST)
     public ServerResponse findDuofenCardOne(HttpServletRequest request,
-                    HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+                    HttpServletResponse response,@RequestBody String param){
         try {
-            Integer gId=CommonUtil.toInteger( requestBody.get( "gId" ) );
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer gId= CommonUtil.toInteger( requestBody.get( "gId" ) );
             Map<String,Object> map=cardCouponsApiService.findDuofenCardOne(gId);
             return ServerResponse.createBySuccess(map);
         }catch ( Exception e ){
@@ -547,9 +580,10 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/findCardDetails",method = RequestMethod.POST)
     public ServerResponse findCardDetails(HttpServletRequest request,
-                    HttpServletResponse response,@RequestBody Map<String,Object> requestBody){
+                    HttpServletResponse response,@RequestBody String param){
         try {
-            Integer gId=CommonUtil.toInteger( requestBody.get( "gId" ) );
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer gId= CommonUtil.toInteger( requestBody.get( "gId" ) );
             Map<String,Object> map=cardCouponsApiService.findCardDetails(gId);
             return ServerResponse.createBySuccess(map);
         }catch ( Exception e ){
