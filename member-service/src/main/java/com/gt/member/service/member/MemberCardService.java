@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.gt.member.entity.MemberCardmodel;
 import com.gt.member.entity.MemberCardrecord;
+import com.gt.member.entity.MemberCardtype;
 
 /**
  * 会员卡业务处理
@@ -17,6 +18,12 @@ import com.gt.member.entity.MemberCardrecord;
  */
 public interface MemberCardService {
 
+    /**
+     * 查询会员卡类型
+     * @param busId
+     * @return
+     */
+    List<MemberCardtype> findCardType(Integer busId);
 
     /**
      * 分组查询卡片信息
@@ -24,6 +31,9 @@ public interface MemberCardService {
      * @return
      */
     List< MemberCardmodel > findGroupByType( Integer busId );
+
+
+
 
     /**
      * 根据类型查询模板

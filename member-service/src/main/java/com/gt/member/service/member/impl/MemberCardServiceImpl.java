@@ -64,6 +64,16 @@ public class MemberCardServiceImpl implements MemberCardService {
     @Autowired
     private MemberGiverulegoodstypeDAO	memberGiverulegoodstypeDAO;
 
+
+    /**
+     * 查询会员卡类型
+     * @param busId
+     * @return
+     */
+    public List<MemberCardtype> findCardType(Integer busId){
+	return memberCardtypeDAO.findByBusId(  busId);
+    }
+
     /**
      * 分组查询卡片信息
      */
