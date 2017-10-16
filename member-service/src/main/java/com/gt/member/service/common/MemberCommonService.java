@@ -7,6 +7,7 @@ import com.gt.member.entity.PublicParameterset;
 import com.gt.member.exception.BusinessException;
 
 import java.util.Map;
+import java.util.SortedMap;
 
 /**
  * 会员公共接口
@@ -67,7 +68,7 @@ public interface MemberCommonService {
      *
      * @return
      */
-    public Double deductFenbi(Map<String, Object> dict, Double fenbiMoney);
+    public Double deductFenbi(SortedMap<String, Object> dict, Double fenbiMoney);
 
     /**
      * 归还商家粉币
@@ -91,6 +92,22 @@ public interface MemberCommonService {
     public MemberCardrecord saveCardRecordNew(Integer cardId, Byte recordType, String number,
                     String itemName, Integer busId, String balance, Integer ctId, double amount);
 
+
+    /**
+     *
+     * @param cardId
+     * @param recordType  记录类型  1充值或消费  2积分 3粉笔 4 流量
+     * @param number 加单位
+     * @param itemName
+     * @param busId
+     * @param balance
+     * @param ctId
+     * @param amount
+     * @return
+     */
+    public MemberCardrecord saveCardRecordOrderCodeNew(Integer cardId, Byte recordType, String number,
+                    String itemName, Integer busId, String balance, Integer ctId, double amount,String orderCode);
+
     /**
      * 关注公众号的接口
      */
@@ -103,6 +120,29 @@ public interface MemberCommonService {
      * @param phone
      */
     public void newMemberMerge(MemberEntity member,Integer busId,String phone)throws BusinessException;
+
+
+
+    /*
+   * 粉币抵扣
+   * @param request
+   * @param memberEntity
+   * @param busId
+   * @param Fenbi 粉币
+   * @return
+   */
+    public void reduceFansCurrency( MemberEntity memberEntity,  Double fenbi ) throws BusinessException;
+
+
+    /*
+      * 粉币赠送
+      * @param request
+      * @param memberEntity
+      * @param busId
+      * @param Fenbi 粉币
+      * @return
+      */
+    public void giveFansCurrency( Integer memberId,  Double fenbi ) throws BusinessException;
 
 
 }

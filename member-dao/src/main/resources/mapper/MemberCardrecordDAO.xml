@@ -3,6 +3,7 @@
 <mapper namespace="com.gt.member.dao.MemberCardrecordDAO">
 
 	<!-- 通用查询映射结果 -->
+	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberCardrecord">
 		<id column="id" property="id" />
 		<result column="cardId" property="cardId" />
@@ -15,12 +16,14 @@
 		<result column="ctId" property="ctId" />
 		<result column="amount" property="amount" />
 		<result column="busId" property="busId" />
+		<result column="orderCode" property="orderCode" />
 	</resultMap>
 
-    <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
-        id, cardId, recordType, number, createDate, itemName, publicId, balance, ctId, amount, busId
-    </sql>
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+		id, cardId AS cardId, recordType AS recordType, number, createDate AS createDate, itemName AS itemName, publicId AS publicId, balance, ctId AS ctId, amount, busId AS busId, orderCode AS orderCode
+	</sql>
+
 
 
 	<select id="findByCardId" resultType="Map">

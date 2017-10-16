@@ -381,9 +381,9 @@ public class MemberApiController extends BaseController {
 	    Map<String,Object> requestBody= JSONObject.parseObject(param);
 	    memberApiService.updateJifenAndFenBiByPinglu( requestBody );
 	    return ServerResponse.createBySuccess();
-	} catch ( Exception e ) {
+	} catch ( BusinessException e ) {
 	    logger.error( "商城）评论修改会员积分或粉币异常", e );
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
 
     }
@@ -572,8 +572,20 @@ public class MemberApiController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/paySuccessByErpBalance", method = RequestMethod.POST )
     public ServerResponse paySuccessByErpBalance( HttpServletRequest request, HttpServletResponse response, @RequestBody String erpPaySuccessBo ) {
+	try {
+	    memberApiService.paySuccessByErpBalance( erpPaySuccessBo );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
 
-        return null;
+    @ApiOperation( value = "erp结算支付成功会员处理", notes = "erp结算支付成功会员处理（包括储值卡扣款、卡券核销、积分粉币扣除、赠送物品）" )
+    @ApiImplicitParam( name = "erpRefundBo", value = "erp 实体类ErpPaySuccessBo", paramType = "query", required = true, dataType = "String" )
+    @ResponseBody
+    @RequestMapping( value = "/refundErp", method = RequestMethod.POST )
+    public ServerResponse refundErp(HttpServletRequest request, HttpServletResponse response, @RequestBody String erpRefundBo ){
+	return null;
     }
 
 

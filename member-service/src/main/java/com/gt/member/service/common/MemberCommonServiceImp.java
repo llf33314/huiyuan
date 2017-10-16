@@ -26,10 +26,7 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Member;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Administrator on 2017/8/15 0015.
@@ -61,7 +58,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
     private SystemMsgService systemMsgService;
 
     @Autowired
-    private MemberEntityDAO memberDao;
+    private MemberEntityDAO memberEntityDAO;
 
     @Autowired
     private MemberQcodeWxDAO memberQcodeWxDAO;
@@ -94,8 +91,8 @@ public class MemberCommonServiceImp implements MemberCommonService {
     @Override
     public Double currencyCount( Double totalMoney, Double fans_currency ) {
 	try {
-	    List<Map< String,Object >> dict= dictService.getDict( "1058" );
-	    Double ratio = CommonUtil.toDouble( dict.get( 0 ).get( "item_value" ) );
+	    SortedMap<String, Object> dict= dictService.getDict( "1058" );
+	    Double ratio = CommonUtil.toDouble( dict.get( "1" ) );
 	    if ( fans_currency < ratio * 10 ) {
 		return 0.0;
 	    }
@@ -118,8 +115,8 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
     @Override
     public Double deductFenbi( Double jifenMoney, int busId ) {
-	List<Map< String,Object >> dict= dictService.getDict( "1058" );
-	Double ratio = CommonUtil.toDouble( dict.get( 0 ).get( "1" ) );
+	SortedMap<String, Object> dict= dictService.getDict( "1058" );
+	Double ratio = CommonUtil.toDouble( dict.get( "1" ) );
 	Double fenbi = jifenMoney * ratio;
 	return fenbi;
     }
@@ -289,8 +286,8 @@ public class MemberCommonServiceImp implements MemberCommonService {
      *
      * @return
      */
-    public Double deductFenbi(Map<String, Object> dict, Double fenbiMoney) {
-	Double ratio = CommonUtil.toDouble(dict.get("item_value"));
+    public Double deductFenbi(SortedMap<String, Object> dict, Double fenbiMoney) {
+	Double ratio = CommonUtil.toDouble(dict.get("1"));
 	Double fenbi = fenbiMoney * ratio;
 	return formatNumber(fenbi);
     }
@@ -358,7 +355,52 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	try {
 	    memberCardrecordDAO.insert(cr);
 	    if (recordType == 2) {
-		MemberEntity memberEntity = memberDao.findByMcId1(cardId);
+		MemberEntity memberEntity = memberEntityDAO.findByMcId1(cardId);
+		// 积分变动通知
+		systemMsgService.jifenMsg(cr, memberEntity );
+	    }
+
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    LOG.error("保存手机端记录异常", e);
+	}
+	return cr;
+    }
+
+
+    /**
+     *
+     * @param cardId
+     * @param recordType  记录类型  1充值或消费  2积分 3粉笔 4 流量
+     * @param number 加单位
+     * @param itemName
+     * @param busId
+     * @param balance
+     * @param ctId
+     * @param amount
+     * @return
+     */
+    public MemberCardrecord saveCardRecordOrderCodeNew(Integer cardId, Byte recordType, String number,
+		    String itemName, Integer busId, String balance, Integer ctId, double amount,String orderCode){
+	if ( CommonUtil.isEmpty(busId)) {
+	    return null;
+	}
+
+	MemberCardrecord cr = new MemberCardrecord();
+	cr.setCardId(cardId);
+	cr.setRecordType(recordType.intValue());
+	cr.setNumber(number);
+	cr.setCreateDate(new Date());
+	cr.setItemName(itemName);
+	cr.setBusId(busId);
+	cr.setBalance(balance);
+	cr.setCtId(ctId);
+	cr.setAmount(amount);
+	cr.setOrderCode( orderCode );
+	try {
+	    memberCardrecordDAO.insert(cr);
+	    if (recordType == 2) {
+		MemberEntity memberEntity = memberEntityDAO.findByMcId1(cardId);
 		// 积分变动通知
 		systemMsgService.jifenMsg(cr, memberEntity );
 	    }
@@ -405,7 +447,6 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
     /**
      * 新增会员处理数据合并问题
-     * @param member
      * @param busId
      * @param phone
      */
@@ -414,7 +455,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
 	}
 
-	MemberEntity m1 = memberDao.findByPhone( busId, phone );
+	MemberEntity m1 = memberEntityDAO.findByPhone( busId, phone );
 	if ( CommonUtil.isNotEmpty( m1 ) && !memberEntity.getId().equals( m1.getId() ) ) {
 	    // 合并member数据
 	    m1.setFlow( m1.getFlow() + memberEntity.getFlow() );
@@ -445,12 +486,11 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    MemberOld old =  JSONObject.toJavaObject( JSON.parseObject( JSONObject.toJSONString( memberEntity ) ), MemberOld.class  );
 
 	    // 删除数据做移出到memberold
-	//    MemberOld old = (MemberOld) net.sf.json.JSONObject.toBean( net.sf.json.JSONObject.fromObject( memberEntity ), MemberOld.class );
 	    memberOldDao.insert( old );
 
-	    memberDao.deleteById( memberEntity.getId() );
+	    memberEntityDAO.deleteById( memberEntity.getId() );
 
-	    memberDao.updateById( m1 );
+	    memberEntityDAO.updateById( m1 );
 
 	    MemberParameter mp = memberParameterDAO.findByMemberId( memberEntity.getId() );
 	    if ( CommonUtil.isNotEmpty( mp ) ) {
@@ -465,5 +505,73 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	}
     }
 
+
+    @Override
+    public void reduceFansCurrency( MemberEntity memberEntity,  Double fenbi) throws BusinessException {
+	try {
+	    if ( memberEntity.getFansCurrency() < fenbi ) {
+		throw new BusinessException( ResponseMemberEnums.MEMBER_LESS_FENBI.getCode(), ResponseMemberEnums.MEMBER_LESS_FENBI.getMsg() );
+	    }
+	    MemberEntity m = new MemberEntity();
+	    m.setId( memberEntity.getId() );
+	    Double yueFenbi=memberEntity.getFansCurrency() - fenbi;
+	    m.setFansCurrency(yueFenbi);
+	    memberEntityDAO.updateById( m );
+
+
+	    BusUserEntity busUserEntity = busUserDAO.selectById( memberEntity.getBusId() );
+	    BusUserEntity busUserEntity1 = new BusUserEntity();
+	    busUserEntity1.setId(  memberEntity.getBusId() );
+	    Double fenbi1 = busUserEntity.getFansCurrency().doubleValue() + fenbi;
+	    busUserEntity1.setFansCurrency( BigDecimal.valueOf( fenbi1 ) );
+	    busUserDAO.updateById( busUserEntity1 );
+	} catch ( BusinessException e ) {
+	    LOG.error( "粉币抵扣异常", e );
+	    throw new BusinessException( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
+
+
+    /*
+   * 粉币赠送
+   * @param request
+   * @param memberEntity
+   * @param busId
+   * @param Fenbi 粉币
+   * @return
+   */
+    public void giveFansCurrency( Integer memberId,  Double fenbi ) throws BusinessException{
+	try {
+	    MemberEntity m = memberEntityDAO.selectById(  memberId);
+
+
+	    BusUserEntity busUserEntity = busUserDAO.selectById( m.getBusId() );
+	    if(busUserEntity.getFansCurrency().doubleValue()<fenbi){
+	       LOG.error( "商家粉币不足" );
+	       return;
+	    }
+
+	    BusUserEntity busUserEntity1 = new BusUserEntity();
+	    busUserEntity1.setId(  m.getBusId() );
+	    Double fenbi1 = busUserEntity.getFansCurrency().doubleValue() - fenbi;
+	    busUserEntity1.setFansCurrency( BigDecimal.valueOf( fenbi1 ) );
+	    busUserDAO.updateById( busUserEntity1 );
+
+
+	    MemberEntity updateMember = new MemberEntity();
+	    updateMember.setId( memberId );
+	    Double yueFenbi=m.getFansCurrency() - fenbi;
+	    updateMember.setFansCurrency(yueFenbi);
+	    memberEntityDAO.updateById( m );
+
+	} catch ( BusinessException e ) {
+	    LOG.error( "商家赠送粉币", e );
+	    throw new BusinessException( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
 
 }

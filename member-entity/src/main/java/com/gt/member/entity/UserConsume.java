@@ -1,7 +1,5 @@
 package com.gt.member.entity;
 
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.enums.IdType;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotations.TableId;
@@ -9,8 +7,7 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableName;
 import java.io.Serializable;
-
-import com.baomidou.mybatisplus.annotations.Version;
+import com.baomidou.mybatisplus.enums.FieldFill;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -21,7 +18,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author pengjiangli
- * @since 2017-08-03
+ * @since 2017-10-16
  */
 @Data
 @Accessors(chain = true)
@@ -59,7 +56,6 @@ public class UserConsume extends Model<UserConsume> {
     /**
      * 卡片等级Id
      */
-    @TableField("gt_id")
 	private Integer gtId;
     /**
      * 记录类型 0积分记录 1充值记录 2消费记录
@@ -67,7 +63,7 @@ public class UserConsume extends Model<UserConsume> {
 	@TableField("recordType")
 	private Integer recordType;
     /**
-     * 消费类型 0积分卡消费 1储值卡消费 2折扣卡消费 3次卡消费 4积分兑换粉笔 5积分兑换商品 6游客消费  7会员卡充值 13购买会员卡 14线下核销 18优惠买单  19粉币兑换物品 20流量充值 21微预约
+     * 消费类型 字典1197 0积分卡消费 1储值卡消费 2折扣卡消费 3次卡消费 4积分兑换粉笔 5积分兑换商品 6游客消费  7会员卡充值 13购买会员卡 14线下核销 18优惠买单  19粉币兑换物品 20流量充值 21微预约
      */
 	@TableField("ucType")
 	private Integer ucType;
@@ -98,7 +94,7 @@ public class UserConsume extends Model<UserConsume> {
 	@TableField("discountMoney")
 	private Double discountMoney;
     /**
-     * 订单id
+     * 订单id （已无效）
      */
 	@TableField("orderId")
 	private Integer orderId;
@@ -118,7 +114,7 @@ public class UserConsume extends Model<UserConsume> {
 	@TableField("giveFenbi")
 	private Double giveFenbi;
     /**
-     * 详情表名
+     * 详情表名 （已无效）
      */
 	@TableField("ucTable")
 	private String ucTable;
@@ -128,7 +124,7 @@ public class UserConsume extends Model<UserConsume> {
 	@TableField("createDate")
 	private Date createDate;
     /**
-     * 支付方式 0支付宝 1微信 2银联 3线下充值 4货到付款 5储值卡支付 6积分支付 7粉币支付 8到店支付 9找人代付  10现金支付 11分期支付
+     * 支付方式 1198
      */
 	@TableField("paymentType")
 	private Integer paymentType;
@@ -162,7 +158,7 @@ public class UserConsume extends Model<UserConsume> {
 	@TableField("giftCount")
 	private Integer giftCount;
     /**
-     * 订单号微信或支付宝
+     * 订单号
      */
 	@TableField("orderCode")
 	private String orderCode;
@@ -177,7 +173,7 @@ public class UserConsume extends Model<UserConsume> {
 	@TableField("storeId")
 	private Integer storeId;
     /**
-     * 0主店铺 1子店铺 不用了
+     * （已无效）0主店铺 1子店铺 不用了
      */
 	@TableField("isParent")
 	private Integer isParent;
@@ -202,12 +198,12 @@ public class UserConsume extends Model<UserConsume> {
 	@TableField("flowState")
 	private Integer flowState;
     /**
-     * 数据来源 0:pc端 1:微信 2:uc端 3:小程序
+     * 数据来源 0:pc端 1:微信 2:uc端 3:小程序 4魔盒
      */
 	@TableField("dataSource")
 	private Integer dataSource;
     /**
-     * 不用了 行业业务场景类型 1.拼团订单 2积分兑换商品订单 3.秒杀订单 4.拍卖订单 5 粉币订单 6预售订单 7批发商品订单
+     * 不需要 行业业务场景类型 1.拼团订单 2积分兑换商品订单 3.秒杀订单 4.拍卖订单 5 粉币订单 6预售订单 7批发商品订单
      */
 	@TableField("moduleOrderType")
 	private Integer moduleOrderType;
@@ -225,10 +221,30 @@ public class UserConsume extends Model<UserConsume> {
 	@TableField("isendDate")
 	private Date isendDate;
     /**
+     * 优惠金额（new）
+     */
+	@TableField("youhuiMoney")
+	private Double youhuiMoney;
+    /**
+     * 退款粉币
+     */
+	@TableField("refundFenbi")
+	private Double refundFenbi;
+    /**
+     * 退款积分
+     */
+	@TableField("refundJifen")
+	private Integer refundJifen;
+    /**
      * 退款金额
      */
 	@TableField("refundMoney")
 	private Double refundMoney;
+    /**
+     * 退款时间
+     */
+	@TableField("refundDate")
+	private Date refundDate;
 
 
 	@Override
@@ -236,4 +252,55 @@ public class UserConsume extends Model<UserConsume> {
 		return this.id;
 	}
 
+	@Override
+	public String toString() {
+		return "UserConsume{" +
+			"id=" + id +
+			", publicId=" + publicId +
+			", busUserId=" + busUserId +
+			", memberId=" + memberId +
+			", mcId=" + mcId +
+			", ctId=" + ctId +
+			", gtId=" + gtId +
+			", recordType=" + recordType +
+			", ucType=" + ucType +
+			", totalMoney=" + totalMoney +
+			", integral=" + integral +
+			", fenbi=" + fenbi +
+			", uccount=" + uccount +
+			", discount=" + discount +
+			", discountMoney=" + discountMoney +
+			", orderId=" + orderId +
+			", giveIntegral=" + giveIntegral +
+			", giveFlow=" + giveFlow +
+			", giveFenbi=" + giveFenbi +
+			", ucTable=" + ucTable +
+			", createDate=" + createDate +
+			", paymentType=" + paymentType +
+			", dvId=" + dvId +
+			", disCountdepict=" + disCountdepict +
+			", balance=" + balance +
+			", payStatus=" + payStatus +
+			", giveGift=" + giveGift +
+			", giftCount=" + giftCount +
+			", orderCode=" + orderCode +
+			", moduleType=" + moduleType +
+			", storeId=" + storeId +
+			", isParent=" + isParent +
+			", freightMoney=" + freightMoney +
+			", offlinePayType=" + offlinePayType +
+			", cardType=" + cardType +
+			", flowState=" + flowState +
+			", dataSource=" + dataSource +
+			", moduleOrderType=" + moduleOrderType +
+			", isend=" + isend +
+			", ischongzhi=" + ischongzhi +
+			", isendDate=" + isendDate +
+			", youhuiMoney=" + youhuiMoney +
+			", refundFenbi=" + refundFenbi +
+			", refundJifen=" + refundJifen +
+			", refundMoney=" + refundMoney +
+			", refundDate=" + refundDate +
+			"}";
+	}
 }

@@ -655,7 +655,7 @@ public interface MemberApiService {
      *
      * @param params
      */
-    public void updateJifenAndFenBiByPinglu( Map< String,Object > params );
+    public void updateJifenAndFenBiByPinglu( Map< String,Object > params )throws BusinessException ;
 
     /**
      * 粉币，积分抵扣规则

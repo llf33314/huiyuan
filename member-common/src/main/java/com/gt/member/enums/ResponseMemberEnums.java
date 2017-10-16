@@ -22,6 +22,7 @@ public enum ResponseMemberEnums {
     IS_MEMBER_CARD(5011,"粉丝已成为会员"),
     IS_BINDING_PHONE(5012,"手机号码已经绑定过"),
     LESS_THAN_CARD(5013,"储值卡借款金额不足"),
+    LESS_THAN_FENBI(5014,"商家粉币不足"),
 
 
 

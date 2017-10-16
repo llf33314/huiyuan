@@ -173,13 +173,13 @@
             <version>1.0.6</version>
         </dependency>
 
+
+        <!--会员实体包-->
         <dependency>
             <groupId>com.gt.member</groupId>
             <artifactId>Member_bo</artifactId>
             <version>1.0.4</version>
-
         </dependency>
-
 
 
         <!-- mybatisPlus代码生成模板引擎 -->

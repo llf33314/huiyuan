@@ -4,7 +4,7 @@ import com.gt.member.exception.BusinessException;
 
 import java.util.List;
 import java.util.Map;
-
+import java.util.SortedMap;
 
 /**
  * 字典里面方法，如图片格式要求
@@ -21,7 +21,7 @@ public interface DictService {
      * @param type
      * @return
      */
-    public List<Map< String,Object >> getDict(String type) throws BusinessException;
+    public SortedMap<String, Object> getDict(String type) throws BusinessException;
 
 
     /**

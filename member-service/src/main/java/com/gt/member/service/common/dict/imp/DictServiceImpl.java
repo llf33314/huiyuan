@@ -29,10 +29,14 @@ public class DictServiceImpl implements DictService {
     private BusUserNumDAO busUserNumDAO;
 
     @Override
-    public List<Map< String,Object >> getDict( String type ) throws BusinessException {
+    public SortedMap<String, Object> getDict( String type ) throws BusinessException {
 	try {
-
-	    return dictItemsDAO.getDictReturnKeyAndValue( type );
+	    SortedMap<String, Object> map = new TreeMap<String, Object>();
+	    List<Map<String, Object>> list =  dictItemsDAO.getDictReturnKeyAndValue( type );
+	    for (Map<String, Object> map2 : list) {
+		map.put(map2.get("item_key").toString(), map2.get("item_value"));
+	    }
+	    return map;
 	} catch ( Exception e ) {
 	    LOG.error( "查询字典异常", e );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );

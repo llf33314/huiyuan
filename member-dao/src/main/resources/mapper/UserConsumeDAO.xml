@@ -45,7 +45,11 @@
 		<result column="isend" property="isend" />
 		<result column="ischongzhi" property="ischongzhi" />
 		<result column="isendDate" property="isendDate" />
+		<result column="youhuiMoney" property="youhuiMoney" />
+		<result column="refundFenbi" property="refundFenbi" />
+		<result column="refundJifen" property="refundJifen" />
 		<result column="refundMoney" property="refundMoney" />
+		<result column="refundDate" property="refundDate" />
 	</resultMap>
 
     <!-- 通用查询结果列 -->
@@ -53,7 +57,8 @@
         id, public_id , busUserId, memberId, mcId, ctId, gt_id , recordType, ucType, totalMoney, integral, fenbi, uccount,
         discount, discountMoney, orderId, giveIntegral, giveFlow, giveFenbi, ucTable, createDate, paymentType, dvId, disCountdepict,
          balance, payStatus, giveGift, giftCount, orderCode, moduleType, storeId, isParent, freightMoney, offlinePayType, cardType,
-         flowState, dataSource, moduleOrderType, isend, ischongzhi, isendDate,refundMoney
+         flowState, dataSource, moduleOrderType, isend, ischongzhi, isendDate,youhuiMoney,refundFenbi ,
+		refundJifen , refundMoney , refundDate
     </sql>
 
 	<insert id="insertBatchFlowRecord" parameterType="ArrayList">
