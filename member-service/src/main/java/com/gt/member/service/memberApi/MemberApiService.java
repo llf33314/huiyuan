@@ -673,4 +673,11 @@ public interface MemberApiService {
      * @param erpPaySuccessBo
      */
     public void paySuccessByErpBalance( String erpPaySuccessBo ) throws BusinessException;
+
+    /**
+     * erp退款 包括钱 积分 粉币
+     * @param erpRefundBo
+     * @throws BusinessException
+     */
+    public void refundErp(String erpRefundBo) throws BusinessException;
 }

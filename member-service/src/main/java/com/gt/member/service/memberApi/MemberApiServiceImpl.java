@@ -5,14 +5,11 @@ package com.gt.member.service.memberApi;
 
 import com.alibaba.fastjson.JSON;
 import com.gt.api.enums.ResponseEnums;
-import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.FenbiFlowRecord;
 import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.common.entity.WxShop;
 import com.gt.entityBo.*;
-import com.gt.entityBo.queryBo.MallAllEntityQuery;
-import com.gt.entityBo.queryBo.MallEntityQuery;
 import com.gt.member.dao.*;
 import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.common.FenbiFlowRecordDAO;
@@ -4546,6 +4543,87 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    LOG.error( "支付成功回调异常", e );
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
+
+    }
+
+
+    public void refundErp(String erpRefundBo) throws BusinessException{
+       try {
+	   ErpRefundBo erfb = JSON.toJavaObject( JSON.parseObject( erpRefundBo ), ErpRefundBo.class );
+	   UserConsume uc = userConsumeMapper.findByOrderCode1( erfb.getOrderCode() );
+	   if ( CommonUtil.isEmpty( uc ) ) {
+	       throw new BusinessException( ResponseMemberEnums.NOT_ORDER );
+	   }
+	   if ( !DateTimeKit.laterThanNow( uc.getIsendDate() ) ) {
+	       throw new BusinessException( ResponseMemberEnums.END_ORDER );
+	   }
+	   UserConsume updateUc = new UserConsume();
+	   updateUc.setId( uc.getId() );
+	   Double refundMoney = uc.getRefundMoney() + erfb.getRefundMoney();
+	   updateUc.setRefundMoney( refundMoney );
+
+	   Boolean bool = false;
+	   MemberEntity member = memberDAO.selectById( uc.getMemberId() );
+	   MemberCard card = null;
+	   if ( CommonUtil.isNotEmpty( uc.getMcId() ) ) {
+	       card = memberCardDAO.selectById( uc.getMcId() );
+	   }
+
+	   MemberEntity upmember = new MemberEntity();
+	   upmember.setId( member.getId() );
+	   if ( erfb.getRefundJifen() > 0 ) {
+	       Integer refundJifen = uc.getRefundJifen() + erfb.getRefundJifen();
+	       updateUc.setRefundJifen( refundJifen );
+
+	       Integer jifen = member.getIntegral() + erfb.getRefundJifen();
+	       upmember.setIntegral( jifen );
+
+	       if ( CommonUtil.isNotEmpty( card ) ) {
+		   memberCommonService.saveCardRecordOrderCodeNew( card.getMcId(), (byte) 2, erfb.getRefundJifen() + "积分", "退积分", uc.getBusUserId(), jifen + "积分", 0, 0, erfb.getOrderCode() );
+	       }
+	       bool = true;
+	   }
+
+	   if ( erfb.getRefundFenbi() > 0 ) {
+	       Double refundFenbi = uc.getRefundFenbi() + erfb.getRefundFenbi();
+	       updateUc.setRefundFenbi( refundFenbi );
+	       memberCommonService.giveFansCurrency( member.getId(), erfb.getRefundFenbi() );
+	       double fenbi = member.getFansCurrency() + erfb.getRefundFenbi();
+	       if ( CommonUtil.isNotEmpty( card ) ) {
+		   memberCommonService.saveCardRecordOrderCodeNew( card.getMcId(), (byte) 3, erfb.getRefundFenbi() + "粉币", "退粉币", uc.getBusUserId(), fenbi + "粉币", 0, 0, erfb.getOrderCode() );
+	       }
+
+	   }
+	   updateUc.setRefundDate( new Date() );
+	   userConsumeMapper.updateById( updateUc );
+
+	   if ( erfb.getRefundPayType() == 5 ) {
+	       //储值卡退款
+	       if ( CommonUtil.isEmpty( card ) ) {
+		   throw new BusinessException( ResponseMemberEnums.MEMBER_NOT_CARD );
+	       }
+	       MemberCard mc = new MemberCard();
+	       mc.setMcId( card.getMcId() );
+	       Double money = card.getMoney() + erfb.getRefundMoney();
+	       mc.setMoney( money );
+	       memberCardDAO.updateById( mc );
+
+	       memberCommonService.saveCardRecordOrderCodeNew( card.getMcId(), (byte) 1, erfb.getRefundMoney() + "元", "退款", uc.getBusUserId(), money + "元", 0, 0, erfb.getOrderCode() );
+
+	   } else {
+	       if ( CommonUtil.isNotEmpty( card ) ) {
+		   memberCommonService.saveCardRecordOrderCodeNew( card.getMcId(), (byte) 1, erfb.getRefundMoney() + "元", "退款", uc.getBusUserId(), card.getMoney() + "元", 0, 0, erfb.getOrderCode() );
+	       }
+	   }
+
+	   if ( bool ) {
+	       memberDAO.updateById( upmember );
+	   }
+       }catch ( BusinessException e ){
+           throw  e;
+       }catch ( Exception e ){
+           throw new BusinessException( ResponseEnums.ERROR );
+       }
 
     }
 }

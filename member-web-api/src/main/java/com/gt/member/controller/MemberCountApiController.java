@@ -11,6 +11,7 @@ import com.gt.member.service.memberApi.MemberCountMoneyApiService;
 import com.gt.entityBo.MallAllEntity;
 import com.gt.entityBo.PaySuccessBo;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -77,24 +78,6 @@ public class MemberCountApiController {
             return ServerResponse.createBySuccess(JSONObject.toJSON(memberShopEntity1));
         }catch (Exception e){
             return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),"计算失败");
-        }
-    }
-
-
-
-
-    @ApiOperation(value = "支付成功回调", notes = "传入值具体描述请看实体类 储值卡支付 直接调用 回调类以处理储值卡扣款")
-    @ResponseBody
-    @GetMapping("/paySuccess")
-    @RequestMapping(value = "paySuccess",method = RequestMethod.POST)
-    public ServerResponse paySuccess(HttpServletRequest request,
-                                     HttpServletResponse response,@RequestBody String paySuccessBo){
-        try {
-            PaySuccessBo  paySuccessBo1=JSONObject.toJavaObject( JSONObject.parseObject( paySuccessBo ),PaySuccessBo.class ) ;
-            memberApiService.paySuccess(paySuccessBo1);
-            return ServerResponse.createBySuccess();
-        }catch (BusinessException e){
-            return ServerResponse.createByError(e.getCode(),e.getMessage());
         }
     }
 }

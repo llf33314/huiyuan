@@ -38,7 +38,9 @@ public enum ResponseMemberEnums {
     LESS_THAN_CASH(7002,"收取现金不够"),
     PLEASE_PAY(7003,"请支付购买会员卡金额"),
     ORDER_PAY_REPEAT(7004,"订单重复支付"),
-    ORDER_PAY_ERROR(7005,"当前订单支付存在问题,将影响收入")
+    ORDER_PAY_ERROR(7005,"当前订单支付存在问题,将影响收入"),
+    NOT_ORDER(7006,"订单不存在"),
+    END_ORDER(7007,"订单已终结,不能退款")
     ;
 
     private Integer code;

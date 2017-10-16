@@ -56,6 +56,7 @@ public class UserConsume extends Model<UserConsume> {
     /**
      * 卡片等级Id
      */
+    @TableField("gt_id")
 	private Integer gtId;
     /**
      * 记录类型 0积分记录 1充值记录 2消费记录

@@ -2,6 +2,7 @@ package com.gt.member.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
+import com.gt.entityBo.PaySuccessBo;
 import com.gt.member.base.BaseController;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.entity.MemberCard;
@@ -580,13 +581,31 @@ public class MemberApiController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "erp结算支付成功会员处理", notes = "erp结算支付成功会员处理（包括储值卡扣款、卡券核销、积分粉币扣除、赠送物品）" )
-    @ApiImplicitParam( name = "erpRefundBo", value = "erp 实体类ErpPaySuccessBo", paramType = "query", required = true, dataType = "String" )
+    @ApiOperation( value = "erp结算退款", notes = "erp结算退款" )
+    @ApiImplicitParam( name = "erpRefundBo", value = "erp 实体类erpRefundBo", paramType = "query", required = true, dataType = "String" )
     @ResponseBody
     @RequestMapping( value = "/refundErp", method = RequestMethod.POST )
     public ServerResponse refundErp(HttpServletRequest request, HttpServletResponse response, @RequestBody String erpRefundBo ){
-	return null;
+	try {
+	    memberApiService.refundErp( erpRefundBo );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
     }
 
-
+    @ApiOperation(value = "支付成功回调", notes = "传入值具体描述请看实体类 储值卡支付 直接调用 回调类以处理储值卡扣款")
+    @ApiImplicitParam( name = "paySuccessBo", value = "PaySuccessBo 实体类", paramType = "query", required = true, dataType = "String" )
+    @ResponseBody
+    @RequestMapping(value = "paySuccess",method = RequestMethod.POST)
+    public ServerResponse paySuccess(HttpServletRequest request,
+		    HttpServletResponse response,@RequestBody String paySuccessBo){
+	try {
+	    PaySuccessBo paySuccessBo1=JSONObject.toJavaObject( JSONObject.parseObject( paySuccessBo ),PaySuccessBo.class ) ;
+	    memberApiService.paySuccess(paySuccessBo1);
+	    return ServerResponse.createBySuccess();
+	}catch (BusinessException e){
+	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	}
+    }
 }

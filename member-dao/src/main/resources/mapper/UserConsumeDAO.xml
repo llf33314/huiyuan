@@ -54,9 +54,12 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, public_id , busUserId, memberId, mcId, ctId, gt_id , recordType, ucType, totalMoney, integral, fenbi, uccount,
-        discount, discountMoney, orderId, giveIntegral, giveFlow, giveFenbi, ucTable, createDate, paymentType, dvId, disCountdepict,
-         balance, payStatus, giveGift, giftCount, orderCode, moduleType, storeId, isParent, freightMoney, offlinePayType, cardType,
+        id, public_id , busUserId, memberId, mcId, ctId, gt_id , recordType,
+         ucType, totalMoney, integral, fenbi, uccount,
+        discount, discountMoney, orderId, giveIntegral, giveFlow, giveFenbi,
+         ucTable, createDate, paymentType, dvId, disCountdepict,
+         balance, payStatus, giveGift, giftCount, orderCode,
+          moduleType, storeId, isParent, freightMoney, offlinePayType, cardType,
          flowState, dataSource, moduleOrderType, isend, ischongzhi, isendDate,youhuiMoney,refundFenbi ,
 		refundJifen , refundMoney , refundDate
     </sql>
