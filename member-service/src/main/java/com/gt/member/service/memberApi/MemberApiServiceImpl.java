@@ -188,8 +188,11 @@ public class MemberApiServiceImpl implements MemberApiService {
     @Transactional
     public void findGiveRule( String orderId, String itemName, byte type ) throws BusinessException {
 	List< Map< String,Object > > ucs = userConsumeMapper.findByOrderCode( orderId );
-	if ( CommonUtil.isEmpty( ucs ) || ucs.size() == 0 || ucs.size() > 1 ) {
-	    throw new BusinessException( ResponseMemberEnums.NO_DATA.getCode(), ResponseMemberEnums.NO_DATA.getMsg() );
+	if ( CommonUtil.isEmpty( ucs ) || ucs.size() == 0  ) {
+	    throw new BusinessException( ResponseMemberEnums.NO_DATA );
+	}
+	if(ucs.size() > 1 ){
+	    throw new BusinessException( ResponseMemberEnums.REPEAT_ORDER );
 	}
 
 	try {
@@ -965,12 +968,14 @@ public class MemberApiServiceImpl implements MemberApiService {
      *
      * @throws Exception
      */
-    @Transactional( rollbackFor = Exception.class )
     public void findGiveRuleDelay( String orderNo ) throws Exception {
 	List< Map< String,Object > > ucs = userConsumeMapper.findByOrderCode( orderNo );
-	if ( CommonUtil.isEmpty( ucs ) || ucs.size() == 0 || ucs.size() > 1 ) {
+	if ( CommonUtil.isEmpty( ucs ) || ucs.size() == 0 ) {
 	    LOG.error( "赠送物品查询订单出现异常" );
-	    throw new Exception();
+	    throw new BusinessException( ResponseMemberEnums.NOT_ORDER );
+	}
+	if(ucs.size() > 1 ){
+	    throw new BusinessException( ResponseMemberEnums.REPEAT_ORDER );
 	}
 
 	try {
