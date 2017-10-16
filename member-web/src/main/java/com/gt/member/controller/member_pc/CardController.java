@@ -16,6 +16,7 @@ import com.gt.member.dao.common.WxPublicUsersDAO;
 import com.gt.member.dao.common.WxShopDAO;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.entity.MemberCardmodel;
+import com.gt.member.entity.MemberCardtype;
 import com.gt.member.entity.MemberEntity;
 import com.gt.member.entity.MemberQcodeWx;
 import com.gt.member.service.common.dict.DictService;
@@ -31,10 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,13 +63,33 @@ public class CardController {
     @Autowired
     private MemberCardService memberCardService;
 
-    /**
-     * 会员卡新增和修改第一步页面数据查询pc
-     */
+    @Autowired
+    private BusUserDAO busUserMapper;
+
+
+    @ApiOperation( value = "查询会员卡类型", notes = "查询会员卡类型" )
+    @ResponseBody
+    @RequestMapping( value="/findCardType", method = RequestMethod.GET )
+    public ServerResponse findCardType(HttpServletRequest request, HttpServletResponse response){
+	SessionUtil.setLoginStyle( request,1 );
+	BusUserEntity busUserEntity=busUserMapper.selectById( 36 );
+	SessionUtil.setLoginUser( request,busUserEntity );
+	SessionUtil.setPidBusId( request,36 );
+	try {
+	    List< MemberCardtype > cardTypes = memberCardService.findCardType( busUserEntity.getId() );
+	    return ServerResponse.createBySuccess( cardTypes );
+	}catch ( Exception e ){
+	    LOG.error( "查询会员卡类型异常：", e );
+	    e.printStackTrace();
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), "查询会员卡类型异常" );
+	}
+    }
+
+
     @ApiOperation( value = "会员卡新增和修改第1步页面", notes = "会员卡新增和修改第1步页面" )
     @ApiImplicitParams( @ApiImplicitParam( name = "ctId", value = "会员卡类型id", paramType = "query", required = false, dataType = "int" ) )
     @ResponseBody
-    @RequestMapping( "/editGradeTypeFrist" )
+    @RequestMapping( value="/editGradeTypeFrist", method = RequestMethod.GET )
     public ServerResponse editGradeTypeFrist( HttpServletRequest request, HttpServletResponse response, Integer ctId ) {
 	try {
 	    Integer busId = SessionUtil.getPidBusId( request );
@@ -87,7 +105,7 @@ public class CardController {
     @ApiOperation( value = "会员卡新增和修改第2步页面", notes = "会员卡新增和修改第2步页面" )
     @ApiImplicitParams( @ApiImplicitParam( name = "ctId", value = "会员卡类型id", paramType = "query", required = false, dataType = "int" ) )
     @ResponseBody
-    @RequestMapping( "/editGradeTypeSecond" )
+    @RequestMapping( value="/editGradeTypeSecond", method = RequestMethod.GET )
     public ServerResponse editGradeTypeSecond( HttpServletRequest request, HttpServletResponse response, Integer ctId ) {
 	try {
 	    Integer busId = SessionUtil.getPidBusId( request );
@@ -102,7 +120,7 @@ public class CardController {
 
     @ApiOperation( value = "查询卡片背景模板", notes = "查询卡片背景模板" )
     @ResponseBody
-    @RequestMapping( "/findCardModel" )
+    @RequestMapping( value="/findCardModel", method = RequestMethod.GET )
     public ServerResponse findCardModel( HttpServletRequest request, HttpServletResponse response ) {
 	try {
 	    Integer busId = SessionUtil.getPidBusId( request );
@@ -118,7 +136,7 @@ public class CardController {
     @ApiOperation( value = "保存卡片背景模板", notes = "保存卡片背景模板" )
     @ApiImplicitParams( @ApiImplicitParam( name = "param", value = "json字符传", paramType = "query", required = false, dataType = "int" ) )
     @ResponseBody
-    @RequestMapping( "/saveCardModel" )
+    @RequestMapping( value = "/saveCardModel" , method = RequestMethod.GET)
     public ServerResponse saveCardModel( HttpServletRequest request, HttpServletResponse response, @RequestParam String param){
 	try {
 	    Integer busId = SessionUtil.getPidBusId( request );
@@ -134,7 +152,7 @@ public class CardController {
     @ApiOperation( value = "会员卡新增和修改第3步页面", notes = "会员卡新增和修改第3步页面" )
     @ApiImplicitParams( @ApiImplicitParam( name = "ctId", value = "会员卡类型id", paramType = "query", required = false, dataType = "int" ) )
     @ResponseBody
-    @RequestMapping( "/editGradeTypeThird" )
+    @RequestMapping( value = "/editGradeTypeThird" , method = RequestMethod.GET)
     public ServerResponse editGradeTypeThird( HttpServletRequest request, HttpServletResponse response, Integer ctId ){
 	try {
 	    Integer busId = SessionUtil.getPidBusId( request );
