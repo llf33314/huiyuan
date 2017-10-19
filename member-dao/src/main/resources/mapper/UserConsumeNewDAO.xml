@@ -47,4 +47,10 @@
 
 	</sql>
 
+
+	<select id="findByCode" resultMap="BaseResultMap">
+		select * from t_wx_user_consume_new where busId=#{busId} and orderCode=#{orderCode}
+
+	</select>
+
 </mapper>

@@ -4725,14 +4725,14 @@ public class MemberApiServiceImpl implements MemberApiService {
     public void refundErp(String erpRefundBo) throws BusinessException{
        try {
 	   ErpRefundBo erfb = JSON.toJavaObject( JSON.parseObject( erpRefundBo ), ErpRefundBo.class );
-	   UserConsume uc = userConsumeMapper.findByOrderCode1( erfb.getOrderCode() );
+	   UserConsumeNew uc = userConsumeNewDAO.findByCode( erfb.getBusId(),erfb.getOrderCode() );
 	   if ( CommonUtil.isEmpty( uc ) ) {
 	       throw new BusinessException( ResponseMemberEnums.NOT_ORDER );
 	   }
 	   if ( !DateTimeKit.laterThanNow( uc.getIsendDate() ) ) {
 	       throw new BusinessException( ResponseMemberEnums.END_ORDER );
 	   }
-	   UserConsume updateUc = new UserConsume();
+	   UserConsumeNew updateUc = new UserConsumeNew();
 	   updateUc.setId( uc.getId() );
 	   Double refundMoney = uc.getRefundMoney() + erfb.getRefundMoney();
 	   updateUc.setRefundMoney( refundMoney );
@@ -4754,7 +4754,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	       upmember.setIntegral( jifen );
 
 	       if ( CommonUtil.isNotEmpty( card ) ) {
-		   memberCommonService.saveCardRecordOrderCodeNew( card.getMcId(), (byte) 2, erfb.getRefundJifen() + "积分", "退积分", uc.getBusUserId(), jifen + "积分", 0, 0, erfb.getOrderCode() );
+		   memberCommonService.saveCardRecordOrderCodeNew( card.getMcId(), (byte) 2, erfb.getRefundJifen() + "积分", "退积分", uc.getBusId(), jifen + "积分", 0, 0, erfb.getOrderCode() );
 	       }
 	       bool = true;
 	   }
@@ -4765,12 +4765,12 @@ public class MemberApiServiceImpl implements MemberApiService {
 	       memberCommonService.giveFansCurrency( member.getId(), erfb.getRefundFenbi() );
 	       double fenbi = member.getFansCurrency() + erfb.getRefundFenbi();
 	       if ( CommonUtil.isNotEmpty( card ) ) {
-		   memberCommonService.saveCardRecordOrderCodeNew( card.getMcId(), (byte) 3, erfb.getRefundFenbi() + "粉币", "退粉币", uc.getBusUserId(), fenbi + "粉币", 0, 0, erfb.getOrderCode() );
+		   memberCommonService.saveCardRecordOrderCodeNew( card.getMcId(), (byte) 3, erfb.getRefundFenbi() + "粉币", "退粉币", uc.getBusId(), fenbi + "粉币", 0, 0, erfb.getOrderCode() );
 	       }
 
 	   }
 	   updateUc.setRefundDate( new Date() );
-	   userConsumeMapper.updateById( updateUc );
+	   userConsumeNewDAO.updateById( updateUc );
 
 	   if ( erfb.getRefundPayType() == 5 ) {
 	       //储值卡退款
@@ -4782,15 +4782,12 @@ public class MemberApiServiceImpl implements MemberApiService {
 	       Double money = card.getMoney() + erfb.getRefundMoney();
 	       mc.setMoney( money );
 	       memberCardDAO.updateById( mc );
-
-	       memberCommonService.saveCardRecordOrderCodeNew( card.getMcId(), (byte) 1, erfb.getRefundMoney() + "元", "退款", uc.getBusUserId(), money + "元", 0, 0, erfb.getOrderCode() );
-
+	       memberCommonService.saveCardRecordOrderCodeNew( card.getMcId(), (byte) 1, erfb.getRefundMoney() + "元", "退款", uc.getBusId(), money + "元", 0, 0, erfb.getOrderCode() );
 	   } else {
 	       if ( CommonUtil.isNotEmpty( card ) ) {
-		   memberCommonService.saveCardRecordOrderCodeNew( card.getMcId(), (byte) 1, erfb.getRefundMoney() + "元", "退款", uc.getBusUserId(), card.getMoney() + "元", 0, 0, erfb.getOrderCode() );
+		   memberCommonService.saveCardRecordOrderCodeNew( card.getMcId(), (byte) 1, erfb.getRefundMoney() + "元", "退款", uc.getBusId(), card.getMoney() + "元", 0, 0, erfb.getOrderCode() );
 	       }
 	   }
-
 	   if ( bool ) {
 	       memberDAO.updateById( upmember );
 	   }

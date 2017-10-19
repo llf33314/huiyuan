@@ -2,6 +2,7 @@ package com.gt.member.dao;
 
 import com.gt.member.entity.UserConsumeNew;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -12,5 +13,7 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
  * @since 2017-10-17
  */
 public interface UserConsumeNewDAO extends BaseMapper<UserConsumeNew> {
+
+    UserConsumeNew findByCode(@Param( "busId" ) Integer busId,@Param( "orderCode" )String orderCode);
 
 }
