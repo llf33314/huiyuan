@@ -674,6 +674,14 @@ public interface MemberApiService {
      */
     public void paySuccessByErpBalance( String erpPaySuccessBo ) throws BusinessException;
 
+
+    /**
+     * erp计算 会员卡核销接口（包括储值卡扣款 、 借款、优惠券核销 、积分、粉币）
+     *
+     * @param erpPaySuccessBo
+     */
+    public void newPaySuccessByErpBalance( String newErpPaySuccessBo ) throws BusinessException;
+
     /**
      * erp退款 包括钱 积分 粉币
      * @param erpRefundBo
