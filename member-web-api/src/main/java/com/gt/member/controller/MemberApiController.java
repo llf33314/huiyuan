@@ -568,31 +568,8 @@ public class MemberApiController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "erp结算支付成功会员处理", notes = "erp结算支付成功会员处理（包括储值卡扣款、卡券核销、积分粉币扣除、赠送物品）" )
-    @ApiImplicitParam( name = "erpPaySuccessBo", value = "erp结算核销对象 实体类ErpPaySuccessBo", paramType = "query", required = true, dataType = "String" )
-    @ResponseBody
-    @RequestMapping( value = "/paySuccessByErpBalance", method = RequestMethod.POST )
-    public ServerResponse paySuccessByErpBalance( HttpServletRequest request, HttpServletResponse response, @RequestBody String erpPaySuccessBo ) {
-	try {
-	    memberApiService.paySuccessByErpBalance( erpPaySuccessBo );
-	    return ServerResponse.createBySuccess(  );
-	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
-	}
-    }
 
-    @ApiOperation( value = "erp结算退款", notes = "erp结算退款" )
-    @ApiImplicitParam( name = "erpRefundBo", value = "erp 实体类erpRefundBo", paramType = "query", required = true, dataType = "String" )
-    @ResponseBody
-    @RequestMapping( value = "/refundErp", method = RequestMethod.POST )
-    public ServerResponse refundErp(HttpServletRequest request, HttpServletResponse response, @RequestBody String erpRefundBo ){
-	try {
-	    memberApiService.refundErp( erpRefundBo );
-	    return ServerResponse.createBySuccess(  );
-	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
-	}
-    }
+
 
     @ApiOperation(value = "支付成功回调", notes = "传入值具体描述请看实体类 储值卡支付 直接调用 回调类以处理储值卡扣款")
     @ApiImplicitParam( name = "paySuccessBo", value = "PaySuccessBo 实体类", paramType = "query", required = true, dataType = "String" )
@@ -611,13 +588,26 @@ public class MemberApiController extends BaseController {
 
 
 
-    @ApiOperation( value = "新的erp结算支付成功会员处理支持多种支付数据保存", notes = "erp结算支付成功会员处理（包括储值卡扣款、卡券核销、积分粉币扣除、赠送物品）" )
+    @ApiOperation( value = "新的erp结算支付成功会员处理支持多种支付数据保存 支付多种支付", notes = "erp结算支付成功会员处理（包括储值卡扣款、卡券核销、积分粉币扣除、赠送物品）" )
     @ApiImplicitParam( name = "newErpPaySuccessBo", value = "erp结算核销对象 实体类ErpPaySuccessBo", paramType = "query", required = true, dataType = "String" )
     @ResponseBody
     @RequestMapping( value = "/newPaySuccessByErpBalance", method = RequestMethod.POST )
     public ServerResponse newpaySuccessByErpBalance( HttpServletRequest request, HttpServletResponse response, @RequestBody String newErpPaySuccessBo ) {
 	try {
 	    memberApiService.paySuccessByErpBalance( newErpPaySuccessBo );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+    @ApiOperation( value = "erp结算退款", notes = "erp结算退款" )
+    @ApiImplicitParam( name = "erpRefundBo", value = "erp 实体类erpRefundBo", paramType = "query", required = true, dataType = "String" )
+    @ResponseBody
+    @RequestMapping( value = "/refundErp", method = RequestMethod.POST )
+    public ServerResponse refundErp(HttpServletRequest request, HttpServletResponse response, @RequestBody String erpRefundBo ){
+	try {
+	    memberApiService.refundErp( erpRefundBo );
 	    return ServerResponse.createBySuccess(  );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
