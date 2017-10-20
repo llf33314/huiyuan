@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -102,7 +103,7 @@ public class CardController {
     public ServerResponse findCardModel( HttpServletRequest request, HttpServletResponse response ) {
 	try {
 	    Integer busId = SessionUtil.getPidBusId( request );
-	    List< MemberCardmodel > cardmodels = memberCardService.findCardModel( busId );
+	    List< MemberCardmodel > cardmodels = memberCardService.findCardModelByBusId( busId );
 	    return ServerResponse.createBySuccess( cardmodels );
 	} catch ( Exception e ) {
 	    LOG.error( "查询卡片背景模板异常：", e );
@@ -309,6 +310,7 @@ public class CardController {
 	    return ServerResponse.createByError(e.getCode(),e.getMessage());
 	}
     }
+
 
 
 

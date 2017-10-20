@@ -21,7 +21,7 @@ public interface MemberCardmodelDAO extends BaseMapper<MemberCardmodel> {
      * 获取卡片模板
      * @return
      */
-    List<MemberCardmodel> findGroupByType(@Param("busId")Integer busId);
+    List<MemberCardmodel> findCardModelByBusId(@Param("busId")Integer busId);
 
     /**
      * 根据类型查询模板
@@ -43,11 +43,4 @@ public interface MemberCardmodelDAO extends BaseMapper<MemberCardmodel> {
      */
     List<Map<String, Object>> findCardBackgroundModel(@Param("gtId")Integer gtId);
 
-
-    /**
-     * 根据类型查询模板
-     * @param cmType
-     * @return
-     */
-    List<MemberCardmodel> findBybusId(@Param("busId") Integer busId);
 }

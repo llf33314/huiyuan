@@ -45,11 +45,11 @@ public interface MemberCardService {
     List<MemberCardtype> findCardType(Integer busId);
 
     /**
-     * 分组查询卡片信息
+     * 查询卡片信息
      *
      * @return
      */
-    List< MemberCardmodel > findGroupByType( Integer busId );
+    List< MemberCardmodel > findCardModelByBusId( Integer busId ) throws  BusinessException;
 
 
 
@@ -117,12 +117,6 @@ public interface MemberCardService {
 
     public void saveOrUpdateOption(String json,Integer busId)throws  BusinessException;
 
-    /**
-     * 商家卡片背景模板
-     * @param busId
-     * @return
-     */
-    public List< MemberCardmodel >  findCardModel(Integer busId);
 
     /**
      * 保存会员卡设置
@@ -238,5 +232,7 @@ public interface MemberCardService {
      * @return
      */
     public Map<String,Object> memberTongJi(Integer busId,Integer ctId,String startTime) throws BusinessException;
+
+
 
 }

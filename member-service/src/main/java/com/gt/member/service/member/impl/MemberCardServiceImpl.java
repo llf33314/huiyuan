@@ -181,8 +181,11 @@ public class MemberCardServiceImpl implements MemberCardService {
      * 分组查询卡片信息
      */
     @Override
-    public List< MemberCardmodel > findGroupByType( Integer busId ) {
-	return cardModelMapper.findGroupByType( busId );
+    public List< MemberCardmodel > findCardModelByBusId( Integer busId ) throws  BusinessException {
+	if ( CommonUtil.isEmpty( busId ) ) {
+	    throw new BusinessException( ResponseMemberEnums.INVALID_SESSION );
+	}
+	return cardModelMapper.findCardModelByBusId( busId );
     }
 
     /**
@@ -389,17 +392,6 @@ public class MemberCardServiceImpl implements MemberCardService {
 	}
     }
 
-    /**
-     * 商家卡片背景模板
-     *
-     * @param busId
-     *
-     * @return
-     */
-    public List< MemberCardmodel > findCardModel( Integer busId ) {
-	List< MemberCardmodel > cardmodels = memberCardmodelDAO.findBybusId( busId );
-	return cardmodels;
-    }
 
     /**
      * 保存会员卡设置

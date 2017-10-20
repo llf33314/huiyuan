@@ -22,11 +22,10 @@
     </sql>
 
 
-	<select id="findGroupByType" resultMap="BaseResultMap">
+	<select id="findCardModelByBusId" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from t_member_cardmodel where busId=0 or busId=#{busId} GROUP BY
-		cm_type,busId
+		from t_member_cardmodel where busId=0 or busId=#{busId}
 	</select>
 
 	<select id="findByType" resultMap="BaseResultMap">
@@ -73,9 +72,6 @@
 	</select>
 
 
-	<select id="findBybusId" resultType="Map">
-		select cm_id as cmId,cm_url as cmUrl from t_member_cardmodel where busId=0
-		or busId=#{busId} and cm_state=0
-	</select>
+
 
 </mapper>
