@@ -23,6 +23,8 @@ public enum ResponseMemberEnums {
     IS_BINDING_PHONE(5012,"手机号码已经绑定过"),
     LESS_THAN_CARD(5013,"储值卡借款金额不足"),
     LESS_THAN_FENBI(5014,"商家粉币不足"),
+    PLEASE_SCAN_CODE(5015,"请扫码核销"),
+    DISABLE_MEMBER_CARD(5016,"会员卡被拉黑"),
 
 
 
@@ -40,7 +42,14 @@ public enum ResponseMemberEnums {
     ORDER_PAY_REPEAT(7004,"订单重复支付"),
     ORDER_PAY_ERROR(7005,"当前订单支付存在问题,将影响收入"),
     NOT_ORDER(7006,"订单不存在"),
-    END_ORDER(7007,"订单已终结,不能退款")
+    END_ORDER(7007,"订单已终结,不能退款"),
+    INVALID_SESSION(7008,"SESSION失效,请重新登录"),
+
+
+    GIFT_EXIST(8001,"赠送物品已存在,请修改"),
+    CAN_NOT_MINUS(8002,"不能是负值"),
+    IMP_ERROR(8003,"导入数据异常,请查看下载的错误信息")
+
     ;
 
     private Integer code;

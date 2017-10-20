@@ -221,21 +221,22 @@
             <artifactId>commons-lang3</artifactId>
             <version>${dev.lib.commons-lang3}</version>
         </dependency>
-        <!-- thymeleaf&Vue 模板 -->
-        <!--<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
+
         <dependency>
-            <groupId>net.sourceforge.nekohtml</groupId>
-            <artifactId>nekohtml</artifactId>
-            <version>${dev.lib.nekohtml}</version>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.9</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
         <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>vue</artifactId>
-            <version>${dev.lib.vue}</version>
-        </dependency>-->
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.17</version>
+        </dependency>
+
+
+
         <!-- 单元测试 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -243,11 +244,6 @@
             <!--<scope>test</scope>-->
         </dependency>
 
-        <!-- Spring Boot Reids 依赖 -->
-        <!--<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>-->
         <!-- json 包 -->
         <dependency>
             <groupId>com.alibaba</groupId>

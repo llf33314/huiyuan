@@ -18,6 +18,7 @@ import com.gt.member.util.CommonUtil;
 import com.gt.member.util.DateTimeKit;
 import com.gt.member.util.PropertiesUtil;
 import net.sf.json.JSONArray;
+import org.apache.cxf.transport.http.UntrustedURLConnectionIOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,11 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
     @Autowired
     private MemberAppletOpenidDAO memberAppletOpenidDAO;
+
+    @Autowired
+    private UserConsumeNewDAO userConsumeNewDAO;
+
+    private MemberGiveruleDAO MemberGiveruleDAO;
 
 
 
@@ -571,6 +577,340 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
+    }
+
+
+
+    /**
+     * 根据订单号添加赠送物品记录
+     *
+     * @param orderCode
+     *            订单号
+     * @throws Exception
+     */
+    public void findGiveRule(Integer busId,String orderCode) throws Exception {
+//	UserConsumeNew ucs = userConsumeNewDAO
+//			.findByCode(busId,orderCode);
+//	if (CommonUtil.isEmpty(ucs)) {
+//	    LOG.error("赠送物品查询订单出现异常");
+//	    throw new Exception();
+//	}
+//
+//	try {
+//	    Integer busUserId = ucs.getBusId();
+//
+//	    Integer gtId = ucs.getGtId();
+//	    Integer ctId = ucs.getCtId();
+//	    double price = ucs.getDiscountAfterMoney();
+//
+//
+//	    // 如果是次卡 和 储值卡 就查询第一个等级的赠送规则
+//	    MemberGiverule gr = null;
+//	    if (ctId == 5 || ctId == 3) {
+//		List<Map<String, Object>> grs = MemberGiveruleDAO
+//				.findByBusIdAndCtId(busUserId, ctId);
+//		gr = new GiveRule();
+//		if (grs.size() != 0) {
+//		    gr.setGrId(CommonUtil.toInteger(grs.get(0).get("gr_id")));
+//		}
+//	    } else {
+//		gr = giveRuleMapper.findBybusIdAndGtIdAndCtId(busUserId, gtId,
+//				ctId);
+//	    }
+//
+//	    Double fans_currency = 0.0;// 粉笔
+//	    int integral = 0; // 积分
+//	    int flow = 0;
+//
+//	    MemberDate memberday = findMemeberDate(busUserId, ctId);
+//	    boolean flag = false; // 表示今天是否是会员日
+//	    if (CommonUtil.isNotEmpty(memberday)) {
+//		flag = true;
+//	    }
+//
+//	    if (type == 1) {
+//		if (CommonUtil.isNotEmpty(gr)) {
+//		    List<Map<String, Object>> grgts = giveRuleGoodsTypeMapper
+//				    .findByGrId(gr.getGrId());
+//		    GiveConsume giveConsume = null;
+//		    GiveRuleGoodsType grgt = null;
+//		    for (Map<String, Object> map : grgts) {
+//			giveConsume = new GiveConsume();
+//			if (CommonUtil.isEmpty(map.get("gId")))
+//			    continue;
+//			if ("1".equals(map.get("gId").toString())) {
+//			    if ("1".equals(map.get("give_type").toString())) {
+//				// 积分
+//				if (CommonUtil.isEmpty(map.get("money")))
+//				    continue;
+//				Double money = Double.parseDouble(map.get(
+//						"money").toString());
+//				int count = (int) Math.floor(price / money);
+//				if (count == 0)
+//				    continue;
+//				if (CommonUtil.isEmpty(map.get("number")))
+//				    continue;
+//				int num = count
+//						* Integer.parseInt(map.get("number")
+//						.toString());
+//				Integer upperLmit = Integer.parseInt(map.get(
+//						"upperLmit").toString());
+//				if (upperLmit != 0) {
+//				    num = num > upperLmit ? upperLmit : num;
+//				}
+//				// 会员日 积分赠送
+//				if (flag) {
+//				    num = num * memberday.getIntegral();
+//				}
+//
+//				giveConsume.setGcTotal(num);
+//				giveConsume.setGtId(Integer.parseInt(map.get(
+//						"gId").toString()));
+//				giveConsume.setGtName(map.get("gt_name")
+//						.toString());
+//				giveConsume.setGtUnit(map.get("gt_unit")
+//						.toString());
+//				giveConsume.setUcId(ucId);
+//				giveConsume.setMemberid(CommonUtil
+//						.toInteger(ucs.get(0).get("memberId")));
+//				giveConsume.setSenddate(new Date());
+//				giveConsumeMapper.insertSelective(giveConsume);
+//				integral = num;
+//			    }
+//			} else {
+//			    // 添加赠送物品记录
+//			    Integer upperLmit = Integer.parseInt(map.get(
+//					    "upperLmit").toString());
+//
+//			    if ("2".equals(map.get("gId").toString())
+//					    || "3".equals(map.get("gId").toString())
+//					    || upperLmit > 0) {
+//				Integer count = Integer.parseInt(map.get(
+//						"number").toString());
+//				Double money = Double.parseDouble(map.get(
+//						"money").toString());
+//				if (price < money)
+//				    continue;
+//				if (upperLmit < count) {
+//				    // 扣除商家粉币数量
+//				    if ("3".equals(map.get("gId").toString())) {
+//					if (fenbi < count) {
+//					    continue;
+//					}
+//					// 会员日 粉币赠送
+//					if (flag) {
+//					    count = count
+//							    * memberday
+//							    .getFansCurrency();
+//					}
+//
+//					giveConsume.setGcTotal(count);
+//					// 冻结商家粉笔数量
+//					fenbiFlowRecordMapper
+//							.updateFenbiReduce(busUserId,
+//									count, ctId,
+//									recFreezeType);
+//
+//					fans_currency = (double) count;
+//				    } else if ("2".equals(map.get("gId")
+//						    .toString())) {
+//					Integer flowCount = Integer
+//							.parseInt(map.get("number")
+//									.toString());
+//					// 会员日赠送流量
+//					if (flag) {
+//					    flowCount = flowCount
+//							    * memberday.getFlow();
+//					    giveConsume.setGcTotal(flowCount);
+//					    flow = flowCount
+//							    * memberday.getFlow();
+//					} else {
+//					    giveConsume.setGcTotal(flowCount);
+//					    flow = flowCount;
+//					}
+//
+//				    }
+//				    // 上限非等于0 认为是商家自定义物品
+//				    if (upperLmit != 0) {
+//					giveConsume.setGcTotal(upperLmit);
+//				    }
+//				} else {
+//				    giveConsume.setGcTotal(count);
+//				}
+//
+//				giveConsume.setGtId(Integer.parseInt(map.get(
+//						"gId").toString()));
+//				giveConsume.setGtName(map.get("gt_name")
+//						.toString());
+//				giveConsume.setGtUnit(map.get("gt_unit")
+//						.toString());
+//				giveConsume.setUcId(ucId);
+//				giveConsume.setMemberid(CommonUtil
+//						.toInteger(ucs.get(0).get("memberId")));
+//				giveConsume.setSenddate(new Date());
+//				giveConsumeMapper.insertSelective(giveConsume);
+//
+//				if (!"2".equals(map.get("gId").toString())
+//						&& !"3".equals(map.get("gId")
+//						.toString())) {
+//				    // 修改赠送规则物品剩余数量(商家自定义物品)
+//				    grgt = new GiveRuleGoodsType();
+//				    grgt.setGrId(Integer.parseInt(map.get(
+//						    "gr_id").toString()));
+//				    grgt.setGtId(Integer.parseInt(map
+//						    .get("gId").toString()));
+//
+//				    if (upperLmit < count) {
+//					grgt.setUpperlmit(0);
+//					grgt.setGiveType((byte) 2);
+//				    } else {
+//					grgt.setUpperlmit(upperLmit - count);
+//				    }
+//				    giveRuleGoodsTypeMapper
+//						    .updateByPrimaryKeySelective(grgt);
+//				}
+//			    }
+//			}
+//		    }
+//		}
+//	    }
+//
+//	    if (CommonUtil.isNotEmpty(ucs.get(0).get("mcId"))) {
+//		Card card = cardMapper.selectByPrimaryKey(Integer.parseInt(ucs
+//				.get(0).get("mcId").toString()));
+//
+//		// 修改会员的流量 粉笔 积分信息
+//		Member member1 = memberMapper.findByMcIdAndbusId(
+//				card.getBusid(),
+//				Integer.parseInt(ucs.get(0).get("mcId").toString()));
+//		// 消费 积分为负数 改为正数
+//		if (integral < 0) {
+//		    integral = -integral;
+//		}
+//
+//		if (CommonUtil.isNotEmpty(member1)) {
+//		    Member member = new Member();
+//		    member.setId(member1.getId());
+//		    member.setFansCurrency(member1.getFansCurrency()
+//				    + fans_currency);
+//		    member.setFlow(member1.getFlow() + flow);
+//		    member.setIntegral(member1.getIntegral() + integral);
+//		    member.setFlowdate(new Date());
+//		    member.setIntegraldate(new Date());
+//		    member.setTotalintegral(member1.getTotalintegral()
+//				    + integral);
+//		    if (ctId == 5) {
+//			if (CommonUtil.isNotEmpty(ucs.get(0).get("totalMoney"))) {
+//			    price = Double.parseDouble(ucs.get(0)
+//					    .get("totalMoney").toString());
+//			}
+//		    }
+//		    member.setTotalmoney(member1.getTotalmoney() + price);
+//		    try {
+//			memberMapper.updateByPrimaryKeySelective(member);
+//		    } catch (Exception e) {
+//			e.printStackTrace();
+//		    }
+//		}
+//		Map<String, Object> map = null;
+//		// 判断时效卡升级
+//		if (ctId == 4) {
+//		    map = findNextGradeCtId4(busUserId, gtId, price);
+//		} else if (card.getApplytype() != 4) { // 泛会员升级
+//		    // 判断会员是否是要升级
+//		    map = findNextGrade(busUserId, ctId, gtId,
+//				    member1.getTotalintegral() + integral,
+//				    member1.getTotalmoney() + price);
+//		}
+//
+//		// 用来标示该价格正负
+//		if (!"1".equals(recordType)) {
+//		    price = -price;
+//		}
+//
+//		double balance = 0.0;
+//		if (CommonUtil.isNotEmpty(card)
+//				&& CommonUtil.isNotEmpty(card.getMoney())) {
+//		    balance = card.getMoney();
+//		    if ("3".equals(CommonUtil.toString(ucs.get(0).get(
+//				    "paymentType")))
+//				    || "5".equals(CommonUtil.toString(ucs.get(0).get(
+//				    "paymentType")))) {
+//			card.setMoney(balance + price > 0 ? balance + price : 0);
+//		    }
+//
+//		    if (CommonUtil.isNotEmpty(ucs.get(0).get("uccount"))) {
+//			Integer uccount = Integer.parseInt(ucs.get(0)
+//					.get("uccount").toString());
+//			if (ctId == 5) {
+//			    if (CommonUtil.isNotEmpty(ucs.get(0).get(
+//					    "giftCount"))) {
+//				Integer giftCount = Integer.parseInt(ucs.get(0)
+//						.get("giftCount").toString());
+//				uccount = uccount + giftCount;
+//			    }
+//			}
+//			if (uccount != 0) {
+//			    card.setFrequency(card.getFrequency() - uccount);
+//			}
+//		    }
+//		    // 修改会员卡等级和赠送规则
+//		    if (CommonUtil.isNotEmpty(map)) {
+//			card.setGtId(Integer.parseInt(map.get("gtId")
+//					.toString()));
+//			card.setGrId(Integer.parseInt(map.get("grId")
+//					.toString()));
+//
+//			// 升级通知
+//			systemMsgService
+//					.upgradeMemberMsg(
+//							member1,
+//							card.getCardno(),
+//							CommonUtil.isEmpty(card.getExpiredate()) ? "长期有效"
+//									: DateTimeKit.format(card
+//									.getExpiredate()));
+//		    }
+//		    cardMapper.updateByPrimaryKeySelective(card);
+//		}
+//		if (card.getCtId() == 5) {
+//		    if ("1".equals(ucs.get(0).get("recordType").toString())) {
+//			saveCardRecordNew(Integer.parseInt(ucs.get(0)
+//							.get("mcId").toString()), (byte) 1,
+//					ucs.get(0).get("uccount") + "次,送"
+//							+ ucs.get(0).get("giftcount") + "次",
+//					itemName, member1.getBusid(), card
+//							.getFrequency().toString(),
+//					card.getCtId(), 0.0);
+//		    } else {
+//			if ("0".equals(CommonUtil.toString(ucs.get(0).get(
+//					"uccount")))) {
+//			    saveCardRecordNew(
+//					    Integer.parseInt(ucs.get(0).get("mcId")
+//							    .toString()), (byte) 1,
+//					    price + "元", itemName, member1.getBusid(),
+//					    card.getFrequency().toString(),
+//					    card.getCtId(), 0.0);
+//			} else {
+//			    saveCardRecordNew(Integer.parseInt(ucs.get(0)
+//							    .get("mcId").toString()), (byte) 1, ucs
+//							    .get(0).get("uccount") + "次", itemName,
+//					    member1.getBusid(), card.getFrequency()
+//							    .toString(), card.getCtId(), 0.0);
+//			}
+//
+//		    }
+//		} else {
+//		    saveCardRecordNew(
+//				    Integer.parseInt(ucs.get(0).get("mcId").toString()),
+//				    (byte) 1, price + "元", itemName,
+//				    member1.getBusid(), card.getMoney().toString(),
+//				    card.getCtId(), 0.0);
+//		}
+//	    }
+//	} catch (Exception e) {
+//	    LOG.error("添加赠送记录数据查询异常异常", e);
+//	    throw new Exception();
+//	}
     }
 
 }

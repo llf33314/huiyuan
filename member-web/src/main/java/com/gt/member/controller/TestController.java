@@ -34,11 +34,14 @@ public class TestController extends BaseController {
 	map.put("memberId", 197);
 	map.put("busId", 42);
 	map.put("page", 1);
-	//SignHttpUtils.postByHttp("http://192.168.2.240:8090/api/memberApi/findByMemberId",map,"MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM");
 
+try {
+    String aa = SignHttpUtils.WxmppostByHttp( "http://192.168.2.241:8080/memberPc/editCard/findSystemNotice", "", "MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM" );
+    System.out.println(aa);
+}
+catch ( Exception e ){
 
-	//String aa= SignHttpUtils.postByHttp("POST /memberAPI/cardCouponseApi/findCardReceiveBuy",map,"MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM");
-	//System.out.println(aa);
+}
     }
 
 }

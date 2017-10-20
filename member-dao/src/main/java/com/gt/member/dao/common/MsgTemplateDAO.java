@@ -1,7 +1,7 @@
 package com.gt.member.dao.common;
 
-import com.gt.common.entity.WxShop;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.gt.common.entity.MsgTemplate;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -13,18 +13,14 @@ import java.util.Map;
  * </p>
  *
  * @author pengjiangli
- * @since 2017-08-02
+ * @since 2017-10-18
  */
-public interface WxShopDAO extends BaseMapper<WxShop> {
-
-    WxShop selectMainShopByBusId(Integer busId);
+public interface MsgTemplateDAO extends BaseMapper<MsgTemplate > {
 
     /**
-     *
+     * 获取模板信息（id，title）
      * @param busId
-     * @param verson 版本2
      * @return
      */
-    List<Map<String, Object> > findWxShopbyPublicId1Ver2(@Param("busId")Integer busId);
-
+    List<Map<String, Object> > selectTempObjByBusId(@Param("busId")Integer busId);
 }

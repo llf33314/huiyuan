@@ -4,7 +4,8 @@
 
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberNoticeuser">
-		<id column="busId" property="busId" />
+		<id column="id" property="id" />
+		<result column="busId" property="busId" />
 		<result column="noticeId" property="noticeId" />
 		<result column="msgType" property="msgType" />
 		<result column="status" property="status" />
@@ -14,7 +15,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        busId, noticeId, msgType, status, sendDate, createDate
+         busId AS busId, noticeId AS noticeId, msgType AS msgType, status, sendDate AS sendDate, createDate AS createDate, id
     </sql>
 
 
@@ -61,5 +62,11 @@
 			#{n.status,jdbcType=TINYINT}, #{n.senddate,jdbcType=TIMESTAMP})
 		</foreach>
 	</insert>
+
+
+	<select id="findByNoticeIdAndMemberId" resultMap="BaseResultMap">
+		select * from t_member_noticeuser where noticeId=#{noticeId} and busId=#{memberId}
+
+	</select>
 
 </mapper>

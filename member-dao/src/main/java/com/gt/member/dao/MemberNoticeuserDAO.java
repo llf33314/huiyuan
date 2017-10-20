@@ -17,6 +17,7 @@ import java.util.Map;
  * @since 2017-07-25
  */
 public interface MemberNoticeuserDAO extends BaseMapper<MemberNoticeuser> {
+
     List<Map<String, Object>> findByNoticeId(@Param("noticeId") Integer noticeId);
 
     Integer findCountNotice(@Param("memberId") Integer memberId,@Param("sendDate") Date sendDate);
@@ -30,4 +31,6 @@ public interface MemberNoticeuserDAO extends BaseMapper<MemberNoticeuser> {
     int deleteByNoticeId(@Param("noticeId") Integer noticeId);
 
     int saveList(@Param("noticeUsers") List<MemberNoticeuser> noticeUsers);
+
+    MemberNoticeuser findByNoticeIdAndMemberId(@Param("noticeId") Integer noticeId,@Param("memberId")Integer memberId);
 }

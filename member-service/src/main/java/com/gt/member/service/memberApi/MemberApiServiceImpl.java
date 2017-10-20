@@ -965,12 +965,12 @@ public class MemberApiServiceImpl implements MemberApiService {
      *
      * @throws Exception
      */
-    @Transactional( rollbackFor = Exception.class )
-    public void findGiveRuleDelay( String orderNo ) throws Exception {
+
+    public void findGiveRuleDelay( String orderNo ) throws BusinessException {
 	List< Map< String,Object > > ucs = userConsumeMapper.findByOrderCode( orderNo );
 	if ( CommonUtil.isEmpty( ucs ) || ucs.size() == 0 || ucs.size() > 1 ) {
 	    LOG.error( "赠送物品查询订单出现异常" );
-	    throw new Exception();
+	    throw new BusinessException(ResponseMemberEnums.NOT_ORDER);
 	}
 
 	try {
@@ -1151,7 +1151,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    LOG.error( "添加赠送记录数据查询异常异常", e );
-	    throw new Exception();
+	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
 
@@ -3423,7 +3423,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    uc.setOrderCode( paySuccessBo.getOrderCode() );
 	    uc.setStoreId( paySuccessBo.getStoreId() );
 	    uc.setDataSource( paySuccessBo.getDataSource() );
-	    uc.setIsend( 0 );
+	    uc.setIsend( 1 );
+	    uc.setIsendDate(new Date());
 
 	    MemberCard card = null;
 	    if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {

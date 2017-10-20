@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.UserConsumePayDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.UserConsumePay">
+		<id column="id" property="id" />
+		<result column="ucId" property="ucId" />
+		<result column="payMoney" property="payMoney" />
+		<result column="paymentType" property="paymentType" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, ucId AS ucId, payMoney AS payMoney, paymentType AS paymentType
+    </sql>
+
+</mapper>

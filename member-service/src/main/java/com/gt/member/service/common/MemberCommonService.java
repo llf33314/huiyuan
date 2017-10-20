@@ -145,4 +145,14 @@ public interface MemberCommonService {
     public void giveFansCurrency( Integer memberId,  Double fenbi ) throws BusinessException;
 
 
+    /***
+     * 当前立即赠送物品
+     * @param orderId
+     * @throws Exception
+     */
+    public void findGiveRule(Integer busId,String orderCode) throws Exception;
+
+
+
+
 }

@@ -1,5 +1,9 @@
 package com.gt.member.config.filter;
 
+import com.gt.common.entity.BusUserEntity;
+import com.gt.member.dao.common.BusUserDAO;
+import com.gt.member.util.SessionUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -14,6 +18,9 @@ import javax.servlet.http.HttpServletResponse;
  * Time : 16:30
  */
 public class SysLogInterceptor extends HandlerInterceptorAdapter {
+
+    @Autowired
+    private BusUserDAO busUserMapper;
     @Override
     public void afterCompletion( HttpServletRequest request,
 		    HttpServletResponse response, Object handler, Exception ex )
@@ -26,6 +33,9 @@ public class SysLogInterceptor extends HandlerInterceptorAdapter {
 		    HttpServletResponse response, Object handler,
 		    ModelAndView modelAndView ) throws Exception {
 	System.out.println( "功能日志拦截 = " );
+
+
+
 	if ( !handler.getClass().getName().endsWith( "DwrController" ) ) {
 	    HandlerMethod handlerMethod = (HandlerMethod) handler;
 	//    SysLogAnnotation annotation = handlerMethod.getMethodAnnotation( SysLogAnnotation.class );
@@ -57,6 +67,11 @@ public class SysLogInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle( HttpServletRequest request,
 		    HttpServletResponse response, Object handler ) throws Exception {
+	SessionUtil.setLoginStyle( request, 1 );
+	BusUserEntity busUserEntity = new BusUserEntity();
+	busUserEntity.setId( 36 );
+	SessionUtil.setLoginUser( request, busUserEntity );
+	SessionUtil.setPidBusId( request, 36 );
 
 	return super.preHandle( request, response, handler );
     }

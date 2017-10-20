@@ -99,10 +99,6 @@ public interface MemberEntityDAO extends BaseMapper<MemberEntity > {
      */
     MemberEntity selectOpenid(@Param("ids")String ids,@Param("wxUserId")Integer wxUserId);
 
-    /**
-     * 查询前台页面指定的中奖人信息数
-     */
-    List<MemberEntity > randomNum(@Param("numBer")Integer numBer,@Param("wxUserId")Integer wxUserId);
 
     /**
      * 根据指定的openid去查询用户信息
@@ -123,10 +119,6 @@ public interface MemberEntityDAO extends BaseMapper<MemberEntity > {
      */
     List<MemberEntity > queryWxUserId(@Param("userId")Integer userId);
 
-    /**
-     * 查询公众ID下的用户信息
-     */
-    List<MemberEntity > queryListUser(@Param("wxUserId")Integer wxUserId);
 
     /**
      * 查询用户所属公众号Id
@@ -268,4 +260,9 @@ public interface MemberEntityDAO extends BaseMapper<MemberEntity > {
      * @return
      */
     List<Map<String,Object>> findMemberByPhoneAndBusId(@Param("busId")Integer busId,@Param("phone")String phone);
+
+    List<MemberEntity> selectByPrimaryKeys(@Param("ids")String ids);
+
+
+    void updateMemberJifen(@Param( "ids" )List<Integer> ids,Integer jifen);
 }

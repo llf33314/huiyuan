@@ -1,7 +1,7 @@
 package com.gt.member.dao.common;
 
-import com.gt.common.entity.WxShop;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.gt.common.entity.BusUserBranchRelation;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -13,18 +13,15 @@ import java.util.Map;
  * </p>
  *
  * @author pengjiangli
- * @since 2017-08-02
+ * @since 2017-10-19
  */
-public interface WxShopDAO extends BaseMapper<WxShop> {
+public interface BusUserBranchRelationDAO extends BaseMapper<BusUserBranchRelation > {
 
-    WxShop selectMainShopByBusId(Integer busId);
 
     /**
-     *
+     * 查询登陆用户所拥有的门店信息
      * @param busId
-     * @param verson 版本2
      * @return
      */
-    List<Map<String, Object> > findWxShopbyPublicId1Ver2(@Param("busId")Integer busId);
-
+    List<Map<String, Object> > findBusUserShop(@Param("busId")Integer busId);
 }

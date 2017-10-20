@@ -144,6 +144,17 @@ public class ServerResponse<T> implements Serializable {
         return new ServerResponse<>(errorCode, errorMessage);
     }
 
+    /**
+     * 创建响应失败
+     *
+     * @param errorCode    状态码
+     * @param errorMessage 消息
+     * @return ServerResponse
+     */
+    public static <T> ServerResponse<T> createDataByError(int errorCode, String errorMessage,T data) {
+        return new ServerResponse<>(errorCode, errorMessage,data);
+    }
+
 
     public static <T> T getDate(ServerResponse serverResponse){
         return (T)serverResponse.getData();

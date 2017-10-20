@@ -19,21 +19,22 @@
 		<result column="sendStuts" property="sendStuts" />
 		<result column="noticeMember" property="noticeMember" />
 		<result column="busId" property="busId" />
+		<result column="smsContent" property="smsContent" />
 	</resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, title, img_url , notice_user , sendType, sendDate, sendSms, sendMsg, content,
-        createDate, createUser, publicId, sendStuts, noticeMember, busId
+        createDate, createUser, publicId, sendStuts, noticeMember, busId,smsContent
     </sql>
 
 	<select id="findMemberNotice" resultType="Map">
 		select   <include refid="Base_Column_List" />
-		from t_member_notice where busId=#{busId} ORDER BY id DESC LIMIT #{fristpage},#{pagesize}
+		from t_member_notice where busId=#{busId} and sendStuts=#{sendStuts} ORDER BY id DESC LIMIT #{fristpage},#{pagesize}
 	</select>
 
 	<select id="countMemberNotice" resultType="java.lang.Integer">
-		SELECT COUNT(id) FROM t_member_notice  WHERE busId=#{busId}
+		SELECT COUNT(id) FROM t_member_notice  WHERE busId=#{busId} and sendStuts=#{sendStuts}
 	</select>
 
 	<select id="findBySendStruts" resultType="Map">

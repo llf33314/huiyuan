@@ -21,12 +21,13 @@
 		<result column="youhuiText" property="youhuiText" />
 		<result column="buttonType" property="buttonType" />
 		<result column="buttonUrl" property="buttonUrl" />
+		<result column="isOpen" property="isOpen" />
 	</resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, integralRatio, changeMoney, startMoney, publicId, startType, findImage, isOpenCard, busId, loginImage, isclearJifen, month,
-        memberView, youhuiButton, youhuiText, buttonType, buttonUrl
+        memberView, youhuiButton, youhuiText, buttonType, buttonUrl,isOpen
     </sql>
 
 

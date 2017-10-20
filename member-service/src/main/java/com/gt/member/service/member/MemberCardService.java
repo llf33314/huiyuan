@@ -3,12 +3,15 @@
  */
 package com.gt.member.service.member;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import com.gt.member.entity.MemberCardmodel;
-import com.gt.member.entity.MemberCardrecord;
-import com.gt.member.entity.MemberCardtype;
+import com.gt.member.entity.*;
+import com.gt.member.exception.BusinessException;
+import com.gt.member.service.bo.ErrorWorkbook;
+import com.gt.member.util.Page;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 /**
  * 会员卡业务处理
@@ -17,6 +20,22 @@ import com.gt.member.entity.MemberCardtype;
  * @version 创建时间:2016年3月8日
  */
 public interface MemberCardService {
+
+
+    /**
+     * 积分清0
+     *
+     * @param busIds
+     */
+    void clearJifen( String busIds );
+
+    /**
+     * 添加积分记录
+     *
+     * @param str
+     */
+    void jifenLog( String str );
+
 
     /**
      * 查询会员卡类型
@@ -90,24 +109,134 @@ public interface MemberCardService {
     public Map< String,Object > editGradeTypeThird(Integer busId,Integer ctId);
 
     /**
+     * 会员资料设置
+     * @param busId
+     * @return
+     */
+    public MemberOption findOption(Integer busId)throws  BusinessException;
+
+    public void saveOrUpdateOption(String json,Integer busId)throws  BusinessException;
+
+    /**
      * 商家卡片背景模板
      * @param busId
      * @return
      */
     public List< MemberCardmodel >  findCardModel(Integer busId);
 
+    /**
+     * 保存会员卡设置
+     * @param json
+     */
+    public void saveOrUpdateGradeType(String json,Integer busUserId) throws BusinessException;
 
     /**
-     * 积分清0
-     *
-     * @param busIds
+     * 查询通用设置
+     * @param busId
+     * @return
+     * @throws BusinessException
      */
-    void clearJifen( String busIds );
+    public Map<String,Object> findtongyongSet(Integer busId) throws BusinessException;
 
     /**
-     * 添加积分记录
-     *
-     * @param str
+     * 保存通用设置
+     * @param json
+     * @param busId
+     * @throws BusinessException
      */
-    void jifenLog( String str );
+    public void saveTongyongSet(String json,Integer busId) throws BusinessException;
+
+    /**
+     * 编辑礼品设置
+     * @param id
+     * @return
+     */
+    public MemberGift editGift(Integer id);
+
+    /**
+     * 保存或修改礼品设置
+     * @param json
+     * @param busId
+     * @throws BusinessException
+     */
+    public void saveOrUpdateGift(String json,Integer busId) throws  BusinessException;
+
+
+    /**
+     * 分页查询会员信息
+     * @param busId
+     * @param params
+     * @return
+     */
+    public Map<String,Object> findMember(Integer busId,Map<String, Object> params);
+
+    /**
+     * 批量审核
+     * @param memberIds
+     * @param ischecked
+     */
+    public void cardBatchApplyChecked(Integer busId,String memberIds,Integer ischecked) throws BusinessException;
+
+    public void cardApplyCheckedByOne(Integer busId,Integer memberId,Integer ischecked)throws BusinessException;
+
+    /**
+     * 赠送积分和粉币给用户
+     * @param busId
+     * @param json
+     * @throws BusinessException
+     */
+    public void addIntegralAndfenbi(Integer busId,String json)throws BusinessException;
+
+    /**
+     * 拉黑 或回复操作
+     * @param mcId
+     * @param cardStatus
+     */
+    public void updateDis(Integer mcId,Integer cardStatus);
+
+    /**
+     * 查询会员卡详情
+     * @param memberId
+     * @return
+     */
+    public Map<String,Object> findMemberDetails(Integer memberId);
+
+
+    /**
+     * 导入会员信息
+     * @param input
+     */
+    public List<ErrorWorkbook> upLoadMember(Integer busId,InputStream input);
+
+
+    public SXSSFWorkbook errorMember(List<ErrorWorkbook> wbs);
+
+
+    public List<Map<String,Object>> findMember(Integer busId,String json);
+
+    /**
+     * 查询会员卡信息
+     * @param busId
+     * @param cardNo
+     * @return
+     * @throws BusinessException
+     */
+    public Map<String,Object> findMemberCardByCardNo(Integer busId,String cardNo)throws BusinessException;
+
+    /**
+     * 积分消费
+     * @param busId
+     * @param intergral
+     * @param cardNo
+     */
+    public void intergralConsume(Integer busId,Integer intergral,String cardNo) throws BusinessException;
+
+    /**
+     * 会员卡统计
+     * @param busId
+     * @param ctId
+     * @return
+     */
+    public Map<String,Object> memberTongJi(Integer busId,Integer ctId,String startTime) throws BusinessException;
+
 }

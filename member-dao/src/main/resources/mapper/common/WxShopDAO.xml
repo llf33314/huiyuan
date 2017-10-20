@@ -56,4 +56,10 @@
 		where bus_id = #{busId,jdbcType=INTEGER} and main_shop=1
 	</select>
 
+
+	<select id="findWxShopbyPublicId1Ver2" resultType="Map">
+		select id,poiId,business_name as name from t_wx_shop where bus_id = #{busId}
+		and status!=-1
+	</select>
+
 </mapper>
