@@ -16,4 +16,7 @@ public interface UserConsumeNewDAO extends BaseMapper<UserConsumeNew> {
 
     UserConsumeNew findByCode(@Param( "busId" ) Integer busId,@Param( "orderCode" )String orderCode);
 
+
+    UserConsumeNew findOneByCode(@Param( "orderCode" )String orderCode);
+
 }

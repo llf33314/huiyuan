@@ -1,9 +1,6 @@
 package com.gt.member.service.common;
 
-import com.gt.member.entity.MemberCardrecord;
-import com.gt.member.entity.MemberDate;
-import com.gt.member.entity.MemberEntity;
-import com.gt.member.entity.PublicParameterset;
+import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
 
 import java.util.Map;
@@ -79,34 +76,18 @@ public interface MemberCommonService {
 
     /**
      *
-     * @param cardId
-     * @param recordType  记录类型  1充值或消费  2积分 3粉笔 4 流量
-     * @param number 加单位
+     * @param memberId
+     * @param recordType
+     * @param number
      * @param itemName
      * @param busId
      * @param balance
-     * @param ctId
-     * @param amount
+     * @param orderCode
+     * @param rtype
      * @return
      */
-    public MemberCardrecord saveCardRecordNew(Integer cardId, Byte recordType, String number,
-                    String itemName, Integer busId, String balance, Integer ctId, double amount);
-
-
-    /**
-     *
-     * @param cardId
-     * @param recordType  记录类型  1充值或消费  2积分 3粉笔 4 流量
-     * @param number 加单位
-     * @param itemName
-     * @param busId
-     * @param balance
-     * @param ctId
-     * @param amount
-     * @return
-     */
-    public MemberCardrecord saveCardRecordOrderCodeNew(Integer cardId, Byte recordType, String number,
-                    String itemName, Integer busId, String balance, Integer ctId, double amount,String orderCode);
+    public void saveCardRecordOrderCodeNew(Integer memberId, Integer recordType, Double number,
+                    String itemName, Integer busId, Double balance, String orderCode,Integer rtype);
 
     /**
      * 关注公众号的接口
@@ -143,6 +124,8 @@ public interface MemberCommonService {
       * @return
       */
     public void giveFansCurrency( Integer memberId,  Double fenbi ) throws BusinessException;
+
+    public void tuijianGive( MemberRecommend recommend );
 
 
 }

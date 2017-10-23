@@ -831,7 +831,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             for (Map<String, Object> map2 : stateMap) {
                 if (CommonUtil.toInteger(map2.get("recommendId")) > 0) {
                     MemberRecommend recommend = recommendMapper.selectById(CommonUtil.toInteger(map2.get("recommendId")));
-                    tuijianGive(recommend);
+                    memberCommonService.tuijianGive(recommend);
                 }
             }
         } catch (BusinessException e) {
@@ -945,11 +945,11 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 if ( memberEntity.getIntegral() < dfcr.getJifen()) {
                     throw new BusinessException(ResponseMemberEnums.MEMBER_LESS_JIFEN.getCode(), ResponseMemberEnums.MEMBER_LESS_JIFEN.getMsg());
                 }
-                if (CommonUtil.isNotEmpty( memberEntity.getMcId())) {
-                    memberCommonService.saveCardRecordNew( memberEntity.getMcId(), (byte) 2, dfcr.getJifen() + "积分", "领取优惠券扣除积分", memberEntity.getBusId(), null, 0, -dfcr.getJifen());
-                }
                 flag = true;
+                Integer balance=memberEntity.getIntegral() - dfcr.getJifen();
                 m1.setIntegral( memberEntity.getIntegral() - dfcr.getJifen());
+                memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(),2,dfcr.getJifen().doubleValue(), "领取优惠券扣除积分",memberEntity.getBusId(),balance.doubleValue(),"",0);
+
             }
 
             if (dfcr.getFenbi() > 0) {
@@ -957,11 +957,12 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 if ( memberEntity.getFansCurrency() < dfcr.getFenbi()) {
                     throw new BusinessException(ResponseMemberEnums.MEMBER_LESS_FENBI.getCode(), ResponseMemberEnums.MEMBER_LESS_FENBI.getMsg());
                 }
-                if (CommonUtil.isNotEmpty( memberEntity.getMcId())) {
-                    memberCommonService.saveCardRecordNew( memberEntity.getMcId(), (byte) 3, dfcr.getFenbi() + "粉币", "领取优惠券扣除粉币", memberEntity.getBusId(), null, 0, -dfcr.getFenbi());
-                }
+
                 flag = true;
-                m1.setFansCurrency( memberEntity.getFansCurrency() - dfcr.getFenbi());
+                double balance=memberEntity.getFansCurrency() - dfcr.getFenbi();
+                m1.setFansCurrency( balance);
+                memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(),3,dfcr.getFenbi().doubleValue(), "领取优惠券扣除粉币",memberEntity.getBusId(),balance,"",0);
+
 
                 // 归还商户粉币
                 returnfansCurrency( memberEntity.getBusId(), new Double(-dfcr.getFenbi()));
@@ -1612,7 +1613,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             for (Map<String, Object> map2 : stateMap) {
                 if (CommonUtil.toInteger(map2.get("recommendId")) > 0) {
                     MemberRecommend recommend = recommendMapper.selectById(CommonUtil.toInteger(map2.get("recommendId")));
-                    tuijianGive(recommend);
+                    memberCommonService.tuijianGive(recommend);
                 }
             }
             return map;
@@ -1624,85 +1625,6 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
         }
     }
 
-    /**
-     * 多粉卡券核销推荐调用
-     *
-     * @param recommend
-     * @throws Exception
-     */
-    public void tuijianGive(MemberRecommend recommend) throws Exception {
-        boolean flag = false;
-
-        //赠送积分、粉币、流量、金额
-        MemberEntity tuijianMemberEntity = memberMapper.selectById(recommend.getMemberId());
-        MemberEntity m1 = new MemberEntity();
-        m1.setId(recommend.getMemberId());
-        if (recommend.getIntegral() > 0) {
-            m1.setIntegral( tuijianMemberEntity.getIntegral() + recommend.getIntegral());
-            //积分记录
-            memberCommonService.saveCardRecordNew( tuijianMemberEntity.getMcId(), (byte) 2, recommend.getIntegral() + "", "推荐优惠券赠送", tuijianMemberEntity.getBusId(), null, 0,
-                    Double.valueOf(recommend.getIntegral()));
-            flag = true;
-        }
-        if (recommend.getFenbi() > 0) {
-
-            BusUserEntity busUserEntity = busUserDAO.selectById( tuijianMemberEntity.getBusId());
-            if ( busUserEntity.getFansCurrency().doubleValue() >= recommend.getFenbi()) {
-
-               // 新增粉笔和流量分配表
-                FenbiFlowRecord fenbi = new FenbiFlowRecord();
-                fenbi.setBusUserId( busUserEntity.getId() );
-                fenbi.setRecType( 1 );
-                fenbi.setRecCount( new BigDecimal( recommend.getFenbi() ) );
-                fenbi.setRecUseCount(new BigDecimal( recommend.getFenbi() ) );
-                fenbi.setRecDesc( "推荐优惠券赠送粉币" );
-                fenbi.setRecFreezeType( 102 );
-                fenbi.setRollStatus( 2 );
-                fenbi.setFlowType( 0 );
-                fenbi.setFlowId( 0 );
-                fenbiFlowRecordDAO.insert( fenbi );
-
-                BusUserEntity b = new BusUserEntity();
-                b.setId( busUserEntity.getId());
-                Double fansCurrency = busUserEntity.getFansCurrency().doubleValue() - recommend.getFenbi();
-                b.setFansCurrency(BigDecimal.valueOf(fansCurrency));
-                busUserDAO.updateById(b);
-
-                m1.setFansCurrency( tuijianMemberEntity.getFansCurrency() + recommend.getFenbi());
-                //粉币记录
-                memberCommonService.saveCardRecordNew( tuijianMemberEntity.getMcId(), (byte) 3, recommend.getFenbi() + "", "推荐优惠券赠送", tuijianMemberEntity.getBusId(), null, 0,
-                        Double.valueOf(recommend.getFenbi()));
-                flag = true;
-            }
-        }
-
-        if (recommend.getFlow() > 0) {
-            m1.setFlow( tuijianMemberEntity.getFlow() + recommend.getFlow());
-            //流量记录
-            memberCommonService.saveCardRecordNew( tuijianMemberEntity.getMcId(), (byte) 4, recommend.getFlow() + "", "推荐优惠券赠送", tuijianMemberEntity.getBusId(), null, 0,
-                    Double.valueOf(recommend.getFlow()));
-            flag = true;
-        }
-        if (flag) {
-            memberMapper.updateById(m1);
-        }
-
-        if (recommend.getMoney() > 0) {
-            MemberCard card = cardMapper.selectById( tuijianMemberEntity.getMcId());
-            MemberCard c = new MemberCard();
-            c.setMcId(card.getMcId());
-            c.setGiveMoney(card.getGiveMoney() + recommend.getMoney());
-            cardMapper.updateById(c);
-            //流量记录
-            memberCommonService.saveCardRecordNew( tuijianMemberEntity.getMcId(), (byte) 1, recommend.getMoney() + "", "推荐优惠券赠送", tuijianMemberEntity.getBusId(), null, 0,
-                    Double.valueOf(recommend.getMoney()));
-        }
-
-        MemberRecommend r = new MemberRecommend();
-        r.setId(recommend.getId());
-        r.setUserNum(recommend.getUserNum() + 1);
-        recommendMapper.updateById(r);
-    }
 
     private Map<String, Object> returnfansCurrency(Integer busId, Double fans_currency) {
         Map<String, Object> map = new HashMap<String, Object>();

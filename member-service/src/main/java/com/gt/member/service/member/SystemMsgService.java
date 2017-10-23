@@ -1,6 +1,7 @@
 package com.gt.member.service.member;
 
 
+import com.gt.member.entity.MemberCardrecordNew;
 import com.gt.member.entity.MemberEntity;
 import com.gt.member.entity.MemberCardrecord;
 
@@ -17,21 +18,21 @@ public interface SystemMsgService {
 	 * @param cardRecord
 	 * @return
 	 */
-	public boolean jifenMsg(MemberCardrecord cardRecord, MemberEntity memberEntity );
+	public boolean jifenMsg(MemberCardrecordNew cardRecord, MemberEntity memberEntity );
 
 	/**
 	 * 粉币操作 包含消息推送
 	 * @param cardRecord
 	 * @return
 	 */
-	public boolean fenbiMsg(MemberCardrecord cardRecord, MemberEntity memberEntity );
+	public boolean fenbiMsg(MemberCardrecordNew cardRecord, MemberEntity memberEntity );
 
 	/**
 	 * 流量操作  包含消息推送
 	 * @param cardRecord
 	 * @return
 	 */
-	public boolean flowMsg(MemberCardrecord cardRecord, MemberEntity memberEntity );
+	public boolean flowMsg(MemberCardrecordNew cardRecord, MemberEntity memberEntity );
 
 	/**
 	 * 会员卡升级通知

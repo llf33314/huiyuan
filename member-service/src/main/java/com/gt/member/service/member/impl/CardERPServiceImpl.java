@@ -22,10 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CardERPServiceImpl implements CardERPService {
@@ -72,6 +69,12 @@ public class CardERPServiceImpl implements CardERPService {
     @Autowired
     private RedisCacheUtil redisCacheUtil;
 
+    @Autowired
+    private UserConsumeNewDAO userConsumeNewDAO;
+
+    @Autowired
+    private UserConsumePayDAO userConsumePayDAO;
+
     @Override
     public List< Map< String,Object > > findMemberIsNotCard( Integer busId, Map< String,Object > params ) {
 	try {
@@ -81,16 +84,16 @@ public class CardERPServiceImpl implements CardERPService {
 
 	    List< Map< String,Object > > members = memberMapper.findMemberIsNotCard( busId );
 
-	    //			List<Map<String, Object>> memberList = new ArrayList<Map<String, Object>>();
-	    //			for (Map<String, Object> map : members) {
-	    //			    try {
-	    //				byte[] bytes = (byte[]) map.get( "nickname" );
-	    //				map.put( "nickname", new String( bytes, "UTF-8" ) );
-	    //			    } catch ( Exception e ) {
-	    //				map.put( "nickname", null );
-	    //			    }
-	    //			    memberList.add( map );
-	    //			}
+	    List< Map< String,Object > > memberList = new ArrayList< Map< String,Object > >();
+	    for ( Map< String,Object > map : members ) {
+		try {
+		    byte[] bytes = (byte[]) map.get( "nickname" );
+		    map.put( "nickname", new String( bytes, "UTF-8" ) );
+		} catch ( Exception e ) {
+		    map.put( "nickname", null );
+		}
+		memberList.add( map );
+	    }
 	    return members;
 	} catch ( Exception e ) {
 	    e.printStackTrace();
@@ -201,7 +204,7 @@ public class CardERPServiceImpl implements CardERPService {
 		    throw new Exception();
 		}
 		// 添加会员记录
-		UserConsume uc = new UserConsume();
+		UserConsumeNew uc = new UserConsumeNew();
 		uc.setMemberId( memberEntity.getId() );
 		uc.setCtId( ctId );
 		uc.setRecordType( 2 );
@@ -209,17 +212,18 @@ public class CardERPServiceImpl implements CardERPService {
 		uc.setTotalMoney( gradeType.getBuyMoney() );
 		uc.setCreateDate( new Date() );
 		uc.setPayStatus( 0 );
-		uc.setDiscount( 100 );
-		uc.setDiscountMoney( gradeType.getBuyMoney() );
+		uc.setDiscountMoney( 0.0 );
+		uc.setDiscountAfterMoney( gradeType.getBuyMoney() );
 		String orderCode = CommonUtil.getMEOrderCode();
 		uc.setOrderCode( orderCode );
 		uc.setGtId( gtId );
-		uc.setBusUserId( busUserEntity.getId() );
-		uc.setStoreId( shopId );
+		uc.setBusId( busUserEntity.getId() );
+		uc.setShopId( shopId );
 		String notityUrl = PropertiesUtil.getWebHome() + "/addMember/79B4DE7C/successPayBuyCard";
 		WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersDAO.selectByUserId( busUserEntity.getId() );
 
-		userConsumeMapper.insert( uc );
+		userConsumeNewDAO.insert( uc );
+
 		MemberEntity memberEntity1 = new MemberEntity();
 		memberEntity1.setId( memberEntity.getId() );
 		memberEntity1.setPhone( phone );
@@ -249,22 +253,30 @@ public class CardERPServiceImpl implements CardERPService {
 	Map< String,Object > returnMap = new HashMap<>();
 	try {
 	    String orderCode = CommonUtil.toString( params.get( "out_trade_no" ) );
-	    UserConsume uc = userConsumeMapper.findByOrderCode1( orderCode );
+	    UserConsumeNew uc = userConsumeNewDAO.findOneByCode( orderCode );
 	    //购买会员卡
 	    MemberGradetype gradeType = gradeTypeMapper.selectById( uc.getGtId() );
 	    if ( CommonUtil.isEmpty( gradeType ) || CommonUtil.isEmpty( gradeType.getBuyMoney() <= 0 ) ) {
 		throw new Exception();
 	    }
 	    Integer payType = CommonUtil.toInteger( params.get( "payType" ) );
-	    UserConsume u=new UserConsume();
+	    UserConsumeNew u=new UserConsumeNew();
 	    u.setId( uc.getId() );
 	    u.setPayStatus( 1 );
+	    u.setIsendDate(new Date(  ));
+	    userConsumeNewDAO.updateById( u );
+
+	    UserConsumePay ucpay=new UserConsumePay();
+	    ucpay.setUcId( uc.getId());
+	    ucpay.setPayMoney(uc.getDiscountAfterMoney());
+
+
 	    if(payType==0){
-		u.setPaymentType( 1 );
+		ucpay.setPaymentType(1);
 	    }else if(payType==1) {
-		u.setPaymentType( 0 );
+		ucpay.setPaymentType(0);
 	    }
-	    userConsumeMapper.updateById( u );
+	    userConsumePayDAO.insert( ucpay );
 
 	    // 添加会员卡
 	    MemberCard card = new MemberCard();
@@ -276,11 +288,11 @@ public class CardERPServiceImpl implements CardERPService {
 	    card.setApplyType( 3 );
 	    card.setMemberId( uc.getMemberId() );
 	    card.setGtId( uc.getGtId() );
-	    MemberGiverule giveRule = giveRuleMapper.findBybusIdAndGtIdAndCtId( uc.getBusUserId(), card.getGtId(), card.getCtId() );
+	    MemberGiverule giveRule = giveRuleMapper.findBybusIdAndGtIdAndCtId( uc.getBusId(), card.getGtId(), card.getCtId() );
 	    card.setGrId( giveRule.getGrId() );
 
 	    card.setCardNo( CommonUtil.getCode() );
-	    card.setBusId( uc.getBusUserId() );
+	    card.setBusId( uc.getBusId() );
 	    card.setReceiveDate( new Date() );
 	    card.setIsbinding( 1 );
 
@@ -306,13 +318,7 @@ public class CardERPServiceImpl implements CardERPService {
 	    memberEntity.setMcId( card.getMcId() );
 	    memberMapper.updateById( memberEntity );
 
-	    String balance = null;
-	    if ( card.getCtId() == 5 ) {
-		balance = card.getFrequency() + "次";
-	    } else {
-		balance = card.getMoney() + "元";
-	    }
-	    memberCommonService.saveCardRecordNew( card.getMcId(), (byte) 1, gradeType.getBuyMoney() + "元", "购买会员卡", card.getPublicId(), balance, card.getCtId(), 0.0 );
+	    memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(),1,gradeType.getBuyMoney(),"购买会员卡",uc.getBusId(),0.0,orderCode,0 );
 
 	    // 新增会员短信通知
 	    memberEntity = memberMapper.selectById( uc.getMemberId() );

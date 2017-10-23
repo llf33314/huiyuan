@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.common.entity.BusUserEntity;
+import com.gt.common.entity.FenbiFlowRecord;
 import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.member.dao.*;
 import com.gt.member.dao.common.BusUserDAO;
@@ -77,6 +78,15 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
     @Autowired
     private MemberAppletOpenidDAO memberAppletOpenidDAO;
+
+    @Autowired
+    private MemberCardrecordNewDAO memberCardrecordNewDAO;
+
+    @Autowired
+    private MemberCardDAO memberCardDAO;
+
+    @Autowired
+    private MemberRecommendDAO memberRecommendDAO;
 
 
 
@@ -319,88 +329,24 @@ public class MemberCommonServiceImp implements MemberCommonService {
     }
 
 
-    /**
-     * 添加会员卡记录((新数据接口))
-     *
-     * @param cardId
-     *            卡类型id
-     * @param recordType
-     *            消费类型
-     * @param number
-     *            数量
-     * @param itemName
-     *            物品名称
-     *            公众号
-     * @param balance
-     *            余额
-     */
-    @Override
-    public MemberCardrecord saveCardRecordNew(Integer cardId, Byte recordType,
-		    String number, String itemName, Integer busId, String balance,
-		    Integer ctId, double amount) {
-	if ( CommonUtil.isEmpty(busId)) {
-	    return null;
-	}
 
-	MemberCardrecord cr = new MemberCardrecord();
-	cr.setCardId(cardId);
-	cr.setRecordType(recordType.intValue());
+
+
+    public void saveCardRecordOrderCodeNew(Integer memberId, Integer recordType, Double number,
+		    String itemName, Integer busId, Double balance, String orderCode,Integer rtype){
+	MemberCardrecordNew cr = new MemberCardrecordNew();
+	cr.setMemberId(memberId);
+	cr.setRecordType(recordType);
 	cr.setNumber(number);
 	cr.setCreateDate(new Date());
 	cr.setItemName(itemName);
 	cr.setBusId(busId);
 	cr.setBalance(balance);
-	cr.setCtId(ctId);
-	cr.setAmount(amount);
-	try {
-	    memberCardrecordDAO.insert(cr);
-	    if (recordType == 2) {
-		MemberEntity memberEntity = memberEntityDAO.findByMcId1(cardId);
-		// 积分变动通知
-		systemMsgService.jifenMsg(cr, memberEntity );
-	    }
-
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    LOG.error("保存手机端记录异常", e);
-	}
-	return cr;
-    }
-
-
-    /**
-     *
-     * @param cardId
-     * @param recordType  记录类型  1充值或消费  2积分 3粉笔 4 流量
-     * @param number 加单位
-     * @param itemName
-     * @param busId
-     * @param balance
-     * @param ctId
-     * @param amount
-     * @return
-     */
-    public MemberCardrecord saveCardRecordOrderCodeNew(Integer cardId, Byte recordType, String number,
-		    String itemName, Integer busId, String balance, Integer ctId, double amount,String orderCode){
-	if ( CommonUtil.isEmpty(busId)) {
-	    return null;
-	}
-
-	MemberCardrecord cr = new MemberCardrecord();
-	cr.setCardId(cardId);
-	cr.setRecordType(recordType.intValue());
-	cr.setNumber(number);
-	cr.setCreateDate(new Date());
-	cr.setItemName(itemName);
-	cr.setBusId(busId);
-	cr.setBalance(balance);
-	cr.setCtId(ctId);
-	cr.setAmount(amount);
 	cr.setOrderCode( orderCode );
 	try {
-	    memberCardrecordDAO.insert(cr);
+	    memberCardrecordNewDAO.insert(cr);
 	    if (recordType == 2) {
-		MemberEntity memberEntity = memberEntityDAO.findByMcId1(cardId);
+		MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
 		// 积分变动通知
 		systemMsgService.jifenMsg(cr, memberEntity );
 	    }
@@ -409,7 +355,6 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    e.printStackTrace();
 	    LOG.error("保存手机端记录异常", e);
 	}
-	return cr;
     }
 
 
@@ -573,4 +518,80 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	}
     }
 
+
+
+    /**
+     * 多粉卡券核销 推荐调用
+     *
+     * @param recommend
+     *
+     * @throws Exception
+     */
+    public void tuijianGive( MemberRecommend recommend ) {
+	boolean flag = false;
+
+	//赠送积分、粉币、流量、金额
+	MemberEntity tuijianMemberEntity = memberEntityDAO.selectById( recommend.getMemberId() );
+	MemberEntity m1 = new MemberEntity();
+	m1.setId( recommend.getMemberId() );
+	if ( recommend.getIntegral() > 0 ) {
+	    //积分记录
+	    Integer balance=tuijianMemberEntity.getIntegral() + recommend.getIntegral();
+	    m1.setIntegral( balance );
+	    saveCardRecordOrderCodeNew( tuijianMemberEntity.getId(),2,recommend.getIntegral().doubleValue(), "推荐优惠券赠送",tuijianMemberEntity.getBusId(),balance.doubleValue(),"",1);
+	    flag = true;
+	}
+	if ( recommend.getFenbi() > 0 ) {
+
+	    BusUserEntity busUserEntity = busUserDAO.selectById( tuijianMemberEntity.getBusId() );
+	    if ( busUserEntity.getFansCurrency().doubleValue() >= recommend.getFenbi() ) {
+
+
+
+		BusUserEntity b = new BusUserEntity();
+		b.setId( busUserEntity.getId() );
+		Double fenbi1 = busUserEntity.getFansCurrency().doubleValue() - recommend.getFenbi();
+		b.setFansCurrency( BigDecimal.valueOf( fenbi1 ) );
+		busUserDAO.updateById( b );
+
+
+		//粉币记录
+		Double balance=tuijianMemberEntity.getFansCurrency() + recommend.getFenbi();
+		m1.setFansCurrency(balance);
+
+		saveCardRecordOrderCodeNew( tuijianMemberEntity.getId(),3,recommend.getFenbi().doubleValue(), "推荐优惠券赠送",tuijianMemberEntity.getBusId(),balance.doubleValue(),"",1);
+
+		flag = true;
+	    }
+	}
+
+	if ( recommend.getFlow() > 0 ) {
+	    Integer balance=tuijianMemberEntity.getFlow() + recommend.getFlow();
+	    m1.setFlow( balance );
+	    //流量记录
+	    saveCardRecordOrderCodeNew( tuijianMemberEntity.getId(),4,recommend.getFlow().doubleValue(), "推荐优惠券赠送",tuijianMemberEntity.getBusId(),balance.doubleValue(),"",1);
+
+
+	    flag = true;
+	}
+	if ( flag ) {
+	    memberEntityDAO.updateById( m1 );
+	}
+
+	if ( recommend.getMoney() > 0  && CommonUtil.isNotEmpty( tuijianMemberEntity.getMcId() )) {
+	    MemberCard card = memberCardDAO.selectById( tuijianMemberEntity.getMcId() );
+	    MemberCard c = new MemberCard();
+	    c.setMcId( card.getMcId() );
+	    Double balance=card.getGiveMoney() + recommend.getMoney();
+	    c.setGiveMoney( balance );
+	    memberCardDAO.updateById( c );
+	    //
+	    saveCardRecordOrderCodeNew( tuijianMemberEntity.getId(),1,recommend.getMoney().doubleValue(), "推荐优惠券赠送",tuijianMemberEntity.getBusId(),balance.doubleValue(),"",1);
+	}
+
+	MemberRecommend r = new MemberRecommend();
+	r.setId( recommend.getId() );
+	r.setUserNum( recommend.getUserNum() + 1 );
+	memberRecommendDAO.updateById( r );
+    }
 }

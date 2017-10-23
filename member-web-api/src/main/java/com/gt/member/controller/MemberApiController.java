@@ -288,67 +288,8 @@ public class MemberApiController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "商场修改订单状态", notes = "商场修改订单状态" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = true, dataType = "Striing" ),
-		    @ApiImplicitParam( name = "payType", value = "支付方式", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "payStatus", value = "支付状态", paramType = "query", required = true, dataType = "int" ) } )
-    @ResponseBody
-    @RequestMapping( value = "/updateUserConsume", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse updateUserConsume( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
-	try {
-	    Map<String,Object> requestBody= JSONObject.parseObject(param);
-	    String orderNo = CommonUtil.toString( requestBody.get( "orderNo" ) );
-	    Integer payType = CommonUtil.toInteger( requestBody.get( "payType" ) );
-	    Integer payStatus = CommonUtil.toInteger( requestBody.get( "payStatus" ) );
-	    memberApiService.updateUserConsume( orderNo, payType, payStatus );
-	    return ServerResponse.createBySuccess();
-	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "查询会员卡片名称异常", e );
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
-	}
-    }
-
-    @ApiOperation( value = "退款包括了储值卡退款(不包括积分和粉币)", notes = "退款包括了储值卡退款" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "String" ),
-		    @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = true, dataType = "String" ),
-		    @ApiImplicitParam( name = "money", value = "退款金额", paramType = "query", required = true, dataType = "double" ) } )
-    @ResponseBody
-    @RequestMapping( value = "/refundMoney", method = RequestMethod.POST )
-    public ServerResponse refundMoney( HttpServletRequest request, HttpServletResponse response, @RequestBody String param) {
-	try {
-	    Map<String,Object> requestBody= JSONObject.parseObject(param);
-	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
-	    String orderNo = CommonUtil.toString( requestBody.get( "orderNo" ) );
-	    Double money = CommonUtil.toDouble( requestBody.get( "money" ) );
-	    memberApiService.refundMoney( busId, orderNo, money );
-	    return ServerResponse.createBySuccess();
-	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
-	}
-    }
-
-    @ApiOperation( value = "退款包括了储值卡退款(包括积分和粉币)", notes = "退款包括了储值卡退款" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = true, dataType = "String" ),
-		    @ApiImplicitParam( name = "money", value = "退款金额", paramType = "query", required = true, dataType = "double" ),
-		    @ApiImplicitParam( name = "fenbi", value = "粉币", paramType = "query", required = true, dataType = "double" ),
-		    @ApiImplicitParam( name = "jifen", value = "积分", paramType = "query", required = true, dataType = "int" ), } )
-    @ResponseBody
-    @RequestMapping( value = "/refundMoneyAndJifenAndFenbi", method = RequestMethod.POST )
-    public ServerResponse refundMoneyAndJifenAndFenbi( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
-	try {
-	    Map<String,Object> requestBody= JSONObject.parseObject(param);
-	    memberApiService.refundMoneyAndJifenAndFenbi( requestBody );
-	    return ServerResponse.createBySuccess();
-	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
-	}
-    }
-
     @ApiOperation( value = "（商城）查询会员积分记录", notes = "（商城）查询会员积分记录" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "mcId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
+    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "page", value = "页数", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "pageSize", value = "条数", paramType = "query", required = true, dataType = "int" ) } )
 
@@ -357,10 +298,10 @@ public class MemberApiController extends BaseController {
     public ServerResponse findCardrecord( HttpServletRequest request, HttpServletResponse response, @RequestBody String param) {
 	try {
 	    Map<String,Object> requestBody= JSONObject.parseObject(param);
-	    Integer mcId = CommonUtil.toInteger( requestBody.get( "mcId" ) );
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
 	    Integer page = CommonUtil.toInteger( requestBody.get( "page" ) );
 	    Integer pageSize = CommonUtil.toInteger( requestBody.get( "pageSize" ) );
-	    List< Map< String,Object > > listMap = memberApiService.findCardrecord( mcId, page, pageSize );
+	    List< Map< String,Object > > listMap = memberApiService.findCardrecord( memberId, page, pageSize );
 	    return ServerResponse.createBySuccess( listMap );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -569,39 +510,37 @@ public class MemberApiController extends BaseController {
     }
 
 
-
-
-    @ApiOperation(value = "支付成功回调", notes = "传入值具体描述请看实体类 储值卡支付 直接调用 回调类以处理储值卡扣款")
-    @ApiImplicitParam( name = "paySuccessBo", value = "PaySuccessBo 实体类", paramType = "query", required = true, dataType = "String" )
-    @ResponseBody
-    @RequestMapping(value = "/paySuccess",method = RequestMethod.POST)
-    public ServerResponse paySuccess(HttpServletRequest request,
-		    HttpServletResponse response,@RequestBody String paySuccessBo){
-	try {
-	    PaySuccessBo paySuccessBo1=JSONObject.toJavaObject( JSONObject.parseObject( paySuccessBo ),PaySuccessBo.class ) ;
-	    memberApiService.paySuccess(paySuccessBo1);
-	    return ServerResponse.createBySuccess();
-	}catch (BusinessException e){
-	    return ServerResponse.createByError(e.getCode(),e.getMessage());
-	}
-    }
+//    @ApiOperation(value = "支付成功回调", notes = "传入值具体描述请看实体类 储值卡支付 直接调用 回调类以处理储值卡扣款")
+//    @ApiImplicitParam( name = "paySuccessBo", value = "PaySuccessBo 实体类", paramType = "query", required = true, dataType = "String" )
+//    @ResponseBody
+//    @RequestMapping(value = "/paySuccess",method = RequestMethod.POST)
+//    public ServerResponse paySuccess(HttpServletRequest request,
+//		    HttpServletResponse response,@RequestBody String paySuccessBo){
+//	try {
+//	    PaySuccessBo paySuccessBo1=JSONObject.toJavaObject( JSONObject.parseObject( paySuccessBo ),PaySuccessBo.class ) ;
+//	    memberApiService.paySuccess(paySuccessBo1);
+//	    return ServerResponse.createBySuccess();
+//	}catch (BusinessException e){
+//	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+//	}
+//    }
 
 
 
-    @ApiOperation( value = "新的erp结算支付成功会员处理支持多种支付数据保存 支付多种支付", notes = "erp结算支付成功会员处理（包括储值卡扣款、卡券核销、积分粉币扣除、赠送物品）" )
+    @ApiOperation( value = "结算支付成功会员处理支持多种支付数据保存 支付多种支付", notes = "结算支付成功会员处理（包括储值卡扣款、卡券核销、积分粉币扣除、赠送物品）" )
     @ApiImplicitParam( name = "newErpPaySuccessBo", value = "erp结算核销对象 实体类ErpPaySuccessBo", paramType = "query", required = true, dataType = "String" )
     @ResponseBody
     @RequestMapping( value = "/newPaySuccessByErpBalance", method = RequestMethod.POST )
     public ServerResponse newpaySuccessByErpBalance( HttpServletRequest request, HttpServletResponse response, @RequestBody String newErpPaySuccessBo ) {
 	try {
-	    memberApiService.paySuccessByErpBalance( newErpPaySuccessBo );
+	    memberApiService.newPaySuccessByErpBalance( newErpPaySuccessBo );
 	    return ServerResponse.createBySuccess(  );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
 
-    @ApiOperation( value = "erp结算退款", notes = "erp结算退款" )
+    @ApiOperation( value = "结算退款", notes = "结算退款" )
     @ApiImplicitParam( name = "erpRefundBo", value = "erp 实体类erpRefundBo", paramType = "query", required = true, dataType = "String" )
     @ResponseBody
     @RequestMapping( value = "/refundErp", method = RequestMethod.POST )

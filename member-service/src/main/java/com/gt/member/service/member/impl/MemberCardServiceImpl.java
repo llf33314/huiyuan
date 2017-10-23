@@ -253,8 +253,8 @@ public class MemberCardServiceImpl implements MemberCardService {
     @Override
     public void jifenLog( String str ) {
 	JSONObject obj = JSONObject.fromObject( str );
-	memberCommonService.saveCardRecordNew( obj.getInt( "mcId" ), (byte) 2, obj.getString( "number" ), obj.getString( "itemName" ), obj.getInt( "busId" ), null, null,
-			obj.getDouble( "amount" ) );
+//	memberCommonService.saveCardRecordNew( obj.getInt( "mcId" ), (byte) 2, obj.getString( "number" ), obj.getString( "itemName" ), obj.getInt( "busId" ), null, null,
+//			obj.getDouble( "amount" ) );
 
     }
 

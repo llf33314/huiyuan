@@ -53,4 +53,8 @@
 
 	</select>
 
+	<select id="findOneByCode" resultMap="BaseResultMap">
+		select * from t_wx_user_consume_new where orderCode=#{orderCode}
+	</select>
+
 </mapper>

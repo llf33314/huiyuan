@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberCardrecordNewDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberCardrecordNew">
+		<id column="id" property="id" />
+		<result column="memberId" property="memberId" />
+		<result column="recordType" property="recordType" />
+		<result column="number" property="number" />
+		<result column="createDate" property="createDate" />
+		<result column="itemName" property="itemName" />
+		<result column="balance" property="balance" />
+		<result column="rtype" property="rtype" />
+		<result column="busId" property="busId" />
+		<result column="orderCode" property="orderCode" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, memberId AS memberId, recordType AS recordType, number, createDate AS createDate, itemName AS itemName, balance, rtype, busId AS busId, orderCode AS orderCode
+    </sql>
+
+
+
+	<select id="findCardrecordByMemberId" resultType="Map">
+		SELECT itemName,number,date_format(createDate, '%Y-%c-%d %h:%i:%s') as createDate FROM t_member_cardrecord_new WHERE recordType = 2 AND memberId= #{memberId}
+		order by id desc limit #{page},#{pageSize}
+
+	</select>
+
+</mapper>
