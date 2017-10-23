@@ -27,7 +27,7 @@ public class MpGenerator {
     public static final  String   outPutJavaModel    = outPutBaseDir + "src/main/java";
     // 需要生成的表
     public static final  String[] generatorTableName = new String[] {
-		    "t_wx_user_consume"
+		    "t_member_cardrecord_new"
     };
     // 去除表前缀 例如：bus_user 填入bus 生成的 user
     public static final  String[] tablePrefix        = new String[] { "t_wx","t_" };

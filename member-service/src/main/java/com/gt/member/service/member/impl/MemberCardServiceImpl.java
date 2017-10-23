@@ -1457,6 +1457,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 
     @Override
+<<<<<<< HEAD
     public SXSSFWorkbook errorMember(List<ErrorWorkbook> wbs) {
 	SXSSFWorkbook wb = new SXSSFWorkbook();
 	try {

@@ -4,10 +4,13 @@ import com.gt.member.entity.UserConsumeNew;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
+<<<<<<< HEAD
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+=======
+>>>>>>> ae76849aca3d2f4538456ff77be4f3c544ac352b
 /**
  * <p>
   *  Mapper 接口
@@ -102,5 +105,7 @@ public interface UserConsumeNewDAO extends BaseMapper<UserConsumeNew> {
      */
     Integer userCiKa(@Param("busId")Integer busId);
 
+
+    UserConsumeNew findOneByCode(@Param( "orderCode" )String orderCode);
 
 }

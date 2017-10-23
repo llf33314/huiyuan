@@ -43,12 +43,14 @@ public enum ResponseMemberEnums {
     ORDER_PAY_ERROR(7005,"当前订单支付存在问题,将影响收入"),
     NOT_ORDER(7006,"订单不存在"),
     END_ORDER(7007,"订单已终结,不能退款"),
-    INVALID_SESSION(7008,"SESSION失效,请重新登录"),
+    REPEAT_ORDER(7008,"订单号重复"),
+    INVALID_SESSION(7009,"SESSION失效,请重新登录"),
 
 
     GIFT_EXIST(8001,"赠送物品已存在,请修改"),
     CAN_NOT_MINUS(8002,"不能是负值"),
     IMP_ERROR(8003,"导入数据异常,请查看下载的错误信息")
+
 
     ;
 

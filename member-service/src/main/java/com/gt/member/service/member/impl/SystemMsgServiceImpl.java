@@ -1,6 +1,7 @@
 package com.gt.member.service.member.impl;
 
 
+import com.gt.member.entity.MemberCardrecordNew;
 import com.gt.member.entity.MemberEntity;
 import com.gt.member.entity.MemberCardrecord;
 import com.gt.member.service.member.SystemMsgService;
@@ -17,19 +18,19 @@ import org.springframework.stereotype.Service;
 public class SystemMsgServiceImpl implements SystemMsgService {
 
 	@Override
-	public boolean jifenMsg(MemberCardrecord cardRecord, MemberEntity memberEntity ) {
+	public boolean jifenMsg(MemberCardrecordNew cardRecord, MemberEntity memberEntity ) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean fenbiMsg(MemberCardrecord cardRecord, MemberEntity memberEntity ) {
+	public boolean fenbiMsg(MemberCardrecordNew cardRecord, MemberEntity memberEntity ) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean flowMsg(MemberCardrecord cardRecord, MemberEntity memberEntity ) {
+	public boolean flowMsg(MemberCardrecordNew cardRecord, MemberEntity memberEntity ) {
 		// TODO Auto-generated method stub
 		return false;
 	}
