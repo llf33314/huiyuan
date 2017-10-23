@@ -142,6 +142,9 @@ public class MemberCardServiceImpl implements MemberCardService {
     @Autowired
     private MemberRecommendDAO memberRecommendDAO;
 
+    @Autowired
+    private PublicParametersetDAO publicParameterSetMapper;
+
 
     /**
      * 查询会员卡类型
@@ -383,29 +386,64 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    }
 	    Map< String,Object > publicParams = JSON.parseObject( json );
 	    //设置
-	    Integer qiandao = CommonUtil.toInteger( publicParams.get( "qiandao" ) );
 	    Integer ctId = CommonUtil.toInteger( publicParams.get( "ctId" ) );
-	    if ( qiandao > 0 ) {
-		MemberFind memberFind = memberFindDAO.findByQianDao( busUserId );
-		if ( CommonUtil.isEmpty( memberFind ) ) {
-		    MemberFind mf = new MemberFind();
-		    mf.setIntegral( qiandao );
-		    mf.setModel( 1 );
-		    mf.setBusId( busUserId );
-		    mf.setSoure( 0 );
-		    mf.setTitle( "签到" );
-		    mf.setType( 2 );
-		    memberFindDAO.insert( mf );
-		} else {
-		    memberFind.setIntegral( qiandao );
-		    memberFind.setModel( 1 );
-		    memberFind.setBusId( busUserId );
-		    memberFind.setSoure( 0 );
-		    memberFind.setTitle( "签到" );
-		    memberFind.setType( 2 );
-		    memberFindDAO.updateById( memberFind );
+	    if(CommonUtil.isNotEmpty( publicParams.get( "qiandao" )  )) {
+		Integer qiandao = CommonUtil.toInteger( publicParams.get( "qiandao" ) );
+		if ( qiandao > 0 ) {
+		    MemberFind memberFind = memberFindDAO.findByQianDao( busUserId );
+		    if ( CommonUtil.isEmpty( memberFind ) ) {
+			MemberFind mf = new MemberFind();
+			mf.setIntegral( qiandao );
+			mf.setModel( 1 );
+			mf.setBusId( busUserId );
+			mf.setSoure( 0 );
+			mf.setTitle( "签到" );
+			mf.setType( 2 );
+			memberFindDAO.insert( mf );
+		    } else {
+			memberFind.setIntegral( qiandao );
+			memberFind.setModel( 1 );
+			memberFind.setBusId( busUserId );
+			memberFind.setSoure( 0 );
+			memberFind.setTitle( "签到" );
+			memberFind.setType( 2 );
+			memberFindDAO.updateById( memberFind );
+		    }
 		}
 	    }
+
+
+
+	    //积分规则抵扣
+
+	    PublicParameterset ps =new PublicParameterset();
+	    if(CommonUtil.isNotEmpty( publicParams.get( "integralRatio" ) )){
+		ps.setIntegralRatio(CommonUtil.toDouble( publicParams.get( "integralRatio" ) ));
+	    }
+	    if(CommonUtil.isNotEmpty( publicParams.get( "startMoney" ) )){
+		ps.setStartMoney(CommonUtil.toDouble( publicParams.get( "startMoney" ) ));
+	    }
+	    if(CommonUtil.isNotEmpty( publicParams.get( "isclearJifen" ) )){
+		ps.setIsclearJifen(CommonUtil.toInteger( publicParams.get( "isclearJifen" ) ));
+	    }
+	    if(CommonUtil.isNotEmpty( publicParams.get( "integralRatio" ) )){
+		ps.setIntegralRatio(CommonUtil.toDouble( publicParams.get( "integralRatio" ) ));
+	    }
+	    if(CommonUtil.isNotEmpty( publicParams.get( "integralRatio" ) )){
+		ps.setIntegralRatio(CommonUtil.toDouble( publicParams.get( "integralRatio" ) ));
+	    }
+	    if(CommonUtil.isNotEmpty( publicParams.get( "integralRatio" ) )){
+		ps.setIntegralRatio(CommonUtil.toDouble( publicParams.get( "integralRatio" ) ));
+	    }
+	    ps.setBusId(busUserId);
+	    if (CommonUtil.isNotEmpty(ps.getId())) {
+		publicParameterSetMapper.updateById(ps);
+	    }
+	    else {
+		publicParameterSetMapper.insert(ps);
+	    }
+
+
 
 	    //会员日操作
 	    Integer ismemberDate = CommonUtil.toInteger( publicParams.get( "ismemberDate" ) );
