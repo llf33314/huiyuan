@@ -22,19 +22,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 public interface MemberCardService {
 
 
-    /**
-     * 积分清0
-     *
-     * @param busIds
-     */
-    void clearJifen( String busIds );
 
-    /**
-     * 添加积分记录
-     *
-     * @param str
-     */
-    void jifenLog( String str );
 
 
     /**

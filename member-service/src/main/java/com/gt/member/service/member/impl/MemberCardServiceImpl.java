@@ -142,29 +142,6 @@ public class MemberCardServiceImpl implements MemberCardService {
     @Autowired
     private MemberRecommendDAO memberRecommendDAO;
 
-    @Override
-    public void clearJifen( String busIds ) {
-	try {
-	    List< Integer > list = new ArrayList< Integer >();
-	    String[] str = busIds.split( "," );
-	    for ( String s : str ) {
-		if ( CommonUtil.isNotEmpty( s ) ) {
-		    list.add( CommonUtil.toInteger( s ) );
-		}
-	    }
-	    //	memberService.clearJifen(list);
-	} catch ( Exception e ) {
-	    LOG.error( "httpclien调用积分清0异常", e );
-	}
-    }
-
-    @Override
-    public void jifenLog( String str ) {
-	JSONObject obj = JSONObject.parseObject( str );
-	memberCommonService.saveCardRecordNew( obj.getInteger( "mcId" ), (byte) 2, obj.getString( "number" ), obj.getString( "itemName" ), obj.getInteger( "busId" ), null, null,
-			obj.getDouble( "amount" ) );
-
-    }
 
     /**
      * 查询会员卡类型
@@ -1107,8 +1084,9 @@ public class MemberCardServiceImpl implements MemberCardService {
 		memberMapper.updateMemberJifen( ids, number.intValue() );
 		List< Map< String,Object > > list = memberMapper.findMemberByIds( busId, ids );
 		for ( Map< String,Object > member : list ) {
-		    memberCommonService.saveCardRecordOrderCodeNew( CommonUtil.toInteger( member.get( "mc_id" ) ), (byte) 2, number.intValue() + "积分", "商家赠送", busId, null, 0,
-				    number.intValue(), "" );
+		    Double integral=CommonUtil.toInteger( member.get( "integral" ) )+number;
+		    memberCommonService.saveCardRecordOrderCodeNew( CommonUtil.toInteger( member.get( "id" ) ),  2, number, "商家赠送", busId, integral, "",
+				     1 );
 		}
 	    } else {
 		//判断商家粉币是否充值
@@ -1124,8 +1102,9 @@ public class MemberCardServiceImpl implements MemberCardService {
 		}
 		List< Map< String,Object > > list = memberMapper.findMemberByIds( busId, ids );
 		for ( Map< String,Object > member : list ) {
-		    memberCommonService.saveCardRecordOrderCodeNew( CommonUtil.toInteger( member.get( "mc_id" ) ), (byte) 3, number.intValue() + "粉币", "商家赠送", busId, null, 0,
-				    number.intValue(), "" );
+		    Double fans_currency=CommonUtil.toInteger( member.get( "fans_currency" ) )+number;
+		    memberCommonService.saveCardRecordOrderCodeNew( CommonUtil.toInteger( member.get( "id" ) ),  3, number, "商家赠送", busId, fans_currency, "",
+				    1 );
 		}
 	    }
 	} catch ( BusinessException e ) {
@@ -1457,7 +1436,6 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 
     @Override
-<<<<<<< HEAD
     public SXSSFWorkbook errorMember(List<ErrorWorkbook> wbs) {
 	SXSSFWorkbook wb = new SXSSFWorkbook();
 	try {
@@ -1718,7 +1696,9 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    ucPay.setPayMoney( 0.0 );
 	    userConsumePayDAO.insert( ucPay );
 
-	    memberCommonService.saveCardRecordOrderCodeNew( card.getMcId(), (byte) 2, "-" + intergral, "积分兑换", card.getBusId(), shenyuJifen + "", 0, -intergral, orderCode );
+	    memberCommonService.saveCardRecordOrderCodeNew( member.getId(),  2, intergral.doubleValue(), "积分兑换", busId, shenyuJifen.doubleValue(), orderCode,
+			    0 );
+
 	}catch ( BusinessException e ){
             throw  e;
 	}catch ( Exception e ){

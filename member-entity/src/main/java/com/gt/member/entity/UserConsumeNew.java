@@ -78,11 +78,7 @@ public class UserConsumeNew extends Model<UserConsumeNew> {
      */
 	private Double fenbi;
     /**
-<<<<<<< HEAD
-     * 次数
-=======
      * 消费次数
->>>>>>> ae76849aca3d2f4538456ff77be4f3c544ac352b
      */
 	private Integer uccount;
     /**
@@ -143,14 +139,6 @@ public class UserConsumeNew extends Model<UserConsumeNew> {
 	@TableField("isendDate")
 	private Date isendDate;
     /**
-<<<<<<< HEAD
-     * 退款金额
-     */
-	@TableField("refundMoney")
-	private Double refundMoney;
-    /**
-=======
->>>>>>> ae76849aca3d2f4538456ff77be4f3c544ac352b
      * 订单号
      */
 	@TableField("orderCode")
@@ -170,8 +158,6 @@ public class UserConsumeNew extends Model<UserConsumeNew> {
      */
 	@TableField("payStatus")
 	private Integer payStatus;
-<<<<<<< HEAD
-=======
     /**
      * 次卡剩余次数
      */
@@ -197,7 +183,6 @@ public class UserConsumeNew extends Model<UserConsumeNew> {
      */
 	@TableField("refundDate")
 	private Date refundDate;
->>>>>>> ae76849aca3d2f4538456ff77be4f3c544ac352b
 
 
 	@Override
@@ -232,22 +217,15 @@ public class UserConsumeNew extends Model<UserConsumeNew> {
 			", isend=" + isend +
 			", ischongzhi=" + ischongzhi +
 			", isendDate=" + isendDate +
-<<<<<<< HEAD
-			", refundMoney=" + refundMoney +
-=======
->>>>>>> ae76849aca3d2f4538456ff77be4f3c544ac352b
 			", orderCode=" + orderCode +
 			", shopId=" + shopId +
 			", createDate=" + createDate +
 			", payStatus=" + payStatus +
-<<<<<<< HEAD
-=======
 			", balanceCount=" + balanceCount +
 			", refundMoney=" + refundMoney +
 			", refundFenbi=" + refundFenbi +
 			", refundJifen=" + refundJifen +
 			", refundDate=" + refundDate +
->>>>>>> ae76849aca3d2f4538456ff77be4f3c544ac352b
 			"}";
 	}
 }

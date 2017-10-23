@@ -637,7 +637,7 @@
 
 
 	<select id="findMemberByIds" resultType="Map">
-		select id,nickname,phone,headimgurl,mc_id from t_wx_bus_member where  busId=#{busId} and
+		select id,nickname,phone,headimgurl,integral,fans_currency from t_wx_bus_member where  busId=#{busId} and
 		<foreach close=")" collection="ids" item="id" open="(" separator="or">
 			id=#{id}
 		</foreach>
