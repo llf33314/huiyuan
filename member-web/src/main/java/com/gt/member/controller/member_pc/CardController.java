@@ -177,7 +177,7 @@ public class CardController {
 
     @ApiOperation( value = "保存会员资料设置", notes = "保存会员资料设置" )
     @ResponseBody
-    @RequestMapping( value = "/saveMemberOption", method = RequestMethod.GET )
+    @RequestMapping( value = "/saveMemberOption", method = RequestMethod.POST )
     public ServerResponse saveMemberOption( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 
 	try {
@@ -206,7 +206,7 @@ public class CardController {
 
     @ApiOperation( value = "保存通用设置", notes = "保存通用设置" )
     @ResponseBody
-    @RequestMapping( value = "/saveTongyongSet", method = RequestMethod.GET )
+    @RequestMapping( value = "/saveTongyongSet", method = RequestMethod.POST )
     public ServerResponse saveTongyongSet(HttpServletRequest request, HttpServletResponse response,String json){
 	try {
 	    Integer busId = SessionUtil.getPidBusId( request );
@@ -232,7 +232,7 @@ public class CardController {
 
     @ApiOperation( value = "保存或修改礼品设置", notes = "保存或修改礼品设置" )
     @ResponseBody
-    @RequestMapping( value = "/saveOrUpdateGift", method = RequestMethod.GET )
+    @RequestMapping( value = "/saveOrUpdateGift", method = RequestMethod.POST )
     public ServerResponse saveOrUpdateGift(HttpServletRequest request, HttpServletResponse response,String  json){
 	try {
 	    Integer busId = SessionUtil.getPidBusId( request );
@@ -258,7 +258,7 @@ public class CardController {
 
     @ApiOperation( value = "保存系统通知", notes = "保存系统通知" )
     @ResponseBody
-    @RequestMapping( value = "/saveSystemNotice", method = RequestMethod.GET )
+    @RequestMapping( value = "/saveSystemNotice", method = RequestMethod.POST )
     public ServerResponse saveSystemNotice(HttpServletRequest request, HttpServletResponse response,String json){
 	try {
 	    Integer busId = SessionUtil.getPidBusId( request );
@@ -300,7 +300,7 @@ public class CardController {
     @ApiOperation( value = "保存会员消息", notes = "保存会员消息" )
     @ApiImplicitParams( @ApiImplicitParam( name = "sendDate", value = "发送时间", paramType = "query", required = false, dataType = "String" ) )
     @ResponseBody
-    @RequestMapping( value = "/saveMemberNotice", method = RequestMethod.GET )
+    @RequestMapping( value = "/saveMemberNotice", method = RequestMethod.POST )
     public ServerResponse saveMemberNotice(HttpServletRequest request, HttpServletResponse response,String json,String sendDate){
 	try {
 	    Integer busId = SessionUtil.getPidBusId( request );

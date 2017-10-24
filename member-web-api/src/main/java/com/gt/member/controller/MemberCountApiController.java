@@ -3,15 +3,12 @@ package com.gt.member.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.member.dto.ServerResponse;
-import com.gt.member.exception.BusinessException;
 import com.gt.entityBo.MallNotShopEntity;
 import com.gt.entityBo.MemberShopEntity;
 import com.gt.member.service.memberApi.MemberApiService;
 import com.gt.member.service.memberApi.MemberCountMoneyApiService;
 import com.gt.entityBo.MallAllEntity;
-import com.gt.entityBo.PaySuccessBo;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,7 +32,7 @@ public class MemberCountApiController {
     private MemberCountMoneyApiService memberCountMoneyApiService;
 
     @Autowired
-    private  MemberApiService memberApiService;
+    private MemberApiService memberApiService;
 
 
     @ApiOperation(value = "门店计算方法(跨门店)", notes = "传入值具体描述请看实体类")

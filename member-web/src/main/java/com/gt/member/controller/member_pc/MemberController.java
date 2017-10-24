@@ -10,6 +10,7 @@ import com.gt.member.export.ExportExcel;
 import com.gt.member.service.bo.ErrorWorkbook;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.service.member.MemberNoticeService;
+import com.gt.member.util.Page;
 import com.gt.member.util.RedisCacheUtil;
 import com.gt.member.util.SessionUtil;
 import io.swagger.annotations.Api;
@@ -66,8 +67,8 @@ public class MemberController {
 
 	try {
 	    Integer busId = SessionUtil.getPidBusId( request );
-	    Map<String,Object> memberS = memberCardService.findMember(busId, params );
-	    return ServerResponse.createBySuccess( memberS );
+	    Page page = memberCardService.findMember(busId, params );
+	    return ServerResponse.createBySuccess( page );
 	} catch ( Exception e ) {
 	    LOG.error( "查询会员列表异常：", e );
 	    e.printStackTrace();
@@ -82,7 +83,7 @@ public class MemberController {
 
     })
     @ResponseBody
-    @RequestMapping( value = "/cardBatchApplyChecked", method = RequestMethod.GET )
+    @RequestMapping( value = "/cardBatchApplyChecked", method = RequestMethod.POST )
     public ServerResponse cardBatchApplyChecked(HttpServletRequest request,
 		    HttpServletResponse response,String memberIds,Integer ischecked){
 	try {
@@ -103,7 +104,7 @@ public class MemberController {
 
     })
     @ResponseBody
-    @RequestMapping( value = "/cardApplyCheckedByOne", method = RequestMethod.GET )
+    @RequestMapping( value = "/cardApplyCheckedByOne", method = RequestMethod.POST )
     public ServerResponse cardApplyCheckedByOne(HttpServletRequest request,
 		    HttpServletResponse response,Integer memberId,Integer ischecked){
 	try {
@@ -129,7 +130,7 @@ public class MemberController {
 
     })
     @ResponseBody
-    @RequestMapping( value = "/addIntegralAndfenbi", method = RequestMethod.GET )
+    @RequestMapping( value = "/addIntegralAndfenbi", method = RequestMethod.POST )
     public ServerResponse addIntegralAndfenbi(HttpServletRequest request,
 		    HttpServletResponse response,String json){
 	try {
@@ -182,7 +183,7 @@ public class MemberController {
 	}
     }
 
-    @ApiOperation( value = "拉黑或恢复会员", notes = "拉黑或恢复会员" )
+    @ApiOperation( value = "删除会员", notes = "删除会员" )
     @ApiImplicitParams({
 		    @ApiImplicitParam( name = "memberId", value = "会员id", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "name", value = "用户登录名称", paramType = "query", required = false, dataType = "int" ),
@@ -190,10 +191,11 @@ public class MemberController {
 
     })
     @ResponseBody
-    @RequestMapping( value = "/deleteMember", method = RequestMethod.GET )
+    @RequestMapping( value = "/deleteMember", method = RequestMethod.POST )
     public ServerResponse deleteMember(HttpServletRequest request,
 		    HttpServletResponse response,String json){
 	//缺接口
+	// TODO
 	return null;
     }
 
@@ -261,7 +263,7 @@ public class MemberController {
 		    @ApiImplicitParam( name = "redisStr", value = "redisStr 导入错误下载标示", paramType = "query", required = false, dataType = "int" )
     })
     @ResponseBody
-    @RequestMapping( value = "/downExecl", method = RequestMethod.GET )
+    @RequestMapping( value = "/downExecl", method = RequestMethod.POST )
     public void downExecl(HttpServletRequest request,
 		    HttpServletResponse response,  String redisStr) {
 	try {
@@ -347,7 +349,7 @@ public class MemberController {
 		    @ApiImplicitParam( name = "intergral", value = "兑换积分", paramType = "query", required = false, dataType = "int" )
     })
     @ResponseBody
-    @RequestMapping( value = "/intergralConsume", method = RequestMethod.GET )
+    @RequestMapping( value = "/intergralConsume", method = RequestMethod.POST )
     public ServerResponse intergralConsume(HttpServletRequest request,
 		    HttpServletResponse response,String cardNo,Integer intergral){
 	try {
@@ -361,7 +363,7 @@ public class MemberController {
 	}
     }
 
-    @ApiOperation( value = "工作台 会员卡统计", notes = "工作台 会员卡统计" )
+    @ApiOperation( value = "工作台——会员卡统计", notes = "工作台 会员卡统计" )
     @ApiImplicitParams({
 		    @ApiImplicitParam( name = "ctId", value = "会员卡类型 第一次默认传0" , paramType = "query", required = false, dataType = "int" )
     })
@@ -376,10 +378,157 @@ public class MemberController {
 	} catch ( BusinessException e ) {
 	    LOG.error( "积分兑换异常：", e );
 	    e.printStackTrace();
-	    return ServerResponse.createByError( e.getCode(),e.getMessage());
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
-
     }
+
+
+    @ApiOperation( value = "交易记录——充值记录", notes = "充值记录" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "cardNo", value = "卡号、手机号" , paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "startTime", value = "查询日期" , paramType = "query", required = false, dataType = "String" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findChongZhiLog", method = RequestMethod.GET )
+    public ServerResponse findChongZhiLog(HttpServletRequest request,
+		    HttpServletResponse response,Map<String,Object> params){
+	try {
+	    Integer busId = SessionUtil.getPidBusId( request );
+	    Page page= memberCardService.findChongZhiLog(busId,params);
+	    return ServerResponse.createBySuccess( page  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+    @ApiOperation( value = "交易记录——充值记录详情", notes = "充值记录详情" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "ucId", value = "订单id" , paramType = "query", required = false, dataType = "int" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findChongZhiLogDetails", method = RequestMethod.GET )
+    public ServerResponse findChongZhiLogDetails(HttpServletRequest request,
+		    HttpServletResponse response,Integer ucId){
+	try {
+	    Map<String,Object> map= memberCardService.findChongZhiLogDetails(ucId);
+	    return ServerResponse.createBySuccess( map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+    @ApiOperation( value = "交易记录——积分兑换记录", notes = "兑换记录" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "cardNo", value = "卡号、手机号" , paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "startTime", value = "查询日期" , paramType = "query", required = false, dataType = "String" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findDuiHuanLog", method = RequestMethod.GET )
+    public ServerResponse findDuiHuanLog(HttpServletRequest request,
+		    HttpServletResponse response,Map<String,Object> params){
+	try {
+	    Integer busId = SessionUtil.getPidBusId( request );
+	    Page page= memberCardService.findDuiHuanLog(busId,params);
+	    return ServerResponse.createBySuccess( page  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+    @ApiOperation( value = "交易记录——积分兑换记录详情", notes = "兑换记录详情" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "ucId", value = "订单id" , paramType = "query", required = false, dataType = "int" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findDuiHuanLogDetails", method = RequestMethod.GET )
+    public ServerResponse findDuiHuanLogDetails(HttpServletRequest request,
+		    HttpServletResponse response,Integer ucId){
+	try {
+	    Map<String,Object> map= memberCardService.findDuiHuanLogDetails(ucId);
+	    return ServerResponse.createBySuccess( map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+
+    @ApiOperation( value = "交易记录——次卡记录", notes = "次卡记录" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "cardNo", value = "卡号、手机号" , paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "startTime", value = "查询日期" , paramType = "query", required = false, dataType = "String" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findCiKaLog", method = RequestMethod.GET )
+    public ServerResponse findCiKaLog(HttpServletRequest request,
+		    HttpServletResponse response,Map<String,Object> params){
+	try {
+	    Integer busId = SessionUtil.getPidBusId( request );
+	    Page page= memberCardService.findCikaLog(busId,params);
+	    return ServerResponse.createBySuccess( page  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+
+    @ApiOperation( value = "交易记录——次卡记录详情", notes = "次卡记录详情" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "ucId", value = "订单id" , paramType = "query", required = false, dataType = "int" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findCiKaLogDetails", method = RequestMethod.GET )
+    public ServerResponse findCiKaLogDetails(HttpServletRequest request,
+		    HttpServletResponse response,Integer ucId){
+	try {
+	    Map<String,Object> map=  memberCardService.findCikaLogDetails(ucId);
+	    return ServerResponse.createBySuccess( map  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+
+    @ApiOperation( value = "交易记录——消费记录", notes = "消费记录" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "cardNo", value = "卡号、手机号" , paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "startTime", value = "查询日期" , paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "payStatus", value = "支付方式 0未支付 1已支付" , paramType = "query", required = false, dataType = "int" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findXiaoFeiLog", method = RequestMethod.GET )
+    public ServerResponse findXiaoFeiLog(HttpServletRequest request,
+		    HttpServletResponse response,Map<String,Object> params){
+	try {
+	    Integer busId = SessionUtil.getPidBusId( request );
+	    Page page= memberCardService.findXiaoFeiLog(busId,params);
+	    return ServerResponse.createBySuccess( page  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+
+    @ApiOperation( value = "交易记录——消费记录详情", notes = "消费记录详情" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "ucId", value = "订单id" , paramType = "query", required = false, dataType = "int" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findXiaoFeiLogDetails", method = RequestMethod.GET )
+    public ServerResponse findXiaoFeiLogDetails(HttpServletRequest request,
+		    HttpServletResponse response,Integer ucId){
+	try {
+	    Map<String,Object> map=  memberCardService.findXiaoFeiLogDetails(ucId);
+	    return ServerResponse.createBySuccess( map  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+
+
+
+
+
 
 
 

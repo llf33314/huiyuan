@@ -150,7 +150,7 @@ public interface MemberCardService {
      * @param params
      * @return
      */
-    public Map<String,Object> findMember(Integer busId,Map<String, Object> params);
+    public Page findMember(Integer busId,Map<String, Object> params);
 
     /**
      * 批量审核
@@ -221,6 +221,69 @@ public interface MemberCardService {
      */
     public Map<String,Object> memberTongJi(Integer busId,Integer ctId,String startTime) throws BusinessException;
 
+    /**
+     * 分页查询充值记录
+     * @param busId
+     * @param params
+     * @return
+     */
+    public Page findChongZhiLog(Integer busId,Map<String,Object> params) throws BusinessException;
 
+    /**
+     * 充值记录详情
+     * @param ucId
+     * @return
+     */
+    public Map<String,Object> findChongZhiLogDetails(Integer ucId) throws BusinessException;
+
+
+    /**
+     * 分页查询积分兑换记录
+     * @param busId
+     * @param params
+     * @return
+     */
+    public Page findDuiHuanLog(Integer busId,Map<String,Object> params) throws BusinessException;
+
+    /**
+     * 兑换详情
+     * @param ucId
+     * @return
+     */
+    public Map<String,Object> findDuiHuanLogDetails(Integer ucId) throws BusinessException;
+
+    /**
+     * 次卡消费次数
+     * @param busId
+     * @param params
+     * @return
+     * @throws BusinessException
+     */
+    public Page findCikaLog(Integer busId,Map<String,Object> params) throws  BusinessException;
+
+
+    /**
+     * 次卡消费次数详情
+     * @param ucId
+     * @return
+     */
+    public Map<String,Object> findCikaLogDetails(Integer ucId) throws BusinessException;
+
+    /**
+     * 消费记录
+     * @param busId
+     * @param params
+     * @return
+     * @throws BusinessException
+     */
+    public Page findXiaoFeiLog(Integer busId,Map<String,Object> params) throws BusinessException;
+
+    /**
+     * 消费记录详情
+     * @param ucId
+     * @return
+     * @throws BusinessException
+     */
+    public Map<String,Object> findXiaoFeiLogDetails(Integer ucId) throws BusinessException;
 
 }

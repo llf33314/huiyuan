@@ -103,7 +103,7 @@ public class SessionUtil {
 		Object obj = request.getSession().getAttribute( SESSION_MEMBER );
 		if ( obj != null ) {
 		    MemberEntity mem = JSONObject.toJavaObject( ( JSONObject.parseObject( obj.toString() ) ), MemberEntity.class );
-		    if(mem.getBusId()==busId){
+		    if(mem.getBusId()!=busId){
 		        return null;
 		    }
 		    return mem;

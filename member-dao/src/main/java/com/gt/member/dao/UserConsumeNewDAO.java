@@ -3,14 +3,10 @@ package com.gt.member.dao;
 import com.gt.member.entity.UserConsumeNew;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
-
-<<<<<<< HEAD
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-=======
->>>>>>> ae76849aca3d2f4538456ff77be4f3c544ac352b
 /**
  * <p>
   *  Mapper 接口
@@ -28,6 +24,14 @@ public interface UserConsumeNewDAO extends BaseMapper<UserConsumeNew> {
      * @return
      */
     UserConsumeNew findByCode(@Param( "busId" ) Integer busId,@Param( "orderCode" )String orderCode);
+
+    /**
+     * 根据订单查询订单数据
+     * @param orderCode
+     * @return
+     */
+    UserConsumeNew findOneByCode(@Param( "orderCode" )String orderCode);
+
     /**
      * 查询订单总数
      * @param busId
@@ -106,6 +110,27 @@ public interface UserConsumeNewDAO extends BaseMapper<UserConsumeNew> {
     Integer userCiKa(@Param("busId")Integer busId);
 
 
-    UserConsumeNew findOneByCode(@Param( "orderCode" )String orderCode);
+    List<Map<String,Object>> findUserConsumeChongZhiByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("date")String date,@Param("first")Integer first,
+                    @Param("pageSize")Integer pageSize);
+
+    Integer countUserConsumeChongZhiByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("date")String date);
+
+
+    List<Map<String,Object>> findUserConsumeDuiHuanByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("date")String date,@Param("first")Integer first,
+                    @Param("pageSize")Integer pageSize);
+
+    Integer countUserConsumeDuiHuanByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("date")String date);
+
+
+    List<Map<String,Object>> findUserConsumeCikaByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("date")String date,@Param("first")Integer first,
+                    @Param("pageSize")Integer pageSize);
+
+    Integer countUserConsumeCikaByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("date")String date);
+
+
+    List<Map<String,Object>> findUserConsumeXiaoFeiByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("date")String date,@Param("payStatus")Integer payStatus,@Param("first")Integer first,
+                    @Param("pageSize")Integer pageSize);
+
+    Integer countUserConsumeXiaoFeiByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("date")String date,@Param("payStatus")Integer payStatus);
 
 }

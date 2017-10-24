@@ -35,6 +35,7 @@ import com.gt.member.util.*;
 import com.gt.util.entity.param.sms.OldApiSms;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xdgf.geom.Dimension2dDouble;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -828,7 +829,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	}
     }
 
-    public Map< String,Object > findMember( Integer busId, Map< String,Object > params ) {
+    public Page findMember( Integer busId, Map< String,Object > params ) {
 	Map< String,Object > map = new HashMap<>();
 
 	List< Map< String,Object > > cardTypes = memberGradetypeDAO.findGradeTyeBybusId( busId );
@@ -837,22 +838,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 		params.put( "ctId", cardTypes.get( 0 ).get( "ctId" ) );
 	    }
 	}
-	map.put( "cardTypes", cardTypes );
-	//等级
-	List< Map< String,Object > > gradeTypes = memberGradetypeDAO.findBybusIdAndCtId3( busId, CommonUtil.toInteger( params.get( "ctId" ) ) );
-	map.put( "gradeTypes", gradeTypes );
 	Page page = findMemberBybusId( busId, params );
-	map.put( "page", page );
-	map.put( "phone", params.get( "phone" ) );
-	map.put( "search", params.get( "search" ) );
-	map.put( "ctId", params.get( "ctId" ) );
-	map.put( "gtId", params.get( "gtId" ) );
-	map.put( "startDate", params.get( "startDate" ) );
-	map.put( "endDate", params.get( "endDate" ) );
-	if ( CommonUtil.isNotEmpty( params.get( "changeCardType" ) ) ) {
-	    map.put( "changeCardType", params.get( "changeCardType" ) );
-	}
-	return map;
+	return page;
     }
 
     public Page findMemberBybusId( Integer busId, Map< String,Object > params ) {
@@ -1895,6 +1882,360 @@ public class MemberCardServiceImpl implements MemberCardService {
 	} catch (Exception e) {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
+    }
+
+
+    public Page findChongZhiLog(Integer busId,Map<String,Object> params) throws BusinessException{
+	try {
+	    params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
+	    int pageSize = 10;
+
+	    Integer memberId=null;
+	    if(CommonUtil.isNotEmpty( params.get( "cardNo" ) )){
+	       MemberEntity memberEntity=memberMapper.findByPhone( busId, CommonUtil.toString( params.get( "cardNo" ) ));
+	       if(CommonUtil.isEmpty( memberEntity )){
+	         MemberCard memberCard=memberCardDAO.findCardByCardNo( busId,CommonUtil.toString(  params.get( "cardNo" ) ) );
+	       	 memberEntity=memberMapper.findByMcIdAndbusId( busId,memberCard.getMcId() );
+		   if ( CommonUtil.isNotEmpty( memberEntity ) ) {
+		       memberId = memberEntity.getId();
+		   }else{
+		       memberId=0;
+		   }
+	       }else{
+		   memberId=memberEntity.getId();
+	       }
+	     }
+
+	    String startDate = null;
+	    if ( CommonUtil.isNotEmpty( params.get( "startTime" ) ) ) {
+		startDate = CommonUtil.toString( params.get( "startTime" ) ) + " 00:00:00";
+	    }
+
+	    int rowCount = userConsumeNewDAO.countUserConsumeChongZhiByMemberId( busId, memberId,startDate );
+
+	    Page page = new Page( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "" );
+	    params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	    params.put( "maxResult", pageSize );
+
+	    List< Map< String,Object > > list = userConsumeNewDAO.findUserConsumeChongZhiByMemberId( busId,memberId,startDate,
+			    CommonUtil.toInteger( params.get( "firstResult" ) ),CommonUtil.toInteger( params.get( "maxResult" ) ) );
+	    page.setSubList( list );
+	    return page;
+	} catch ( Exception e ) {
+	    LOG.error( "分页查询充值记录异常",e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+    public Map<String,Object> findChongZhiLogDetails(Integer ucId) throws BusinessException{
+	try {
+	    Map< String,Object > map = new HashMap<>();
+	    UserConsumeNew ucNew = userConsumeNewDAO.selectById( ucId );
+	    MemberEntity memberEntity = memberMapper.selectById( ucNew.getMemberId() );
+	    if(CommonUtil.isEmpty( memberEntity )){
+		memberEntity=memberMapper.findMemberByOldId(ucNew.getBusId(),ucNew.getMemberId());
+	    }
+	    map.put( "nickName", memberEntity.getNickname() );
+	    map.put( "headImg", memberEntity.getHeadimgurl() );
+	    List< Map< String,Object > > cards = memberCardDAO.findCardById( memberEntity.getMcId() );
+	    map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
+	    map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
+	    map.put( "cardNo", cards.get( 0 ).get( "cardNo" ) );
+
+	    /**
+	     * 订单
+	     */
+	    map.put( "orderCode", ucNew.getOrderCode() );
+	    map.put( "dateTime", DateTimeKit.getDateTime( ucNew.getIsendDate() ) );
+	    map.put( "money", ucNew.getDiscountAfterMoney() );
+	    map.put( "payStatus", ucNew.getPayStatus() );
+
+	    List< UserConsumePay > userConsumePays = userConsumePayDAO.findByUcId( ucId );
+	    SortedMap< String,Object > sortemap = dictService.getDict( "1198" );
+	    String payType = "";
+	    for ( UserConsumePay userConsumePay : userConsumePays ) {
+		payType = CommonUtil.toString( sortemap.get( userConsumePay.getPaymentType() ) ) + "   ";
+	    }
+	    map.put( "payType", payType );
+	    return map;
+	}catch ( Exception e ){
+	    LOG.error( "查询订单详情异常",e );
+	    throw  new BusinessException( ResponseEnums.ERROR );
+	}
+
+    }
+
+    public Page findDuiHuanLog(Integer busId,Map<String,Object> params) throws BusinessException{
+	try {
+	    params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
+	    int pageSize = 10;
+
+	    Integer memberId=null;
+	    if(CommonUtil.isNotEmpty( params.get( "cardNo" ) )){
+		MemberEntity memberEntity=memberMapper.findByPhone( busId, CommonUtil.toString( params.get( "cardNo" ) ));
+		if(CommonUtil.isEmpty( memberEntity )){
+		    MemberCard memberCard=memberCardDAO.findCardByCardNo( busId,CommonUtil.toString(  params.get( "cardNo" ) ) );
+		    memberEntity=memberMapper.findByMcIdAndbusId( busId,memberCard.getMcId() );
+		    if ( CommonUtil.isNotEmpty( memberEntity ) ) {
+			memberId = memberEntity.getId();
+		    }else{
+			memberId=0;
+		    }
+		}else{
+		    memberId=memberEntity.getId();
+		}
+	    }
+
+	    String startDate = null;
+	    if ( CommonUtil.isNotEmpty( params.get( "startTime" ) ) ) {
+		startDate = CommonUtil.toString( params.get( "startTime" ) ) + " 00:00:00";
+	    }
+
+	    int rowCount = userConsumeNewDAO.countUserConsumeDuiHuanByMemberId( busId, memberId,startDate );
+
+	    Page page = new Page( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "" );
+	    params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	    params.put( "maxResult", pageSize );
+
+	    List< Map< String,Object > > list = userConsumeNewDAO.findUserConsumeDuiHuanByMemberId( busId,memberId,startDate,
+			    CommonUtil.toInteger( params.get( "firstResult" ) ),CommonUtil.toInteger( params.get( "maxResult" ) ) );
+	    page.setSubList( list );
+	    return page;
+	} catch ( Exception e ) {
+	    LOG.error( "分页查询积分兑换记录异常",e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+
+    public Map<String,Object> findDuiHuanLogDetails(Integer ucId) throws BusinessException{
+	try {
+	    Map< String,Object > map = new HashMap<>();
+	    UserConsumeNew ucNew = userConsumeNewDAO.selectById( ucId );
+	    MemberEntity memberEntity = memberMapper.selectById( ucNew.getMemberId() );
+	    if(CommonUtil.isEmpty( memberEntity )){
+		memberEntity=memberMapper.findMemberByOldId(ucNew.getBusId(),ucNew.getMemberId());
+	    }
+	    map.put( "nickName", memberEntity.getNickname() );
+	    map.put( "headImg", memberEntity.getHeadimgurl() );
+	    List< Map< String,Object > > cards = memberCardDAO.findCardById( memberEntity.getMcId() );
+	    map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
+	    map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
+	    map.put( "cardNo", cards.get( 0 ).get( "cardNo" ) );
+
+	    /**
+	     * 订单
+	     */
+	    map.put( "orderCode", ucNew.getOrderCode() );
+	    map.put( "dateTime", DateTimeKit.getDateTime( ucNew.getIsendDate() ) );
+	    map.put( "integral", ucNew.getIntegral() );
+
+
+	    List< UserConsumePay > userConsumePays = userConsumePayDAO.findByUcId( ucId );
+	    SortedMap< String,Object > sortemap = dictService.getDict( "1198" );
+	    String payType = "";
+	    for ( UserConsumePay userConsumePay : userConsumePays ) {
+		payType = CommonUtil.toString( sortemap.get( userConsumePay.getPaymentType() ) ) + "   ";
+	    }
+	    map.put( "payType", payType );
+	    return map;
+	}catch ( Exception e ){
+	    LOG.error( "查询订单详情异常",e );
+	    throw  new BusinessException( ResponseEnums.ERROR );
+	}
+
+    }
+
+
+    public Page findCikaLog(Integer busId,Map<String,Object> params) throws  BusinessException{
+	try {
+	    params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
+	    int pageSize = 10;
+
+	    Integer memberId=null;
+	    if(CommonUtil.isNotEmpty( params.get( "cardNo" ) )){
+		MemberEntity memberEntity=memberMapper.findByPhone( busId, CommonUtil.toString( params.get( "cardNo" ) ));
+		if(CommonUtil.isEmpty( memberEntity )){
+		    MemberCard memberCard=memberCardDAO.findCardByCardNo( busId,CommonUtil.toString(  params.get( "cardNo" ) ) );
+		    memberEntity=memberMapper.findByMcIdAndbusId( busId,memberCard.getMcId() );
+		    if ( CommonUtil.isNotEmpty( memberEntity ) ) {
+			memberId = memberEntity.getId();
+		    }else{
+			memberId=0;
+		    }
+		}else{
+		    memberId=memberEntity.getId();
+		}
+	    }
+
+	    String startDate = null;
+	    if ( CommonUtil.isNotEmpty( params.get( "startTime" ) ) ) {
+		startDate = CommonUtil.toString( params.get( "startTime" ) ) + " 00:00:00";
+	    }
+
+	    int rowCount = userConsumeNewDAO.countUserConsumeCikaByMemberId( busId, memberId,startDate );
+
+	    Page page = new Page( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "" );
+	    params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	    params.put( "maxResult", pageSize );
+
+	    List< Map< String,Object > > list = userConsumeNewDAO.findUserConsumeCikaByMemberId( busId,memberId,startDate,
+			    CommonUtil.toInteger( params.get( "firstResult" ) ),CommonUtil.toInteger( params.get( "maxResult" ) ) );
+	    page.setSubList( list );
+	    return page;
+	} catch ( Exception e ) {
+	    LOG.error( "分页查询次卡记录异常",e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+    /**
+     * 次卡消费次数详情
+     * @param ucId
+     * @return
+     */
+    public Map<String,Object> findCikaLogDetails(Integer ucId) throws BusinessException{
+	try {
+	    Map< String,Object > map = new HashMap<>();
+	    UserConsumeNew ucNew = userConsumeNewDAO.selectById( ucId );
+	    MemberEntity memberEntity = memberMapper.selectById( ucNew.getMemberId() );
+	    if(CommonUtil.isEmpty( memberEntity )){
+		memberEntity=memberMapper.findMemberByOldId(ucNew.getBusId(),ucNew.getMemberId());
+	    }
+	    map.put( "nickName", memberEntity.getNickname() );
+	    map.put( "headImg", memberEntity.getHeadimgurl() );
+	    List< Map< String,Object > > cards = memberCardDAO.findCardById( memberEntity.getMcId() );
+	    map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
+	    map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
+	    map.put( "cardNo", cards.get( 0 ).get( "cardNo" ) );
+
+	    /**
+	     * 订单
+	     */
+	    map.put( "orderCode", ucNew.getOrderCode() );
+	    map.put( "dateTime", DateTimeKit.getDateTime( ucNew.getIsendDate() ) );
+	    map.put( "uccount", ucNew.getUccount() );
+
+	    return map;
+	}catch ( Exception e ){
+	    LOG.error( "查询订单详情异常",e );
+	    throw  new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+    public Page findXiaoFeiLog(Integer busId,Map<String,Object> params) throws BusinessException{
+	try {
+	    params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
+	    int pageSize = 10;
+
+	    Integer memberId=null;
+	    if(CommonUtil.isNotEmpty( params.get( "cardNo" ) )){
+		MemberEntity memberEntity=memberMapper.findByPhone( busId, CommonUtil.toString( params.get( "cardNo" ) ));
+		if(CommonUtil.isEmpty( memberEntity )){
+		    MemberCard memberCard=memberCardDAO.findCardByCardNo( busId,CommonUtil.toString(  params.get( "cardNo" ) ) );
+		    memberEntity=memberMapper.findByMcIdAndbusId( busId,memberCard.getMcId() );
+		    if ( CommonUtil.isNotEmpty( memberEntity ) ) {
+			memberId = memberEntity.getId();
+		    }else{
+			memberId=0;
+		    }
+		}else{
+		    memberId=memberEntity.getId();
+		}
+	    }
+
+	    String startDate = null;
+	    if ( CommonUtil.isNotEmpty( params.get( "startTime" ) ) ) {
+		startDate = CommonUtil.toString( params.get( "startTime" ) ) + " 00:00:00";
+	    }
+
+
+	    Integer payStatus = null;
+	    if ( CommonUtil.isNotEmpty( params.get( "payStatus" ) ) ) {
+		payStatus = CommonUtil.toInteger( params.get( "payStatus" ) );
+	    }
+
+	    int rowCount = userConsumeNewDAO.countUserConsumeXiaoFeiByMemberId( busId, memberId,startDate,payStatus );
+
+	    Page page = new Page( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "" );
+	    params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	    params.put( "maxResult", pageSize );
+
+	    List< Map< String,Object > > list = userConsumeNewDAO.findUserConsumeXiaoFeiByMemberId( busId,memberId,startDate,payStatus,
+			    CommonUtil.toInteger( params.get( "firstResult" ) ),CommonUtil.toInteger( params.get( "maxResult" ) ) );
+
+	    SortedMap< String,Object > sortemap = dictService.getDict( "1197" );
+	    List<Map< String,Object >> userConsumes=new ArrayList<>(  );
+	    for(Map< String,Object > map:list){
+		Object obj= sortemap.get( CommonUtil.toString( map.get( "ucType" ) ) );
+		if(CommonUtil.isNotEmpty( obj )){
+		    map.put( "ucTypeName",obj );
+		}else{
+		    map.put( "ucTypeName","未知" );
+		}
+		userConsumes.add( map );
+	    }
+	    page.setSubList( userConsumes );
+	    return page;
+	} catch ( Exception e ) {
+	    LOG.error( "分页查询消费记录异常",e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+
+    public Map<String,Object> findXiaoFeiLogDetails(Integer ucId) throws BusinessException{
+	try {
+	    Map< String,Object > map = new HashMap<>();
+	    UserConsumeNew ucNew = userConsumeNewDAO.selectById( ucId );
+	    MemberEntity memberEntity = memberMapper.selectById( ucNew.getMemberId() );
+	    if(CommonUtil.isEmpty( memberEntity )){
+		memberEntity=memberMapper.findMemberByOldId(ucNew.getBusId(),ucNew.getMemberId());
+	    }
+	    map.put( "nickName", memberEntity.getNickname() );
+	    map.put( "headImg", memberEntity.getHeadimgurl() );
+	    List< Map< String,Object > > cards = memberCardDAO.findCardById( memberEntity.getMcId() );
+	    map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
+	    map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
+	    map.put( "cardNo", cards.get( 0 ).get( "cardNo" ) );
+
+	    /**
+	     * 订单
+	     */
+	    map.put( "orderCode", ucNew.getOrderCode() );
+	    map.put( "isend",ucNew.getIsend() );
+	    map.put( "dateTime", DateTimeKit.getDateTime( ucNew.getIsendDate() ) );
+	    map.put( "totalMoney",ucNew.getTotalMoney() );
+	    map.put( "discountMoney",ucNew.getDiscountMoney() );
+	    map.put( "discountAfterMoney", ucNew.getDiscountAfterMoney() );
+	    map.put( "integral",ucNew.getIntegral() );
+	    map.put( "fenbi",ucNew.getFenbi() );
+	    map.put( "disCountdepict",ucNew.getDisCountdepict());
+	    map.put( "balance",ucNew.getBalance() );
+
+
+	    //退款
+	    map.put( "refundMoney",ucNew.getRefundMoney() );
+	    map.put( "refundFenbi",ucNew.getRefundFenbi() );
+	    map.put( "refundJifen",ucNew.getRefundJifen() );
+	    map.put("refundDate",DateTimeKit.getDateTime( ucNew.getRefundDate() ));
+
+
+
+	    map.put( "payStatus", ucNew.getPayStatus() );
+	    List< UserConsumePay > userConsumePays = userConsumePayDAO.findByUcId( ucId );
+	    SortedMap< String,Object > sortemap = dictService.getDict( "1198" );
+	    String payType = "";
+	    for ( UserConsumePay userConsumePay : userConsumePays ) {
+		payType = CommonUtil.toString( sortemap.get( userConsumePay.getPaymentType() ) ) + "   ";
+	    }
+	    map.put( "payType", payType );
+	    return map;
+	}catch ( Exception e ){
+	    LOG.error( "查询订单详情异常",e );
+	    throw  new BusinessException( ResponseEnums.ERROR );
+	}
+
     }
 
 }
