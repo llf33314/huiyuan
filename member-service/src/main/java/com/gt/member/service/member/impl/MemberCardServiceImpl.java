@@ -3,20 +3,32 @@
  */
 package com.gt.member.service.member.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.*;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.WxPublicUsers;
+import com.gt.api.enums.ResponseEnums;
+import com.gt.api.util.HttpClienUtils;
+import com.gt.api.util.RequestUtils;
+import com.gt.common.entity.BusUserEntity;
+import com.gt.common.entity.WxPublicUsersEntity;
+import com.gt.common.entity.WxShop;
 import com.gt.member.dao.*;
+import com.gt.member.dao.common.BusUserBranchRelationDAO;
+import com.gt.member.dao.common.BusUserDAO;
+import com.gt.member.dao.common.WxPublicUsersDAO;
+import com.gt.member.dao.common.WxShopDAO;
 import com.gt.member.entity.*;
-import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.export.ExcelStyle;
 import com.gt.member.service.bo.ErrorWorkbook;
-import com.gt.member.service.common.MemberCommonService;
 import com.gt.member.service.common.dict.DictService;
+import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.util.*;
 
@@ -1102,7 +1114,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		for ( Map< String,Object > member : list ) {
 		    Double integral=CommonUtil.toInteger( member.get( "integral" ) )+number;
 		    memberCommonService.saveCardRecordOrderCodeNew( CommonUtil.toInteger( member.get( "id" ) ),  2, number, "商家赠送", busId, integral, "",
-				     1 );
+				    1 );
 		}
 	    } else {
 		//判断商家粉币是否充值
@@ -1487,6 +1499,70 @@ public class MemberCardServiceImpl implements MemberCardService {
 		} else {
 		    cell.setCellStyle(cellStyle); // 填充样式
 		}
+
+		cell = row.createCell(1);
+		cell.setCellValue(ewb.getCname()); // 设置内容
+		if ("1".equals(ewb.getCnameStyle())) {
+		    cell.setCellStyle(errorCellStyle); // 填充样式
+		} else {
+		    cell.setCellStyle(cellStyle); // 填充样式
+		}
+
+		cell = row.createCell(2);
+		cell.setCellValue(ewb.getSex()); // 设置内容
+		if ("1".equals(ewb.getSexStyle())) {
+		    cell.setCellStyle(errorCellStyle); // 填充样式
+		} else {
+		    cell.setCellStyle(cellStyle); // 填充样式
+		}
+
+		cell = row.createCell(3);
+		cell.setCellValue(ewb.getPhone()); // 设置内容
+		if ("1".equals(ewb.getPhoneStyle())) {
+		    cell.setCellStyle(errorCellStyle); // 填充样式
+		} else {
+		    cell.setCellStyle(cellStyle); // 填充样式
+		}
+
+		cell = row.createCell(4);
+		cell.setCellValue(ewb.getLingquDate()); // 设置内容
+		if ("1".equals(ewb.getLingquDateStyle())) {
+		    cell.setCellStyle(errorCellStyle); // 填充样式
+		} else {
+		    cell.setCellStyle(cellStyle); // 填充样式
+		}
+
+		cell = row.createCell(5);
+		cell.setCellValue(ewb.getBalance()); // 设置内容
+		if ("1".equals(ewb.getBalanceStyle())) {
+		    cell.setCellStyle(errorCellStyle); // 填充样式
+		} else {
+		    cell.setCellStyle(cellStyle); // 填充样式
+		}
+
+		cell = row.createCell(6);
+		cell.setCellValue(ewb.getJifen()); // 设置内容
+		if ("1".equals(ewb.getJifenStyle())) {
+		    cell.setCellStyle(errorCellStyle); // 填充样式
+		} else {
+		    cell.setCellStyle(cellStyle); // 填充样式
+		}
+
+		cell = row.createCell(7);
+		cell.setCellValue(ewb.getMemberType()); // 设置内容
+		if ("1".equals(ewb.getMemberTypeStyle())) {
+		    cell.setCellStyle(errorCellStyle); // 填充样式
+		} else {
+		    cell.setCellStyle(cellStyle); // 填充样式
+		}
+
+		cell = row.createCell(8);
+		cell.setCellValue(ewb.getMemberGrade()); // 设置内容
+		if ("1".equals(ewb.getMemberGradeStyle())) {
+		    cell.setCellStyle(errorCellStyle); // 填充样式
+		} else {
+		    cell.setCellStyle(cellStyle); // 填充样式
+		}
 	    }
 	} catch (Exception e) {
 	    LOG.error("导出excel异常", e);
@@ -1500,7 +1576,7 @@ public class MemberCardServiceImpl implements MemberCardService {
     @Override
     public List<Map<String, Object>> findMember(Integer busId, String json) {
 
-        JSONObject jsonObject=JSONObject.parseObject(  json);
+	JSONObject jsonObject=JSONObject.parseObject(  json);
 	Integer ctId=CommonUtil.toInteger( jsonObject.get( "ctId" ) );
 	Integer gtId=CommonUtil.toInteger( jsonObject.get( "gtId" ) );
 	List<Map<String, Object>> list = memberMapper.findMember(busId, "",
@@ -1571,7 +1647,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		}
 	    }
 	    if (CommonUtil.isEmpty(card)) {
-	        throw new BusinessException( ResponseMemberEnums.MEMBER_NOT_CARD );
+		throw new BusinessException( ResponseMemberEnums.MEMBER_NOT_CARD );
 	    } else if (card.getCardStatus() == 1) {
 		throw new BusinessException( ResponseMemberEnums.DISABLE_MEMBER_CARD );
 	    } else {
@@ -1593,14 +1669,14 @@ public class MemberCardServiceImpl implements MemberCardService {
 	}catch ( BusinessException e ){
 	    throw  e;
 	}catch (Exception e) {
-	  throw new BusinessException( ResponseEnums.ERROR );
+	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
 
     @Transactional
     public void intergralConsume(Integer busId,Integer intergral,String cardNo) throws BusinessException{
 
-        try {
+	try {
 	    MemberCard card = memberCardDAO.findCardByCardNo( busId, cardNo );
 	    if ( CommonUtil.isEmpty( card ) ) {
 		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
@@ -1652,7 +1728,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 			    0 );
 
 	}catch ( BusinessException e ){
-            throw  e;
+	    throw  e;
 	}catch ( Exception e ){
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
@@ -1819,19 +1895,19 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 	    Integer memberId=null;
 	    if(CommonUtil.isNotEmpty( params.get( "cardNo" ) )){
-	       MemberEntity memberEntity=memberMapper.findByPhone( busId, CommonUtil.toString( params.get( "cardNo" ) ));
-	       if(CommonUtil.isEmpty( memberEntity )){
-	         MemberCard memberCard=memberCardDAO.findCardByCardNo( busId,CommonUtil.toString(  params.get( "cardNo" ) ) );
-	       	 memberEntity=memberMapper.findByMcIdAndbusId( busId,memberCard.getMcId() );
-		   if ( CommonUtil.isNotEmpty( memberEntity ) ) {
-		       memberId = memberEntity.getId();
-		   }else{
-		       memberId=0;
-		   }
-	       }else{
-		   memberId=memberEntity.getId();
-	       }
-	     }
+		MemberEntity memberEntity=memberMapper.findByPhone( busId, CommonUtil.toString( params.get( "cardNo" ) ));
+		if(CommonUtil.isEmpty( memberEntity )){
+		    MemberCard memberCard=memberCardDAO.findCardByCardNo( busId,CommonUtil.toString(  params.get( "cardNo" ) ) );
+		    memberEntity=memberMapper.findByMcIdAndbusId( busId,memberCard.getMcId() );
+		    if ( CommonUtil.isNotEmpty( memberEntity ) ) {
+			memberId = memberEntity.getId();
+		    }else{
+			memberId=0;
+		    }
+		}else{
+		    memberId=memberEntity.getId();
+		}
+	    }
 
 	    String startDate = null;
 	    if ( CommonUtil.isNotEmpty( params.get( "startTime" ) ) ) {
