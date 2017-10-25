@@ -2246,7 +2246,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 	    uc.setOrderCode( erpPaySuccess.getOrderCode() );
 	    uc.setShopId( erpPaySuccess.getStoreId() );
-	    uc.setDataSource( 5 );
+	    uc.setDataSource( erpPaySuccess.getDataSource() );
 	    uc.setIsend( 0 );
 	    if(erpPaySuccess.getIsendDate()>0) {
 		uc.setIsendDate( new Date( erpPaySuccess.getIsendDate() ) );
@@ -2568,4 +2568,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
+
+
+
 }

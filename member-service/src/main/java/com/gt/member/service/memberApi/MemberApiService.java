@@ -439,4 +439,6 @@ public interface MemberApiService {
      * @throws BusinessException
      */
     public void jifenExchange(String json) throws BusinessException;
+
+
 }

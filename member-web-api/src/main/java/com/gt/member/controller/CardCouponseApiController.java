@@ -592,6 +592,23 @@ public class CardCouponseApiController {
     }
 
 
+    @ApiOperation(value = "获取粉丝卡券数量", notes = "获取粉丝卡券数量")
+    @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int")
+    @ResponseBody
+    @RequestMapping (value = "/countMemberDuofenCard",method = RequestMethod.POST)
+    public ServerResponse countMemberDuofenCard(HttpServletRequest request,
+                    HttpServletResponse response,String param){
+        try {
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer memberId= CommonUtil.toInteger( requestBody.get( "memberId" ) );
+            Integer count=cardCouponsApiService.countMemberDuofenCard(memberId);
+            return ServerResponse.createBySuccess(count);
+        }catch ( Exception e ){
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
+        }
+
+    }
+
 
 
 }
