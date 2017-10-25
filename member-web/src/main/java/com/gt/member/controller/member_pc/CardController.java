@@ -1,6 +1,7 @@
 package com.gt.member.controller.member_pc;
 
 import com.gt.api.enums.ResponseEnums;
+import com.gt.api.util.SessionUtils;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dto.ServerResponse;
@@ -55,7 +56,7 @@ public class CardController {
     @RequestMapping( value = "/findCardType", method = RequestMethod.GET )
     public ServerResponse findCardType( HttpServletRequest request, HttpServletResponse response ) {
 	try {
-	   Integer busId= SessionUtil.getPidBusId( request );
+	   Integer busId= SessionUtils.getPidBusId( request );
 	    List< MemberCardtype > cardTypes = memberCardService.findCardType(busId );
 	    return ServerResponse.createBySuccess( cardTypes );
 	} catch ( Exception e ) {
@@ -71,7 +72,7 @@ public class CardController {
     @RequestMapping( value = "/editGradeTypeFrist", method = RequestMethod.GET )
     public ServerResponse editGradeTypeFrist( HttpServletRequest request, HttpServletResponse response, Integer ctId ) {
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    Map< String,Object > map = memberCardService.editGradeTypeFrist( busId, ctId );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( Exception e ) {
@@ -87,7 +88,7 @@ public class CardController {
     @RequestMapping( value = "/editGradeTypeSecond", method = RequestMethod.GET )
     public ServerResponse editGradeTypeSecond( HttpServletRequest request, HttpServletResponse response, Integer ctId ) {
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    Map< String,Object > map = memberCardService.editGradeTypeSecond( busId, ctId );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( Exception e ) {
@@ -102,7 +103,7 @@ public class CardController {
     @RequestMapping( value = "/findCardModel", method = RequestMethod.GET )
     public ServerResponse findCardModel( HttpServletRequest request, HttpServletResponse response ) {
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    List< MemberCardmodel > cardmodels = memberCardService.findCardModelByBusId( busId );
 	    return ServerResponse.createBySuccess( cardmodels );
 	} catch ( Exception e ) {
@@ -118,7 +119,7 @@ public class CardController {
     @RequestMapping( value = "/saveCardModel", method = RequestMethod.GET )
     public ServerResponse saveCardModel( HttpServletRequest request, HttpServletResponse response, @RequestParam String param ) {
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.saveCardModel( busId, param );
 	    return ServerResponse.createBySuccess();
 	} catch ( Exception e ) {
@@ -134,7 +135,7 @@ public class CardController {
     @RequestMapping( value = "/editGradeTypeThird", method = RequestMethod.GET )
     public ServerResponse editGradeTypeThird( HttpServletRequest request, HttpServletResponse response, Integer ctId ) {
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.editGradeTypeThird( busId, ctId );
 	    return ServerResponse.createBySuccess();
 	} catch ( Exception e ) {
@@ -149,7 +150,7 @@ public class CardController {
     @ResponseBody
     @RequestMapping( value = "/saveOrUpdateGradeType", method = RequestMethod.POST )
     public ServerResponse saveOrUpdateGradeType( HttpServletRequest request, HttpServletResponse response, String gradeType ) {
-	Integer busId = SessionUtil.getPidBusId( request );
+	Integer busId = SessionUtils.getPidBusId( request );
 	try {
 	    memberCardService.saveOrUpdateGradeType( gradeType, busId );
 	    return ServerResponse.createBySuccess(  );
@@ -165,7 +166,7 @@ public class CardController {
     @RequestMapping( value = "/findMemberOption", method = RequestMethod.GET )
     public ServerResponse findMemberOption( HttpServletRequest request, HttpServletResponse response ) {
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    MemberOption memberOption = memberCardService.findOption( busId );
 	    return ServerResponse.createBySuccess( memberOption );
 	} catch ( BusinessException e ) {
@@ -181,7 +182,7 @@ public class CardController {
     public ServerResponse saveMemberOption( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.saveOrUpdateOption( json, busId );
 	    return ServerResponse.createBySuccess();
 	} catch ( Exception e ) {
@@ -195,7 +196,7 @@ public class CardController {
     @RequestMapping( value = "/findtongYongSet", method = RequestMethod.GET )
     public ServerResponse findtongYongSet(HttpServletRequest request, HttpServletResponse response){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    Map<String,Object> map=memberCardService.findtongyongSet( busId );
 	    return ServerResponse.createBySuccess(map);
 	} catch ( BusinessException e ) {
@@ -209,7 +210,7 @@ public class CardController {
     @RequestMapping( value = "/saveTongyongSet", method = RequestMethod.POST )
     public ServerResponse saveTongyongSet(HttpServletRequest request, HttpServletResponse response,String json){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.saveTongyongSet( json,busId );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
@@ -222,7 +223,7 @@ public class CardController {
     @RequestMapping( value = "/editGift", method = RequestMethod.GET )
     public ServerResponse editGift(HttpServletRequest request, HttpServletResponse response,Integer id){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    MemberGift memberGift= memberCardService.editGift( id);
 	    return ServerResponse.createBySuccess(memberGift);
 	} catch ( Exception e ) {
@@ -235,7 +236,7 @@ public class CardController {
     @RequestMapping( value = "/saveOrUpdateGift", method = RequestMethod.POST )
     public ServerResponse saveOrUpdateGift(HttpServletRequest request, HttpServletResponse response,String  json){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.saveOrUpdateGift( json,busId);
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
@@ -248,7 +249,7 @@ public class CardController {
     @RequestMapping( value = "/findSystemNotice", method = RequestMethod.GET )
     public ServerResponse findSystemNotice(HttpServletRequest request, HttpServletResponse response){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    Map<String,Object> map= memberNoticeService.findSystemNotice(busId);
 	    return ServerResponse.createBySuccess(map);
 	} catch ( BusinessException e ) {
@@ -261,7 +262,7 @@ public class CardController {
     @RequestMapping( value = "/saveSystemNotice", method = RequestMethod.POST )
     public ServerResponse saveSystemNotice(HttpServletRequest request, HttpServletResponse response,String json){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberNoticeService.saveSystemNotice(busId,json);
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
@@ -275,7 +276,7 @@ public class CardController {
     @RequestMapping( value = "/findMemberNotice", method = RequestMethod.GET )
     public ServerResponse findMemberNotice(HttpServletRequest request, HttpServletResponse response,Map<String, Object> param){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	   Page  page=memberNoticeService.findMemberNotice(busId,param);
 	    return ServerResponse.createBySuccess(page);
 	} catch ( BusinessException e ) {
@@ -288,7 +289,7 @@ public class CardController {
     @RequestMapping( value = "/editMemberNotice", method = RequestMethod.GET )
     public ServerResponse editMemberNotice(HttpServletRequest request, HttpServletResponse response,Integer id){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    Map<String,Object>  map=memberNoticeService.editMemberNotice(busId,id);
 	    return ServerResponse.createBySuccess(map);
 	} catch ( BusinessException e ) {
@@ -303,7 +304,7 @@ public class CardController {
     @RequestMapping( value = "/saveMemberNotice", method = RequestMethod.POST )
     public ServerResponse saveMemberNotice(HttpServletRequest request, HttpServletResponse response,String json,String sendDate){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberNoticeService.saveMemberNotice(busId,json,sendDate);
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
