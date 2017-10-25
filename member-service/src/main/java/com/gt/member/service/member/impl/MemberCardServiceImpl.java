@@ -3,26 +3,14 @@
  */
 package com.gt.member.service.member.impl;
 
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.gt.api.bean.session.WxPublicUsers;
-import com.gt.api.enums.ResponseEnums;
-import com.gt.api.util.HttpClienUtils;
-import com.gt.api.util.RequestUtils;
-import com.gt.common.entity.BusUserEntity;
-import com.gt.common.entity.WxPublicUsersEntity;
-import com.gt.common.entity.WxShop;
 import com.gt.member.dao.*;
-import com.gt.member.dao.common.BusUserBranchRelationDAO;
-import com.gt.member.dao.common.BusUserDAO;
-import com.gt.member.dao.common.WxPublicUsersDAO;
-import com.gt.member.dao.common.WxShopDAO;
 import com.gt.member.entity.*;
+import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.export.ExcelStyle;
@@ -1495,70 +1483,6 @@ public class MemberCardServiceImpl implements MemberCardService {
 		Cell cell = row.createCell(0);
 		cell.setCellValue(ewb.getCardNo()); // 设置内容
 		if ("1".equals(ewb.getCardNoStyle())) {
-		    cell.setCellStyle(errorCellStyle); // 填充样式
-		} else {
-		    cell.setCellStyle(cellStyle); // 填充样式
-		}
-
-		cell = row.createCell(1);
-		cell.setCellValue(ewb.getCname()); // 设置内容
-		if ("1".equals(ewb.getCnameStyle())) {
-		    cell.setCellStyle(errorCellStyle); // 填充样式
-		} else {
-		    cell.setCellStyle(cellStyle); // 填充样式
-		}
-
-		cell = row.createCell(2);
-		cell.setCellValue(ewb.getSex()); // 设置内容
-		if ("1".equals(ewb.getSexStyle())) {
-		    cell.setCellStyle(errorCellStyle); // 填充样式
-		} else {
-		    cell.setCellStyle(cellStyle); // 填充样式
-		}
-
-		cell = row.createCell(3);
-		cell.setCellValue(ewb.getPhone()); // 设置内容
-		if ("1".equals(ewb.getPhoneStyle())) {
-		    cell.setCellStyle(errorCellStyle); // 填充样式
-		} else {
-		    cell.setCellStyle(cellStyle); // 填充样式
-		}
-
-		cell = row.createCell(4);
-		cell.setCellValue(ewb.getLingquDate()); // 设置内容
-		if ("1".equals(ewb.getLingquDateStyle())) {
-		    cell.setCellStyle(errorCellStyle); // 填充样式
-		} else {
-		    cell.setCellStyle(cellStyle); // 填充样式
-		}
-
-		cell = row.createCell(5);
-		cell.setCellValue(ewb.getBalance()); // 设置内容
-		if ("1".equals(ewb.getBalanceStyle())) {
-		    cell.setCellStyle(errorCellStyle); // 填充样式
-		} else {
-		    cell.setCellStyle(cellStyle); // 填充样式
-		}
-
-		cell = row.createCell(6);
-		cell.setCellValue(ewb.getJifen()); // 设置内容
-		if ("1".equals(ewb.getJifenStyle())) {
-		    cell.setCellStyle(errorCellStyle); // 填充样式
-		} else {
-		    cell.setCellStyle(cellStyle); // 填充样式
-		}
-
-		cell = row.createCell(7);
-		cell.setCellValue(ewb.getMemberType()); // 设置内容
-		if ("1".equals(ewb.getMemberTypeStyle())) {
-		    cell.setCellStyle(errorCellStyle); // 填充样式
-		} else {
-		    cell.setCellStyle(cellStyle); // 填充样式
-		}
-
-		cell = row.createCell(8);
-		cell.setCellValue(ewb.getMemberGrade()); // 设置内容
-		if ("1".equals(ewb.getMemberGradeStyle())) {
 		    cell.setCellStyle(errorCellStyle); // 填充样式
 		} else {
 		    cell.setCellStyle(cellStyle); // 填充样式

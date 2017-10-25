@@ -5,7 +5,6 @@ import com.gt.api.exception.SignException;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.member.BasicTest;
 import com.gt.member.util.HttpClienUtil;
-import com.gt.member.util.MemberConfig;
 import net.sf.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,7 @@ import java.util.Map;
  */
 public class BusUserServiceTest extends BasicTest {
 
-    @Autowired
-	private MemberConfig memberConfig;
+
 
     @Test
     public void testSelect() throws SignException {

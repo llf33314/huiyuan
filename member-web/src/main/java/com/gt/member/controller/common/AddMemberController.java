@@ -2,8 +2,10 @@ package com.gt.member.controller.common;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.TCommonStaff;
 import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.RequestUtils;
+import com.gt.api.util.SessionUtils;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.TCommonStaffEntity;
 import com.gt.common.entity.WxPublicUsersEntity;
@@ -88,15 +90,15 @@ public class AddMemberController {
     @RequestMapping( "/erpAddMember" )
     public String erpAddMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
         Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
-	Integer loginStyle = SessionUtil.getLoginStyle( request );
+        Integer loginStyle = SessionUtils.getLoginStyle( request );
 	Integer userId = 0;
 	if ( "0".equals( loginStyle ) ) {
-	    TCommonStaffEntity tc = SessionUtil.getCommonStaff( request );
+	    TCommonStaff tc = SessionUtils.getCommonStaff( request );
 	    userId = tc.getId();
 	} else {
-	    userId= SessionUtil.getLoginUser(request).getId();
+	    userId= SessionUtils.getLoginUser(request).getId();
 	}
-	Integer busId = SessionUtil.getLoginUser( request ).getId();
+	Integer busId = SessionUtils.getLoginUser( request ).getId();
 	if(CommonUtil.isEmpty( shopId )){
 	    shopId= wxShopDAO.selectMainShopByBusId(busId  ).getId();
 	}
@@ -145,8 +147,7 @@ public class AddMemberController {
     public void findCardType( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer cardType ) throws IOException {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
-
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, cardType );
 	    if(gradeTypes.size()>0 ) {
 		if("3".equals( CommonUtil.toString(  gradeTypes.get( 0 ).get( "applyType" ) ))){
@@ -349,16 +350,16 @@ public class AddMemberController {
     @RequestMapping( "/guanzhuiQcode" )
     public void guanzhuiQcode( HttpServletRequest request, HttpServletResponse response ) throws Exception {
 	Map< String,Object > map = new HashMap<>();
-	Integer loginStyle = SessionUtil.getLoginStyle( request );
+	Integer loginStyle = SessionUtils.getLoginStyle( request );
 	String scene_id = "";
 	Integer pIduserId = 0;
 	Integer userId=0;
 	if (loginStyle==0 ) {
-	    TCommonStaffEntity tc = SessionUtil.getCommonStaff( request );
+	    TCommonStaff tc = SessionUtils.getCommonStaff( request );
 	    userId = tc.getId();
 	    scene_id = userId + "_" + System.currentTimeMillis() + "_5";//员工
 	} else {
-	    userId = SessionUtil.getLoginUser( request ).getId();
+	    userId = SessionUtils.getLoginUser( request ).getId();
 	    scene_id = userId + "_" + System.currentTimeMillis() + "_6";//管理员
 	}
 
@@ -372,7 +373,7 @@ public class AddMemberController {
 	String imgUrl = null;
 	if ( CommonUtil.isEmpty( mqw ) ) {
 	    Map< String,Object > querymap = new HashMap<>();
-	    pIduserId=SessionUtil.getPidBusId( request );
+	    pIduserId=SessionUtils.getPidBusId( request );
 	    WxPublicUsersEntity wxPublicUsersEntity =wxPublicUsersMapper.selectByUserId( pIduserId );
 
 	    RequestUtils requestUtils=new RequestUtils<>(  );

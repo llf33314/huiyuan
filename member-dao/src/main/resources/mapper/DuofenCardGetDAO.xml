@@ -316,4 +316,20 @@
 	</select>
 
 
+
+	<select id="countCardGetByMemberId" resultType="java.lang.Integer">
+		select
+		count(id)
+		from t_duofen_card_get g
+		where g.state=0 and g.memberId
+		in
+		<foreach close=")" collection="memberIds" item="m" open="(" separator=",">
+			#{m}
+		</foreach>
+
+
+
+	</select>
+
+
 </mapper>

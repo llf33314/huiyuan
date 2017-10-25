@@ -191,4 +191,11 @@ public interface DuofenCardGetDAO extends BaseMapper<DuofenCardGet> {
     int deleteByIds(@Param("ids")List<Integer> ids);
 
     List<Map<String,Object>> findMeiRongCardGetByMemberId(@Param( "memberIds" )List<Integer> memberIds,@Param( "receiceId" )Integer receiceId);
+
+    /**
+     * 查询用户名下所有的卡券信息
+     * @param memberId
+     * @return
+     */
+   Integer countCardGetByMemberId(@Param("memberIds")List<Integer> memberIds);
 }

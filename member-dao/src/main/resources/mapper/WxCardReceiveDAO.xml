@@ -83,4 +83,9 @@
 		from t_wx_card_receive
 		where user_card_code= #{cardcode,jdbcType=VARCHAR} limit 1
 	</select>
+
+
+	<select id="countReceive" resultType="java.lang.Integer">
+		select count(id) from t_wx_card_receive where status=0 and openid=#{openId}
+	</select>
 </mapper>

@@ -43,9 +43,9 @@ pageEncoding="UTF-8" %>
         </div>
 
         <div class="add-member-box pl60 clearfix" v-cloak>
-            <label class="fl el-form-item__label" style="font-weight: bold">新增会员</label>
+            <label class="fl el-form-item__label" style="font-weight: bold;position: absolute;">新增会员</label>
             <div class="add-main">
-                <el-form :model="ruleForm" :rules="rules" :label-position="labelPosition" ref="ruleForm" label-width="130px" class="demo-ruleForm"  >
+                <el-form :model="ruleForm" :rules="rules" :label-position="labelPosition" ref="ruleForm" label-width="150px" class="demo-ruleForm"  >
                     <c:if test="${gongzhong==1}">
                         <el-form-item label="关注公众号办理：" prop="follow">
                             <el-switch on-text="" off-text="" v-model="ruleForm.follow" @change="fnGuanZhu"></el-switch>
@@ -445,6 +445,7 @@ pageEncoding="UTF-8" %>
                                         $("#memberId").val("");
                                         $(".cur-list").remove();
                                         setTime();
+                                        clearMember();
                                     }else if(data.code==2){
 
                                         //跳转支付页面
@@ -503,6 +504,13 @@ pageEncoding="UTF-8" %>
             },3000);
         }
 
+        function clearMember(){
+            $("#memberUser").val("");
+            vm.ruleForm.phone="";
+            vm.ruleForm.verification="";
+            vm.show = true;
+        }
+
         //推送
         var userId = '${memberUser}';
         var socket =  io.connect('${host}');
@@ -550,6 +558,7 @@ pageEncoding="UTF-8" %>
                 $("#memberId").val("");
                 $(".cur-list").remove();
                 setTime();
+                clearMember();
             }
         }
 

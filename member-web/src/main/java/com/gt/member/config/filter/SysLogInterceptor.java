@@ -1,10 +1,5 @@
 package com.gt.member.config.filter;
 
-import com.gt.api.bean.session.BusUser;
-import com.gt.api.util.SessionUtils;
-import com.gt.common.entity.BusUserEntity;
-import com.gt.member.dao.common.BusUserDAO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -19,9 +14,6 @@ import javax.servlet.http.HttpServletResponse;
  * Time : 16:30
  */
 public class SysLogInterceptor extends HandlerInterceptorAdapter {
-
-    @Autowired
-    private BusUserDAO busUserMapper;
     @Override
     public void afterCompletion( HttpServletRequest request,
 		    HttpServletResponse response, Object handler, Exception ex )
@@ -34,9 +26,6 @@ public class SysLogInterceptor extends HandlerInterceptorAdapter {
 		    HttpServletResponse response, Object handler,
 		    ModelAndView modelAndView ) throws Exception {
 	System.out.println( "功能日志拦截 = " );
-
-
-
 	if ( !handler.getClass().getName().endsWith( "DwrController" ) ) {
 	    HandlerMethod handlerMethod = (HandlerMethod) handler;
 	//    SysLogAnnotation annotation = handlerMethod.getMethodAnnotation( SysLogAnnotation.class );

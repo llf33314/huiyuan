@@ -2,6 +2,7 @@ package com.gt.member.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
+import com.gt.entityBo.PaySuccessBo;
 import com.gt.member.base.BaseController;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.entity.MemberCard;
@@ -17,6 +18,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -524,7 +526,6 @@ public class MemberApiController extends BaseController {
 //    }
 
 
-
     @ApiOperation( value = "（单门店）结算支付成功会员处理支持多种支付数据保存 支付多种支付", notes = "结算支付成功会员处理（包括储值卡扣款、卡券核销、积分粉币扣除、赠送物品）" )
     @ApiImplicitParam( name = "newErpPaySuccessBo", value = "erp结算核销对象 实体类ErpPaySuccessBo", paramType = "query", required = true, dataType = "String" )
     @ResponseBody
@@ -563,5 +564,25 @@ public class MemberApiController extends BaseController {
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
+    }
+
+
+    @ApiOperation( value = "积分兑换商品", notes = "积分兑换商品" )
+    @ApiImplicitParams( {
+		    @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "shopId", value = "门店id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "intergral", value = "兑换积分", paramType = "query", required = true, dataType = "int" ),
+
+    } )
+     @ResponseBody
+    @RequestMapping( value = "/jifenExchange", method = RequestMethod.POST )
+    public ServerResponse jifenExchange(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    memberApiService.jifenExchange( param );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+
     }
 }

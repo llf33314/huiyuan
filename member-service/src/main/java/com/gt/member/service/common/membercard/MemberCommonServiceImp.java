@@ -1,4 +1,4 @@
-package com.gt.member.service.common;
+package com.gt.member.service.common.membercard;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Member;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -931,5 +930,30 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	r.setId( recommend.getId() );
 	r.setUserNum( recommend.getUserNum() + 1 );
 	memberRecommendDAO.updateById( r );
+    }
+
+
+
+    @Override
+    public List<Integer> findMemberIds(Integer memberId) {
+	List<Integer> list = new ArrayList<Integer>();
+	MemberEntity member = memberEntityDAO.selectById(memberId);
+	if (CommonUtil.isEmpty(member.getOldId())) {
+	    list.add(memberId);
+	    return list;
+	}
+	String[] str = member.getOldId().split(",");
+	for (int i = 0; i < str.length; i++) {
+	    if (CommonUtil.isNotEmpty(str[i]) && !str[i].contains("null")
+			    && !list.contains(CommonUtil.toInteger(str[i]))) {
+		list.add(CommonUtil.toInteger(str[i]));
+	    }
+	}
+
+	if (!list.contains(memberId)) {
+	    list.add(memberId);
+	}
+
+	return list;
     }
 }

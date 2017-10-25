@@ -332,6 +332,13 @@ public interface CardCouponsApiService {
      * @return
      */
     public Map<String,Object> findCardDetails(Integer gid);
-    // <!-------------------多粉对外接口end---------------------->
 
+
+    /**
+     * 查询卡券数量
+     * @param memberId
+     * @return
+     * @throws BusinessException
+     */
+    public Integer countMemberDuofenCard(Integer memberId) throws BusinessException;
 }
