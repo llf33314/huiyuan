@@ -38,4 +38,10 @@ public interface WxCardReceiveDAO extends BaseMapper<WxCardReceive> {
 
     List<Map<String, Object>> findByCodeAndPublicId(@Param("publicId")Integer publicId, @Param("cardcode")String cardcode);
 
+    /**
+     * 查询优惠券数量
+     * @param openId
+     * @return
+     */
+    Integer countReceive(@Param("openId")String openId);
 }
