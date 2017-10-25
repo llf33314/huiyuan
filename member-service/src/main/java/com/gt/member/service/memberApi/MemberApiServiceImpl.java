@@ -2385,6 +2385,20 @@ public class MemberApiServiceImpl implements MemberApiService {
     }
 
 
+    /**
+     * erp计算 会员卡核销接口（包括储值卡扣款 、 借款、优惠券核销 、积分、粉币）
+     *
+     * @param newErpPaySuccessBos
+     */
+    @Transactional
+    public void newPaySuccessShopsByErpBalance( String newErpPaySuccessBos ) throws BusinessException{
+	List<NewErpPaySuccessBo> list= JSON.parseArray( newErpPaySuccessBos,NewErpPaySuccessBo.class );
+	for(NewErpPaySuccessBo newErpPaySuccessBo:list){
+	    newPaySuccessByErpBalance(JSON.toJSONString( newErpPaySuccessBo ));
+	}
+    }
+
+
 
     public void refundErp(String erpRefundBo) throws BusinessException{
        try {
