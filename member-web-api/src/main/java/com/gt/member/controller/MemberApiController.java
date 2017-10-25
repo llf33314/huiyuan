@@ -526,7 +526,6 @@ public class MemberApiController extends BaseController {
 //    }
 
 
-
     @ApiOperation( value = "结算支付成功会员处理支持多种支付数据保存 支付多种支付", notes = "结算支付成功会员处理（包括储值卡扣款、卡券核销、积分粉币扣除、赠送物品）" )
     @ApiImplicitParam( name = "newErpPaySuccessBo", value = "erp结算核销对象 实体类ErpPaySuccessBo", paramType = "query", required = true, dataType = "String" )
     @ResponseBody
@@ -551,5 +550,25 @@ public class MemberApiController extends BaseController {
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
+    }
+
+
+    @ApiOperation( value = "积分兑换商品", notes = "积分兑换商品" )
+    @ApiImplicitParams( {
+		    @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "shopId", value = "门店id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "intergral", value = "兑换积分", paramType = "query", required = true, dataType = "int" ),
+
+    } )
+     @ResponseBody
+    @RequestMapping( value = "/jifenExchange", method = RequestMethod.POST )
+    public ServerResponse jifenExchange(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    memberApiService.jifenExchange( param );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+
     }
 }

@@ -422,4 +422,11 @@ public interface MemberApiService {
      * @param jifen
      */
     public void updateJifen( Integer memberId, Integer jifen ) throws BusinessException;
+
+    /**
+     * 积分兑换商品
+     * @param json
+     * @throws BusinessException
+     */
+    public void jifenExchange(String json) throws BusinessException;
 }

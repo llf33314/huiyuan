@@ -88,7 +88,7 @@ public class AddMemberController {
     @RequestMapping( "/erpAddMember" )
     public String erpAddMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
         Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
-	Integer loginStyle = SessionUtil.getLoginStyle( request );
+        Integer loginStyle = SessionUtil.getLoginStyle( request );
 	Integer userId = 0;
 	if ( "0".equals( loginStyle ) ) {
 	    TCommonStaffEntity tc = SessionUtil.getCommonStaff( request );

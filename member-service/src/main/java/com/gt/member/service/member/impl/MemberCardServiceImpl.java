@@ -10,7 +10,7 @@ import java.util.Map;
 
 import com.gt.member.dao.*;
 import com.gt.member.entity.*;
-import com.gt.member.service.common.MemberCommonService;
+import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.PropertiesUtil;

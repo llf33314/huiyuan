@@ -1,4 +1,4 @@
-package com.gt.member.service.common;
+package com.gt.member.service.common.membercard;
 
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;

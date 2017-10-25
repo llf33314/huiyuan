@@ -7,7 +7,6 @@ import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.RequestUtils;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.common.entity.BusUserEntity;
-import com.gt.common.entity.FenbiFlowRecord;
 import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.common.entity.WxShop;
 import com.gt.member.dao.common.BusUserDAO;
@@ -22,8 +21,9 @@ import com.gt.member.entity.DuofenCardReceive;
 import com.gt.member.entity.DuofenCardReceivelog;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
-import com.gt.member.service.common.MemberCommonService;
+import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.common.dict.DictService;
+import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.util.*;
 import com.gt.util.entity.param.sms.OldApiSms;
@@ -47,12 +47,6 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
     private static final Logger LOG = LoggerFactory.getLogger(CardCouponsApiServiceImpl.class);
 
-    //微信卡券核销
-    private final String CODE_CONSUME = "/8A5DA52E/wxcardapi/6F6D9AD2/79B4DE7C/codeConsume.do";
-
-    //发送短信
-    private final String SEND_SMS = "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do";
-
     @Autowired
     private WxCardDAO wxCardMapper;
 
@@ -74,23 +68,6 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     @Autowired
     private MemberEntityDAO memberMapper;
 
-    @Autowired
-    private MemberCardService memberCardService;
-
-    @Autowired
-    private MemberCardDAO cardMapper;
-
-    @Autowired
-    private MemberGiveruleDAO giveRuleMapper;
-
-    @Autowired
-    private DictService dictService;
-
-    @Autowired
-    private UserConsumeDAO userConsumeMapper;
-
-    @Autowired
-    private MemberCardrecordDAO cardRecordMapper;
 
     @Autowired
     private BusUserDAO busUserDAO;
@@ -101,29 +78,19 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     @Autowired
     private WxPublicUsersDAO wxPublicUsersDAO;
 
-    @Autowired
-    private FenbiFlowRecordDAO fenbiFlowRecordDAO;
 
     @Autowired
     private MemberCommonService memberCommonService;
 
-    //	@Autowired
-    //	private BusUserBranchRelationMapper busUserBranchRelationMapper;
-
-    //	@Autowired
-    //	private CouponMallPutlistService couponMallPutlistService;
-    //
-    //	@Autowired
-    //	private CouponMallOrderService couponMallOrderService;
-    //
-    //	@Autowired
-    //	private IStoreService storeService;
 
     @Autowired
     private MemberRecommendDAO recommendMapper;
 
     @Autowired
     private WxShopDAO wxShopDAO;
+
+    @Autowired
+    private RequestService requestService;
 
     //<!-----------卡券对外接口Start------------>
     @Override
@@ -258,12 +225,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             }
 
             WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersDAO.selectById( wxPublicUsersId );
-            String url= PropertiesUtil.getWxmp_home()+CODE_CONSUME;
-            String getWxmpsignKey= PropertiesUtil.getWxmpsignKey();
-            map.put( "card_id", wcr.getCardId());
-            map.put( "code",code );
-            map.put( "busId", wxPublicUsersEntity.getBusUserId() );
-            String result= SignHttpUtils.postByHttp(url,map,getWxmpsignKey);
+            String result=requestService.codeConsume( wcr.getCardId(),code,wxPublicUsersEntity.getBusUserId() );
 
             JSONObject returnJSON =JSONObject.parseObject( result);
             if (!"0".equals(returnJSON.get("code").toString())) {
@@ -293,12 +255,8 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             }
             Map<String, Object> map = new HashMap<>();
             WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersDAO.selectById( wxPublicUsersId );
-            String url= PropertiesUtil.getWxmp_home()+CODE_CONSUME;
-            String getWxmpsignKey= PropertiesUtil.getWxmpsignKey();
-            map.put( "card_id", wcr.getCardId());
-            map.put( "code",code );
-            map.put( "busId", wxPublicUsersEntity.getBusUserId() );
-            String result=SignHttpUtils.postByHttp(url,map,getWxmpsignKey);
+            String result=requestService.codeConsume( wcr.getCardId(),code,wxPublicUsersEntity.getBusUserId() );
+
 
             JSONObject returnJSON =JSONObject.parseObject( result);
             if (!"0".equals(returnJSON.get("code").toString())) {
@@ -669,7 +627,6 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 // 短信通知
                 if (receives.getIsCallSms() == 1) {
                     try {
-                        String url=PropertiesUtil.getWxmp_home()+SEND_SMS;
                         RequestUtils<OldApiSms> requestUtils=new RequestUtils<OldApiSms>(  );
 
                         OldApiSms oldApiSms=new OldApiSms();
@@ -680,7 +637,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                         oldApiSms.setModel(12);
                         requestUtils.setReqdata( oldApiSms );
                         try {
-                            String smsStr = HttpClienUtils.reqPostUTF8(JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
+                            requestService.sendSms( requestUtils );
                         } catch ( Exception e ) {
                             LOG.error( "短信发送失败", e );
                         }
@@ -1015,7 +972,6 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             if (dfcr.getIsCallSms() == 1) {
                 try {
                     RequestUtils<OldApiSms> requestUtils=new RequestUtils<OldApiSms>(  );
-                    String url=PropertiesUtil.getWxmp_home()+SEND_SMS;
                     OldApiSms oldApiSms=new OldApiSms();
                     oldApiSms.setMobiles(dfcr.getMobilePhone()  );
                     oldApiSms.setContent( "用户领取一个包,包名：" + dfcr.getCardsName() );
@@ -1023,8 +979,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                     oldApiSms.setBusId(memberEntity.getBusId());
                     oldApiSms.setModel(12);
                     requestUtils.setReqdata( oldApiSms );
-                    String smsStr = HttpClienUtils.reqPostUTF8(JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
-
+                    requestService.sendSms( requestUtils );
                 }catch ( Exception e ){
                     LOG.error( "短信发送失败",e );
                 }
@@ -1278,7 +1233,6 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
             if (dfcr.getIsCallSms() == 1) {
                 try {
                     RequestUtils<OldApiSms> requestUtils=new RequestUtils<OldApiSms>(  );
-                    String url=PropertiesUtil.getWxmp_home()+SEND_SMS;
                     OldApiSms oldApiSms=new OldApiSms();
                     oldApiSms.setMobiles(dfcr.getMobilePhone()  );
                     oldApiSms.setContent( "用户领取一个包,包名：" + dfcr.getCardsName() );
@@ -1286,8 +1240,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                     oldApiSms.setBusId(busId);
                     oldApiSms.setModel(12);
                     requestUtils.setReqdata( oldApiSms );
-                    String smsStr = HttpClienUtils.reqPostUTF8(JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
-
+                    requestService.sendSms( requestUtils );
                 }catch ( Exception e ){
                     LOG.error( "短信发送失败",e );
                 }
@@ -1362,7 +1315,6 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 if (receives.getIsCallSms() == 1) {
                     try {
                         RequestUtils<OldApiSms> requestUtils=new RequestUtils<OldApiSms>(  );
-                        String url=PropertiesUtil.getWxmp_home()+SEND_SMS;
                         OldApiSms oldApiSms=new OldApiSms();
                         oldApiSms.setMobiles(receives.getMobilePhone()  );
                         oldApiSms.setContent( "用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券" );
@@ -1370,8 +1322,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                         oldApiSms.setBusId( memberEntity.getBusId() );
                         oldApiSms.setModel(12);
                         requestUtils.setReqdata( oldApiSms );
-                        String smsStr = HttpClienUtils.reqPostUTF8(JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
-
+                        requestService.sendSms( requestUtils );
                     }catch ( Exception e ){
                         LOG.error( "短信发送失败",e );
                     }
@@ -1546,7 +1497,6 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                 if (receives.getIsCallSms() == 1) {
                     try {
                         RequestUtils<OldApiSms> requestUtils=new RequestUtils<OldApiSms>(  );
-                        String url=PropertiesUtil.getWxmp_home()+SEND_SMS;
                         OldApiSms oldApiSms=new OldApiSms();
                         oldApiSms.setMobiles(receives.getMobilePhone()  );
                         oldApiSms.setContent( "用户购买了" + num + "个" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券" );
@@ -1554,8 +1504,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
                         oldApiSms.setBusId( memberEntity.getBusId() );
                         oldApiSms.setModel(12);
                         requestUtils.setReqdata( oldApiSms );
-                        String smsStr = HttpClienUtils.reqPostUTF8(JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
-
+                        requestService.sendSms( requestUtils );
                     }catch ( Exception e ){
                         LOG.error( "短信发送失败",e );
                     }

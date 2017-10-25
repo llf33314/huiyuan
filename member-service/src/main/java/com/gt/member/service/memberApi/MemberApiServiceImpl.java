@@ -4,9 +4,10 @@
 package com.gt.member.service.memberApi;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.common.entity.BusUserEntity;
-import com.gt.common.entity.FenbiFlowRecord;
 import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.common.entity.WxShop;
 import com.gt.entityBo.*;
@@ -18,20 +19,17 @@ import com.gt.member.dao.common.WxShopDAO;
 import com.gt.member.entity.*;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
-import com.gt.member.service.common.MemberCommonService;
+import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.*;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -731,44 +729,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 		return memberEntity;
 	    } else {
 		MemberEntity m1 = memberDAO.selectById( memberId );
-
-		MemberEntity memberEntity = new MemberEntity();
-		memberEntity.setFlow( m1.getFlow() + oldMemberEntity.getFlow() );
-		memberEntity.setIntegral( m1.getIntegral() + oldMemberEntity.getIntegral() );
-		memberEntity.setFansCurrency( m1.getFansCurrency() + oldMemberEntity.getFansCurrency() );
-		memberEntity.setId( oldMemberEntity.getId() );
-
-		if ( CommonUtil.isNotEmpty( oldMemberEntity.getOldId() ) && !oldMemberEntity.getOldId().contains( oldMemberEntity.getId().toString() ) ) {
-		    memberEntity.setOldId( oldMemberEntity.getOldId() + "," + oldMemberEntity.getId() + "," + m1.getId() );
-		} else {
-		    if ( CommonUtil.isNotEmpty( oldMemberEntity.getOldId() ) ) {
-			memberEntity.setOldId( oldMemberEntity.getOldId() + "," + m1.getId() );
-		    } else {
-			memberEntity.setOldId( m1.getId() + "," );
-		    }
-		}
-		if ( CommonUtil.isEmpty( oldMemberEntity.getOpenid() ) ) {
-		    memberEntity.setOpenid( m1.getOpenid() );
-		}
-
-		if ( CommonUtil.isEmpty( oldMemberEntity.getPublicId() ) && CommonUtil.isNotEmpty( m1.getPublicId() ) ) {
-		    memberEntity.setPublicId( m1.getPublicId() );
-		}
-
-		if ( CommonUtil.isEmpty( oldMemberEntity.getHeadimgurl() ) ) {
-		    memberEntity.setHeadimgurl( m1.getHeadimgurl() );
-		}
-
-		memberDAO.deleteById( m1.getId() );
-		memberDAO.updateById( memberEntity );
-
-		MemberOld old = (MemberOld) JSONObject.toBean( JSONObject.fromObject( m1 ), MemberOld.class );
-		memberOldMapper.insert( old );
-		// 修改小程序之前openId对应的memberId
-		memberAppletOpenidMapper.updateMemberId( memberEntity.getId(), m1.getId() );
-
-		memberEntity.setPhone( phone );
-		return memberEntity;
+		memberCommonService.newMemberMerge(m1,busId,phone);
+		return m1;
 	    }
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
@@ -1008,7 +970,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    }
 		    if ( list.size() > 0 ) {
 			map.put( "code", 1 );
-			map.put( "cardList", JSONArray.fromObject( list ) );
+			map.put( "cardList", JSONArray.toJSONString( list ) );
 		    }
 		}
 		// 查询能使用的多粉优惠券
@@ -1176,7 +1138,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    }
 		    if ( list.size() > 0 ) {
 			map.put( "code", 1 );
-			map.put( "cardList", JSONArray.fromObject( list ) );
+			map.put( "cardList", JSONArray.toJSONString( list ) );
 		    }
 		}
 
@@ -1479,7 +1441,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    LOG.error( "支付成功回调异常" + JSONObject.fromObject( paySuccessBo ), e );
+	    LOG.error( "支付成功回调异常" + JSONArray.toJSONString( paySuccessBo ), e );
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
 
@@ -1722,7 +1684,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 			}
 			if ( list.size() > 0 ) {
 			    map.put( "code", 1 );
-			    map.put( "cardList" + shopId, JSONArray.fromObject( list ) );
+			    map.put( "cardList" + shopId, JSONArray.toJSONString( list ) );
 			}
 		    }
 		}
@@ -2286,7 +2248,11 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    uc.setShopId( erpPaySuccess.getStoreId() );
 	    uc.setDataSource( 5 );
 	    uc.setIsend( 0 );
-
+	    if(erpPaySuccess.getIsendDate()>0) {
+		uc.setIsendDate( new Date( erpPaySuccess.getIsendDate() ) );
+	    }else{
+		uc.setIsendDate( new Date( ) );
+	    }
 	    uc.setIntegral( erpPaySuccess.getJifenNum() );
 	    uc.setFenbi( erpPaySuccess.getFenbiNum() );
 	    if ( erpPaySuccess.getUseCoupon() == 1 ) {
@@ -2518,6 +2484,74 @@ public class MemberApiServiceImpl implements MemberApiService {
 	if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
 	    memberCommonService.saveCardRecordOrderCodeNew(memberId, 2, jifen.doubleValue(), "商场积分", memberEntity.getBusId(), banlan.doubleValue(), null, 0 );
 	}
+    }
 
+    public void jifenExchange(String json) throws BusinessException{
+	try {
+	    JSONObject jsonObject=JSONObject.parseObject( json );
+
+	    Integer memberId=jsonObject.getInteger( "memberId" );
+	    Integer shopId=jsonObject.getInteger( "shopId" );
+
+	    MemberEntity member = memberDAO.selectById(memberId );
+	    if ( CommonUtil.isEmpty( member.getMcId() ) ) {
+		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
+	    }
+
+	    Integer intergral=jsonObject.getInteger( "intergral" );
+
+	    Integer jifen = member.getIntegral();
+	    if ( intergral > jifen ) {
+		throw new BusinessException( ResponseMemberEnums.MEMBER_LESS_JIFEN );
+	    }
+
+	    MemberEntity mem = new MemberEntity();
+	    mem.setId( member.getId() );
+	    Integer shenyuJifen = member.getIntegral() - intergral;
+	    mem.setIntegral( shenyuJifen );
+	    memberDAO.updateById( mem );
+
+	    MemberCard memberCard=memberCardDAO.selectById( member.getMcId() );
+	    // 添加会员记录
+	    UserConsumeNew uc = new UserConsumeNew();
+	    uc.setBusId( member.getBusId() );
+	    uc.setMemberId( member.getId() );
+	    uc.setMcId( memberCard.getMcId() );
+	    uc.setCtId( memberCard.getCtId() );
+	    uc.setGtId( memberCard.getGtId() );
+	    uc.setRecordType( 0 );
+	    uc.setCreateDate( new Date() );
+	    uc.setUcType( 5 );
+	    uc.setIntegral( intergral );
+	    uc.setFenbi( 0.0 );
+	    uc.setUccount( 0 );
+	    uc.setDiscountMoney( 0.0 );
+	    String orderCode = CommonUtil.getMEOrderCode();
+	    uc.setOrderCode( orderCode );
+	    uc.setDataSource( 0 );
+	    uc.setIsendDate( new Date() );
+	    uc.setIsend( 1 );
+	    uc.setBalance( shenyuJifen.doubleValue() );
+	    uc.setPayStatus(1);
+
+
+	    uc.setShopId( shopId );
+
+	    userConsumeNewDAO.insert( uc );
+
+	    UserConsumePay ucPay = new UserConsumePay();
+	    ucPay.setUcId( uc.getId() );
+	    ucPay.setPaymentType( 11 );
+	    ucPay.setPayMoney( 0.0 );
+	    userConsumePayDAO.insert( ucPay );
+
+	    memberCommonService.saveCardRecordOrderCodeNew( member.getId(),  2, intergral.doubleValue(), "积分兑换", member.getBusId(), shenyuJifen.doubleValue(), orderCode,
+			    0 );
+
+	}catch ( BusinessException e ){
+	    throw  e;
+	}catch ( Exception e ){
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
     }
 }

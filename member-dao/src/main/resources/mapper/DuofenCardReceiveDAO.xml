@@ -112,7 +112,7 @@
 
 	<select id="findByBusUserId" resultType="Map">
 		select <include refid="Base_Column_List" />  from t_duofen_card_receive
-		where busId=#{busUserId}  and state=1 and deliveryAddr=2 and (receiveDate&gt;=#{date} or receiveDate is null)
+		where busId=#{busUserId}  and state=1 and deliveryAddr=2 and (receiveDate&gt;=#{date} or receiveDate is null) order by id desc
 	</select>
 
 
