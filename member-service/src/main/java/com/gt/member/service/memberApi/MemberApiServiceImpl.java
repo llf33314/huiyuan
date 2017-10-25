@@ -2289,7 +2289,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    List<PayTypeBo> payTypeBos=erpPaySuccess.getPayTypeBos();
 	    if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
 		card = cardMapper.selectById( memberEntity.getMcId() );
-		if ( CommonUtil.isNotEmpty( card ) ) {
+		if ( CommonUtil.isEmpty( card ) ) {
 		    throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
 		}
 		uc.setCtId( card.getCtId() );
