@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.RequestUtils;
+import com.gt.api.util.SessionUtils;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.TCommonStaffEntity;
 import com.gt.common.entity.WxPublicUsersEntity;
@@ -71,12 +72,9 @@ public class CardController {
     @ResponseBody
     @RequestMapping( value="/findCardType", method = RequestMethod.GET )
     public ServerResponse findCardType(HttpServletRequest request, HttpServletResponse response){
-	SessionUtil.setLoginStyle( request,1 );
-	BusUserEntity busUserEntity=busUserMapper.selectById( 36 );
-	SessionUtil.setLoginUser( request,busUserEntity );
-	SessionUtil.setPidBusId( request,36 );
 	try {
-	    List< MemberCardtype > cardTypes = memberCardService.findCardType( busUserEntity.getId() );
+	    Integer busId= SessionUtils.getPidBusId( request);
+	    List< MemberCardtype > cardTypes = memberCardService.findCardType( busId);
 	    return ServerResponse.createBySuccess( cardTypes );
 	}catch ( Exception e ){
 	    LOG.error( "查询会员卡类型异常：", e );
@@ -92,7 +90,7 @@ public class CardController {
     @RequestMapping( value="/editGradeTypeFrist", method = RequestMethod.GET )
     public ServerResponse editGradeTypeFrist( HttpServletRequest request, HttpServletResponse response, Integer ctId ) {
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    Map< String,Object > map = memberCardService.editGradeTypeFrist( busId, ctId );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( Exception e ) {
@@ -108,7 +106,7 @@ public class CardController {
     @RequestMapping( value="/editGradeTypeSecond", method = RequestMethod.GET )
     public ServerResponse editGradeTypeSecond( HttpServletRequest request, HttpServletResponse response, Integer ctId ) {
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    Map< String,Object > map = memberCardService.editGradeTypeSecond( busId, ctId );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( Exception e ) {
@@ -123,7 +121,7 @@ public class CardController {
     @RequestMapping( value="/findCardModel", method = RequestMethod.GET )
     public ServerResponse findCardModel( HttpServletRequest request, HttpServletResponse response ) {
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    List< MemberCardmodel > cardmodels = memberCardService.findCardModel( busId );
 	    return ServerResponse.createBySuccess( cardmodels );
 	} catch ( Exception e ) {
@@ -139,7 +137,7 @@ public class CardController {
     @RequestMapping( value = "/saveCardModel" , method = RequestMethod.GET)
     public ServerResponse saveCardModel( HttpServletRequest request, HttpServletResponse response, @RequestParam String param){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.saveCardModel(busId, param);
 	    return ServerResponse.createBySuccess(  );
 	} catch ( Exception e ) {
@@ -155,7 +153,7 @@ public class CardController {
     @RequestMapping( value = "/editGradeTypeThird" , method = RequestMethod.GET)
     public ServerResponse editGradeTypeThird( HttpServletRequest request, HttpServletResponse response, Integer ctId ){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.editGradeTypeThird(busId, ctId);
 	    return ServerResponse.createBySuccess(  );
 	} catch ( Exception e ) {

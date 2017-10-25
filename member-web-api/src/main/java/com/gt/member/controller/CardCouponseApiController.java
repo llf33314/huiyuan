@@ -597,7 +597,7 @@ public class CardCouponseApiController {
     @ResponseBody
     @RequestMapping (value = "/countMemberDuofenCard",method = RequestMethod.POST)
     public ServerResponse countMemberDuofenCard(HttpServletRequest request,
-                    HttpServletResponse response,String param){
+                    HttpServletResponse response,@RequestBody String param){
         try {
             Map<String,Object> requestBody= JSONObject.parseObject(param);
             Integer memberId= CommonUtil.toInteger( requestBody.get( "memberId" ) );
@@ -608,6 +608,9 @@ public class CardCouponseApiController {
         }
 
     }
+
+
+
 
 
 
