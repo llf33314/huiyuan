@@ -1721,7 +1721,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 			    }
 			}
 			if ( list.size() > 0 ) {
-			    map.put( "code", 1 );
 			    map.put( "cardList" + shopId, JSONArray.fromObject( list ) );
 			}
 		    }
@@ -2284,8 +2283,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 	    uc.setOrderCode( erpPaySuccess.getOrderCode() );
 	    uc.setShopId( erpPaySuccess.getStoreId() );
-	    uc.setDataSource( 5 );
+	    uc.setDataSource( erpPaySuccess.getDataSource() );
 	    uc.setIsend( 0 );
+
 
 	    uc.setIntegral( erpPaySuccess.getJifenNum() );
 	    uc.setFenbi( erpPaySuccess.getFenbiNum() );
@@ -2416,6 +2416,20 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
 
+    }
+
+
+    /**
+     * erp计算 会员卡核销接口（包括储值卡扣款 、 借款、优惠券核销 、积分、粉币）
+     *
+     * @param newErpPaySuccessBos
+     */
+    @Transactional
+    public void newPaySuccessShopsByErpBalance( String newErpPaySuccessBos ) throws BusinessException{
+        List<NewErpPaySuccessBo> list= JSON.parseArray( newErpPaySuccessBos,NewErpPaySuccessBo.class );
+        for(NewErpPaySuccessBo newErpPaySuccessBo:list){
+	    newPaySuccessByErpBalance(JSON.toJSONString( newErpPaySuccessBo ));
+	}
     }
 
 

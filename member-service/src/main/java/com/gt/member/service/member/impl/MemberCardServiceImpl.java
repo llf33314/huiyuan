@@ -146,6 +146,9 @@ public class MemberCardServiceImpl implements MemberCardService {
     @Autowired
     private PublicParametersetDAO publicParameterSetMapper;
 
+    @Autowired
+    private MemberPicklogDAO memberPicklogDAO;
+
 
     /**
      * 查询会员卡类型
@@ -2235,7 +2238,103 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    LOG.error( "查询订单详情异常",e );
 	    throw  new BusinessException( ResponseEnums.ERROR );
 	}
+    }
 
+    public Page findCommend(Integer busId, Map<String, Object> params) throws BusinessException{
+	try {
+	    params.put("curPage", CommonUtil.isEmpty(params.get("curPage")) ? 1
+			    : CommonUtil.toInteger(params.get("curPage")));
+	    int pageSize = 10;
+	    Object search1 = params.get("search");
+	    String search = null;
+	    if (CommonUtil.isNotEmpty(search1)) {
+		search = search1.toString();
+	    }
+	    Integer recommendType = null;
+	    if (CommonUtil.isNotEmpty(params.get("recommendType"))) {
+		recommendType = CommonUtil.toInteger(params
+				.get("recommendType"));
+	    }
+
+	    int rowCount = memberMapper.countCommend(busId, search,
+			    recommendType);
+
+	    Page page = new Page(CommonUtil.toInteger(params.get("curPage")),
+			    pageSize, rowCount, "");
+	    params.put("firstResult", pageSize
+			    * ((page.getCurPage() <= 0 ? 1 : page.getCurPage()) - 1));
+	    params.put("maxResult", pageSize);
+	    List<Map<String, Object>> list = memberMapper.findCommend(busId,
+			    search, CommonUtil.toInteger(params.get("firstResult")),
+			    pageSize, recommendType);
+	    List<Map<String, Object>> memberList = new ArrayList<Map<String, Object>>();
+	    for (Map<String, Object> map : list) {
+		if (map.containsKey("nickname")) {
+		    try {
+			byte[] bytes = (byte[]) map.get("nickname");
+			map.put("nickname", new String(bytes, "UTF-8"));
+		    } catch (Exception e) {
+			map.put("nickname", null);
+		    }
+		    memberList.add(map);
+		} else {
+		    memberList.add(map);
+		}
+	    }
+	    page.setSubList(memberList);
+	    return page;
+	} catch (Exception e) {
+	    LOG.error( "查询推荐记录异常",e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+    /**
+     * 推荐佣金提取记录
+     * @param busId
+     * @param params
+     * @return
+     */
+    public Page findPickLog(Integer busId,Map<String, Object> params)throws  BusinessException{
+	try {
+	    params.put("curPage", CommonUtil.isEmpty(params.get("curPage")) ? 1
+			    : CommonUtil.toInteger(params.get("curPage")));
+	    int pageSize = 10;
+	    Object search1 = params.get("phone");
+	    String search = null;
+	    if (CommonUtil.isNotEmpty(search1)) {
+		search = search1.toString();
+	    }
+	    int rowCount = memberPicklogDAO.countPickLog(busId, search);
+	    Page page = new Page(CommonUtil.toInteger(params.get("curPage")),
+			    pageSize, rowCount, "");
+	    params.put("firstResult", pageSize
+			    * ((page.getCurPage() <= 0 ? 1 : page.getCurPage()) - 1));
+	    params.put("maxResult", pageSize);
+	    List<Map<String, Object>> list = memberPicklogDAO.findPickLog(
+			    busId, search,
+			    CommonUtil.toInteger(params.get("firstResult")), pageSize);
+	    List<Map<String, Object>> memberList = new ArrayList<Map<String, Object>>();
+	    for (Map<String, Object> map : list) {
+		if (map.containsKey("nickname")) {
+		    try {
+			byte[] bytes = (byte[]) map.get("nickname");
+			map.put("nickname", new String(bytes, "UTF-8"));
+		    } catch (Exception e) {
+			map.put("nickname", null);
+		    }
+		    memberList.add(map);
+		} else {
+		    memberList.add(map);
+		}
+
+	    }
+	    page.setSubList(memberList);
+	    return page;
+	} catch (Exception e) {
+	    LOG.error( "佣金提取记录异常",e );
+	    throw  new BusinessException( ResponseEnums.ERROR );
+	}
     }
 
 }

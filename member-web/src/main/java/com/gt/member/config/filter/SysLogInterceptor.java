@@ -1,8 +1,9 @@
 package com.gt.member.config.filter;
 
+import com.gt.api.bean.session.BusUser;
+import com.gt.api.util.SessionUtils;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.member.dao.common.BusUserDAO;
-import com.gt.member.util.SessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -67,11 +68,11 @@ public class SysLogInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle( HttpServletRequest request,
 		    HttpServletResponse response, Object handler ) throws Exception {
-	SessionUtil.setLoginStyle( request, 1 );
-	BusUserEntity busUserEntity = new BusUserEntity();
-	busUserEntity.setId( 36 );
-	SessionUtil.setLoginUser( request, busUserEntity );
-	SessionUtil.setPidBusId( request, 36 );
+	SessionUtils.setLoginStyle( request, 1 );
+	BusUser busUser=new BusUser();
+	busUser.setId( 36 );
+	SessionUtils.setLoginUser( request, busUser );
+	SessionUtils.setPidBusId( request, 36 );
 
 	return super.preHandle( request, response, handler );
     }

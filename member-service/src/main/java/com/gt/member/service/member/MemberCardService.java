@@ -286,4 +286,22 @@ public interface MemberCardService {
      */
     public Map<String,Object> findXiaoFeiLogDetails(Integer ucId) throws BusinessException;
 
+    /**
+     * 会员推荐
+     * @param busId
+     * @param params
+     * @return
+     * @throws BusinessException
+     */
+    public Page findCommend(Integer busId, Map<String, Object> params) throws BusinessException;
+
+
+    /**
+     * 推荐佣金提取记录
+     * @param busId
+     * @param params
+     * @return
+     */
+    public Page findPickLog(Integer busId,Map<String, Object> params)throws BusinessException;
+
 }

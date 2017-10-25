@@ -1,8 +1,8 @@
 package com.gt.member.controller.member_pc;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.gt.api.enums.ResponseEnums;
+import com.gt.api.util.SessionUtils;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
@@ -12,7 +12,6 @@ import com.gt.member.service.member.MemberCardService;
 import com.gt.member.service.member.MemberNoticeService;
 import com.gt.member.util.Page;
 import com.gt.member.util.RedisCacheUtil;
-import com.gt.member.util.SessionUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -66,7 +65,7 @@ public class MemberController {
     public ServerResponse findMember(HttpServletRequest request, HttpServletResponse response,Map<String,Object> params ){
 
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    Page page = memberCardService.findMember(busId, params );
 	    return ServerResponse.createBySuccess( page );
 	} catch ( Exception e ) {
@@ -87,7 +86,7 @@ public class MemberController {
     public ServerResponse cardBatchApplyChecked(HttpServletRequest request,
 		    HttpServletResponse response,String memberIds,Integer ischecked){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.cardBatchApplyChecked(busId, memberIds,ischecked );
 	    return ServerResponse.createBySuccess(  );
 	} catch ( BusinessException e ) {
@@ -108,7 +107,7 @@ public class MemberController {
     public ServerResponse cardApplyCheckedByOne(HttpServletRequest request,
 		    HttpServletResponse response,Integer memberId,Integer ischecked){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.cardApplyCheckedByOne(busId, memberId,ischecked );
 	    return ServerResponse.createBySuccess(  );
 	} catch ( BusinessException e ) {
@@ -117,10 +116,6 @@ public class MemberController {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
-
-
-
-
 
     @ApiOperation( value = "商家赠送积分、粉币", notes = "商家赠送积分、粉币" )
     @ApiImplicitParams({
@@ -134,7 +129,7 @@ public class MemberController {
     public ServerResponse addIntegralAndfenbi(HttpServletRequest request,
 		    HttpServletResponse response,String json){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.addIntegralAndfenbi(busId, json);
 	    return ServerResponse.createBySuccess(  );
 	} catch ( BusinessException e ) {
@@ -154,7 +149,7 @@ public class MemberController {
     public ServerResponse sendNoticeToUser(HttpServletRequest request,
 		    HttpServletResponse response,Integer id,String memberIds){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberNoticeService.sendNoticeToUser(id, memberIds);
 	    return ServerResponse.createBySuccess(  );
 	} catch ( BusinessException e ) {
@@ -218,18 +213,15 @@ public class MemberController {
 	}
     }
 
-    @ApiOperation( value = "查询会员详情", notes = "查询会员详情" )
-    @ApiImplicitParams({
-		    @ApiImplicitParam( name = "memberId", value = "会员id", paramType = "query", required = false, dataType = "int" )
-    })
+    @ApiOperation( value = "导入实体卡", notes = "导入实体卡" )
     @ResponseBody
     @RequestMapping( value = "/upLoadMember", method = RequestMethod.GET )
     public ServerResponse upLoadMember(HttpServletRequest request,
 		    HttpServletResponse response){
 	LOG.info("调用导入实体卡");
 	try {
-	    Integer danqianBusId=SessionUtil.getLoginUser( request ).getId();
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer danqianBusId=SessionUtils.getLoginUser( request ).getId();
+	    Integer busId = SessionUtils.getPidBusId( request );
 
 	    MultipartHttpServletRequest mulRequest = (MultipartHttpServletRequest) request;
 
@@ -245,7 +237,6 @@ public class MemberController {
 		} else {
 		    String redisStr="MEMBER_IMP_"+danqianBusId;
 		    redisCacheUtil.set(  redisStr, JSONArray.toJSONString(wbs),5*60);
-		    request.getSession().setAttribute("imp" + busId, wbs);
 		    return ServerResponse.createDataByError( ResponseMemberEnums.IMP_ERROR.getCode(), ResponseMemberEnums.IMP_ERROR.getMsg(),redisStr);
 		}
 	    }
@@ -298,7 +289,7 @@ public class MemberController {
     @RequestMapping( value = "/exportMember", method = RequestMethod.GET )
     public void exportMember(HttpServletRequest request,
 		    HttpServletResponse response, String json){
-	Integer busId = SessionUtil.getPidBusId( request );
+	Integer busId = SessionUtils.getPidBusId( request );
 
 	List<Map<String, Object>> listMap = memberCardService.findMember(busId,
 			json);
@@ -332,7 +323,7 @@ public class MemberController {
     public ServerResponse findMemberCardByCardNo(HttpServletRequest request,
 		    HttpServletResponse response,  String cardNo){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    Map<String,Object> map=memberCardService.findMemberCardByCardNo(busId,cardNo);
 	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
@@ -353,7 +344,7 @@ public class MemberController {
     public ServerResponse intergralConsume(HttpServletRequest request,
 		    HttpServletResponse response,String cardNo,Integer intergral){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.intergralConsume(busId,intergral,cardNo);
 	    return ServerResponse.createBySuccess(  );
 	} catch ( Exception e ) {
@@ -372,7 +363,7 @@ public class MemberController {
     public ServerResponse memberTongJi(HttpServletRequest request,
 		    HttpServletResponse response,Integer ctId,String startdate){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    Map<String,Object> map= memberCardService.memberTongJi(busId,ctId,startdate);
 	    return ServerResponse.createBySuccess(map  );
 	} catch ( BusinessException e ) {
@@ -393,7 +384,7 @@ public class MemberController {
     public ServerResponse findChongZhiLog(HttpServletRequest request,
 		    HttpServletResponse response,Map<String,Object> params){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    Page page= memberCardService.findChongZhiLog(busId,params);
 	    return ServerResponse.createBySuccess( page  );
 	} catch ( BusinessException e ) {
@@ -427,7 +418,7 @@ public class MemberController {
     public ServerResponse findDuiHuanLog(HttpServletRequest request,
 		    HttpServletResponse response,Map<String,Object> params){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    Page page= memberCardService.findDuiHuanLog(busId,params);
 	    return ServerResponse.createBySuccess( page  );
 	} catch ( BusinessException e ) {
@@ -462,7 +453,7 @@ public class MemberController {
     public ServerResponse findCiKaLog(HttpServletRequest request,
 		    HttpServletResponse response,Map<String,Object> params){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    Page page= memberCardService.findCikaLog(busId,params);
 	    return ServerResponse.createBySuccess( page  );
 	} catch ( BusinessException e ) {
@@ -499,7 +490,7 @@ public class MemberController {
     public ServerResponse findXiaoFeiLog(HttpServletRequest request,
 		    HttpServletResponse response,Map<String,Object> params){
 	try {
-	    Integer busId = SessionUtil.getPidBusId( request );
+	    Integer busId = SessionUtils.getPidBusId( request );
 	    Page page= memberCardService.findXiaoFeiLog(busId,params);
 	    return ServerResponse.createBySuccess( page  );
 	} catch ( BusinessException e ) {
@@ -524,11 +515,59 @@ public class MemberController {
 	}
     }
 
+    @ApiOperation( value = "工作台--推荐--会员推荐", notes = "会员推荐" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "cardNo", value = "卡号、手机号" , paramType = "query", required = false, dataType = "String" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findMemberCommend", method = RequestMethod.GET )
+    public ServerResponse findMemberCommend(HttpServletRequest request,
+		    HttpServletResponse response,Map<String,Object> params){
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    params.put( "recommendType",0 );
+	    Page page= memberCardService.findCommend(busId,params);
+	    return ServerResponse.createBySuccess( page  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
 
 
+    @ApiOperation( value = "工作台--推荐--优惠券推荐", notes = "会员推荐" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "cardNo", value = "卡号、手机号" , paramType = "query", required = false, dataType = "String" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findCardCommend", method = RequestMethod.GET )
+    public ServerResponse findCardCommend(HttpServletRequest request,
+		    HttpServletResponse response,Map<String,Object> params){
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    params.put( "recommendType",1 );
+	    Page page= memberCardService.findCommend(busId,params);
+	    return ServerResponse.createBySuccess( page  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
 
-
-
+    @ApiOperation( value = "工作台--推荐--佣金提取", notes = "会员推荐" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "phone", value = "手机号" , paramType = "query", required = false, dataType = "String" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findPickLog", method = RequestMethod.GET )
+    public ServerResponse findPickLog(HttpServletRequest request,
+		    HttpServletResponse response,Map<String,Object> params){
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    Page page= memberCardService.findPickLog(busId,params);
+	    return ServerResponse.createBySuccess( page  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
 
 
 
