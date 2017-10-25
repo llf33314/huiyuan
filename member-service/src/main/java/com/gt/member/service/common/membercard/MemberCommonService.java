@@ -3,6 +3,7 @@ package com.gt.member.service.common.membercard;
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
 
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
@@ -128,4 +129,5 @@ public interface MemberCommonService {
     public void tuijianGive( MemberRecommend recommend );
 
 
+    public List<Integer> findMemberIds(Integer memberId);
 }

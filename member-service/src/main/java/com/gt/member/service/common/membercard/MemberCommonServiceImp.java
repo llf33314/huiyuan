@@ -592,4 +592,29 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	r.setUserNum( recommend.getUserNum() + 1 );
 	memberRecommendDAO.updateById( r );
     }
+
+
+
+    @Override
+    public List<Integer> findMemberIds(Integer memberId) {
+	List<Integer> list = new ArrayList<Integer>();
+	MemberEntity member = memberEntityDAO.selectById(memberId);
+	if (CommonUtil.isEmpty(member.getOldId())) {
+	    list.add(memberId);
+	    return list;
+	}
+	String[] str = member.getOldId().split(",");
+	for (int i = 0; i < str.length; i++) {
+	    if (CommonUtil.isNotEmpty(str[i]) && !str[i].contains("null")
+			    && !list.contains(CommonUtil.toInteger(str[i]))) {
+		list.add(CommonUtil.toInteger(str[i]));
+	    }
+	}
+
+	if (!list.contains(memberId)) {
+	    list.add(memberId);
+	}
+
+	return list;
+    }
 }
