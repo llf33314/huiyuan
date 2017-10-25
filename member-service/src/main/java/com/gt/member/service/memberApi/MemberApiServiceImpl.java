@@ -729,44 +729,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 		return memberEntity;
 	    } else {
 		MemberEntity m1 = memberDAO.selectById( memberId );
-
-		MemberEntity memberEntity = new MemberEntity();
-		memberEntity.setFlow( m1.getFlow() + oldMemberEntity.getFlow() );
-		memberEntity.setIntegral( m1.getIntegral() + oldMemberEntity.getIntegral() );
-		memberEntity.setFansCurrency( m1.getFansCurrency() + oldMemberEntity.getFansCurrency() );
-		memberEntity.setId( oldMemberEntity.getId() );
-
-		if ( CommonUtil.isNotEmpty( oldMemberEntity.getOldId() ) && !oldMemberEntity.getOldId().contains( oldMemberEntity.getId().toString() ) ) {
-		    memberEntity.setOldId( oldMemberEntity.getOldId() + "," + oldMemberEntity.getId() + "," + m1.getId() );
-		} else {
-		    if ( CommonUtil.isNotEmpty( oldMemberEntity.getOldId() ) ) {
-			memberEntity.setOldId( oldMemberEntity.getOldId() + "," + m1.getId() );
-		    } else {
-			memberEntity.setOldId( m1.getId() + "," );
-		    }
-		}
-		if ( CommonUtil.isEmpty( oldMemberEntity.getOpenid() ) ) {
-		    memberEntity.setOpenid( m1.getOpenid() );
-		}
-
-		if ( CommonUtil.isEmpty( oldMemberEntity.getPublicId() ) && CommonUtil.isNotEmpty( m1.getPublicId() ) ) {
-		    memberEntity.setPublicId( m1.getPublicId() );
-		}
-
-		if ( CommonUtil.isEmpty( oldMemberEntity.getHeadimgurl() ) ) {
-		    memberEntity.setHeadimgurl( m1.getHeadimgurl() );
-		}
-
-		memberDAO.deleteById( m1.getId() );
-		memberDAO.updateById( memberEntity );
-
-		MemberOld old = (MemberOld) JSONObject.toBean( JSONObject.fromObject( m1 ), MemberOld.class );
-		memberOldMapper.insert( old );
-		// 修改小程序之前openId对应的memberId
-		memberAppletOpenidMapper.updateMemberId( memberEntity.getId(), m1.getId() );
-
-		memberEntity.setPhone( phone );
-		return memberEntity;
+		memberCommonService.newMemberMerge(m1,busId,phone);
+		return m1;
 	    }
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
@@ -1006,7 +970,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    }
 		    if ( list.size() > 0 ) {
 			map.put( "code", 1 );
-			map.put( "cardList", JSONArray.fromObject( list ) );
+			map.put( "cardList", JSONArray.toJSONString( list ) );
 		    }
 		}
 		// 查询能使用的多粉优惠券
@@ -1174,7 +1138,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    }
 		    if ( list.size() > 0 ) {
 			map.put( "code", 1 );
-			map.put( "cardList", JSONArray.fromObject( list ) );
+			map.put( "cardList", JSONArray.toJSONString( list ) );
 		    }
 		}
 
@@ -1467,17 +1431,17 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 	    if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
 		//会员立即送 和 延迟送  TODO
-//		if ( paySuccessBo.getDelay() == 0 ) {
-//		    findGiveRuleDelay( paySuccessBo.getOrderCode() );  //延迟送
-//		} else if ( paySuccessBo.getDelay() == 1 ) {
-//		    findGiveRule( paySuccessBo.getOrderCode(), "消费会员赠送", (byte) 1 );
-//		}
+		//		if ( paySuccessBo.getDelay() == 0 ) {
+		//		    findGiveRuleDelay( paySuccessBo.getOrderCode() );  //延迟送
+		//		} else if ( paySuccessBo.getDelay() == 1 ) {
+		//		    findGiveRule( paySuccessBo.getOrderCode(), "消费会员赠送", (byte) 1 );
+		//		}
 	    }
 
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    LOG.error( "支付成功回调异常" + JSONObject.fromObject( paySuccessBo ), e );
+	    LOG.error( "支付成功回调异常" + JSONArray.toJSONString( paySuccessBo ), e );
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
 
@@ -1719,6 +1683,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 			    }
 			}
 			if ( list.size() > 0 ) {
+			    map.put( "code", 1 );
 			    map.put( "cardList" + shopId, JSONArray.toJSONString( list ) );
 			}
 		    }
@@ -2324,7 +2289,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    List<PayTypeBo> payTypeBos=erpPaySuccess.getPayTypeBos();
 	    if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
 		card = cardMapper.selectById( memberEntity.getMcId() );
-		if ( CommonUtil.isNotEmpty( card ) ) {
+		if ( CommonUtil.isEmpty( card ) ) {
 		    throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
 		}
 		uc.setCtId( card.getCtId() );
@@ -2420,83 +2385,97 @@ public class MemberApiServiceImpl implements MemberApiService {
     }
 
 
+    /**
+     * erp计算 会员卡核销接口（包括储值卡扣款 、 借款、优惠券核销 、积分、粉币）
+     *
+     * @param newErpPaySuccessBos
+     */
+    @Transactional
+    public void newPaySuccessShopsByErpBalance( String newErpPaySuccessBos ) throws BusinessException{
+	List<NewErpPaySuccessBo> list= JSON.parseArray( newErpPaySuccessBos,NewErpPaySuccessBo.class );
+	for(NewErpPaySuccessBo newErpPaySuccessBo:list){
+	    newPaySuccessByErpBalance(JSON.toJSONString( newErpPaySuccessBo ));
+	}
+    }
+
+
 
     public void refundErp(String erpRefundBo) throws BusinessException{
-       try {
-	   ErpRefundBo erfb = JSON.toJavaObject( JSON.parseObject( erpRefundBo ), ErpRefundBo.class );
-	   UserConsumeNew uc = userConsumeNewDAO.findByCode( erfb.getBusId(),erfb.getOrderCode() );
-	   if ( CommonUtil.isEmpty( uc ) ) {
-	       throw new BusinessException( ResponseMemberEnums.NOT_ORDER );
-	   }
-	   if ( !DateTimeKit.laterThanNow( uc.getIsendDate() ) ) {
-	       throw new BusinessException( ResponseMemberEnums.END_ORDER );
-	   }
-	   UserConsumeNew updateUc = new UserConsumeNew();
-	   updateUc.setId( uc.getId() );
-	   Double refundMoney = uc.getRefundMoney() + erfb.getRefundMoney();
-	   updateUc.setRefundMoney( refundMoney );
+	try {
+	    ErpRefundBo erfb = JSON.toJavaObject( JSON.parseObject( erpRefundBo ), ErpRefundBo.class );
+	    UserConsumeNew uc = userConsumeNewDAO.findByCode( erfb.getBusId(),erfb.getOrderCode() );
+	    if ( CommonUtil.isEmpty( uc ) ) {
+		throw new BusinessException( ResponseMemberEnums.NOT_ORDER );
+	    }
+	    if ( !DateTimeKit.laterThanNow( uc.getIsendDate() ) ) {
+		throw new BusinessException( ResponseMemberEnums.END_ORDER );
+	    }
+	    UserConsumeNew updateUc = new UserConsumeNew();
+	    updateUc.setId( uc.getId() );
+	    Double refundMoney = uc.getRefundMoney() + erfb.getRefundMoney();
+	    updateUc.setRefundMoney( refundMoney );
 
-	   Boolean bool = false;
-	   MemberEntity member = memberDAO.selectById( uc.getMemberId() );
-	   MemberCard card = null;
-	   if ( CommonUtil.isNotEmpty( uc.getMcId() ) ) {
-	       card = memberCardDAO.selectById( uc.getMcId() );
-	   }
+	    Boolean bool = false;
+	    MemberEntity member = memberDAO.selectById( uc.getMemberId() );
+	    MemberCard card = null;
+	    if ( CommonUtil.isNotEmpty( uc.getMcId() ) ) {
+		card = memberCardDAO.selectById( uc.getMcId() );
+	    }
 
-	   MemberEntity upmember = new MemberEntity();
-	   upmember.setId( member.getId() );
-	   if ( erfb.getRefundJifen() > 0 ) {
-	       Integer refundJifen = uc.getRefundJifen() + erfb.getRefundJifen();
-	       updateUc.setRefundJifen( refundJifen );
+	    MemberEntity upmember = new MemberEntity();
+	    upmember.setId( member.getId() );
+	    if ( erfb.getRefundJifen() > 0 ) {
+		Integer refundJifen = uc.getRefundJifen() + erfb.getRefundJifen();
+		updateUc.setRefundJifen( refundJifen );
 
-	       Integer jifen = member.getIntegral() + erfb.getRefundJifen();
-	       upmember.setIntegral( jifen );
+		Integer jifen = member.getIntegral() + erfb.getRefundJifen();
+		upmember.setIntegral( jifen );
 
-	       if ( CommonUtil.isNotEmpty( card ) ) {
-		  memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 2, erfb.getRefundJifen().doubleValue(), "退积分", member.getBusId(), jifen.doubleValue(),
-				   erfb.getOrderCode(), 1 );
-	       }
-	       bool = true;
-	   }
+		if ( CommonUtil.isNotEmpty( card ) ) {
+		    memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 2, erfb.getRefundJifen().doubleValue(), "退积分", member.getBusId(), jifen.doubleValue(),
+				    erfb.getOrderCode(), 1 );
+		}
+		bool = true;
+	    }
 
-	   if ( erfb.getRefundFenbi() > 0 ) {
-	       Double refundFenbi = uc.getRefundFenbi() + erfb.getRefundFenbi();
-	       updateUc.setRefundFenbi( refundFenbi );
-	       memberCommonService.giveFansCurrency( member.getId(), erfb.getRefundFenbi() );
-	       double fenbi = member.getFansCurrency() + erfb.getRefundFenbi();
-	       if ( CommonUtil.isNotEmpty( card ) ) {
-		   memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 3, erfb.getRefundFenbi().doubleValue(), "退粉币", member.getBusId(), fenbi,
-				   erfb.getOrderCode(), 1 );
-	       }
+	    if ( erfb.getRefundFenbi() > 0 ) {
+		Double refundFenbi = uc.getRefundFenbi() + erfb.getRefundFenbi();
+		updateUc.setRefundFenbi( refundFenbi );
+		memberCommonService.giveFansCurrency( member.getId(), erfb.getRefundFenbi() );
+		double fenbi = member.getFansCurrency() + erfb.getRefundFenbi();
+		if ( CommonUtil.isNotEmpty( card ) ) {
+		    memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 3, erfb.getRefundFenbi().doubleValue(), "退粉币", member.getBusId(), fenbi,
+				    erfb.getOrderCode(), 1 );
+		}
 
-	   }
-	   updateUc.setRefundDate( new Date() );
-	   userConsumeNewDAO.updateById( updateUc );
+	    }
+	    updateUc.setRefundDate( new Date() );
+	    userConsumeNewDAO.updateById( updateUc );
 
-	   if ( erfb.getRefundPayType() == 5 ) {
-	       //储值卡退款
-	       if ( CommonUtil.isEmpty( card ) ) {
-		   throw new BusinessException( ResponseMemberEnums.MEMBER_NOT_CARD );
-	       }
-	       MemberCard mc = new MemberCard();
-	       mc.setMcId( card.getMcId() );
-	       Double money = card.getMoney() + erfb.getRefundMoney();
-	       mc.setMoney( money );
-	       memberCardDAO.updateById( mc );
-	       memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 1, erfb.getRefundMoney(), "退款", member.getBusId(), money,
-			       erfb.getOrderCode(), 1 );
-	   } else {
-	    	 memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 1, erfb.getRefundMoney(), "退款", member.getBusId(), 0.0,
-				   erfb.getOrderCode(), 1 );
-	   }
-	   if ( bool ) {
-	       memberDAO.updateById( upmember );
-	   }
-       }catch ( BusinessException e ){
-           throw  e;
-       }catch ( Exception e ){
-           throw new BusinessException( ResponseEnums.ERROR );
-       }
+	    if ( erfb.getRefundPayType() == 5 ) {
+		//储值卡退款
+		if ( CommonUtil.isEmpty( card ) ) {
+		    throw new BusinessException( ResponseMemberEnums.MEMBER_NOT_CARD );
+		}
+		MemberCard mc = new MemberCard();
+		mc.setMcId( card.getMcId() );
+		Double money = card.getMoney() + erfb.getRefundMoney();
+		mc.setMoney( money );
+		memberCardDAO.updateById( mc );
+		memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 1, erfb.getRefundMoney(), "退款", member.getBusId(), money,
+				erfb.getOrderCode(), 1 );
+	    } else {
+		memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 1, erfb.getRefundMoney(), "退款", member.getBusId(), 0.0,
+				erfb.getOrderCode(), 1 );
+	    }
+	    if ( bool ) {
+		memberDAO.updateById( upmember );
+	    }
+	}catch ( BusinessException e ){
+	    throw  e;
+	}catch ( Exception e ){
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
     }
 
 
