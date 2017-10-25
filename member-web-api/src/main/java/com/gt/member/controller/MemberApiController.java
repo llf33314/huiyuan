@@ -525,13 +525,27 @@ public class MemberApiController extends BaseController {
 
 
 
-    @ApiOperation( value = "结算支付成功会员处理支持多种支付数据保存 支付多种支付", notes = "结算支付成功会员处理（包括储值卡扣款、卡券核销、积分粉币扣除、赠送物品）" )
+    @ApiOperation( value = "（单门店）结算支付成功会员处理支持多种支付数据保存 支付多种支付", notes = "结算支付成功会员处理（包括储值卡扣款、卡券核销、积分粉币扣除、赠送物品）" )
     @ApiImplicitParam( name = "newErpPaySuccessBo", value = "erp结算核销对象 实体类ErpPaySuccessBo", paramType = "query", required = true, dataType = "String" )
     @ResponseBody
     @RequestMapping( value = "/newPaySuccessByErpBalance", method = RequestMethod.POST )
     public ServerResponse newpaySuccessByErpBalance( HttpServletRequest request, HttpServletResponse response, @RequestBody String newErpPaySuccessBo ) {
 	try {
 	    memberApiService.newPaySuccessByErpBalance( newErpPaySuccessBo );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+
+    @ApiOperation( value = "(跨门店)结算支付成功会员处理支持多种支付数据保存 支付多种支付", notes = "结算支付成功会员处理（包括储值卡扣款、卡券核销、积分粉币扣除、赠送物品）" )
+    @ApiImplicitParam( name = "newErpPaySuccessBos", value = "erp结算核销对象 实体类ErpPaySuccessBo集合", paramType = "query", required = true, dataType = "String" )
+    @ResponseBody
+    @RequestMapping( value = "/newPaySuccessShopsByErpBalance", method = RequestMethod.POST )
+    public ServerResponse newPaySuccessShopsByErpBalance( HttpServletRequest request, HttpServletResponse response, @RequestBody String newErpPaySuccessBos ) {
+	try {
+	    memberApiService.newPaySuccessShopsByErpBalance( newErpPaySuccessBos );
 	    return ServerResponse.createBySuccess(  );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
