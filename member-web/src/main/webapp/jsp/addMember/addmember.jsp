@@ -48,7 +48,7 @@ pageEncoding="UTF-8" %>
                 <el-form :model="ruleForm" :rules="rules" :label-position="labelPosition" ref="ruleForm" label-width="150px" class="demo-ruleForm"  >
                     <c:if test="${gongzhong==1}">
                         <el-form-item label="关注公众号办理：" prop="follow">
-                            <el-switch on-text="" off-text="" v-model="ruleForm.follow" @change="fnGuanZhu"></el-switch>
+                            <el-switch on-text="" off-text="" v-model="ruleForm.follow" @change="fnGuanZhu" style="margin-top: 7px;"></el-switch>
                         </el-form-item>
                     </c:if>
                     <el-form-item label="会员卡类型：" prop="cardType">
