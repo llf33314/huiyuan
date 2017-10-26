@@ -44,9 +44,6 @@ public class CardERPServiceImpl implements CardERPService {
     private MemberGiveruleDAO giveRuleMapper;
 
     @Autowired
-    private UserConsumeDAO userConsumeMapper;
-
-    @Autowired
     private MemberCardbuyDAO cardBuyMapper;
 
     @Autowired

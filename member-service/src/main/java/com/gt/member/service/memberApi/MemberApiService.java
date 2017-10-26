@@ -111,13 +111,8 @@ public interface MemberApiService {
     public Map< String,Object > findMember( String openId );
 
 
-    /*
-     * 撤单
-     * @param orderCode
-     * @return
-     * @throws Exception
-     */
-    public Map< String,Object > cancelOrder( String orderCode ) throws Exception;
+
+
 
     /*
      * 小程序绑定手机号码
@@ -135,14 +130,6 @@ public interface MemberApiService {
     public List< Map< String,Object > > findMemberCardRecharge( Integer busId, String cardNo );
 
 
-	/*
-	 * 分页查询会员充值记录
-	 * @param busId
-	 * @param params 参数  curPage 页面条数   memberId 粉丝id  startDate 开始时间 endDate 结束时间
-	 * @return
-	 */
-
-    public Page findConsumeByMemberId( Integer busId, Map< String,Object > params );
 
     /*
      * 根据卡号查询会员卡信息
@@ -381,6 +368,15 @@ public interface MemberApiService {
      * @throws BusinessException
      */
     public void successChongZhi( Map< String,Object > params ) throws BusinessException;
+
+    /**
+     * 魔盒充值成功接口
+     *
+     * @param params
+     *
+     * @throws BusinessException
+     */
+    public void successChongZhiVer1( Map< String,Object > params ) throws BusinessException;
 
     /**
      * (商城）评论修改会员积分或粉币
