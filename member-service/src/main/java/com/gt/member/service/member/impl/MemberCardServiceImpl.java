@@ -254,7 +254,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    List< MemberCardtype > cardTypes = memberCardtypeDAO.findByBusId( busId );
 	    map.put( "cardTypes", cardTypes );
 	}
-	List< Integer > fukaList = findCtId( ctId );
+	List< Map<String,Object> > fukaList = findCtId( ctId );
 	map.put( "fukaList", fukaList );
 	MemberFind memberFind = memberFindDAO.findByQianDao( busId );
 	if ( CommonUtil.isNotEmpty( memberFind ) ) {
@@ -281,17 +281,38 @@ public class MemberCardServiceImpl implements MemberCardService {
 	return map;
     }
 
-    public List< Integer > findCtId( Integer ctId ) {
-	List< Integer > list = new ArrayList<>();
+    public List< Map<String,Object> > findCtId( Integer ctId ) {
+	List< Map<String,Object>  > list = new ArrayList<>();
+	Map<String,Object> map=null;
 	switch ( ctId ) {
 	    case 2:
-		list.add( 4 );
-		list.add( 5 );
+		map=new HashMap<>(  );
+		map.put("id",4  );
+		map.put("name","时效卡"  );
+
+		list.add( map );
+
+		map=new HashMap<>(  );
+		map.put("id",5  );
+		map.put("name","次卡"  );
+
+		list.add( map );
 		return list;
 	    case 3:
-		list.add( 2 );
-		list.add( 4 );
-		list.add( 5 );
+		map=new HashMap<>(  );
+		map.put("id",2  );
+		map.put("name","折扣卡"  );
+		list.add( map );
+
+		map=new HashMap<>(  );
+		map.put("id",4  );
+		map.put("name","时效卡"  );
+		list.add( map );
+
+		map=new HashMap<>(  );
+		map.put("id",5  );
+		map.put("name","次卡"  );
+		list.add( map );
 		return list;
 	}
 	return list;
