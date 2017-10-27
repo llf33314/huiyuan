@@ -437,4 +437,12 @@ public interface MemberApiService {
     public void jifenExchange(String json) throws BusinessException;
 
 
+    /**
+     * 分页查询会员卡信息
+     * @param params
+     * @throws BusinessException
+     */
+    public Page findMemberPage(String params) throws BusinessException;
+
+
 }

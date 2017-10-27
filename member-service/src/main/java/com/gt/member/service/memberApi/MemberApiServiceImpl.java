@@ -946,7 +946,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 		WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersMapper.selectByUserId( busId );
 
-		if ( CommonUtil.isNotEmpty( wxPublicUsersEntity ) && CommonUtil.isNotEmpty( memberEntity.getOpenid() ) && wxShop.getStatus() == 2 ) {
+		if ( CommonUtil.isNotEmpty( wxPublicUsersEntity ) && CommonUtil.isNotEmpty( memberEntity.getOpenid() ) && CommonUtil.isNotEmpty( wxShop ) && wxShop.getStatus() == 2 ) {
 		    // 查询优惠券信息
 		    List< Map< String,Object > > cardList = wxCardReceiveMapper.findByOpenId1( wxPublicUsersEntity.getId(), memberEntity.getOpenid() );
 		    List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
@@ -2513,5 +2513,123 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
+
+
+    /**
+     * 分页查询会员卡信息
+     * @throws BusinessException
+     */
+    public Page findMemberPage(String json) throws BusinessException{
+	try {
+	    Map<String,Object> params=JSON.parseObject( json,Map.class );
+	    Integer busId=CommonUtil.toInteger( params.get( "busId" ) );
+	    params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
+	    int pageSize = CommonUtil.isEmpty( params.get( "pageSize" ) ) ? 10 : CommonUtil.toInteger( params.get( "pageSize" ) ) ;
+	    Object search1 = params.get( "cardNo" );
+	    String search = null;
+	    if ( CommonUtil.isNotEmpty( search1 ) ) {
+		search = search1.toString();
+	    }
+	    Object ctIdObj = params.get( "ctId" );
+	    Integer ctId = 0;
+	    Byte source = null;
+	    if ( CommonUtil.isNotEmpty( ctIdObj ) ) {
+		ctId = Integer.parseInt( ctIdObj.toString() );
+		if ( ctId == -1 ) {
+		    ctId = ctId == -1 ? 0 : ctId;
+		    source = 1;
+		}
+	    }
+	    Byte changeCardType = null;
+	    if ( CommonUtil.isNotEmpty( params.get( "changeCardType" ) ) ) {
+		changeCardType = 1;
+	    }
+	    Object gtIdObj = params.get( "gtId" );
+	    Integer gtId = 0;
+	    if ( CommonUtil.isNotEmpty( gtIdObj ) ) {
+		gtId = Integer.parseInt( gtIdObj.toString() );
+	    }
+	    String startDate = null;
+	    if ( CommonUtil.isNotEmpty( params.get( "startDate" ) ) ) {
+		startDate = CommonUtil.toString( params.get( "startDate" ) ) + " 00:00:00";
+	    }
+	    String endDate = null;
+	    if ( CommonUtil.isNotEmpty( params.get( "endDate" ) ) ) {
+		endDate = CommonUtil.toString( params.get( "endDate" ) ) + " 23:59:59";
+	    }
+
+	    Object phone1 = params.get( "phone" );
+	    String phone = null;
+	    if ( CommonUtil.isNotEmpty( phone1 ) ) {
+		phone = phone1.toString();
+	    }
+
+	    int rowCount = memberDAO.countMember( busId, search, phone, ctId, gtId, source, changeCardType, startDate, endDate );
+	    Page page = new Page( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "member/findMember.do" );
+	    params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	    params.put( "maxResult", pageSize );
+
+	    List< Map< String,Object > > list = null;
+	    List< Map< String,Object > > members = null;
+	    if ( CommonUtil.isEmpty( phone ) ) {
+		list = memberDAO.findMemberBybusId( Integer.parseInt( params.get( "firstResult" ).toString() ), pageSize, busId, search, ctId, gtId, source, changeCardType,
+				startDate, endDate );
+		// 采用数据拼接方式
+		List< Integer > mcIds = new ArrayList< Integer >();
+		for ( Map< String,Object > map : list ) {
+		    if ( CommonUtil.isNotEmpty( map.get( "mc_id" ) ) ) {
+			mcIds.add( CommonUtil.toInteger( map.get( "mc_id" ) ) );
+		    }
+		}
+		if ( mcIds.size() > 0 ) {
+		    members = memberDAO.findMemberBymcIds( busId, mcIds, phone );
+		}
+	    } else {
+		members = memberDAO.findMemberByPhone( busId, phone );
+		if ( CommonUtil.isNotEmpty( members ) && members.size() > 0 ) {
+		    list = memberDAO.findMemberBybusIdAndPhone( busId, CommonUtil.toInteger( members.get( 0 ).get( "mc_id" ) ) );
+		}
+
+	    }
+
+	    List< Map< String,Object > > memberList = new ArrayList< Map< String,Object > >();
+	    for ( Map< String,Object > map : list ) {
+		for ( Map< String,Object > member : members ) {
+		    if ( CommonUtil.isNotEmpty( map.get( "mc_id" ) ) && CommonUtil.isNotEmpty( member.get( "mc_id" ) ) && CommonUtil.toInteger( map.get( "mc_id" ) )
+				    .equals( CommonUtil.toInteger( member.get( "mc_id" ) ) ) ) {
+			map.put( "id", member.get( "id" ) );
+			map.put( "fans_currency", member.get( "fans_currency" ) );
+			map.put( "flow", member.get( "flow" ) );
+			map.put( "integral", member.get( "integral" ) );
+			map.put( "phone", member.get( "phone" ) );
+			map.put( "nickname", member.get( "nickname" ) );
+			map.put( "sex", member.get( "sex" ) );
+			map.put( "totalMoney", member.get( "totalMoney" ) );
+			map.put( "cardChecked", member.get( "cardChecked" ) );
+			map.put( "remark", member.get( "remark" ) );
+			map.put( "mc_id", member.get( "mc_id" ) );
+			if ( member.containsKey( "nickname" ) ) {
+			    try {
+				byte[] bytes = (byte[]) map.get( "nickname" );
+				map.put( "nickname", new String( bytes, "UTF-8" ) );
+			    } catch ( Exception e ) {
+				map.put( "nickname", null );
+			    }
+			    memberList.add( map );
+			} else {
+			    memberList.add( map );
+			}
+		    }
+		}
+	    }
+	    page.setSubList( memberList );
+	    return page;
+	} catch ( Exception e ) {
+	    LOG.error( "分页查询会员异常",e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+
 
 }
