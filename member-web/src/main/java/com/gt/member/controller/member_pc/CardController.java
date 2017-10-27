@@ -2,8 +2,6 @@ package com.gt.member.controller.member_pc;
 
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.SessionUtils;
-import com.gt.common.entity.BusUserEntity;
-import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,8 +45,6 @@ public class CardController {
     @Autowired
     private MemberNoticeService memberNoticeService;
 
-    @Autowired
-    private BusUserDAO busUserMapper;
 
     @ApiOperation( value = "查询没有创建的会员卡类型", notes = "查询会员卡类型" )
     @ResponseBody

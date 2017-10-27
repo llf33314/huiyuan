@@ -11,6 +11,7 @@ import com.gt.member.entity.MemberGradetype;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.memberApi.MemberApiService;
 import com.gt.member.util.CommonUtil;
+import com.gt.member.util.Page;
 import com.gt.member.util.PropertiesUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -580,6 +581,25 @@ public class MemberApiController extends BaseController {
 	try {
 	    memberApiService.jifenExchange( param );
 	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+    @ApiOperation( value = "findMemberPage", notes = "分页查询会员信息" )
+    @ApiImplicitParams( {
+		    @ApiImplicitParam( name = "pageSize", value = "每页条数", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "curPage", value = "当前页", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "cardNo", value = "卡号", paramType = "query", required = true, dataType = "string" ),
+		    @ApiImplicitParam( name = "phone", value = "手机号", paramType = "query", required = true, dataType = "string" ),
+
+    } )
+    @ResponseBody
+    @RequestMapping( value = "/findMemberPage", method = RequestMethod.POST )
+    public ServerResponse findMemberPage(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    Page page= memberApiService.findMemberPage( param );
+	    return ServerResponse.createBySuccess( page );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
