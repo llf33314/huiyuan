@@ -451,5 +451,12 @@ public interface MemberApiService {
      */
     public List<Map<String,Object>> findGradeTypeBybusId(Integer busId);
 
+    /**
+     * 统计会员数据和今日新增会员卡
+     * @param busId
+     * @return
+     */
+    public Map<String,Object> coutMemberCard(Integer busId);
+
 
 }

@@ -41,8 +41,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 
     private static final Logger LOG = LoggerFactory.getLogger( MemberApiServiceImpl.class );
 
-    @Autowired
-    private MemberCardDAO cardMapper;
 
     @Autowired
     private MemberEntityDAO memberDAO;
@@ -338,7 +336,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    if ( CommonUtil.isEmpty( memberEntity ) || CommonUtil.isEmpty( memberEntity.getMcId() ) ) {
 		throw new BusinessException( ResponseMemberEnums.NO_DATA );
 	    }
-	    MemberCard card = cardMapper.selectById( memberEntity.getMcId() );
+	    MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 	    if ( CommonUtil.isEmpty( card ) ) {
 		throw new BusinessException( ResponseMemberEnums.NO_DATA );
 	    }
@@ -390,7 +388,7 @@ public class MemberApiServiceImpl implements MemberApiService {
     public void isMemember( Integer memberId ) throws BusinessException {
 	MemberEntity memberEntity = memberDAO.selectById( memberId );
 	if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-	    MemberCard card = cardMapper.selectById( memberEntity.getMcId() );
+	    MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 	    if ( card.getIsChecked() == 0 || card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS );
 	    }
@@ -414,7 +412,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	if ( CommonUtil.isEmpty( memberId ) || CommonUtil.isEmpty( memberEntity.getMcId() ) ) {
 	    throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
 	}
-	MemberCard card = cardMapper.selectById( memberEntity.getMcId() );
+	MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 	if ( CommonUtil.isEmpty( card ) ) {
 	    throw new BusinessException( ResponseMemberEnums.CARD_STATUS );
 	}
@@ -436,7 +434,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	if ( CommonUtil.isEmpty( memberId ) || CommonUtil.isEmpty( memberEntity.getMcId() ) ) {
 	    return null;
 	}
-	MemberCard card = cardMapper.selectById( memberEntity.getMcId() );
+	MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 	return card;
     }
 
@@ -455,7 +453,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 	// 根据会员id查询赠送规则
 	MemberEntity memberEntity = memberDAO.selectById( memberId );
-	MemberCard card = cardMapper.selectById( memberEntity.getMcId() );
+	MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 	MemberGiverule giveRule = giveRuleMapper.selectById( card.getGrId() );
 	switch ( card.getCtId() ) {
 	    case 1:
@@ -500,7 +498,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    return null;
 	}
 	Integer mcId = memberEntity.getMcId();
-	MemberCard card = cardMapper.selectById( mcId );
+	MemberCard card = memberCardDAO.selectById( mcId );
 	MemberGradetype gradeType = gradeTypeMapper.selectById( card.getGtId() );
 	return gradeType;
     }
@@ -515,7 +513,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    return returnMap;
 	}
 
-	MemberCard card = cardMapper.selectById( memberEntity.getMcId() );
+	MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 	if ( card.getIsChecked() == 0 || card.getCardStatus() == 1 ) {
 	    returnMap.put( "result", 0 );
 	    returnMap.put( "message", "非会员" );
@@ -624,7 +622,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
     @Override
     public List< Map< String,Object > > findMemberCardRecharge( Integer busId, String cardNo ) {
-	MemberCard card = cardMapper.findCardByCardNo( busId, cardNo );
+	MemberCard card = memberCardDAO.findCardByCardNo( busId, cardNo );
 	if ( CommonUtil.isEmpty( card ) ) {
 	    return null;
 	}
@@ -680,7 +678,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    map.put( "message", "当前用户非会员" );
 	    return map;
 	}
-	MemberCard card = cardMapper.selectById( memberEntity.getMcId() );
+	MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 
 	if ( card.getShopId() > 0 ) {
 	    if ( shopId != card.getShopId() && !shopId.equals( card.getShopId() ) ) {
@@ -735,7 +733,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    MemberCard card = null;
 	    // 查询卡号是否存在
 	    if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-		card = cardMapper.selectById( memberEntity.getMcId() );
+		card = memberCardDAO.selectById( memberEntity.getMcId() );
 	    }
 
 	    if ( CommonUtil.isEmpty( card ) ) {
@@ -744,7 +742,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    } else if ( card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
-		List< Map< String,Object > > cards = cardMapper.findCardById( card.getMcId() );
+		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
 		MemberGiverule giveRule = giveRuleMapper.selectById( card.getGrId() );
 		map.put( "nickName", memberEntity.getNickname() );
 		map.put( "phone", memberEntity.getPhone() );
@@ -863,7 +861,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 		cardNo = cardNodecrypt.substring( 0, cardNodecrypt.indexOf( "?time" ) );
 
-		MemberCard card1 = cardMapper.findCardByCardNo( busId, cardNo );
+		MemberCard card1 = memberCardDAO.findCardByCardNo( busId, cardNo );
 		if ( card1.getCtId() == 3 ) {
 		    // 2分钟后为超时
 		    if ( DateTimeKit.secondBetween( new Date( time ), new Date() ) > 120 ) {
@@ -885,7 +883,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    throw new BusinessException( ResponseMemberEnums.ERROR_QR_CODE.getCode(), ResponseMemberEnums.ERROR_QR_CODE.getMsg() );
 
 		}
-		card = cardMapper.selectById( c.getMcId() );
+		card = memberCardDAO.selectById( c.getMcId() );
 
 		map.put( "jie", 1 );
 		map.put( "lentMoney", c.getLentMoney() );
@@ -895,7 +893,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    MemberEntity memberEntity = null;
 	    // 查询卡号是否存在
 	    if ( CommonUtil.isEmpty( card ) ) {
-		card = cardMapper.findCardByCardNo( busId, cardNo );
+		card = memberCardDAO.findCardByCardNo( busId, cardNo );
 		if ( CommonUtil.isNotEmpty( card ) ) {
 		    memberEntity = memberDAO.findByMcIdAndbusId( busId, card.getMcId() );
 		}
@@ -905,7 +903,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    if ( CommonUtil.isEmpty( card ) ) {
 		memberEntity = memberDAO.findByPhone( busId, cardNo );
 		if ( CommonUtil.isNotEmpty( memberEntity ) ) {
-		    card = cardMapper.selectById( memberEntity.getMcId() );
+		    card = memberCardDAO.selectById( memberEntity.getMcId() );
 		}
 	    }
 
@@ -914,7 +912,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    } else if ( card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
-		List< Map< String,Object > > cards = cardMapper.findCardById( card.getMcId() );
+		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
 		MemberGiverule giveRule = giveRuleMapper.selectById( card.getGrId() );
 		map.put( "result", true );
 		map.put( "nickName", memberEntity.getNickname() );
@@ -1033,7 +1031,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 	    cardNo = cardNodecrypt.substring( 0, cardNodecrypt.indexOf( "?time" ) );
 
-	    MemberCard card1 = cardMapper.findCardByCardNo( busId, cardNo );
+	    MemberCard card1 = memberCardDAO.findCardByCardNo( busId, cardNo );
 	    if ( card1.getCtId() == 3 ) {
 		// 2分钟后为超时
 		if ( DateTimeKit.secondBetween( new Date( time ), new Date() ) > 120 ) {
@@ -1047,7 +1045,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    MemberEntity memberEntity = null;
 	    // 查询卡号是否存在
 	    if ( CommonUtil.isEmpty( card ) ) {
-		card = cardMapper.findCardByCardNo( busId, cardNo );
+		card = memberCardDAO.findCardByCardNo( busId, cardNo );
 		if ( CommonUtil.isNotEmpty( card ) ) {
 		    memberEntity = memberDAO.findByMcIdAndbusId( busId, card.getMcId() );
 		}
@@ -1058,7 +1056,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		memberEntity = memberDAO.findByPhone( busId, cardNo );
 
 		if ( CommonUtil.isNotEmpty( memberEntity ) ) {
-		    card = cardMapper.selectById( memberEntity.getMcId() );
+		    card = memberCardDAO.selectById( memberEntity.getMcId() );
 		}
 	    }
 
@@ -1191,7 +1189,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 	    MemberCard card = null;
 	    if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-		card = cardMapper.selectById( memberEntity.getMcId() );
+		card = memberCardDAO.selectById( memberEntity.getMcId() );
 		uc.setMcId( memberEntity.getMcId() );
 		uc.setCtId( card.getCtId() );
 		uc.setGtId( card.getGtId() );
@@ -1208,7 +1206,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 			}
 			double banlan = card.getMoney() - totalMoney;
 			card.setMoney( banlan );
-			cardMapper.updateById( card );
+			memberCardDAO.updateById( card );
 			memberCommonService
 					.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, totalMoney, "消费", memberEntity.getBusId(), banlan, paySuccessBo.getOrderCode(), 0 );
 			systemMsgService.sendChuzhiXiaofei( memberEntity, totalMoney );
@@ -1294,7 +1292,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	WxShop wxShop = wxShopDAO.selectMainShopByBusId( busId );
 
 	// 统计会员卡
-	List< Map< String,Object > > countCard = cardMapper.countMember( busId );
+	List< Map< String,Object > > countCard = memberCardDAO.countMember( busId );
 	if ( CommonUtil.isEmpty( countCard ) || countCard.size() == 0 ) {
 	    return null;
 	}
@@ -1378,7 +1376,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    if ( CommonUtil.isEmpty( memberEntity.getMcId() ) ) {
 		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
 	    }
-	    MemberCard card = cardMapper.selectById( memberEntity.getMcId() );
+	    MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 	    if ( CommonUtil.isNotEmpty( card ) ) {
 		if ( card.getCtId() == 3 ) {
 		    if ( card.getMoney() >= money ) {
@@ -1449,7 +1447,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    MemberCard card = null;
 	    // 查询卡号是否存在
 	    if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-		card = cardMapper.selectById( memberEntity.getMcId() );
+		card = memberCardDAO.selectById( memberEntity.getMcId() );
 	    }
 
 	    if ( CommonUtil.isEmpty( card ) ) {
@@ -1458,7 +1456,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    } else if ( card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
-		List< Map< String,Object > > cards = cardMapper.findCardById( card.getMcId() );
+		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
 		MemberGiverule giveRule = giveRuleMapper.selectById( card.getGrId() );
 		map.put( "nickName", memberEntity.getNickname() );
 		map.put( "phone", memberEntity.getPhone() );
@@ -1717,7 +1715,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    Long time = Long.parseLong( cardNodecrypt.substring( cardNodecrypt.indexOf( "?time=" ) + 6 ) );
 
 		    String cardNo = cardNodecrypt.substring( 0, cardNodecrypt.indexOf( "?time" ) );
-		    card = cardMapper.findCardByCardNo( busId, cardNo );
+		    card = memberCardDAO.findCardByCardNo( busId, cardNo );
 		    if ( card.getCtId() == 3 ) {
 			// 2分钟后为超时
 			if ( DateTimeKit.secondBetween( new Date( time ), new Date() ) > 120 ) {
@@ -1740,7 +1738,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		//		if(true){
 		//		    throw new BusinessException( ResponseMemberEnums. )
 		//		}
-		card = cardMapper.findCardByCardNo( busId, phone );
+		card = memberCardDAO.findCardByCardNo( busId, phone );
 	    }
 	    if ( CommonUtil.isNotEmpty( card ) ) {
 		memberEntity = memberDAO.findByMcIdAndbusId( busId, card.getMcId() );
@@ -1750,7 +1748,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 	    if ( CommonUtil.isNotEmpty( memberEntity ) ) {
 		if ( CommonUtil.isEmpty( card ) ) {
-		    card = cardMapper.selectById( memberEntity.getMcId() );
+		    card = memberCardDAO.selectById( memberEntity.getMcId() );
 		}
 	    }
 	    if ( CommonUtil.isEmpty( card ) ) {
@@ -1758,7 +1756,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    } else if ( card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
-		List< Map< String,Object > > cards = cardMapper.findCardById( card.getMcId() );
+		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
 		MemberGiverule giveRule = giveRuleMapper.selectById( card.getGrId() );
 		map.put( "nickName", memberEntity.getNickname() );
 		map.put( "phone", memberEntity.getPhone() );
@@ -1803,7 +1801,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    busId = dictService.pidUserId( busId );
 	    BusUserEntity busUserEntity = busUserMapper.selectById( busId );
-	    int count = cardMapper.countCardisBinding( busId );
+	    int count = memberCardDAO.countCardisBinding( busId );
 	    String dictNum = dictService.dictBusUserNum( busUserEntity.getId(), busUserEntity.getLevel(), 4, "1093" ); // 多粉 翼粉
 	    if ( CommonUtil.toInteger( dictNum ) < count ) {
 		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_COUNT );
@@ -1872,7 +1870,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 		card.setShopId( shopId );
 		card.setOnline( 0 );
-		cardMapper.insert( card );
+		memberCardDAO.insert( card );
 
 		MemberEntity memberEntity1 = new MemberEntity();
 		memberEntity1.setMcId( card.getMcId() );
@@ -1900,7 +1898,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
 	try {
 	    MemberEntity member = memberDAO.selectById( memberId );
-	    MemberCard card = cardMapper.selectById( member.getMcId() );
+	    MemberCard card = memberCardDAO.selectById( member.getMcId() );
 	    // 添加会员记录
 	    UserConsume uc = new UserConsume();
 	    uc.setBusUserId( member.getBusId() );
@@ -1984,7 +1982,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 			}
 		    }
 		}
-		cardMapper.updateById( card );
+		memberCardDAO.updateById( card );
 
 		memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 1, totalMoney, "会员卡充值", member.getBusId(), card.getMoney(), orderCode, 0 );
 
@@ -2008,7 +2006,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		throw new BusinessException( ResponseMemberEnums.NULL );
 	    }
 	    MemberEntity member = memberDAO.selectById( memberId );
-	    MemberCard card = cardMapper.selectById( member.getMcId() );
+	    MemberCard card = memberCardDAO.selectById( member.getMcId() );
 	    if ( CommonUtil.isEmpty( card ) ) {
 		throw new BusinessException( ResponseMemberEnums.MEMBER_NOT_CARD );
 	    }
@@ -2099,7 +2097,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    }
 		}
 	    }
-	    cardMapper.updateById( card );
+	    memberCardDAO.updateById( card );
 	    userConsumeNewDAO.insert( uc );
 
 	    UserConsumePay userConsumePay = new UserConsumePay();
@@ -2239,7 +2237,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    MemberCard card = null;
 	    List< PayTypeBo > payTypeBos = erpPaySuccess.getPayTypeBos();
 	    if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-		card = cardMapper.selectById( memberEntity.getMcId() );
+		card = memberCardDAO.selectById( memberEntity.getMcId() );
 		if ( CommonUtil.isEmpty( card ) ) {
 		    throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
 		}
@@ -2272,7 +2270,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 			    MemberCard updateCard = new MemberCard();
 			    updateCard.setMcId( card.getMcId() );
 			    updateCard.setMoney( banlan );
-			    cardMapper.updateById( updateCard );
+			    memberCardDAO.updateById( updateCard );
 
 			    bool = true;
 			    memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, payTypeBo.getPayMoney(), "储值卡消费", memberEntity.getBusId(), banlan,
@@ -2633,6 +2631,18 @@ public class MemberApiServiceImpl implements MemberApiService {
 
     public List<Map<String,Object>> findGradeTypeBybusId(Integer busId){
        return memberGradetypeDAO.findGradeTypeByBusId( busId );
+    }
+
+
+    public Map<String,Object> coutMemberCard(Integer busId){
+        Map<String,Object> map=new HashMap<>(  );
+	// 今日新增统计
+	String date = DateTimeKit.getDate() + " 00:00:00";
+	int count = memberCardDAO.countCardByTime(busId, date);
+	map.put( "jinriCount",count );
+	int num = memberCardDAO.countCardisBinding(busId);
+	map.put( "totalCount",num );
+	return map;
     }
 
 

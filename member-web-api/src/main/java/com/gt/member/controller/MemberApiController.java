@@ -600,9 +600,25 @@ public class MemberApiController extends BaseController {
 
     }
 
+    @ApiOperation( value = "统计会员卡总数和今日新增", notes = "统计会员卡总数和今日新增" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
+    } )
+    @ResponseBody
+    @RequestMapping( value = "/countMemberCard", method = RequestMethod.POST )
+    public ServerResponse countMemberCard(HttpServletRequest request, HttpServletResponse response, @RequestBody String param ){
+
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Map<String,Object> map = memberApiService.coutMemberCard( CommonUtil.toInteger( requestBody.get( "busId" ) ) );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getMsg());
+	}
+    }
+
+
     @ApiOperation( value = "查询商家发布的会员卡信息", notes = "查询商家发布的会员卡信息" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
-
     } )
     @ResponseBody
     @RequestMapping( value = "/findGradeTypeBybusId", method = RequestMethod.POST )
