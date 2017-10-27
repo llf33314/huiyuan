@@ -612,6 +612,9 @@ public class MemberApiController extends BaseController {
 		    @ApiImplicitParam( name = "curPage", value = "当前页", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "cardNo", value = "卡号", paramType = "query", required = true, dataType = "string" ),
 		    @ApiImplicitParam( name = "phone", value = "手机号", paramType = "query", required = true, dataType = "string" ),
+		    @ApiImplicitParam( name = "ctId", value = "会员卡类型", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "startDate", value = "开始时间", paramType = "query", required = true, dataType = "string" ),
+		    @ApiImplicitParam( name = "endDate", value = "结束时间", paramType = "query", required = true, dataType = "string" )
 
     } )
     @ResponseBody
