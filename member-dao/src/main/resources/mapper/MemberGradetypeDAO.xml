@@ -306,4 +306,13 @@
 	<select id="countGradeTypeByBusIdAndctId" resultType="java.lang.Integer">
 		select count(gt.gt_id) from t_member_gradetype gt  WHERE gt.busId=#{busId} and AND ct_id=#{ctId}
 	</select>
+
+	<select id="findGradeTypeByBusId" resultType="Map">
+		SELECT gt.ct_id AS ctId,ct_name AS ctName FROM t_member_gradetype gt
+			INNER JOIN t_member_cardtype ct ON gt.ct_id=ct.ct_id
+			  WHERE gt.busId=#{busId} AND gt.is_publish=1 GROUP BY gt.ct_id
+
+	</select>
+
+
 </mapper>

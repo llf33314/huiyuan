@@ -444,5 +444,12 @@ public interface MemberApiService {
      */
     public Page findMemberPage(String params) throws BusinessException;
 
+    /**
+     * 查询商家发布的会员卡信息
+     * @param busId
+     * @return
+     */
+    public List<Map<String,Object>> findGradeTypeBybusId(Integer busId);
+
 
 }

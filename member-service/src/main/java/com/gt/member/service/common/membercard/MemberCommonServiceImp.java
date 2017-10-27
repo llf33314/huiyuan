@@ -492,8 +492,8 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
 	    BusUserEntity busUserEntity = busUserDAO.selectById( m.getBusId() );
 	    if(busUserEntity.getFansCurrency().doubleValue()<fenbi){
-	       LOG.error( "商家粉币不足" );
-	       return;
+		LOG.error( "商家粉币不足" );
+	       throw new BusinessException( ResponseMemberEnums.LESS_THAN_FENBI );
 	    }
 
 	    BusUserEntity busUserEntity1 = new BusUserEntity();

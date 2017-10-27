@@ -2631,5 +2631,10 @@ public class MemberApiServiceImpl implements MemberApiService {
     }
 
 
+    public List<Map<String,Object>> findGradeTypeBybusId(Integer busId){
+       return memberGradetypeDAO.findGradeTypeByBusId( busId );
+    }
+
+
 
 }
