@@ -650,7 +650,7 @@
 	<select id="findByPhone" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from t_wx_bus_member where busId=#{busId} and phone =#{phone}
+		from t_wx_bus_member where busId=#{busId} and phone =#{phone} limit 1
 	</select>
 
 </mapper>
