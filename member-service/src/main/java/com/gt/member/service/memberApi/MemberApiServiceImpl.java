@@ -166,6 +166,47 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}
     }
 
+
+    public Map<String,Object> findMemberCardByMemberId( Integer memberId ) throws BusinessException{
+	Map< String,Object > map = new HashMap< String,Object >();
+	// 查询卡号是否存在
+	try {
+	    MemberEntity memberEntity = memberDAO.selectById( memberId );
+	    MemberCard card = null;
+	    // 查询卡号是否存在
+	    if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
+		card = memberCardDAO.selectById( memberEntity.getMcId() );
+	    }
+	    if ( CommonUtil.isEmpty( card ) ) {
+		throw new BusinessException( ResponseMemberEnums.MEMBER_NOT_CARD.getCode(), ResponseMemberEnums.MEMBER_NOT_CARD.getMsg() );
+	    } else if ( card.getCardStatus() == 1 ) {
+		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
+	    } else {
+		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
+		MemberGiverule giveRule = giveRuleMapper.selectById( card.getGrId() );
+		map.put( "nickName", memberEntity.getNickname() );
+		map.put( "phone", memberEntity.getPhone() );
+		map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
+		map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
+		map.put( "cardNo", card.getCardNo() );
+		map.put( "ctId", card.getCtId() );
+		map.put( "discount", giveRule.getGrDiscount() / 10.0 );
+		map.put( "money", card.getMoney() );
+		map.put( "frequency", card.getFrequency() );
+		map.put( "fans_currency", memberEntity.getFansCurrency() );
+		map.put( "integral", memberEntity.getIntegral() );
+		map.put( "memberId", memberEntity.getId() );
+		map.put( "cardId", card.getMcId() );
+	    }
+	    return map;
+	} catch ( BusinessException e ) {
+	    throw new BusinessException( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    LOG.error( "查询会员信息异常", e );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
+
     /**
      * 查询赠送规则
      *
@@ -914,7 +955,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    } else {
 		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
 		MemberGiverule giveRule = giveRuleMapper.selectById( card.getGrId() );
-		map.put( "result", true );
 		map.put( "nickName", memberEntity.getNickname() );
 		map.put( "phone", memberEntity.getPhone() );
 		map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
@@ -980,7 +1020,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 			}
 		    }
 		    if ( list.size() > 0 ) {
-			map.put( "code", 1 );
 			map.put( "cardList", JSONArray.toJSONString( list ) );
 		    }
 		}

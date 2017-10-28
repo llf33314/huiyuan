@@ -101,6 +101,24 @@ public class MemberApiController extends BaseController {
 	}
     }
 
+    @ApiOperation( value = "根据粉丝id获取粉丝和会员卡信息", notes = "根据粉丝id获取粉丝和会员卡信息" )
+    @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
+    @ResponseBody
+    @RequestMapping( value = "/findMemberCardByMemberId", method = RequestMethod.POST )
+    public ServerResponse findMemberCardByMemberId(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    Map<String,Object> map = memberApiService.findMemberCardByMemberId( memberId );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+
+    }
+
+
+
     @ApiOperation( value = "判断储值卡金额是否充足", notes = "判断储值卡金额是否充足" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "money", value = "消费金额", paramType = "query", required = true, dataType = "int" ), } )

@@ -28,6 +28,14 @@ public interface MemberApiService {
      */
     public MemberEntity findByMemberId( Integer memberId ) throws BusinessException;
 
+    /**
+     * 查询粉丝和会员信息
+     * @param memberId
+     * @return
+     * @throws BusinessException
+     */
+    public Map<String,Object> findMemberCardByMemberId( Integer memberId ) throws BusinessException;
+
 
     /*
      * 根据会员id查询会员卡信息 如果是折扣卡 返回折扣值
