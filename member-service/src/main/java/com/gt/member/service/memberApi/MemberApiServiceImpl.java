@@ -810,7 +810,16 @@ public class MemberApiServiceImpl implements MemberApiService {
 		PublicParameterset ps = publicParameterSetMapper.findBybusId( memberEntity.getBusId() );
 		if ( CommonUtil.isNotEmpty( ps ) ) {
 		    map.put( "getJifenMoeny", ps.getStartMoney() );
+		    map.put( "jifenRatio", ps.getIntegralRatio() );
+		    map.put( "jifenStartMoney", ps.getStartMoney() );
 		}
+
+		SortedMap< String,Object > dict = dictService.getDict( "1058" );
+		Double ratio = CommonUtil.toDouble( dict.get( "1" ) );
+		map.put( "fenbiRatio", ratio );
+		map.put( "fenbiStartMoney", 10 );
+
+
 
 		WxShop wxShop = wxShopDAO.selectById( shopId );
 
@@ -978,7 +987,16 @@ public class MemberApiServiceImpl implements MemberApiService {
 		PublicParameterset ps = publicParameterSetMapper.findBybusId( busId );
 		if ( CommonUtil.isNotEmpty( ps ) ) {
 		    map.put( "getJifenMoeny", ps.getStartMoney() );
+		    map.put( "jifenRatio", ps.getIntegralRatio() );
+		    map.put( "jifenStartMoney", ps.getStartMoney() );
 		}
+
+		SortedMap< String,Object > dict = dictService.getDict( "1058" );
+		Double ratio = CommonUtil.toDouble( dict.get( "1" ) );
+		map.put( "fenbiRatio", ratio );
+		map.put( "fenbiStartMoney", 10 );
+
+
 
 		WxShop wxShop = wxShopDAO.selectById( shopId );
 
