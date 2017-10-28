@@ -1602,7 +1602,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    Integer busId = CommonUtil.toInteger( map.get( "busId" ) );
 
 	    MemberEntity memberEntity = memberDAO.findByPhone( busId, phone );
-	    if ( !memberEntity.getId().equals( memberId ) ) {
+	    if (CommonUtil.isNotEmpty( memberEntity ) && !memberEntity.getId().equals( memberId ) ) {
 		throw new BusinessException( ResponseMemberEnums.IS_BINDING_PHONE );
 	    }
 
@@ -1611,6 +1611,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    m.setPhone( phone );
 	    memberDAO.updateById( m );
 	} catch ( Exception e ) {
+	    LOG.error( "绑定手机号码错误",e );
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
