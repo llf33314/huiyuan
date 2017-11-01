@@ -131,8 +131,8 @@ public class CardController {
     public ServerResponse editGradeTypeThird( HttpServletRequest request, HttpServletResponse response, Integer ctId ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    memberCardService.editGradeTypeThird( busId, ctId );
-	    return ServerResponse.createBySuccess();
+	 Map<String,Object> map=   memberCardService.editGradeTypeThird( busId, ctId );
+	    return ServerResponse.createBySuccess(map);
 	} catch ( Exception e ) {
 	    LOG.error( "会员卡新增和修改第3步页面异常：", e );
 	    e.printStackTrace();
