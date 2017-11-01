@@ -44,5 +44,11 @@
 			#{grId}
 		</foreach>
 	</delete>
+	
+	
+	<delete id="deleteByBusIdAndCtId">
+		delete from  t_member_giverulegoodstype where busId=#{busId} and ctId=#{ctId}
+
+	</delete>
 
 </mapper>

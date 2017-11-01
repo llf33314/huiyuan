@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author pengjiangli
- * @since 2017-10-16
+ * @since 2017-10-30
  */
 @Data
 @Accessors(chain = true)
@@ -34,10 +34,21 @@ public class MemberGradetypeAssistant extends Model<MemberGradetypeAssistant> {
 	@TableField("gtId")
 	private Integer gtId;
     /**
-     * 副卡会员卡类型
+     * 主卡会员卡类型
      */
 	@TableField("ctId")
 	private Integer ctId;
+    /**
+     * 商家id
+     */
+	@TableField("busId")
+	private Integer busId;
+	private Integer discount;
+    /**
+     * 副卡会员卡类型
+     */
+	@TableField("fuctId")
+	private Integer fuctId;
 
 
 	@Override
@@ -51,6 +62,9 @@ public class MemberGradetypeAssistant extends Model<MemberGradetypeAssistant> {
 			"id=" + id +
 			", gtId=" + gtId +
 			", ctId=" + ctId +
+			", busId=" + busId +
+			", discount=" + discount +
+			", fuctId=" + fuctId +
 			"}";
 	}
 }

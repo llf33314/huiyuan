@@ -3,21 +3,32 @@
 <mapper namespace="com.gt.member.dao.MemberRechargegiveAssistantDAO">
 
 	<!-- 通用查询映射结果 -->
+	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberRechargegiveAssistant">
 		<id column="id" property="id" />
 		<result column="money" property="money" />
 		<result column="giveCount" property="giveCount" />
 		<result column="number" property="number" />
 		<result column="assistantId" property="assistantId" />
-		<result column="ctId" property="ctId" />
+		<result column="fuctId" property="fuctId" />
 		<result column="isDate" property="isDate" />
 		<result column="busId" property="busId" />
 		<result column="validDate" property="validDate" />
+		<result column="gtId" property="gtId" />
+		<result column="ctId" property="ctId" />
 	</resultMap>
 
-    <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
-        id, money, giveCount AS giveCount, number, assistantId AS assistantId, ctId AS ctId, isDate AS isDate, busId AS busId, validDate AS validDate
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+        id, money, giveCount AS giveCount, number, assistantId AS assistantId, fuctId AS fuctId, isDate AS isDate, busId AS busId, validDate AS validDate, gtId AS gtId, ctId AS ctId
     </sql>
+
+	<delete id="deleteBybusIdAndGtid">
+		delete from t_member_rechargegive_assistant where busId=#{busId} and gtId=#{gtId}
+	</delete>
+
+	<select id="findByCtIdAndfuCtId" resultType="Map">
+	select * from t_member_rechargegive_assistant where busId=#{busId} and ctId=#{ctId} and fuctId=#{fuctId}
+	</select>
 
 </mapper>

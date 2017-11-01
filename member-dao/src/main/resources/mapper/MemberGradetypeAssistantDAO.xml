@@ -3,15 +3,30 @@
 <mapper namespace="com.gt.member.dao.MemberGradetypeAssistantDAO">
 
 	<!-- 通用查询映射结果 -->
+	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberGradetypeAssistant">
 		<id column="id" property="id" />
 		<result column="gtId" property="gtId" />
 		<result column="ctId" property="ctId" />
+		<result column="busId" property="busId" />
+		<result column="discount" property="discount" />
+		<result column="fuctId" property="fuctId" />
 	</resultMap>
 
-    <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
-        id, gtId AS gtId, ctId AS ctId
-    </sql>
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+		id, gtId AS gtId, ctId AS ctId, busId AS busId, discount, fuctId AS fuctId
+	</sql>
+
+
+	<select id="findAssistantBygtId" resultType="java.lang.Integer">
+		select ctId from t_member_gradetype_assistant where busId=#{busId} and gtId=#{gtId}
+
+	</select>
+
+	<select id="findAssistantByctId" resultType="Map">
+		select * from t_member_gradetype_assistant where busId=#{busId} and ctId=#{ctId} order by id asc
+
+	</select>
 
 </mapper>

@@ -668,4 +668,9 @@
 
 	</select>
 
+	<select id="updateMcIdBymemberId">
+		update t_wx_bus_member set mc_id=null where id=#{memberId}
+	</select>
+
+
 </mapper>

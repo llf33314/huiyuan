@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
+import com.gt.api.bean.session.Member;
+import com.gt.api.util.SessionUtils;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.PropertiesUtil;
@@ -47,7 +49,7 @@ public class AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( guoqi ) ) {
 		//商家已过期
 		Object guoqiUrl = json.get( "guoqiUrl" );
-		return "redirect:" + guoqiUrl;
+		return guoqiUrl.toString();
 	    }
 
 	    Object remoteUcLogin = json.get( "remoteUcLogin" );
@@ -71,7 +73,7 @@ public class AuthorizeOrLoginController {
 	queryMap.put( "busId", busId );
 	queryMap.put( "uclogin", uclogin );
 
-	String url = "redirect:"+ propertiesUtil.getWxmp_home()+"/remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString(  queryMap);
+	String url = propertiesUtil.getWxmp_home()+"/remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString(  queryMap);
 	return url;
     }
 }

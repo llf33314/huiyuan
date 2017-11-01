@@ -179,19 +179,20 @@ public class MemberController {
     }
 
     @ApiOperation( value = "删除会员", notes = "删除会员" )
-    @ApiImplicitParams({
-		    @ApiImplicitParam( name = "memberId", value = "会员id", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "name", value = "用户登录名称", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "pwd", value = "用户登录密码", paramType = "query", required = false, dataType = "int" )
+    @ApiImplicitParam( name = "memberId", value = "会员id", paramType = "query", required = false, dataType = "int" )
 
-    })
     @ResponseBody
     @RequestMapping( value = "/deleteMember", method = RequestMethod.POST )
     public ServerResponse deleteMember(HttpServletRequest request,
-		    HttpServletResponse response,String json){
-	//缺接口
-	// TODO
-	return null;
+		    HttpServletResponse response,Integer memberId){
+	try {
+	    memberCardService.deleteMemberCard(request,memberId);
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    LOG.error( "拉黑或恢复会员异常：", e );
+	    e.printStackTrace();
+	    return ServerResponse.createByError( e.getCode(),e.getMessage());
+	}
     }
 
     @ApiOperation( value = "查询会员详情", notes = "查询会员详情" )

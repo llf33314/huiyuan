@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author pengjiangli
- * @since 2017-10-16
+ * @since 2017-10-30
  */
 @Data
 @Accessors(chain = true)
@@ -47,10 +47,10 @@ public class MemberRechargegiveAssistant extends Model<MemberRechargegiveAssista
 	@TableField("assistantId")
 	private Integer assistantId;
     /**
-     * 卡片类型Id
+     * 副卡卡片类型Id
      */
-	@TableField("ctId")
-	private Integer ctId;
+	@TableField("fuctId")
+	private Integer fuctId;
     /**
      * 是否会员日 0不是 1是
      */
@@ -63,6 +63,16 @@ public class MemberRechargegiveAssistant extends Model<MemberRechargegiveAssista
      */
 	@TableField("validDate")
 	private Integer validDate;
+    /**
+     * 等级id
+     */
+	@TableField("gtId")
+	private Integer gtId;
+    /**
+     * 主卡会员卡类型
+     */
+	@TableField("ctId")
+	private Integer ctId;
 
 
 	@Override
@@ -78,10 +88,12 @@ public class MemberRechargegiveAssistant extends Model<MemberRechargegiveAssista
 			", giveCount=" + giveCount +
 			", number=" + number +
 			", assistantId=" + assistantId +
-			", ctId=" + ctId +
+			", fuctId=" + fuctId +
 			", isDate=" + isDate +
 			", busId=" + busId +
 			", validDate=" + validDate +
+			", gtId=" + gtId +
+			", ctId=" + ctId +
 			"}";
 	}
 }

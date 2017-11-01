@@ -8,7 +8,8 @@ public enum ResponseMemberEnums {
     NO_DATA(4002, "数据不存在"),
     NULL(4003,"数据空值"),
     NO_PHONE_CODE(4004,"短信验证码过时或不存在"),
-    VERIFICATION_BUSUSER(4005,""),  //判断主账户信息
+    VERIFICATION_BUSUSER(4005,"用户权限不足,请登录主账户操作"),  //判断主账户信息
+    USERGRANT(4006,"粉丝未授权"),
 
     CARD_STATUS(5001, "会员卡已停用"),
     MEMBER_LESS_JIFEN(5002,"积分不足"),
@@ -26,6 +27,7 @@ public enum ResponseMemberEnums {
     LESS_THAN_FENBI(5014,"商家粉币不足"),
     PLEASE_SCAN_CODE(5015,"请扫码核销"),
     DISABLE_MEMBER_CARD(5016,"会员卡被拉黑"),
+    PLEASE_BUY_CARD(5017,""),
 
 
 

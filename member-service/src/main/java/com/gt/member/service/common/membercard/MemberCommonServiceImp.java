@@ -525,7 +525,6 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
 
     /**
-<<<<<<< HEAD
      * 根据订单号添加赠送物品记录
      *
      * @param orderCode

@@ -21,4 +21,8 @@ public interface MemberGiverulegoodstypeDAO extends BaseMapper<MemberGiverulegoo
     List<Map<String, Object>> findByGrId(@Param("grId")Integer grId);
 
     void deleteByGrIds(@Param("grIds") List<Integer> grIds);
+
+    int deleteByBusIdAndCtId(@Param("busId")Integer busId,@Param( "ctId" )Integer ctId);
+
+
 }

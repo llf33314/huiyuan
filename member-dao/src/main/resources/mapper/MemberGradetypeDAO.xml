@@ -35,6 +35,7 @@
         <result column="giveMoney" property="giveMoney"/>
         <result column="pickMoney" property="pickMoney"/>
 		<result column="assistantCard" property="assistantCard"/>
+		<result column="isrecommend" property="isrecommend" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -42,7 +43,7 @@
         gt_id , gt_grade_name , gt_name , gt_name_color , gt_login_url , cm_id , gt_text_color , ct_id ,
          public_id , is_publish , isCheck, applyType, buyMoney, buyModel, costMoney, balance, giveflow,
          givefenbi, giveIntegral, url, isView, ismemberDate, isUploadImg, imgExplain, isleft, iseasy,
-         easyApply, busId, giveMoney, pickMoney,assistantCard
+         easyApply, busId, giveMoney, pickMoney,assistantCard,isrecommend
     </sql>
 
 

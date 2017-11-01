@@ -16,6 +16,7 @@ import java.util.Map;
  * @since 2017-07-25
  */
 public interface MemberRechargegiveDAO extends BaseMapper<MemberRechargegive> {
+
     List<Map<String,Object>> findBybusId(@Param("busId")Integer busId, @Param("ctId")Integer ctId);
 
     int deleteBybusIdAndGrid(@Param("busId")Integer busId,@Param("grId")Integer grId);

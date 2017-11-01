@@ -268,4 +268,10 @@ public interface MemberEntityDAO extends BaseMapper<MemberEntity > {
 
 
     MemberEntity findMemberByOldId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId);
+
+    /**
+     * 解绑会员卡
+     * @param memberId
+     */
+    void updateMcIdBymemberId(@Param( "memberId" )Integer memberId);
 }

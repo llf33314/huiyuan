@@ -13,6 +13,8 @@ import com.gt.member.service.bo.ErrorWorkbook;
 import com.gt.member.util.Page;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 会员卡业务处理
  *
@@ -303,5 +305,12 @@ public interface MemberCardService {
      * @return
      */
     public Page findPickLog(Integer busId,Map<String, Object> params)throws BusinessException;
+
+    /**
+     * 删除会员卡信息
+     * @param memberId
+     * @throws BusinessException
+     */
+    public void deleteMemberCard(HttpServletRequest request,Integer memberId)throws BusinessException;
 
 }
