@@ -99,8 +99,8 @@ public class CardController {
     public ServerResponse findCardModel( HttpServletRequest request, HttpServletResponse response ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    List< MemberCardmodel > cardmodels = memberCardService.findCardModelByBusId( busId );
-	    return ServerResponse.createBySuccess( cardmodels );
+	    Map<String,Object> map = memberCardService.findCardModelByBusId( busId );
+	    return ServerResponse.createBySuccess( map );
 	} catch ( Exception e ) {
 	    LOG.error( "查询卡片背景模板异常：", e );
 	    e.printStackTrace();

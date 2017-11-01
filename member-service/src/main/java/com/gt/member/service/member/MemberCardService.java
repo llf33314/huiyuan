@@ -39,7 +39,7 @@ public interface MemberCardService {
      *
      * @return
      */
-    List< MemberCardmodel > findCardModelByBusId( Integer busId ) throws  BusinessException;
+   Map<String,Object> findCardModelByBusId( Integer busId ) throws  BusinessException;
 
 
 

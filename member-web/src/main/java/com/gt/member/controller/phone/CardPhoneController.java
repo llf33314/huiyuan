@@ -98,7 +98,6 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     }
 
 
-
     @ApiOperation( value = "购买会员卡支付回调", notes = "购买会员卡支付回调" )
     @ResponseBody
     @RequestMapping( value = "/buyMemberCard", method = RequestMethod.GET )
@@ -110,4 +109,6 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg() );
 	}
     }
+
+  //  public ServerResponse findMember
 }

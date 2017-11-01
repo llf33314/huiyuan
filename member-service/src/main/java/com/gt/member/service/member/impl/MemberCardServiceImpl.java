@@ -170,11 +170,15 @@ public class MemberCardServiceImpl implements MemberCardService {
      * 分组查询卡片信息
      */
     @Override
-    public List< MemberCardmodel > findCardModelByBusId( Integer busId ) throws BusinessException {
+    public Map<String,Object>  findCardModelByBusId( Integer busId ) throws BusinessException {
 	if ( CommonUtil.isEmpty( busId ) ) {
 	    throw new BusinessException( ResponseMemberEnums.INVALID_SESSION );
 	}
-	return cardModelMapper.findCardModelByBusId( busId );
+	List< MemberCardmodel > cardmodels= cardModelMapper.findCardModelByBusId( busId );
+	Map<String,Object> map=new HashMap<>(  );
+	map.put( "cardmodels",cardmodels );
+	map.put( "path",PropertiesUtil.getRes_web_path() );
+	return map;
     }
 
     /**
@@ -268,6 +272,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	List< Map< String,Object > > fukaList = findCtId( ctId );
 	map.put( "fukaList", fukaList );
 	MemberFind memberFind = memberFindDAO.findByQianDao( busId );
+	map.put( "qiandaojifen", "" );
 	if ( CommonUtil.isNotEmpty( memberFind ) ) {
 	    map.put( "qiandaojifen", memberFind.getIntegral() );
 	}
@@ -529,12 +534,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    if ( CommonUtil.isNotEmpty( publicParams.get( "integralRatio" ) ) ) {
 		ps.setIntegralRatio( CommonUtil.toDouble( publicParams.get( "integralRatio" ) ) );
 	    }
-	    if ( CommonUtil.isNotEmpty( publicParams.get( "integralRatio" ) ) ) {
-		ps.setIntegralRatio( CommonUtil.toDouble( publicParams.get( "integralRatio" ) ) );
+	    if ( CommonUtil.isNotEmpty( publicParams.get( "parametersetId" ) ) ) {
+		ps.setId( CommonUtil.toInteger( publicParams.get( "parametersetId" ) ) );
 	    }
-	    if ( CommonUtil.isNotEmpty( publicParams.get( "integralRatio" ) ) ) {
-		ps.setIntegralRatio( CommonUtil.toDouble( publicParams.get( "integralRatio" ) ) );
-	    }
+
 	    ps.setBusId( busUserId );
 	    if ( CommonUtil.isNotEmpty( ps.getId() ) ) {
 		publicParameterSetMapper.updateById( ps );
