@@ -33,11 +33,15 @@ public interface MemberCardDAO extends BaseMapper<MemberCard> {
      */
     Integer countCardisBinding(@Param("busId") Integer busId);
 
+    Integer countShopIdCardisBinding(@Param("busId") Integer busId,@Param("shopId") Integer shopId);
+
     Integer countCard(@Param("busId") Integer busId,@Param("ctIds")List<Integer> ctIds);
 
     Integer countCard1(@Param("busId") Integer busId,@Param("ctId")Integer ctId);
 
     Integer countCardByTime(@Param("busId") Integer busId,@Param("date") String date);
+
+    Integer countShopIdCardByTime(@Param("busId") Integer busId,@Param("shopId") Integer shopId,@Param("date") String date);
 
     /**
      * 根据卡号查询

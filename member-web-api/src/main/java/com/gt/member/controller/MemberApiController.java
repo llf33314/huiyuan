@@ -620,6 +620,7 @@ public class MemberApiController extends BaseController {
 
     @ApiOperation( value = "统计会员卡总数和今日新增", notes = "统计会员卡总数和今日新增" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
+		     @ApiImplicitParam( name = "shopId", value = "门店id", paramType = "query", required = true, dataType = "int" )
     } )
     @ResponseBody
     @RequestMapping( value = "/countMemberCard", method = RequestMethod.POST )
@@ -627,7 +628,7 @@ public class MemberApiController extends BaseController {
 
 	try {
 	    Map< String,Object > requestBody = JSONObject.parseObject( param );
-	    Map<String,Object> map = memberApiService.coutMemberCard( CommonUtil.toInteger( requestBody.get( "busId" ) ) );
+	    Map<String,Object> map = memberApiService.coutMemberCard( CommonUtil.toInteger( requestBody.get( "busId" ) ) ,CommonUtil.toInteger( requestBody.get( "shopId" ) ));
 	    return ServerResponse.createBySuccess( map );
 	} catch ( Exception e ) {
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getMsg());

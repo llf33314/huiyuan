@@ -47,6 +47,12 @@
 		select count(mc_id) from  t_member_card where busId=#{busId}
 	</select>
 
+	<select id="countShopIdCardisBinding" resultType="java.lang.Integer">
+		select count(mc_id) from  t_member_card where busId=#{busId} and shopId=#{shopId}
+	</select>
+
+
+
 
 
 	<select id="countCard" resultType="java.lang.Integer">
@@ -62,9 +68,16 @@
 	</select>
 
 	<select id="countCardByTime" resultType="java.lang.Integer">
-		select count(mc_id) from t_member_card where busId=#{busId} and isbinding=1 and
+		select count(mc_id) from t_member_card where busId=#{busId}  and
 		receiveDate <![CDATA[ >= ]]> #{date}
 	</select>
+
+	<select id="countShopIdCardByTime" resultType="java.lang.Integer">
+		select count(mc_id) from t_member_card where busId=#{busId} and shopId=#{shopId} and
+		receiveDate <![CDATA[ >= ]]> #{date}
+	</select>
+
+
 
 	<select id="countCardByCardNo" resultType="java.lang.Integer">
 		select count(mc_id) from t_member_card where busId=#{busId} and cardNo=#{cardNo} limit 1

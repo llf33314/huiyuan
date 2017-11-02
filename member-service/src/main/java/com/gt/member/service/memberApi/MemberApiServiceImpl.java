@@ -2694,14 +2694,27 @@ public class MemberApiServiceImpl implements MemberApiService {
     }
 
 
-    public Map<String,Object> coutMemberCard(Integer busId){
+    public Map<String,Object> coutMemberCard(Integer busId,Integer shopId){
         Map<String,Object> map=new HashMap<>(  );
 	// 今日新增统计
 	String date = DateTimeKit.getDate() + " 00:00:00";
-	int count = memberCardDAO.countCardByTime(busId, date);
-	map.put( "jinriCount",count );
-	int num = memberCardDAO.countCardisBinding(busId);
-	map.put( "totalCount",num );
+
+	WxShop wxShop=wxShopDAO.selectMainShopByBusId( busId );
+	if((CommonUtil.isNotEmpty( wxShop ) && wxShop.getId().equals( shopId )) || CommonUtil.isEmpty( shopId )){
+	    int count = memberCardDAO.countCardByTime(busId, date);
+	    map.put( "jinriCount",count );
+
+	    int num = memberCardDAO.countCardisBinding(busId);
+	    map.put( "totalCount",num );
+
+	}else{
+	    int count = memberCardDAO.countShopIdCardByTime(busId,shopId, date);
+	    map.put( "jinriCount",count );
+
+	    int num = memberCardDAO.countShopIdCardisBinding(busId,shopId);
+	    map.put( "totalCount",num );
+	}
+
 	return map;
     }
 

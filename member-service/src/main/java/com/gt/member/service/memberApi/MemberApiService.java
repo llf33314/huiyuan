@@ -464,7 +464,7 @@ public interface MemberApiService {
      * @param busId
      * @return
      */
-    public Map<String,Object> coutMemberCard(Integer busId);
+    public Map<String,Object> coutMemberCard(Integer busId,Integer shopId);
 
 
 }
