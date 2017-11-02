@@ -5,6 +5,7 @@ import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.RequestUtils;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.member.util.PropertiesUtil;
+import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ public class RequestServiceImpl implements RequestService {
 
     //发送短信
     private final String SEND_SMS = "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do";
+
+    private final String SEND_SMS_NEW="/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsNew.do";
 
     private final static String SEND_WXMSG="8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/sendWxMsgTemplate.do";
 
@@ -45,6 +48,13 @@ public class RequestServiceImpl implements RequestService {
     public void sendSms(RequestUtils<OldApiSms> requestUtils){
 	String url=PropertiesUtil.getWxmp_home()+SEND_SMS;
 	String smsStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
+    }
+
+
+    public String sendSmsNew(RequestUtils<NewApiSms> requestUtils){
+	String url=PropertiesUtil.getWxmp_home()+SEND_SMS_NEW;
+	String smsStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
+    	return smsStr;
     }
 
     public void setSendWxmsg(SendWxMsgTemplate sendWxMsgTemplate){

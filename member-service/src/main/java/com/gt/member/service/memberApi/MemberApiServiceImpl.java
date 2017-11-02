@@ -958,7 +958,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 
 	    if ( CommonUtil.isEmpty( card ) ) {
-		throw new BusinessException( ResponseMemberEnums.NO_DATA.getCode(), ResponseMemberEnums.NO_DATA.getMsg() );
+		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR.getCode(), ResponseMemberEnums.NOT_MEMBER_CAR.getMsg() );
 	    } else if ( card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
@@ -1628,7 +1628,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    m.setId( memberId );
 	    m.setPhone( phone );
 	    memberDAO.updateById( m );
-	} catch ( Exception e ) {
+	}catch ( BusinessException e ){
+	    throw  e;
+	}catch ( Exception e ) {
 	    LOG.error( "绑定手机号码错误",e );
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
@@ -2344,7 +2346,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 
 	    //粉币使用
-	    if ( erpPaySuccess.getUserFenbi() == 1 && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
+	    if ( erpPaySuccess.getUserFenbi() == 1 && CommonUtil.isNotEmpty( memberEntity.getMcId() )&& erpPaySuccess.getFenbiNum()>0 ) {
 		Double fenbi = memberEntity.getFansCurrency() - erpPaySuccess.getFenbiNum();
 		memberCommonService.reduceFansCurrency( memberEntity, erpPaySuccess.getFenbiNum() );
 
@@ -2353,7 +2355,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 	    }
 	    //积分使用
-	    if ( erpPaySuccess.getUserJifen() == 1 && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
+	    if ( erpPaySuccess.getUserJifen() == 1 && CommonUtil.isNotEmpty( memberEntity.getMcId() ) && erpPaySuccess.getJifenNum()>0 ) {
 		MemberEntity memberEntity1 = new MemberEntity();
 		memberEntity1.setId( memberEntity.getId() );
 		Integer banlan = memberEntity.getIntegral() - erpPaySuccess.getJifenNum();
@@ -2380,7 +2382,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 
 	    if ( !bool ) {
-		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, erpPaySuccess.getJifenNum().doubleValue(), "消费", memberEntity.getBusId(), 0.0,
+		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, erpPaySuccess.getDiscountAfterMoney(), "消费", memberEntity.getBusId(), 0.0,
 				erpPaySuccess.getOrderCode(), 0 );
 	    }
 

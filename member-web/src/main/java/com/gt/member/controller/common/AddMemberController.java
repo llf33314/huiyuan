@@ -19,8 +19,10 @@ import com.gt.member.dao.common.WxShopDAO;
 import com.gt.member.entity.MemberEntity;
 import com.gt.member.entity.MemberQcodeWx;
 import com.gt.member.service.common.dict.DictService;
+import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.CardERPService;
 import com.gt.member.util.*;
+import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -44,6 +46,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.gt.member.MpGenerator.url;
+
 /**
  * <p>
  * 统一新增会员卡页面
@@ -62,17 +66,12 @@ public class AddMemberController {
     @Autowired
     private MemberQcodeWxDAO memberQcodeWxMapper;
 
-    @Autowired
-    private MemberEntityDAO memberMapper;
 
     @Autowired
     private WxPublicUsersDAO wxPublicUsersMapper;
 
     @Autowired
     private MemberGradetypeDAO gradeTypeMapper;
-
-    @Autowired
-    private BusUserDAO busUserMapper;
 
     @Autowired
     private CardERPService cardERPService;
@@ -86,6 +85,9 @@ public class AddMemberController {
     @Autowired
     private WxShopDAO wxShopDAO;
 
+    @Autowired
+    private RequestService requestService;
+
     @ApiOperation( value = "新增会员统一页面", notes = "新增会员统一页面" )
     @ApiImplicitParam( name = "shopId", value = "门店id(没有门店请传主门店id)", paramType = "query", required = true, dataType = "int" )
     @RequestMapping( "/erpAddMember" )
@@ -96,48 +98,52 @@ public class AddMemberController {
 //	SessionUtils.setLoginUser( request, busUser );
 //	SessionUtils.setPidBusId( request, 36 );
 
-        Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
-        Integer loginStyle = SessionUtils.getLoginStyle( request );
-	Integer userId = 0;
-	if ( "0".equals( loginStyle ) ) {
-	    TCommonStaff tc = SessionUtils.getCommonStaff( request );
-	    userId = tc.getId();
-	} else {
-	    userId= SessionUtils.getLoginUser(request).getId();
-	}
-	Integer busId = SessionUtils.getLoginUser( request ).getId();
-	if(CommonUtil.isEmpty( shopId )){
-	    shopId= wxShopDAO.selectMainShopByBusId(busId  ).getId();
-	}
-	WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersMapper.selectByUserId( busId );
+	try {
+	    Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
+	    Integer loginStyle = SessionUtils.getLoginStyle( request );
+	    Integer userId = 0;
+	    if ( loginStyle.equals( 0 ) ) {
+		TCommonStaff tc = SessionUtils.getCommonStaff( request );
+		userId = tc.getId();
+	    } else {
+		userId = SessionUtils.getLoginUser( request ).getId();
+	    }
+	    LOG.error( "userId:"+userId );
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    if ( CommonUtil.isEmpty( shopId ) ) {
+		shopId = wxShopDAO.selectMainShopByBusId( busId ).getId();
+	    }
+	    WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersMapper.selectByUserId( busId );
 
-	if ( ( CommonUtil.isEmpty( wxPublicUsersEntity ) ) || wxPublicUsersEntity.getServiceTypeInfo() != 2 || wxPublicUsersEntity.getVerifyTypeInfo() != 0 ) {
-	    request.setAttribute( "gongzhong", 0 );
-	} else {
-	    request.setAttribute( "gongzhong", 1 );
-	}
+	    if ( ( CommonUtil.isEmpty( wxPublicUsersEntity ) ) || wxPublicUsersEntity.getServiceTypeInfo() != 2 || wxPublicUsersEntity.getVerifyTypeInfo() != 0 ) {
+		request.setAttribute( "gongzhong", 0 );
+	    } else {
+		request.setAttribute( "gongzhong", 1 );
+	    }
 
-	request.setAttribute( "shopId", shopId );
-	List< Map< String,Object > > mapList = gradeTypeMapper.findBybusId1( busId );//查询该商户下的卡片类型
-	request.setAttribute( "mapList", JSON.toJSON( mapList ) );
-	if ( mapList.size() > 0 ) {
-	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, CommonUtil.toInteger( mapList.get( 0 ).get( "ctId" ) ) );
-	    if(gradeTypes.size()>0 ) {
-	        if("3".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "applyType" ) ) )){
-		    request.setAttribute( "gradeTypes", JSON.toJSON( gradeTypes ) );
-		}else{
-		    List< Map< String,Object > > gts=new ArrayList<>(  );
-		    gts.add( gradeTypes.get( 0 ) );
-		    request.setAttribute( "gradeTypes", JSON.toJSON( gts) );
+	    request.setAttribute( "shopId", shopId );
+	    List< Map< String,Object > > mapList = gradeTypeMapper.findBybusId1( busId );//查询该商户下的卡片类型
+	    request.setAttribute( "mapList", JSON.toJSON( mapList ) );
+	    if ( mapList.size() > 0 ) {
+		List< Map< String,Object > > gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, CommonUtil.toInteger( mapList.get( 0 ).get( "ctId" ) ) );
+		if ( gradeTypes.size() > 0 ) {
+		    if ( "3".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "applyType" ) ) ) ) {
+			request.setAttribute( "gradeTypes", JSON.toJSON( gradeTypes ) );
+		    } else {
+			List< Map< String,Object > > gts = new ArrayList<>();
+			gts.add( gradeTypes.get( 0 ) );
+			request.setAttribute( "gradeTypes", JSON.toJSON( gts ) );
+		    }
 		}
 	    }
+	    request.setAttribute( "busId", busId );
+	    request.setAttribute( "shopId", shopId );
+	    request.setAttribute( "memberUser", "member_" + loginStyle + "_" + userId );
+	    request.setAttribute( "addmember", "addmember_" + busId + "_" + shopId );
+	    request.setAttribute( "host", PropertiesUtil.getSocket_url() );
+	}catch ( Exception e){
+	    LOG.error( "会员异常",e );
 	}
-	request.setAttribute( "busId",busId );
-	request.setAttribute( "shopId", shopId );
-	request.setAttribute( "memberUser", "member_" +loginStyle+"_"+ userId );
-	request.setAttribute( "addmember", "addmember_" +busId+"_"+shopId );
-	request.setAttribute( "host", PropertiesUtil.getSocket_url() );
-
 	return "addMember/addmember";
     }
 
@@ -188,22 +194,25 @@ public class AddMemberController {
 		// 验证类型
 		LOG.debug( "进入短信发送,手机号:" + telNo );
 	    }
-	    String url = PropertiesUtil.getWxmp_home() + "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do";
-	    RequestUtils<OldApiSms> requestUtils=new RequestUtils<OldApiSms>(  );
+	    RequestUtils<NewApiSms> requestUtils=new RequestUtils<NewApiSms>(  );
 	    String no = CommonUtil.getPhoneCode();
 	    redisCacheUtil.set( telNo+"_"+no, no, 5 * 60 );
 	    LOG.debug( "进入短信发送,手机号:" + no );
 
-	    OldApiSms oldApiSms=new OldApiSms();
-	    oldApiSms.setMobiles(telNo);
-	    oldApiSms.setContent( "会员短信校验码:"+no);
-	    oldApiSms.setCompany(PropertiesUtil.getSms_name());
-	    oldApiSms.setBusId(busId);
-	    oldApiSms.setModel(9);
-
-	    requestUtils.setReqdata( oldApiSms );
+//	    OldApiSms oldApiSms=new OldApiSms();
+//	    oldApiSms.setMobiles(telNo);
+//	    oldApiSms.setContent( "会员短信校验码:"+no);
+//	    oldApiSms.setCompany(PropertiesUtil.getSms_name());
+//	    oldApiSms.setBusId(busId);
+//	    oldApiSms.setModel(9);
+	    NewApiSms newApiSms=new NewApiSms();
+	    newApiSms.setMobile( telNo );
+	    newApiSms.setParamsStr( "会员短信校验码:"+no );
+	    newApiSms.setBusId(busId);
+	    newApiSms.setModel(9);
+	    newApiSms.setTmplId( Long.parseLong(PropertiesUtil.getSms_tmplId())  );
 	    try {
-		String smsStr = HttpClienUtils.reqPostUTF8(JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
+		String smsStr = requestService.sendSmsNew( requestUtils );
 		JSONObject json=JSONObject.parseObject( smsStr );
 		if ( "0".equals( CommonUtil.toString(json.get( "code" )  ) ) ) {
 		    map.put( "result", true );

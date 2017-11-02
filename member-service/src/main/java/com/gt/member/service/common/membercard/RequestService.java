@@ -1,6 +1,7 @@
 package com.gt.member.service.common.membercard;
 
 import com.gt.api.util.RequestUtils;
+import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
 
@@ -23,6 +24,9 @@ public interface RequestService {
      * @param requestUtils
      */
     public void sendSms(RequestUtils<OldApiSms> requestUtils);
+
+
+    public String sendSmsNew(RequestUtils<NewApiSms > requestUtils);
 
     /**
      * 消息模板发送
