@@ -241,10 +241,12 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    List< Map< String,Object > > gradeTypes = memberGradetypeDAO.findAllByBusIdAndCtId( busId, ctId );
 	    if ( ctId == 2 || ctId == 3 ) {
 		map.put( "fuka", 1 );
-		Integer gtId = CommonUtil.toInteger( gradeTypes.get( 0 ).get( "gtId" ) );
-		//查询开通的副卡
-		List< Integer > assistantS = memberGradetypeAssistantDAO.findAssistantBygtId( busId, gtId );
-		map.put( "xuanZhongfuka", assistantS );
+		if(gradeTypes.size()>0) {
+		    Integer gtId = CommonUtil.toInteger( gradeTypes.get( 0 ).get( "gtId" ) );
+		    //查询开通的副卡
+		    List< Integer > assistantS = memberGradetypeAssistantDAO.findAssistantBygtId( busId, gtId );
+		    map.put( "xuanZhongfuka", assistantS );
+		}
 	    } else {
 		map.put( "fuka", 0 );
 	    }
