@@ -7,6 +7,7 @@
 		<id column="id" property="id" />
 		<result column="busId" property="busId" />
 		<result column="memberId" property="memberId" />
+		<result column="mcId" property="mcId" />
 		<result column="ctId" property="ctId" />
 		<result column="gtId" property="gtId" />
 		<result column="recordType" property="recordType" />
@@ -31,6 +32,7 @@
 		<result column="shopId" property="shopId" />
 		<result column="createDate" property="createDate" />
 		<result column="payStatus" property="payStatus" />
+		<result column="flowbalance" property="flowbalance" />
 		<result column="balanceCount" property="balanceCount" />
 		<result column="refundMoney" property="refundMoney" />
 		<result column="refundFenbi" property="refundFenbi" />
@@ -40,10 +42,11 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
+
        id, busId AS busId, memberId AS memberId, mcId AS mcId, ctId AS ctId, gtId AS gtId, recordType AS recordType, ucType AS ucType, totalMoney AS totalMoney, integral, fenbi, uccount, discountMoney AS discountMoney, discountAfterMoney AS discountAfterMoney,
 		changeFlow AS changeFlow, dvId AS dvId, disCountdepict AS disCountdepict, cardType AS cardType, balance, flowState AS flowState, dataSource AS dataSource, isend, ischongzhi,
 		isendDate AS isendDate, orderCode AS orderCode, shopId AS shopId, createDate AS createDate, payStatus AS payStatus, balanceCount AS balanceCount, refundMoney AS refundMoney,
-		refundFenbi AS refundFenbi, refundJifen AS refundJifen, refundDate AS refundDate
+		refundFenbi AS refundFenbi, refundJifen AS refundJifen, refundDate AS refundDate,flowbalance
 
 	</sql>
 
@@ -53,8 +56,191 @@
 
 	</select>
 
+	<select id="countOrder" resultType="java.lang.Integer">
+		select count(id) from t_wx_user_consume_new where ctId=#{ctId} and busId=#{busId} and payStatus=1
+	</select>
+
+	<select id="sumXiaofei" resultType="java.lang.Double">
+		select sum(discountAfterMoney) from t_wx_user_consume_new where 	recordType=2 and ctId=#{ctId} and busId=#{busId} and payStatus=1
+	</select>
+
+	<select id="buyCard" resultType="java.lang.Double">
+		select sum(discountAfterMoney) from t_wx_user_consume_new where ucType=13 and ctId=#{ctId} and payStatus=1
+	</select>
+
+
+	<select id="sum7DayOrder" resultType="Map">
+		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS time, SUM(discountAfterMoney) AS discountAfterMoney FROM t_wx_user_consume_new
+		where recordType=2 and ctId=#{ctId} and busId=#{busId} and payStatus=1 and createDate <![CDATA[<=]]>#{date}
+		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
+		ORDER BY time DESC  LIMIT 7
+	</select>
+
+
+	<select id="sum7DayBuyCard" resultType="Map">
+		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS buytime1, SUM(discountAfterMoney) AS buyDiscountAfterMoney FROM t_wx_user_consume_new
+		where
+		ucType=13 and ctId=#{ctId} and busId=#{busId} and payStatus=1 and createDate <![CDATA[<=]]>#{date}
+		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
+		ORDER BY buytime1 DESC  LIMIT 7
+	</select>
+
+
+	<select id="countJifenDuiHan" resultType="Map">
+		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS createDate, SUM(integral) as integralCount FROM t_wx_user_consume_new WHERE  busId=#{busId} and  ctId=1   GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
+		ORDER BY a1 DESC  LIMIT 7
+	</select>
+
+
+	<select id="countUseJifen" resultType="java.lang.Integer">
+		SELECT SUM(integral) FROM t_wx_user_consume_new  WHERE  ctId=1 and busId=#{busId} and payStatus=1
+	</select>
+
+
+	<select id="sum7DayDiscount" resultType="Map">
+		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') as createDate,SUM(discountMoney) AS discountMoney FROM t_wx_user_consume_new
+		WHERE recordType=2 and  ctId=2 AND busId=#{busId} AND payStatus=1
+		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
+		ORDER BY createDate DESC   LIMIT 7
+	</select>
+
+
+	<select id="sumDisCount" resultType="java.lang.Double">
+		SELECT SUM(discountMoney)  FROM t_wx_user_consume_new
+		WHERE recordType=2  AND ctId=2 AND busId=#{busId} AND payStatus=1
+	</select>
+
+	<select id="sumChongzhi" resultType="java.lang.Double">
+		select sum(discountAfterMoney) as discountAfterMoney from t_wx_user_consume_new where recordType=1 and busId=#{busId} and ctId=3 AND payStatus=1
+	</select>
+
+
+
+	<select id="sumChongzhi7Day" resultType="Map">
+		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS createDate ,SUM(discountAfterMoney) AS discountAfterMoney FROM t_wx_user_consume_new WHERE  recordType=1  AND busId=#{busId} AND ctId=3 AND payStatus=1
+		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
+		ORDER BY createDate DESC
+		LIMIT 7
+	</select>
+
+
+	<select id="sumCiKa" resultType="Map">
+		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS createDate,SUM(uccount) AS uccount FROM t_wx_user_consume_new WHERE  recordType=2 AND busId=#{busId} AND ctId=5 AND payStatus=1
+		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
+		ORDER BY createDate DESC
+		LIMIT 7
+	</select>
+
+
+	<select id="userCiKa" resultType="java.lang.Integer">
+		SELECT SUM(uccount) FROM t_wx_user_consume_new WHERE recordType=2 AND busId=#{busId} AND payStatus=1
+	</select>
+
+
+
+
 	<select id="findOneByCode" resultMap="BaseResultMap">
 		select * from t_wx_user_consume_new where orderCode=#{orderCode}
 	</select>
+
+
+	<select id="findUserConsumeChongZhiByMemberId" resultType="Map">
+		select * from t_wx_user_consume_new where busId=#{busId} and recordType=2
+		 <if test="memberId!=null">
+			 and memberId=#{memberId}
+		 </if>
+		<if test="date!=null">
+			and isendDate <![CDATA[>=]]> #{date}
+		</if>
+		ORDER BY id DESC limit #{first},#{pageSize}
+	</select>
+
+
+	<select id="countUserConsumeChongZhiByMemberId" resultType="java.lang.Integer">
+		select count(id) from t_wx_user_consume_new where busId=#{busId} and recordType=2
+		<if test="memberId!=null">
+			and memberId=#{memberId}
+		</if>
+		<if test="date!=null">
+			and isendDate <![CDATA[>=]]> #{date}
+		</if>
+	</select>
+
+	<select id="findUserConsumeDuiHuanByMemberId" resultType="Map">
+		select * from t_wx_user_consume_new where busId=#{busId} and recordType=2
+		<if test="memberId!=null">
+			and memberId=#{memberId}
+		</if>
+		<if test="date!=null">
+			and isendDate <![CDATA[>=]]> #{date}
+		</if>
+		ORDER BY id DESC limit #{first},#{pageSize}
+	</select>
+
+
+	<select id="countUserConsumeDuiHuanByMemberId" resultType="java.lang.Integer">
+		select count(id) from t_wx_user_consume_new where busId=#{busId} and recordType=2
+		<if test="memberId!=null">
+			and memberId=#{memberId}
+		</if>
+		<if test="date!=null">
+			and isendDate <![CDATA[>=]]> #{date}
+		</if>
+	</select>
+
+
+
+	<select id="countUserConsumeCikaByMemberId" resultType="java.lang.Integer">
+		select count(id) from t_wx_user_consume_new where busId=#{busId} and recordType=3
+		<if test="memberId!=null">
+			and memberId=#{memberId}
+		</if>
+		<if test="date!=null">
+			and isendDate <![CDATA[>=]]> #{date}
+		</if>
+	</select>
+
+
+	<select id="findUserConsumeCikaByMemberId" resultType="Map">
+		select * from t_wx_user_consume_new where busId=#{busId} and recordType=3
+		<if test="memberId!=null">
+			and memberId=#{memberId}
+		</if>
+		<if test="date!=null">
+			and isendDate <![CDATA[>=]]> #{date}
+		</if>
+		ORDER BY id DESC limit #{first},#{pageSize}
+	</select>
+
+
+	<select id="countUserConsumeXiaoFeiByMemberId" resultType="java.lang.Integer">
+		select count(id) from t_wx_user_consume_new where busId=#{busId} and recordType=2
+		<if test="memberId!=null">
+			and memberId=#{memberId}
+		</if>
+		<if test="payStatus!=null">
+			and payStatus=#{payStatus}
+		</if>
+		<if test="date!=null">
+			and isendDate <![CDATA[>=]]> #{date}
+		</if>
+	</select>
+
+
+	<select id="findUserConsumeXiaoFeiByMemberId" resultType="Map">
+		select * from t_wx_user_consume_new where busId=#{busId} and recordType=2
+		<if test="memberId!=null">
+			and memberId=#{memberId}
+		</if>
+		<if test="payStatus!=null">
+			and payStatus=#{payStatus}
+		</if>
+		<if test="date!=null">
+			and isendDate <![CDATA[>=]]> #{date}
+		</if>
+		ORDER BY id DESC limit #{first},#{pageSize}
+	</select>
+
+
 
 </mapper>

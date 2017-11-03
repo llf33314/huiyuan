@@ -466,5 +466,10 @@ public interface MemberApiService {
      */
     public Map<String,Object> coutMemberCard(Integer busId,Integer shopId);
 
+    /**
+     * 流量兑换通知
+     */
+    public void changeFlow(Map<String,Object> params) throws BusinessException;
+
 
 }

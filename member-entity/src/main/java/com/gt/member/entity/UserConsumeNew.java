@@ -1,16 +1,15 @@
 package com.gt.member.entity;
 
-import com.baomidou.mybatisplus.enums.IdType;
-import java.util.Date;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
-import java.io.Serializable;
-import com.baomidou.mybatisplus.enums.FieldFill;
-
+import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -23,7 +22,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @TableName("t_wx_user_consume_new")
-public class UserConsumeNew extends Model<UserConsumeNew> {
+public class UserConsumeNew extends Model<UserConsumeNew > {
 
     private static final long serialVersionUID = 1L;
 
@@ -163,6 +162,13 @@ public class UserConsumeNew extends Model<UserConsumeNew> {
      */
 	@TableField("balanceCount")
 	private Integer balanceCount;
+
+    /**
+     * 剩余流量
+     */
+    	@TableField("flowbalance")
+	private Integer flowbalance;
+
     /**
      * 退款金额
      */

@@ -670,6 +670,23 @@ public class MemberApiController extends BaseController {
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
+    }
+
+
+    @ApiOperation( value = "流量兑换通知", notes = "流量兑换通知" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "id", value = "订单id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "status", value = "状态", paramType = "query", required = true, dataType = "int" )
+
+    } )
+    @ResponseBody
+    @RequestMapping( value = "/changeFlow", method = RequestMethod.POST )
+    public ServerResponse changeFlow(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String,Object> params ){
+	try {
+	    memberApiService.changeFlow( params );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
 
     }
 }
