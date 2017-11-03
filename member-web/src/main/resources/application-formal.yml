@@ -96,6 +96,9 @@ web:
  #图片资源ftp密码
  static_source_ftp_password: gt123456
 
+  #多粉 11510 微站 14202
+  sms_tmplId: 11510
+
 
 redisSession:
  domainName: .duofriend.com

@@ -28,6 +28,14 @@ public interface MemberApiService {
      */
     public MemberEntity findByMemberId( Integer memberId ) throws BusinessException;
 
+    /**
+     * 查询粉丝和会员信息
+     * @param memberId
+     * @return
+     * @throws BusinessException
+     */
+    public Map<String,Object> findMemberCardByMemberId( Integer memberId ) throws BusinessException;
+
 
     /*
      * 根据会员id查询会员卡信息 如果是折扣卡 返回折扣值
@@ -111,13 +119,8 @@ public interface MemberApiService {
     public Map< String,Object > findMember( String openId );
 
 
-    /*
-     * 撤单
-     * @param orderCode
-     * @return
-     * @throws Exception
-     */
-    public Map< String,Object > cancelOrder( String orderCode ) throws Exception;
+
+
 
     /*
      * 小程序绑定手机号码
@@ -135,14 +138,6 @@ public interface MemberApiService {
     public List< Map< String,Object > > findMemberCardRecharge( Integer busId, String cardNo );
 
 
-	/*
-	 * 分页查询会员充值记录
-	 * @param busId
-	 * @param params 参数  curPage 页面条数   memberId 粉丝id  startDate 开始时间 endDate 结束时间
-	 * @return
-	 */
-
-    public Page findConsumeByMemberId( Integer busId, Map< String,Object > params );
 
     /*
      * 根据卡号查询会员卡信息
@@ -383,6 +378,15 @@ public interface MemberApiService {
     public void successChongZhi( Map< String,Object > params ) throws BusinessException;
 
     /**
+     * 魔盒充值成功接口
+     *
+     * @param params
+     *
+     * @throws BusinessException
+     */
+    public void successChongZhiVer1( Map< String,Object > params ) throws BusinessException;
+
+    /**
      * (商城）评论修改会员积分或粉币
      *
      * @param params
@@ -446,6 +450,28 @@ public interface MemberApiService {
      * @throws BusinessException
      */
     public Page findMemberPage(String params) throws BusinessException;
+
+
+    /**
+     * 分页查询会员卡信息
+     * @param params
+     * @throws BusinessException
+     */
+    public Page findMemberPage(String params) throws BusinessException;
+
+    /**
+     * 查询商家发布的会员卡信息
+     * @param busId
+     * @return
+     */
+    public List<Map<String,Object>> findGradeTypeBybusId(Integer busId);
+
+    /**
+     * 统计会员数据和今日新增会员卡
+     * @param busId
+     * @return
+     */
+    public Map<String,Object> coutMemberCard(Integer busId,Integer shopId);
 
 
 }

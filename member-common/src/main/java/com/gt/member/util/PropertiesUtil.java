@@ -45,6 +45,8 @@ public class PropertiesUtil {
 
     private static String res_web_path;
 
+    private static String sms_tmplId;
+
     public static String getWebHome() {
 	return webHome;
     }
@@ -171,5 +173,13 @@ public class PropertiesUtil {
 
     public  void setRes_web_path( String res_web_path ) {
 	PropertiesUtil.res_web_path = res_web_path;
+    }
+
+    public static String getSms_tmplId() {
+	return sms_tmplId;
+    }
+
+    public  void setSms_tmplId( String sms_tmplId ) {
+	PropertiesUtil.sms_tmplId = sms_tmplId;
     }
 }
