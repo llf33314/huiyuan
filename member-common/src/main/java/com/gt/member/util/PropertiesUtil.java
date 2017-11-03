@@ -47,6 +47,9 @@ public class PropertiesUtil {
 
     private static String sms_tmplId;
 
+
+    private static String untion_url;
+
     public static String getWebHome() {
 	return webHome;
     }
@@ -181,5 +184,13 @@ public class PropertiesUtil {
 
     public  void setSms_tmplId( String sms_tmplId ) {
 	PropertiesUtil.sms_tmplId = sms_tmplId;
+    }
+
+    public static String getUntion_url() {
+	return untion_url;
+    }
+
+    public static void setUntion_url( String untion_url ) {
+	PropertiesUtil.untion_url = untion_url;
     }
 }

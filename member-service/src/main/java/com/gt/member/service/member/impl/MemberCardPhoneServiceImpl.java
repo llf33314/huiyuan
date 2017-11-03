@@ -1,32 +1,37 @@
 package com.gt.member.service.member.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.Member;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.KeysUtil;
-import com.gt.api.util.sign.SignHttpUtils;
+import com.gt.api.util.RequestUtils;
+import com.gt.api.util.SessionUtils;
 import com.gt.common.entity.AlipayUser;
+import com.gt.common.entity.BusFlow;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.member.dao.*;
-import com.gt.member.dao.common.AlipayUserDAO;
-import com.gt.member.dao.common.BasisCityDAO;
-import com.gt.member.dao.common.BusUserDAO;
-import com.gt.member.dao.common.WxPublicUsersDAO;
+import com.gt.member.dao.common.*;
+import com.gt.member.dto.ServerResponse;
 import com.gt.member.entity.*;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.common.membercard.MemberCommonService;
+import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.MemberCardPhoneService;
 import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.CommonUtil;
+import com.gt.member.util.DateTimeKit;
 import com.gt.member.util.PropertiesUtil;
+import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import org.apache.ibatis.builder.BuilderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -90,6 +95,24 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
     @Autowired
     private UserConsumePayDAO userConsumePayDAO;
+
+    @Autowired
+    private MemberFindDAO memberFindDAO;
+
+    @Autowired
+    private SystemnoticecallDAO systemnoticecallDAO;
+
+    @Autowired
+    private MemberNoticeuserDAO noticeUserMapper;
+
+    @Autowired
+    private MemberCardrecordNewDAO memberCardrecordNewDAO;
+
+    @Autowired
+    private BusFlowDAO busFlowDAO;
+
+    @Autowired
+    private RequestService requestService;
 
     public String wxPayWay( UserConsumeNew consumeNew, int payType ) throws Exception {
 	SubQrPayParams subQrPayParams = new SubQrPayParams();
@@ -155,7 +178,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
     @Transactional
     public void linquMemberCard( Map< String,Object > params ) throws BusinessException {
 	try {
-	    Integer busId=CommonUtil.toInteger( params.get( "busId" ) );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 
 	    int count = cardMapper.countCardisBinding( busId );
 
@@ -163,7 +186,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 	    String dictNum = dictService.dictBusUserNum( busId, busUserEntity.getLevel(), 4, "1093" ); // 多粉 翼粉
 	    if ( CommonUtil.toInteger( dictNum ) < count ) {
-	        throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_COUNT );
+		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_COUNT );
 	    }
 
 	    String phone = CommonUtil.toString( params.get( "phone" ) );
@@ -275,7 +298,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		    payType = 1;
 		}
 		String url = wxPayWay( uc, payType );
-		throw new BusinessException( ResponseMemberEnums.PLEASE_BUY_CARD.getCode(),url );
+		throw new BusinessException( ResponseMemberEnums.PLEASE_BUY_CARD.getCode(), url );
 	    }
 	} catch ( BuilderException e ) {
 	    throw e;
@@ -359,6 +382,146 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	// 新增会员短信通知
 	memberEntity = memberMapper.selectById( uc.getMemberId() );
 	systemMsgService.sendNewMemberMsg( memberEntity );
+    }
+
+    /**
+     * 查询会员卡信息
+     *
+     * @param request
+     * @param busId
+     *
+     * @return
+     * @throws BusinessException
+     */
+    public Map< String,Object > findMember( HttpServletRequest request, Integer busId ) throws BusinessException {
+	try {
+	    Map< String,Object > map = new HashMap<>();
+	    Member member = SessionUtils.getLoginMember( request, busId );
+
+	    MemberEntity memberEntity = memberEntityDAO.selectById( member.getId() );
+	    map.put( "member", memberEntity );
+
+	    MemberFind memberfind = memberFindDAO.findByQianDao( member.getBusid() );
+	    map.put( "qindaoJifen", memberfind.getIntegral() );
+
+	    MemberParameter memberParameter = memberParameterMapper.findByMemberId( member.getId() );
+	    if ( CommonUtil.isEmpty( memberParameter ) ) {
+		request.setAttribute( "qiandao", 0 );
+	    } else {
+		if ( CommonUtil.isNotEmpty( memberParameter.getSignDate() ) && DateTimeKit.isSameDay( memberParameter.getSignDate(), new Date() ) ) {
+		    map.put( "qiandao", 1 );
+		} else {
+		    map.put( "qiandao", 0 );
+		}
+	    }
+
+	    // 查询我的消息
+	    int systemCount = systemnoticecallDAO.findCountByMemberId( member.getId() );
+	    int noticeCount = noticeUserMapper.findCountNotice( member.getId(), new Date() );
+	    int count = systemCount + noticeCount;
+	    map.put( "count", count );
+
+	    // 根据卡号查询信息
+	    List< Map< String,Object > > card = cardMapper.findCardById( member.getMcId() );
+	    map.put( "isleft", card.get( 0 ).get( "isleft" ) );
+
+	    if ( CommonUtil.isEmpty( member.getHeadimgurl() ) ) {
+		MemberParameter mp = memberParameterMapper.findByMemberId( member.getId() );
+		if ( CommonUtil.isNotEmpty( mp ) ) {
+		    map.put( "headimg", mp.getHeadImg() );
+		}
+	    } else {
+		map.put( "headimg", member.getHeadimgurl() );
+	    }
+
+	    // 联盟卡查询
+	    String unionUrl = PropertiesUtil.getUntion_url() + "/cardPhone/#/toUnionCard?busId=" + busId;
+	    map.put( "unionUrl", unionUrl );
+
+	    return map;
+	} catch ( Exception e ) {
+	    LOG.error( "查询会员信息异常", e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+    public Map< String,Object > findCardrecordNew( Map< String,Object > params, Integer memberId, Integer recordType ) {
+	Map< String,Object > map = new HashMap<>();
+	Integer page = CommonUtil.toInteger( params.get( "page" ) );
+	Integer pageSize = 10;
+	List< Map< String,Object > > listMap = memberCardrecordNewDAO.findCardrecordByMemberIdAndRecordType( memberId, recordType, page, pageSize );
+	map.put( "page", listMap );
+	MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
+	map.put( "jifen", memberEntity.getIntegral() );
+	map.put( "fenbi", memberEntity.getFansCurrency() );
+	map.put( "flow", memberEntity.getFlow() );
+	return map;
+    }
+
+    public List< BusFlow > findBusUserFlow( Integer busId ) {
+	List< BusFlow > busFlows = busFlowDAO.getBusFlowsByUserId( busId );
+	return busFlows;
+    }
+
+    @Rollback
+    public void changeFlow( Map< String,Object > params, Integer memberId ) throws BusinessException {
+	try {
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    String phone = CommonUtil.toString( params.get( "phone" ) );
+
+	    UserConsumeNew uc = new UserConsumeNew();
+	    uc.setBusId( busId );
+	    uc.setMemberId( memberId );
+	    MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
+	    MemberCard card = cardMapper.selectById( memberEntity.getMcId() );
+	    if ( CommonUtil.isEmpty( card ) ) {
+		throw new BusinessException( ResponseMemberEnums.MEMBER_NOT_CARD );
+	    }
+
+	    Integer prizeCount = CommonUtil.toInteger( params.get( "prizeCount" ) );
+
+	    if ( memberEntity.getFlow() < prizeCount ) {
+		throw new BusinessException( ResponseMemberEnums.LESS_THAN_FLOE );
+	    }
+	    Integer flowBalance = memberEntity.getFlow() - prizeCount;
+	    uc.setMcId( card.getMcId() );
+	    uc.setCtId( card.getCtId() );
+	    uc.setGtId( card.getGtId() );
+	    uc.setRecordType( 5 );
+	    uc.setUcType( 132 );
+	    uc.setChangeFlow( prizeCount );
+	    uc.setFlowbalance( flowBalance );
+	    String orderCode = CommonUtil.getMEOrderCode();
+	    uc.setOrderCode( orderCode );
+	    userConsumeNewDAO.insert( uc );
+
+	    RequestUtils< AdcServicesInfo > requestUtils = new RequestUtils<>();
+	    AdcServicesInfo adcServicesInfo = new AdcServicesInfo();
+	    if ( CommonUtil.isEmpty( phone ) ) {
+		if ( CommonUtil.isEmpty( memberEntity.getPhone() ) ) {
+		    throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_PHONE );
+		}
+		adcServicesInfo.setMobile( memberEntity.getPhone() );
+	    } else {
+		adcServicesInfo.setMobile( phone );
+	    }
+	    adcServicesInfo.setBusId( busId );
+	    adcServicesInfo.setPrizeCount( prizeCount );
+	    adcServicesInfo.setMemberId( memberId );
+	    adcServicesInfo.setModel( 102 );
+	    adcServicesInfo.setId( uc.getId() );
+	    String notifyUrl="";
+	    adcServicesInfo.setNotifyUrl( notifyUrl );
+	    requestUtils.setReqdata( adcServicesInfo );
+	    String result = requestService.changeFlow( requestUtils );
+	    JSONObject json = JSONObject.parseObject( result );
+	    if ( !"0".equals( CommonUtil.toString( json.get( "code" ) ) ) ) {
+		throw new BusinessException( ResponseMemberEnums.ERROR_CHARGE_FLOW.getCode(), CommonUtil.toString( json.get( "msg" ) ) );
+	    }
+	    memberCommonService.saveCardRecordOrderCodeNew( memberId, 4, prizeCount.doubleValue(), "流量兑换", busId, flowBalance.doubleValue(), orderCode, 0 );
+	} catch ( BusinessException e ) {
+	    throw e;
+	}
     }
 
 }

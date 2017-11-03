@@ -16,7 +16,7 @@ public interface MemberCountMoneyApiService {
      * @return
      * @throws Exception
      */
-    public MemberShopEntity publicMemberCountMoney(MemberShopEntity ce) throws Exception;
+    public MemberShopEntity publicMemberCountMoney( MemberShopEntity ce ) throws Exception;
 
 
     /**
@@ -25,7 +25,7 @@ public interface MemberCountMoneyApiService {
      * @return
      * @throws Exception
      */
-    public MallAllEntity mallSkipShopCount(MallAllEntity mallAllEntity) throws Exception;
+    public MallAllEntity mallSkipShopCount( MallAllEntity mallAllEntity ) throws Exception;
 
 
     /**
@@ -34,5 +34,5 @@ public interface MemberCountMoneyApiService {
      * @return
      * @throws Exception
      */
-    public MallNotShopEntity mallSkipNotShopCount(MallNotShopEntity mallNotShopEntity) throws Exception;
+    public MallNotShopEntity mallSkipNotShopCount( MallNotShopEntity mallNotShopEntity ) throws Exception;
 }

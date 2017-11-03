@@ -170,7 +170,7 @@
         <dependency>
             <groupId>com.gt.wxmp</groupId>
             <artifactId>lfx_wxmp_entity</artifactId>
-            <version>1.0.6</version>
+            <version>1.0.11</version>
         </dependency>
 
 

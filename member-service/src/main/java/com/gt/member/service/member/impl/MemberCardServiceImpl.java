@@ -170,14 +170,14 @@ public class MemberCardServiceImpl implements MemberCardService {
      * 分组查询卡片信息
      */
     @Override
-    public Map<String,Object>  findCardModelByBusId( Integer busId ) throws BusinessException {
+    public Map< String,Object > findCardModelByBusId( Integer busId ) throws BusinessException {
 	if ( CommonUtil.isEmpty( busId ) ) {
 	    throw new BusinessException( ResponseMemberEnums.INVALID_SESSION );
 	}
-	List< MemberCardmodel > cardmodels= cardModelMapper.findCardModelByBusId( busId );
-	Map<String,Object> map=new HashMap<>(  );
-	map.put( "cardmodels",cardmodels );
-	map.put( "path",PropertiesUtil.getRes_web_path() );
+	List< MemberCardmodel > cardmodels = cardModelMapper.findCardModelByBusId( busId );
+	Map< String,Object > map = new HashMap<>();
+	map.put( "cardmodels", cardmodels );
+	map.put( "path", PropertiesUtil.getRes_web_path() );
 	return map;
     }
 
@@ -241,7 +241,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    List< Map< String,Object > > gradeTypes = memberGradetypeDAO.findAllByBusIdAndCtId( busId, ctId );
 	    if ( ctId == 2 || ctId == 3 ) {
 		map.put( "fuka", 1 );
-		if(gradeTypes.size()>0) {
+		if ( gradeTypes.size() > 0 ) {
 		    Integer gtId = CommonUtil.toInteger( gradeTypes.get( 0 ).get( "gtId" ) );
 		    //查询开通的副卡
 		    List< Integer > assistantS = memberGradetypeAssistantDAO.findAssistantBygtId( busId, gtId );
@@ -348,8 +348,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 	}
 	Map< String,Object > map = new HashMap<>();
 
-	PublicParameterset parameterset= publicParametersetDAO.findBybusId( busId );
-	map.put( "parameterset",parameterset );
+	PublicParameterset parameterset = publicParametersetDAO.findBybusId( busId );
+	map.put( "parameterset", parameterset );
 
 	List< Map< String,Object > > gradeTypes = memberGradetypeDAO.findAllByBusIdAndCtId( busId, ctId );
 	if ( CommonUtil.isNotEmpty( gradeTypes ) && gradeTypes.size() > 0 ) {
@@ -362,15 +362,15 @@ public class MemberCardServiceImpl implements MemberCardService {
 		Integer gr_id = CommonUtil.toInteger( giveRules.get( 0 ).get( "gr_id" ) );
 		List< Map< String,Object > > goodTypes = memberGiverulegoodstypeDAO.findByGrId( gr_id );
 		map.put( "goodTypes", goodTypes );
-		map.put( "grEquities", giveRules.get( 0 ).get( "gr_equities" ));
-		map.put( "grUpgradeCount", giveRules.get( 0 ).get( "gr_upgradeCount" ));
-		map.put( "upgradeType", giveRules.get( 0 ).get( "gr_upgradeType" ));
-		if(ctId==2) {
-		    List<Integer> discountS=new ArrayList<>(  );
+		map.put( "grEquities", giveRules.get( 0 ).get( "gr_equities" ) );
+		map.put( "grUpgradeCount", giveRules.get( 0 ).get( "gr_upgradeCount" ) );
+		map.put( "upgradeType", giveRules.get( 0 ).get( "gr_upgradeType" ) );
+		if ( ctId == 2 ) {
+		    List< Integer > discountS = new ArrayList<>();
 		    for ( Map< String,Object > giveRule : giveRules ) {
 			discountS.add( CommonUtil.toInteger( giveRule.get( "gr_discount" ) ) );
 		    }
-		    map.put( "discountS", discountS);
+		    map.put( "discountS", discountS );
 		}
 	    }
 	    List< Integer > gtIds = new ArrayList<>();

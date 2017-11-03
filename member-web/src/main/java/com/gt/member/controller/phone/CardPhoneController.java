@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.gt.api.bean.session.Member;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.SessionUtils;
+import com.gt.common.entity.BusFlow;
 import com.gt.member.controller.RemoteAuthori.AuthorizeOrLoginController;
+import com.gt.member.dao.common.BusFlowDAO;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.entity.MemberCardmodel;
 import com.gt.member.entity.MemberCardtype;
@@ -35,16 +37,16 @@ import java.util.Map;
 
 /**
  * <p>
- * 卡片设置和消息设置
+ * 手机端会员卡
  * </p>
  *
  * @author pengjiangli
  * @since 2017-08-09
  */
-@Api( value = "卡片设置和消息设置", description = "卡片设置和消息设置" )
+@Api( value = "手机端会员卡", description = "手机端会员卡" )
 @Controller
 @CrossOrigin
-@RequestMapping( "/memberPhone/member" )
+@RequestMapping( "/memberPhone/cardPhone" )
 public class CardPhoneController extends AuthorizeOrLoginController {
 
     private static final Logger LOG = LoggerFactory.getLogger( CardPhoneController.class );
@@ -52,27 +54,23 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @Autowired
     private MemberCardPhoneService memberCardPhoneService;
 
-
     @ApiOperation( value = "查询领取会员卡页面数据", notes = "查询领取会员卡页面数据" )
-    @ApiImplicitParams({
-		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
-		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" )
-    })
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
+		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/findLingquData", method = RequestMethod.GET )
-    public ServerResponse findLingquData( HttpServletRequest request, HttpServletResponse response,String json ) {
+    public ServerResponse findLingquData( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
 	try {
-	    Map< String,Object > map = JSON.parseObject( json, Map.class );
-	    Integer busId=CommonUtil.toInteger( map.get( "busId" ) );
-	    Member member= SessionUtils.getLoginMember( request,busId );
-	    if(CommonUtil.isEmpty( member )) {
-		String url = authorizeMember( request, response, map );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
 		if ( CommonUtil.isNotEmpty( url ) ) {
-		    return ServerResponse.createByError(ResponseMemberEnums.USERGRANT.getCode(), url );
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), url );
 		}
 	    }
-	    Map<String,Object> returnMap= memberCardPhoneService.findLingquData(  request,busId);
-	    returnMap.put( "member",member );
+	    Map< String,Object > returnMap = memberCardPhoneService.findLingquData( request, busId );
+	    returnMap.put( "member", member );
 	    return ServerResponse.createBySuccess( returnMap );
 	} catch ( Exception e ) {
 	    LOG.error( "查询会员卡类型异常：", e );
@@ -82,33 +80,153 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     }
 
     @ApiOperation( value = "领取会员卡", notes = "领取会员卡" )
-    @ApiImplicitParams({
-		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
-		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" )
-    })
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
+		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/linquMemberCard", method = RequestMethod.GET )
-    public ServerResponse linquMemberCard(HttpServletRequest request, HttpServletResponse response,@RequestBody Map<String,Object> params){
+    public ServerResponse linquMemberCard( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
 	try {
 	    memberCardPhoneService.linquMemberCard( params );
-	    return ServerResponse.createBySuccess(  );
-	}catch ( BusinessException e ){
-	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
-
 
     @ApiOperation( value = "购买会员卡支付回调", notes = "购买会员卡支付回调" )
     @ResponseBody
     @RequestMapping( value = "/buyMemberCard", method = RequestMethod.GET )
-    public ServerResponse buyMemberCard(HttpServletRequest request, HttpServletResponse response,@RequestBody Map<String,Object> params){
+    public ServerResponse buyMemberCard( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
 	try {
 	    memberCardPhoneService.buyMemberCard( params );
-	    return ServerResponse.createBySuccess(  );
-	}catch ( Exception e ){
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg() );
+	    return ServerResponse.createBySuccess();
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
-  //  public ServerResponse findMember
+    @ApiOperation( value = "查询会员卡信息", notes = "查询会员卡信息" )
+    @ResponseBody
+    @RequestMapping( value = "/findMember", method = RequestMethod.GET )
+    public ServerResponse findMember( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+	try {
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), url );
+		}
+	    }
+	    Map< String,Object > map = memberCardPhoneService.findMember( request, busId );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
+
+    @ApiOperation( value = "查询会员权益", notes = "查询会员权益" )
+    @ResponseBody
+    @RequestMapping( value = "/findMemberEquities", method = RequestMethod.GET )
+    public ServerResponse findMemberEquities( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+	return null;
+    }
+
+
+    @ApiOperation( value = "查询会员交易记录", notes = "查询会员交易记录" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
+		    @ApiImplicitParam( name = "page", value = "授权回调地址", paramType = "query", required = false, dataType = "int" ) } )
+
+    @ResponseBody
+    @RequestMapping( value = "/findCardrecordNew", method = RequestMethod.GET )
+    public ServerResponse findCardrecordNew( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+	try {
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    Map< String,Object > map = memberCardPhoneService.findCardrecordNew( params, member.getId(), 4 );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
+
+    @ApiOperation( value = "查询会员积分记录", notes = "查询会员积分记录" )
+    @ResponseBody
+    @RequestMapping( value = "/findCardrecordNewJifen", method = RequestMethod.GET )
+    public ServerResponse findCardrecordNewJifen( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+	try {
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    Map< String,Object > map = memberCardPhoneService.findCardrecordNew( params, member.getId(), 2 );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+
+    }
+
+
+    @ApiOperation( value = "查询会员粉币记录", notes = "查询会员粉币记录" )
+    @ResponseBody
+    @RequestMapping( value = "/findCardrecordNewFenbi", method = RequestMethod.GET )
+    public ServerResponse findCardrecordNewFenbi( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+	try {
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    Map< String,Object > map = memberCardPhoneService.findCardrecordNew( params, member.getId(), 3 );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
+
+
+    @ApiOperation( value = "查询会员流量记录", notes = "查询会员流量记录" )
+    @ResponseBody
+    @RequestMapping( value = "/findCardrecordNewFlow", method = RequestMethod.GET )
+    public ServerResponse findCardrecordNewFlow( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+	try {
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    Map< String,Object > map = memberCardPhoneService.findCardrecordNew( params, member.getId(), 4 );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
+
+
+    @ApiOperation( value = "查询商家流量信息", notes = "查询商家流量信息" )
+    @ResponseBody
+    @RequestMapping( value = "/findBusUserFlow", method = RequestMethod.GET )
+    public ServerResponse findBusUserFlow(HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params){
+	try {
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    List<BusFlow> busFlows = memberCardPhoneService.findBusUserFlow(busId);
+	    return ServerResponse.createBySuccess( busFlows );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
+
+    @ApiOperation( value = "流量兑换", notes = "流量兑换" )
+    @ResponseBody
+    @RequestMapping( value = "/changeFlow", method = RequestMethod.GET )
+    public ServerResponse changeFlow(HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params){
+	try {
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member=SessionUtils.getLoginMember( request,busId );
+	    memberCardPhoneService.changeFlow(params,member.getId());
+	    return ServerResponse.createBySuccess(  );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
+
+
+
+
+
+
+
 }

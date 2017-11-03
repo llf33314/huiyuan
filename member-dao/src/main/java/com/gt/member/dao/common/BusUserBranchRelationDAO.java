@@ -23,5 +23,5 @@ public interface BusUserBranchRelationDAO extends BaseMapper<BusUserBranchRelati
      * @param busId
      * @return
      */
-    List<Map<String, Object> > findBusUserShop(@Param("busId")Integer busId);
+    List<Map<String, Object> > findBusUserShop( @Param( "busId" ) Integer busId );
 }

@@ -22,14 +22,14 @@ public interface DictItemsDAO extends BaseMapper<DictItems > {
      * 查询字典 键值对
      * @return
      */
-    List<Map<String,Object>> getDictReturnKeyAndValue(@Param( "dictType" )String dictType);
+    List<Map<String,Object>> getDictReturnKeyAndValue( @Param( "dictType" ) String dictType );
 
     /**
      * 查询字典 返回value 值
      * @param key
      * @return
      */
-    String getDiceReturnValue(@Param( "dictType" )String dictType,@Param( "key" )Integer key);
+    String getDiceReturnValue( @Param( "dictType" ) String dictType, @Param( "key" ) Integer key );
 
     /**
      * 查询会员数量
@@ -37,6 +37,6 @@ public interface DictItemsDAO extends BaseMapper<DictItems > {
      * @param level
      * @return
      */
-    List<Map<String,Object>> findMemberCountByUserId(@Param( "dictstyle" )String dictstyle,@Param( "level" )Integer level);
+    List<Map<String,Object>> findMemberCountByUserId( @Param( "dictstyle" ) String dictstyle, @Param( "level" ) Integer level );
 
 }

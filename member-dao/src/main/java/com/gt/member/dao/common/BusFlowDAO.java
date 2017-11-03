@@ -21,6 +21,6 @@ public interface BusFlowDAO extends BaseMapper<BusFlow > {
      * @param userId
      * @return
      */
-    List<BusFlow> getBusFlowsByUserId(@Param("userId")Integer userId);
+    List<BusFlow> getBusFlowsByUserId( @Param( "userId" ) Integer userId );
 
 }

@@ -1,12 +1,10 @@
 package com.gt.member.service.memberApi;
 
+import com.gt.entityBo.*;
 import com.gt.member.dao.*;
 import com.gt.member.entity.*;
-import com.gt.member.entity.DuofenCard;
-import com.gt.member.entity.DuofenCardGet;
-import com.gt.member.service.common.membercard.MemberCommonService;
-import com.gt.entityBo.*;
 import com.gt.member.service.common.dict.DictService;
+import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.util.BigDecimalUtil;
 import com.gt.member.util.CommonUtil;
 import org.apache.log4j.Logger;

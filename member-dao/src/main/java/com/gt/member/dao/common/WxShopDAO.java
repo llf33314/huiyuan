@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public interface WxShopDAO extends BaseMapper<WxShop> {
 
-    WxShop selectMainShopByBusId(Integer busId);
+    WxShop selectMainShopByBusId( Integer busId );
 
     /**
      *
@@ -25,6 +25,6 @@ public interface WxShopDAO extends BaseMapper<WxShop> {
      * @param verson 版本2
      * @return
      */
-    List<Map<String, Object> > findWxShopbyPublicId1Ver2(@Param("busId")Integer busId);
+    List<Map<String, Object> > findWxShopbyPublicId1Ver2( @Param( "busId" ) Integer busId );
 
 }

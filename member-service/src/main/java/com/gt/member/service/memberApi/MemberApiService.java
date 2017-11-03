@@ -1,9 +1,12 @@
 package com.gt.member.service.memberApi;
 
 import com.gt.common.entity.BusUserEntity;
-import com.gt.member.entity.*;
-import com.gt.member.exception.BusinessException;
 import com.gt.entityBo.PaySuccessBo;
+import com.gt.member.entity.MemberCard;
+import com.gt.member.entity.MemberCardtype;
+import com.gt.member.entity.MemberEntity;
+import com.gt.member.entity.MemberGradetype;
+import com.gt.member.exception.BusinessException;
 import com.gt.member.util.Page;
 
 import java.util.List;
@@ -391,7 +394,7 @@ public interface MemberApiService {
      *
      * @param params
      */
-    public void updateJifenAndFenBiByPinglu( Map< String,Object > params )throws BusinessException ;
+    public void updateJifenAndFenBiByPinglu( Map< String,Object > params )throws BusinessException;
 
     /**
      * 粉币，积分抵扣规则
@@ -426,7 +429,7 @@ public interface MemberApiService {
      * @param erpRefundBo
      * @throws BusinessException
      */
-    public void refundErp(String erpRefundBo) throws BusinessException;
+    public void refundErp( String erpRefundBo ) throws BusinessException;
 
 
     /**
@@ -442,14 +445,7 @@ public interface MemberApiService {
      * @param json
      * @throws BusinessException
      */
-    public void jifenExchange(String json) throws BusinessException;
-
-    /**
-     * 分页查询会员卡信息
-     * @param params
-     * @throws BusinessException
-     */
-    public Page findMemberPage(String params) throws BusinessException;
+    public void jifenExchange( String json ) throws BusinessException;
 
 
     /**
@@ -457,21 +453,21 @@ public interface MemberApiService {
      * @param params
      * @throws BusinessException
      */
-    public Page findMemberPage(String params) throws BusinessException;
+    public Page findMemberPage( String params ) throws BusinessException;
 
     /**
      * 查询商家发布的会员卡信息
      * @param busId
      * @return
      */
-    public List<Map<String,Object>> findGradeTypeBybusId(Integer busId);
+    public List<Map<String,Object>> findGradeTypeBybusId( Integer busId );
 
     /**
      * 统计会员数据和今日新增会员卡
      * @param busId
      * @return
      */
-    public Map<String,Object> coutMemberCard(Integer busId,Integer shopId);
+    public Map<String,Object> coutMemberCard( Integer busId, Integer shopId );
 
 
 }

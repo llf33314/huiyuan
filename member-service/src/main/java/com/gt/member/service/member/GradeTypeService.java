@@ -1,4 +1,4 @@
-///**
+package com.gt.member.service.member;///**
 // * P 2016年3月8日
 // */
 //

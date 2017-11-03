@@ -31,8 +31,6 @@ public class AuthorizeOrLoginController {
     @Autowired
     private RedisCacheUtil redisCacheUtil;
 
-    @Autowired
-    private PropertiesUtil propertiesUtil;
 
     public String authorizeMember( HttpServletRequest request, HttpServletResponse response, Map< String,Object > map ) throws Exception {
 	Integer busId = CommonUtil.toInteger( map.get( "busId" ) );
@@ -41,7 +39,7 @@ public class AuthorizeOrLoginController {
 	Map< String,Object > getWxPublicMap = new HashMap<>();
 	getWxPublicMap.put( "busId", busId );
 	//判断商家信息 1是否过期 2公众号是否变更过
-	String wxpublic = SignHttpUtils.WxmppostByHttp( propertiesUtil.getWxmp_home()+GETWXPULICMSG, getWxPublicMap, propertiesUtil.getWxmpsignKey() );
+	String wxpublic = SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmp_home()+GETWXPULICMSG, getWxPublicMap, PropertiesUtil.getWxmpsignKey() );
 	JSONObject json = JSONObject.parseObject( wxpublic );
 	Integer code = CommonUtil.toInteger( json.get( "code" ) );
 	if ( code == 0 ) {
@@ -65,7 +63,7 @@ public class AuthorizeOrLoginController {
 	redisMap.put( "redisKey", otherRedisKey );
 	redisMap.put( "redisValue", requestUrl );
 	redisMap.put( "setime", 300 );
-	SignHttpUtils.WxmppostByHttp( propertiesUtil.getWxmp_home()+"/8A5DA52E/redis/SetExApi.do", redisMap, propertiesUtil.getWxmpsignKey() );
+	SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmp_home()+"/8A5DA52E/redis/SetExApi.do", redisMap, PropertiesUtil.getWxmpsignKey() );
 
 	Map< String,Object > queryMap = new HashMap< String,Object >();
 	queryMap.put( "otherRedisKey", otherRedisKey );
@@ -73,7 +71,7 @@ public class AuthorizeOrLoginController {
 	queryMap.put( "busId", busId );
 	queryMap.put( "uclogin", uclogin );
 
-	String url = propertiesUtil.getWxmp_home()+"/remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString(  queryMap);
+	String url = PropertiesUtil.getWxmp_home()+"/remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString(  queryMap);
 	return url;
     }
 }

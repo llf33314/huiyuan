@@ -18,5 +18,9 @@ import java.util.Map;
 public interface MemberCardrecordNewDAO extends BaseMapper<MemberCardrecordNew> {
 
 
-    List<Map<String,Object>> findCardrecordByMemberId(@Param( "memberId" )Integer memberId,@Param( "page" )Integer page,@Param( "pageSize" )Integer pageSize);
+    List<Map<String,Object>> findCardrecordByMemberId( @Param( "memberId" ) Integer memberId, @Param( "page" ) Integer page, @Param( "pageSize" ) Integer pageSize );
+
+    List<Map<String,Object>> findCardrecordByMemberIdAndRecordType( @Param( "memberId" ) Integer memberId, @Param( "recordType" ) Integer recordType, @Param( "page" ) Integer page,
+		    @Param( "pageSize" ) Integer pageSize );
+
 }

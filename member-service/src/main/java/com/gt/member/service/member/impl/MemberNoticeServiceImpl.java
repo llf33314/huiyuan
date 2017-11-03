@@ -1,7 +1,7 @@
 /**
  * P 2016年3月24日
  */
-package  com.gt.member.service.member.impl;
+package com.gt.member.service.member.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;

@@ -163,6 +163,13 @@ public class UserConsumeNew extends Model<UserConsumeNew> {
      */
 	@TableField("balanceCount")
 	private Integer balanceCount;
+
+    /**
+     * 剩余流量
+     */
+    	@TableField("flowbalance")
+	private Integer flowbalance;
+
     /**
      * 退款金额
      */

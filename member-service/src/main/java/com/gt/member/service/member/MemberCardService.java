@@ -32,7 +32,7 @@ public interface MemberCardService {
      * @param busId
      * @return
      */
-    List<MemberCardtype> findCardType(Integer busId);
+    List<MemberCardtype> findCardType( Integer busId );
 
     /**
      * 查询卡片信息
@@ -87,7 +87,7 @@ public interface MemberCardService {
      * @param busId
      * @param ctId
      */
-    public Map< String,Object > editGradeTypeSecond(Integer busId,Integer ctId);
+    public Map< String,Object > editGradeTypeSecond( Integer busId, Integer ctId );
 
 
 
@@ -96,23 +96,23 @@ public interface MemberCardService {
      * @param busId
      * @param ctId
      */
-    public Map< String,Object > editGradeTypeThird(Integer busId,Integer ctId);
+    public Map< String,Object > editGradeTypeThird( Integer busId, Integer ctId );
 
     /**
      * 会员资料设置
      * @param busId
      * @return
      */
-    public MemberOption findOption(Integer busId)throws  BusinessException;
+    public MemberOption findOption( Integer busId )throws  BusinessException;
 
-    public void saveOrUpdateOption(String json,Integer busId)throws  BusinessException;
+    public void saveOrUpdateOption( String json, Integer busId )throws  BusinessException;
 
 
     /**
      * 保存会员卡设置
      * @param json
      */
-    public void saveOrUpdateGradeType(String json,Integer busUserId) throws BusinessException;
+    public void saveOrUpdateGradeType( String json, Integer busUserId ) throws BusinessException;
 
     /**
      * 查询通用设置
@@ -120,7 +120,7 @@ public interface MemberCardService {
      * @return
      * @throws BusinessException
      */
-    public Map<String,Object> findtongyongSet(Integer busId) throws BusinessException;
+    public Map<String,Object> findtongyongSet( Integer busId ) throws BusinessException;
 
     /**
      * 保存通用设置
@@ -128,14 +128,14 @@ public interface MemberCardService {
      * @param busId
      * @throws BusinessException
      */
-    public void saveTongyongSet(String json,Integer busId) throws BusinessException;
+    public void saveTongyongSet( String json, Integer busId ) throws BusinessException;
 
     /**
      * 编辑礼品设置
      * @param id
      * @return
      */
-    public MemberGift editGift(Integer id);
+    public MemberGift editGift( Integer id );
 
     /**
      * 保存或修改礼品设置
@@ -143,7 +143,7 @@ public interface MemberCardService {
      * @param busId
      * @throws BusinessException
      */
-    public void saveOrUpdateGift(String json,Integer busId) throws  BusinessException;
+    public void saveOrUpdateGift( String json, Integer busId ) throws  BusinessException;
 
 
     /**
@@ -152,16 +152,16 @@ public interface MemberCardService {
      * @param params
      * @return
      */
-    public Page findMember(Integer busId,Map<String, Object> params);
+    public Page findMember( Integer busId, Map< String,Object > params );
 
     /**
      * 批量审核
      * @param memberIds
      * @param ischecked
      */
-    public void cardBatchApplyChecked(Integer busId,String memberIds,Integer ischecked) throws BusinessException;
+    public void cardBatchApplyChecked( Integer busId, String memberIds, Integer ischecked ) throws BusinessException;
 
-    public void cardApplyCheckedByOne(Integer busId,Integer memberId,Integer ischecked)throws BusinessException;
+    public void cardApplyCheckedByOne( Integer busId, Integer memberId, Integer ischecked )throws BusinessException;
 
     /**
      * 赠送积分和粉币给用户
@@ -169,34 +169,34 @@ public interface MemberCardService {
      * @param json
      * @throws BusinessException
      */
-    public void addIntegralAndfenbi(Integer busId,String json)throws BusinessException;
+    public void addIntegralAndfenbi( Integer busId, String json )throws BusinessException;
 
     /**
      * 拉黑 或回复操作
      * @param mcId
      * @param cardStatus
      */
-    public void updateDis(Integer mcId,Integer cardStatus);
+    public void updateDis( Integer mcId, Integer cardStatus );
 
     /**
      * 查询会员卡详情
      * @param memberId
      * @return
      */
-    public Map<String,Object> findMemberDetails(Integer memberId);
+    public Map<String,Object> findMemberDetails( Integer memberId );
 
 
     /**
      * 导入会员信息
      * @param input
      */
-    public List<ErrorWorkbook> upLoadMember(Integer busId,InputStream input);
+    public List<ErrorWorkbook> upLoadMember( Integer busId, InputStream input );
 
 
-    public SXSSFWorkbook errorMember(List<ErrorWorkbook> wbs);
+    public SXSSFWorkbook errorMember( List< ErrorWorkbook > wbs );
 
 
-    public List<Map<String,Object>> findMember(Integer busId,String json);
+    public List<Map<String,Object>> findMember( Integer busId, String json );
 
     /**
      * 查询会员卡信息
@@ -205,7 +205,7 @@ public interface MemberCardService {
      * @return
      * @throws BusinessException
      */
-    public Map<String,Object> findMemberCardByCardNo(Integer busId,String cardNo)throws BusinessException;
+    public Map<String,Object> findMemberCardByCardNo( Integer busId, String cardNo )throws BusinessException;
 
     /**
      * 积分消费
@@ -213,7 +213,7 @@ public interface MemberCardService {
      * @param intergral
      * @param cardNo
      */
-    public void intergralConsume(Integer busId,Integer intergral,String cardNo) throws BusinessException;
+    public void intergralConsume( Integer busId, Integer intergral, String cardNo ) throws BusinessException;
 
     /**
      * 会员卡统计
@@ -221,7 +221,7 @@ public interface MemberCardService {
      * @param ctId
      * @return
      */
-    public Map<String,Object> memberTongJi(Integer busId,Integer ctId,String startTime) throws BusinessException;
+    public Map<String,Object> memberTongJi( Integer busId, Integer ctId, String startTime ) throws BusinessException;
 
     /**
      * 分页查询充值记录
@@ -229,14 +229,14 @@ public interface MemberCardService {
      * @param params
      * @return
      */
-    public Page findChongZhiLog(Integer busId,Map<String,Object> params) throws BusinessException;
+    public Page findChongZhiLog( Integer busId, Map< String,Object > params ) throws BusinessException;
 
     /**
      * 充值记录详情
      * @param ucId
      * @return
      */
-    public Map<String,Object> findChongZhiLogDetails(Integer ucId) throws BusinessException;
+    public Map<String,Object> findChongZhiLogDetails( Integer ucId ) throws BusinessException;
 
 
     /**
@@ -245,14 +245,14 @@ public interface MemberCardService {
      * @param params
      * @return
      */
-    public Page findDuiHuanLog(Integer busId,Map<String,Object> params) throws BusinessException;
+    public Page findDuiHuanLog( Integer busId, Map< String,Object > params ) throws BusinessException;
 
     /**
      * 兑换详情
      * @param ucId
      * @return
      */
-    public Map<String,Object> findDuiHuanLogDetails(Integer ucId) throws BusinessException;
+    public Map<String,Object> findDuiHuanLogDetails( Integer ucId ) throws BusinessException;
 
     /**
      * 次卡消费次数
@@ -261,7 +261,7 @@ public interface MemberCardService {
      * @return
      * @throws BusinessException
      */
-    public Page findCikaLog(Integer busId,Map<String,Object> params) throws  BusinessException;
+    public Page findCikaLog( Integer busId, Map< String,Object > params ) throws  BusinessException;
 
 
     /**
@@ -269,7 +269,7 @@ public interface MemberCardService {
      * @param ucId
      * @return
      */
-    public Map<String,Object> findCikaLogDetails(Integer ucId) throws BusinessException;
+    public Map<String,Object> findCikaLogDetails( Integer ucId ) throws BusinessException;
 
     /**
      * 消费记录
@@ -278,7 +278,7 @@ public interface MemberCardService {
      * @return
      * @throws BusinessException
      */
-    public Page findXiaoFeiLog(Integer busId,Map<String,Object> params) throws BusinessException;
+    public Page findXiaoFeiLog( Integer busId, Map< String,Object > params ) throws BusinessException;
 
     /**
      * 消费记录详情
@@ -286,7 +286,7 @@ public interface MemberCardService {
      * @return
      * @throws BusinessException
      */
-    public Map<String,Object> findXiaoFeiLogDetails(Integer ucId) throws BusinessException;
+    public Map<String,Object> findXiaoFeiLogDetails( Integer ucId ) throws BusinessException;
 
     /**
      * 会员推荐
@@ -295,7 +295,7 @@ public interface MemberCardService {
      * @return
      * @throws BusinessException
      */
-    public Page findCommend(Integer busId, Map<String, Object> params) throws BusinessException;
+    public Page findCommend( Integer busId, Map< String,Object > params ) throws BusinessException;
 
 
     /**
@@ -304,13 +304,13 @@ public interface MemberCardService {
      * @param params
      * @return
      */
-    public Page findPickLog(Integer busId,Map<String, Object> params)throws BusinessException;
+    public Page findPickLog( Integer busId, Map< String,Object > params )throws BusinessException;
 
     /**
      * 删除会员卡信息
      * @param memberId
      * @throws BusinessException
      */
-    public void deleteMemberCard(HttpServletRequest request,Integer memberId)throws BusinessException;
+    public void deleteMemberCard( HttpServletRequest request, Integer memberId )throws BusinessException;
 
 }

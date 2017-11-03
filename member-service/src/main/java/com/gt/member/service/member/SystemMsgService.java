@@ -18,34 +18,34 @@ public interface SystemMsgService {
 	 * @param cardRecord
 	 * @return
 	 */
-	public boolean jifenMsg(MemberCardrecordNew cardRecord, MemberEntity memberEntity );
+	public boolean jifenMsg( MemberCardrecordNew cardRecord, MemberEntity memberEntity );
 
 	/**
 	 * 粉币操作 包含消息推送
 	 * @param cardRecord
 	 * @return
 	 */
-	public boolean fenbiMsg(MemberCardrecordNew cardRecord, MemberEntity memberEntity );
+	public boolean fenbiMsg( MemberCardrecordNew cardRecord, MemberEntity memberEntity );
 
 	/**
 	 * 流量操作  包含消息推送
 	 * @param cardRecord
 	 * @return
 	 */
-	public boolean flowMsg(MemberCardrecordNew cardRecord, MemberEntity memberEntity );
+	public boolean flowMsg( MemberCardrecordNew cardRecord, MemberEntity memberEntity );
 
 	/**
 	 * 会员卡升级通知
 	 * @return
 	 */
-	public boolean upgradeMemberMsg(MemberEntity memberEntity, String cardNo, String dateTime);
+	public boolean upgradeMemberMsg( MemberEntity memberEntity, String cardNo, String dateTime );
 
 	/**
 	 * 新增会员短信通知
 	 * @param memberEntity
 	 * @return
 	 */
-	public boolean sendNewMemberMsg(MemberEntity memberEntity );
+	public boolean sendNewMemberMsg( MemberEntity memberEntity );
 
 
 	/**
@@ -53,7 +53,7 @@ public interface SystemMsgService {
 	 * @param memberEntity
 	 * @return
 	 */
-	public boolean sendChuzhiCard(MemberEntity memberEntity, Double money);
+	public boolean sendChuzhiCard( MemberEntity memberEntity, Double money );
 
 
 	/**
@@ -63,7 +63,7 @@ public interface SystemMsgService {
 	 * @param count
 	 * @return
 	 */
-	public boolean sendCikaCard(MemberEntity memberEntity, double money, int count);
+	public boolean sendCikaCard( MemberEntity memberEntity, double money, int count );
 
 
 	/**
@@ -71,7 +71,7 @@ public interface SystemMsgService {
 	 * @param memberEntity
 	 * @return
 	 */
-	public boolean sendCikaXiaofei(MemberEntity memberEntity );
+	public boolean sendCikaXiaofei( MemberEntity memberEntity );
 
 
 
@@ -80,7 +80,7 @@ public interface SystemMsgService {
 	 * @param memberEntity
 	 * @return
 	 */
-	public boolean sendChuzhiXiaofei(MemberEntity memberEntity, Double money);
+	public boolean sendChuzhiXiaofei( MemberEntity memberEntity, Double money );
 
 
 	/**
@@ -88,6 +88,6 @@ public interface SystemMsgService {
 	 * @param memberEntity
 	 * @return
 	 */
-	public boolean sendChuzhiTuikuan(MemberEntity memberEntity, Double money);
+	public boolean sendChuzhiTuikuan( MemberEntity memberEntity, Double money );
 
 }

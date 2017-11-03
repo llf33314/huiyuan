@@ -15,5 +15,5 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface AlipayUserDAO extends BaseMapper<AlipayUser > {
 
-    AlipayUser selectByBusId(@Param("busId")Integer busId);
+    AlipayUser selectByBusId( @Param( "busId" ) Integer busId );
 }

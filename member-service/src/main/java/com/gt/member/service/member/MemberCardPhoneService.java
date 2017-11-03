@@ -1,8 +1,10 @@
 package com.gt.member.service.member;
 
+import com.gt.common.entity.BusFlow;
 import com.gt.member.exception.BusinessException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,7 +17,7 @@ public interface MemberCardPhoneService {
      * @param busId
      * @return
      */
-    public Map<String,Object> findLingquData(HttpServletRequest request,Integer busId);
+    public Map<String,Object> findLingquData( HttpServletRequest request, Integer busId );
 
     /**
      * 领取会员卡
@@ -33,4 +35,25 @@ public interface MemberCardPhoneService {
      */
     public void buyMemberCard( Map< String,Object > params ) throws Exception;
 
+    /**
+     * 查询会员卡信息
+     * @param request
+     * @param busId
+     * @return
+     * @throws BusinessException
+     */
+    public Map<String,Object> findMember( HttpServletRequest request, Integer busId ) throws BusinessException;
+
+    /**
+     * 查询会员手机端交易记录
+     * @param params
+     * @param recordType
+     * @return
+     */
+    public Map<String,Object> findCardrecordNew( Map< String,Object > params, Integer memberId, Integer recordType );
+
+
+    public List<BusFlow > findBusUserFlow( Integer busId );
+
+    public void changeFlow( Map< String,Object > params, Integer memberId )throws  BusinessException;
 }

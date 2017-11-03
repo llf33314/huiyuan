@@ -29,7 +29,7 @@ public interface CardERPService {
      *
      * @return
      */
-    public Map< String,Object > buyMemberCard(Map< String,Object > params ) throws Exception;
+    public Map< String,Object > buyMemberCard( Map< String,Object > params ) throws Exception;
 
     /**
      * 查询会员信息

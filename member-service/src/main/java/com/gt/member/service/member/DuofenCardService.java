@@ -1,4 +1,4 @@
-//package com.gt.member.service.old.member;
+package com.gt.member.service.member;//package com.gt.member.service.old.member;
 //
 //import com.gt.member.entity.BusUserEntity;
 //import com.gt.member.entity.MemberEntity;

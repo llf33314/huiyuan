@@ -1,4 +1,4 @@
-//package com.gt.member.service.old.member.impl;
+package com.gt.member.service.member.impl;//package com.gt.member.service.old.member.impl;
 //
 //import java.util.HashMap;
 //import java.util.List;

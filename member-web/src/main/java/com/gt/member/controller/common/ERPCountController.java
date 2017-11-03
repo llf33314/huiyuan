@@ -1,4 +1,4 @@
-//package com.gt.member.controller.common;
+package com.gt.member.controller.common;//package com.gt.member.controller.common;
 //
 //import com.alibaba.fastjson.JSON;
 //import com.alibaba.fastjson.JSONObject;

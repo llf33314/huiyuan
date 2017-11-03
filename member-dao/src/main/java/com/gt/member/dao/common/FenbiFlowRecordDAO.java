@@ -14,10 +14,7 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface FenbiFlowRecordDAO extends BaseMapper<FenbiFlowRecord > {
 
-    Double getFenbiSurplus(@Param("userId")Integer userId,
-		    @Param("rec_type")Integer rec_type,
-		    @Param("fre_type")Integer fre_type,
-		    @Param("fkId")Integer fkId);
+    Double getFenbiSurplus( @Param( "userId" ) Integer userId, @Param( "rec_type" ) Integer rec_type, @Param( "fre_type" ) Integer fre_type, @Param( "fkId" ) Integer fkId );
 
     /**
      * 更改粉币冻结额度(已使用加)
@@ -26,10 +23,6 @@ public interface FenbiFlowRecordDAO extends BaseMapper<FenbiFlowRecord > {
      * @param fkId 外键
      * @return
      */
-    int updateFenbiReduce(
-		    @Param("userId")Integer userId,
-		    @Param("num")Integer num,
-		    @Param("fkId")Integer fkId,
-		    @Param("fre_type")Integer fre_type);
+    int updateFenbiReduce( @Param( "userId" ) Integer userId, @Param( "num" ) Integer num, @Param( "fkId" ) Integer fkId, @Param( "fre_type" ) Integer fre_type );
 
 }

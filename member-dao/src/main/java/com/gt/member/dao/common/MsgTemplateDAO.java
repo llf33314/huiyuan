@@ -22,5 +22,5 @@ public interface MsgTemplateDAO extends BaseMapper<MsgTemplate > {
      * @param busId
      * @return
      */
-    List<Map<String, Object> > selectTempObjByBusId(@Param("busId")Integer busId);
+    List<Map<String, Object> > selectTempObjByBusId( @Param( "busId" ) Integer busId );
 }

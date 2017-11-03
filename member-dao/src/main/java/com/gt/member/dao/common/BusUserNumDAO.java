@@ -18,5 +18,5 @@ import java.util.Map;
  */
 public interface BusUserNumDAO extends BaseMapper<BusUserNum > {
 
-    List<Map<String,Object>> findBusUserNum(@Param( "userId" ) Integer userId,@Param( "style" )Integer style);
+    List<Map<String,Object>> findBusUserNum( @Param( "userId" ) Integer userId, @Param( "style" ) Integer style );
 }

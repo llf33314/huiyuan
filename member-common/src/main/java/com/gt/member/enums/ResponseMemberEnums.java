@@ -28,6 +28,9 @@ public enum ResponseMemberEnums {
     PLEASE_SCAN_CODE(5015,"请扫码核销"),
     DISABLE_MEMBER_CARD(5016,"会员卡被拉黑"),
     PLEASE_BUY_CARD(5017,""),
+    NOT_MEMBER_PHONE(5018,"会员手机号码不存在"),
+    LESS_THAN_FLOE(5019,"流量不足"),
+    ERROR_CHARGE_FLOW(5020,""),  //流量兑换失败
 
 
 

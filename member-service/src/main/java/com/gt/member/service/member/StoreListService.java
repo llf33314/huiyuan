@@ -1,4 +1,4 @@
-//package com.gt.member.service.old.member;
+package com.gt.member.service.member;//package com.gt.member.service.old.member;
 //
 //import java.util.List;
 //import java.util.Map;

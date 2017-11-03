@@ -13,5 +13,5 @@ import com.gt.common.entity.WxPublicUsersEntity;
  * @since 2017-07-26
  */
 public interface WxPublicUsersDAO extends BaseMapper<WxPublicUsersEntity > {
-    WxPublicUsersEntity selectByUserId(int userId);
+    WxPublicUsersEntity selectByUserId( int userId );
 }
