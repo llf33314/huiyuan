@@ -1484,7 +1484,8 @@ public class MemberApiServiceImpl implements MemberApiService {
     }
 
     public List< Map< String,Object > > findCardrecord( Integer memberId, Integer page, Integer pageSize ) {
-	return memberCardrecordNewDAO.findCardrecordByMemberId( memberId, page * pageSize, pageSize );
+	List<Integer> memberIds=memberCommonService.findMemberIds( memberId );
+        return memberCardrecordNewDAO.findCardrecordByMemberId( memberIds, page * pageSize, pageSize );
     }
 
     public MemberCard findMemberCardByMcId( Integer mcId ) {

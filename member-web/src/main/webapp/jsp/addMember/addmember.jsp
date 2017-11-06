@@ -446,6 +446,12 @@ pageEncoding="UTF-8" %>
                                         $(".cur-list").remove();
                                         setTime();
                                         clearMember();
+                                        try{
+                                            callback(data.memberId,saveOk);
+                                        }catch (e){
+
+                                        }
+
                                     }else if(data.code==2){
 
                                         //跳转支付页面
@@ -511,6 +517,10 @@ pageEncoding="UTF-8" %>
             vm.show = true;
         }
 
+
+
+
+
         //推送
         var userId = '${memberUser}';
         var socket =  io.connect('${host}');
@@ -559,6 +569,12 @@ pageEncoding="UTF-8" %>
                 $(".cur-list").remove();
                 setTime();
                 clearMember();
+                try {
+                    callback(data, saveOk);
+                }catch (e){
+
+                }
+
             }
         }
 

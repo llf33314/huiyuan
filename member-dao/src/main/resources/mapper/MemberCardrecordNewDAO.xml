@@ -24,7 +24,11 @@
 
 
 	<select id="findCardrecordByMemberId" resultType="Map">
-		SELECT itemName,number,date_format(createDate, '%Y-%c-%d %h:%i:%s') as createDate FROM t_member_cardrecord_new WHERE recordType = 2 AND memberId= #{memberId}
+		SELECT itemName,number,date_format(createDate, '%Y-%c-%d %h:%i:%s') as createDate FROM t_member_cardrecord_new WHERE recordType = 2 AND
+		<foreach close=")" collection="memberIds" item="memberId" open="("
+				 separator="or">
+			memberId= #{memberId}
+		</foreach>
 		order by id desc limit #{page},#{pageSize}
 
 	</select>
