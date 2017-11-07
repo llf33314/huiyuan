@@ -219,9 +219,6 @@ pageEncoding="UTF-8" %>
                     this.cardRank=gradeTypes[0].gt_name;
                     this.carID=gradeTypes[0].gt_id;
                 }
-
-
-
             },
             methods: {
                 handleIconClick: function (ev) {
@@ -446,11 +443,7 @@ pageEncoding="UTF-8" %>
                                         $(".cur-list").remove();
                                         setTime();
                                         clearMember();
-                                        try{
-                                            callback(data.memberId,saveOk);
-                                        }catch (e){
-
-                                        }
+                                        saveOk(data.memberId);
 
                                     }else if(data.code==2){
 
@@ -518,6 +511,10 @@ pageEncoding="UTF-8" %>
         }
 
 
+      function saveOk(memberId){
+            parent.window.postMessage(memberId,"*");
+      }
+
 
 
 
@@ -569,11 +566,7 @@ pageEncoding="UTF-8" %>
                 $(".cur-list").remove();
                 setTime();
                 clearMember();
-                try {
-                    callback(data, saveOk);
-                }catch (e){
-
-                }
+                saveOk(data);
 
             }
         }
