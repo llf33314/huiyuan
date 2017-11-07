@@ -449,7 +449,10 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	Map< String,Object > map = new HashMap<>();
 	Integer page = CommonUtil.toInteger( params.get( "page" ) );
 	Integer pageSize = 10;
-	List< Map< String,Object > > listMap = memberCardrecordNewDAO.findCardrecordByMemberIdAndRecordType( memberId, recordType, page, pageSize );
+
+	//
+	List<Integer> memberIds=memberCommonService.findMemberIds(memberId);
+	List< Map< String,Object > > listMap = memberCardrecordNewDAO.findCardrecordByMemberIdAndRecordType( memberIds, recordType, page, pageSize );
 	map.put( "page", listMap );
 	MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
 	map.put( "jifen", memberEntity.getIntegral() );
@@ -510,7 +513,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    adcServicesInfo.setMemberId( memberId );
 	    adcServicesInfo.setModel( 102 );
 	    adcServicesInfo.setId( uc.getId() );
-	    String notifyUrl="";
+	    String notifyUrl=PropertiesUtil.getWebHome()+"/memberNodoInterceptor/memberNotDo/changeFlow.do";
 	    adcServicesInfo.setNotifyUrl( notifyUrl );
 	    requestUtils.setReqdata( adcServicesInfo );
 	    String result = requestService.changeFlow( requestUtils );
@@ -518,10 +521,25 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    if ( !"0".equals( CommonUtil.toString( json.get( "code" ) ) ) ) {
 		throw new BusinessException( ResponseMemberEnums.ERROR_CHARGE_FLOW.getCode(), CommonUtil.toString( json.get( "msg" ) ) );
 	    }
-	    memberCommonService.saveCardRecordOrderCodeNew( memberId, 4, prizeCount.doubleValue(), "流量兑换", busId, flowBalance.doubleValue(), orderCode, 0 );
+	    memberCommonService.saveCardRecordOrderCodeNew( memberId, 4, prizeCount.doubleValue(), "流量兑换中", busId, flowBalance.doubleValue(), orderCode, 0 );
 	} catch ( BusinessException e ) {
 	    throw e;
 	}
     }
 
+
+
+    public List<Map<String,Object>> findRecharge(Map<String,Object> params) throws BusinessException{
+        Integer busId=CommonUtil.toInteger( params.get( "busId" ) );
+        Integer memberId=CommonUtil.toInteger( params.get( "memberId" ) );
+        Integer ctId=CommonUtil.toInteger( params.get( "ctId" ) );
+        if(CommonUtil.isEmpty( busId ) || CommonUtil.isEmpty( memberId ) ||CommonUtil.isEmpty( ctId ) ){
+            throw new BusinessException( ResponseMemberEnums.NULL );
+	}
+
+	MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
+        MemberCard memberCard=cardMapper.selectById( memberEntity.getMcId() );
+      MemberGiverule memberGiverule=  memberGiveruleDAO.selectById( memberCard.getGrId() );
+	return  null;
+    }
 }

@@ -6,6 +6,7 @@ package com.gt.member.service.memberApi;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.Member;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.WxPublicUsersEntity;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -1492,7 +1494,8 @@ public class MemberApiServiceImpl implements MemberApiService {
     }
 
     public List< Map< String,Object > > findCardrecord( Integer memberId, Integer page, Integer pageSize ) {
-	return memberCardrecordNewDAO.findCardrecordByMemberId( memberId, page * pageSize, pageSize );
+	List<Integer> memberIds=memberCommonService.findMemberIds( memberId );
+        return memberCardrecordNewDAO.findCardrecordByMemberId( memberIds, page * pageSize, pageSize );
     }
 
     public MemberCard findMemberCardByMcId( Integer mcId ) {
@@ -2719,6 +2722,49 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}
 
 	return map;
+    }
+
+    @Transactional
+    public void changeFlow( Map< String,Object > params ) throws BusinessException {
+	try {
+	    Integer id = CommonUtil.toInteger( params.get( "id" ) );
+	    Integer status = CommonUtil.toInteger( params.get( "status" ) );
+	    if ( CommonUtil.isEmpty( id ) || CommonUtil.isEmpty( status ) ) {
+		throw new BusinessException( ResponseMemberEnums.NULL );
+	    }
+
+	    UserConsumeNew uc = userConsumeNewDAO.selectById( id );
+	    if ( CommonUtil.isEmpty( uc ) ) {
+		LOG.error( "流量兑换订单数据不存在" + id );
+		throw new BusinessException( ResponseMemberEnums.NOT_ORDER );
+	    }
+	    if ( status == 0 ) {
+		//兑换成功
+		UserConsumeNew newUc = new UserConsumeNew();
+		newUc.setId( id );
+		newUc.setFlowState( 1 );
+		userConsumeNewDAO.updateById( newUc );
+		memberCommonService.saveCardRecordOrderCodeNew( uc.getMemberId(), 4, uc.getChangeFlow().doubleValue(), "流量兑换成功", uc.getBusId(), uc.getFlowbalance().doubleValue(),
+				uc.getOrderCode(), 0 );
+	    } else {
+		//兑换失败  流量回滚
+		MemberEntity memberEntity = memberDAO.selectById( uc.getId() );
+		if ( CommonUtil.isEmpty( memberEntity ) ) {
+		    memberEntity = memberDAO.findByMcIdAndbusId( uc.getBusId(), uc.getMcId() );
+		}
+		Integer flow = memberEntity.getFlow() + uc.getFlowbalance();
+		MemberEntity m1 = new MemberEntity();
+		m1.setId( memberEntity.getId() );
+		m1.setFlow( flow );
+		memberDAO.updateById( m1 );
+		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 4, uc.getChangeFlow().doubleValue(), "流量兑换失败已退回", uc.getBusId(), flow.doubleValue(), uc.getOrderCode(), 0 );
+	    }
+	}catch ( BusinessException e ){
+	    throw e;
+	}catch ( Exception e ){
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+
     }
 
 

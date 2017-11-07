@@ -211,7 +211,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 
     @ApiOperation( value = "流量兑换", notes = "流量兑换" )
     @ResponseBody
-    @RequestMapping( value = "/changeFlow", method = RequestMethod.GET )
+    @RequestMapping( value = "/changeFlow", method = RequestMethod.POST )
     public ServerResponse changeFlow(HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params){
 	try {
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
@@ -224,7 +224,12 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     }
 
 
-
+    @ApiOperation( value = "查询商家设置会员卡充值信息", notes = "查询商家设置会员卡充值信息" )
+    @ResponseBody
+    @RequestMapping( value = "/findRecharge", method = RequestMethod.GET )
+    public ServerResponse findRecharge(HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params){
+	return null;
+    }
 
 
 

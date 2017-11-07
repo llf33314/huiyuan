@@ -21,4 +21,5 @@ public interface MemberRechargegiveAssistantDAO extends BaseMapper<MemberRecharg
 
     List<Map<String,Object>> findByCtIdAndfuCtId(@Param( "busId" )Integer busId,@Param( "ctId" )Integer ctId,@Param( "fuctId" )Integer fuctId);
 
+    int deleteBybusIdAndCtId(@Param("busId")Integer busId,@Param("ctId")Integer ctId);
 }

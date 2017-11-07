@@ -81,7 +81,7 @@ public class CardController {
     @ApiImplicitParams( @ApiImplicitParam( name = "ctId", value = "会员卡类型id", paramType = "query", required = false, dataType = "int" ) )
     @ResponseBody
     @RequestMapping( value = "/editGradeTypeSecond", method = RequestMethod.GET )
-    public ServerResponse editGradeTypeSecond( HttpServletRequest request, HttpServletResponse response, Integer ctId ) {
+    public ServerResponse editGradeTypeSecond( HttpServletRequest request, HttpServletResponse response, Integer ctId) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    Map< String,Object > map = memberCardService.editGradeTypeSecond( busId, ctId );
@@ -115,8 +115,8 @@ public class CardController {
     public ServerResponse saveCardModel( HttpServletRequest request, HttpServletResponse response, @RequestParam String param ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    memberCardService.saveCardModel( busId, param );
-	    return ServerResponse.createBySuccess();
+	    Integer cmId=  memberCardService.saveCardModel( busId, param );
+	    return ServerResponse.createBySuccess(cmId);
 	} catch ( Exception e ) {
 	    LOG.error( "查询卡片背景模板异常：", e );
 	    e.printStackTrace();
@@ -308,7 +308,44 @@ public class CardController {
     }
 
 
+    @ApiOperation( value = "查询会员卡发布信息", notes = "查询会员卡发布信息" )
+    @ResponseBody
+    @RequestMapping( value = "/findCard", method = RequestMethod.GET )
+    public ServerResponse findCard(HttpServletRequest request, HttpServletResponse response){
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	   Map<String,Object> map=memberCardService.findCard(busId);
+	    return ServerResponse.createBySuccess(map);
+	} catch ( Exception e ) {
+	    LOG.error( "查询会员卡发布信息异常",e );
+	    return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
+	}
+    }
 
+    @ApiOperation( value = "发布会员卡", notes = "发布会员卡" )
+    @ResponseBody
+    @RequestMapping( value = "/publishCard", method = RequestMethod.POST )
+    public ServerResponse publishCard(HttpServletRequest request, HttpServletResponse response,@RequestBody  String  params){
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    memberCardService.publishCard(busId,params);
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	}
+    }
 
+    @ApiOperation( value = "删除会员卡", notes = "删除会员卡" )
+    @ResponseBody
+    @RequestMapping( value = "/deleteCard", method = RequestMethod.GET )
+    public ServerResponse deleteCard(HttpServletRequest request, HttpServletResponse response,  Integer  ctId){
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    memberCardService.deleteCard(busId,ctId);
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	}
+    }
 
 }

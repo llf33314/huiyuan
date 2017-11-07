@@ -56,4 +56,11 @@ public interface MemberCardPhoneService {
     public List<BusFlow > findBusUserFlow( Integer busId );
 
     public void changeFlow( Map< String,Object > params, Integer memberId )throws  BusinessException;
+
+    /**
+     * 查询商家发布充值信息
+     * @param params
+     * @return
+     */
+    public List<Map<String,Object>> findRecharge(Map<String,Object> params) throws BusinessException;
 }

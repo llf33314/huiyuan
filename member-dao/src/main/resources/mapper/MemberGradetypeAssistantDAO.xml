@@ -29,4 +29,9 @@
 
 	</select>
 
+	<delete id="deleteByGtId">
+		delete from t_member_gradetype_assistant  where busId=#{busId} and ctId=#{ctId}
+
+	</delete>
+
 </mapper>

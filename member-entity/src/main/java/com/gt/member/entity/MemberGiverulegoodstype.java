@@ -39,6 +39,7 @@ public class MemberGiverulegoodstype extends Model<MemberGiverulegoodstype> {
     /**
      * 规则：0表示单次送 1:金额等于多少积分(向下取整) 2未启用
      */
+    @TableField("give_type")
     private Integer giveType;
     /**
      * 金额

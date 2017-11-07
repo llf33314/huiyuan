@@ -29,6 +29,8 @@ public interface MemberGradetypeAssistantDAO extends BaseMapper<MemberGradetypeA
 
     List<Map<String,Object>> findAssistantByctId(@Param( "busId" )Integer busId,@Param( "ctId" )Integer ctId);
 
+    int deleteByGtId(@Param( "busId" ) Integer busId,@Param( "ctId" ) Integer ctId);
+
 
 
 

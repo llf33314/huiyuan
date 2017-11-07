@@ -1,6 +1,7 @@
 package com.gt.member.config;
 
 import com.gt.member.config.filter.ApiInterceptor;
+import com.gt.member.config.filter.NotdoInterceptor;
 import com.gt.member.config.filter.PhoneInterceptor;
 import com.gt.member.config.filter.SysLogInterceptor;
 import org.springframework.context.annotation.Configuration;
@@ -34,8 +35,8 @@ public class MyWebAppConfigurer extends WebMvcConfigurerAdapter {
 	registry.addInterceptor( new ApiInterceptor() ).addPathPatterns( "/memberAPI/**" );
         // 定义多个 拦截器
         registry.addInterceptor( new SysLogInterceptor() ).addPathPatterns( "/memberPc/**" );
-
 	registry.addInterceptor( new PhoneInterceptor() ).addPathPatterns( "/memberPhone/**" );
+	registry.addInterceptor( new NotdoInterceptor() ).addPathPatterns( "/memberNodoInterceptor/**" );
 	super.addInterceptors( registry );
     }
 

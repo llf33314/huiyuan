@@ -9,6 +9,7 @@ import com.gt.member.entity.MemberGradetype;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.util.Page;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -468,6 +469,14 @@ public interface MemberApiService {
      * @return
      */
     public Map<String,Object> coutMemberCard( Integer busId, Integer shopId );
+
+    /**
+     * 流量兑换通知
+     * @param params
+     * @throws BusinessException
+     */
+    public void changeFlow( Map< String,Object > params ) throws BusinessException;
+
 
 
 }

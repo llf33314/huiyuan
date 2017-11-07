@@ -31,38 +31,50 @@ public class MemberGradetype extends Model<MemberGradetype> {
     /**
      * 会员卡等级
      */
+    @TableField("gt_grade_name")
 	private String gtGradeName;
     /**
      * 会员卡名称
      */
+    @TableField("gt_name")
 	private String gtName;
     /**
      * 会员卡名称颜色
      */
+    @TableField("gt_name_color")
 	private String gtNameColor;
     /**
      * 会员卡login图片
      */
+
+    @TableField("gt_login_url")
 	private String gtLoginUrl;
     /**
      * 模板id
      */
+    @TableField("cm_id")
 	private Integer cmId;
     /**
      * 文字字体颜色
      */
+
+    @TableField("gt_text_color")
 	private String gtTextColor;
     /**
      * 卡片类型(积分卡、储值卡、时效卡、折扣卡、次卡)
      */
+
+    @TableField("ct_id")
 	private Integer ctId;
     /**
      * 商户id
      */
+    @TableField("public_id")
 	private Integer publicId;
     /**
      * 是否已不发布 0未发布 1已发布
      */
+    @TableField("is_publish")
 	private Integer isPublish;
     /**
      * 是否审核 1不审核 0审核

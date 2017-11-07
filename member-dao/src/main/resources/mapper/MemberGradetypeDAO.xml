@@ -316,4 +316,14 @@
 	</select>
 
 
+	<update id="updateByBusIdAndCtId">
+		update t_member_gradetype set is_publish=1 where busId=#{busId} and ct_id=#{ctId}
+	</update>
+
+
+	<select id="findMemberGradeTypeByBusIdAndCtId" resultMap="BaseResultMap">
+		select * from t_member_gradetype where busId=#{busId} and ct_id=#{ctId}
+
+	</select>
+
 </mapper>

@@ -10,6 +10,7 @@ public enum ResponseMemberEnums {
     NO_PHONE_CODE(4004,"短信验证码过时或不存在"),
     VERIFICATION_BUSUSER(4005,"用户权限不足,请登录主账户操作"),  //判断主账户信息
     USERGRANT(4006,"粉丝未授权"),
+    LOGIN_FAIL(4007,"用户不存在"),
 
     CARD_STATUS(5001, "会员卡已停用"),
     MEMBER_LESS_JIFEN(5002,"积分不足"),
@@ -31,6 +32,7 @@ public enum ResponseMemberEnums {
     NOT_MEMBER_PHONE(5018,"会员手机号码不存在"),
     LESS_THAN_FLOE(5019,"流量不足"),
     ERROR_CHARGE_FLOW(5020,""),  //流量兑换失败
+    NO_DELETE_CARD(5021,"会员卡已经领取,不能删除会员卡"),
 
 
 

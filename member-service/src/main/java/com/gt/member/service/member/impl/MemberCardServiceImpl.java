@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.HttpClienUtils;
@@ -200,24 +201,18 @@ public class MemberCardServiceImpl implements MemberCardService {
 
     @Transactional
     @Override
-    public void saveCardModel( Integer busId, String param ) {
+    public Integer saveCardModel( Integer busId, String param ) {
 	if ( CommonUtil.isEmpty( busId ) ) {
 	    throw new BusinessException( ResponseMemberEnums.INVALID_SESSION );
 	}
-	JSONArray json = JSONArray.parseArray( param );
-	MemberCardmodel cardModel = cardModelMapper.findCardModel();
-	int i = 0;
-	for ( Object object : json ) {
-	    i++;
-	    JSONObject obj = JSONObject.parseObject( object.toString() );
-	    MemberCardmodel cm = new MemberCardmodel();
-	    cm.setCmUrl( obj.getString( "url" ).split( "upload" )[1] );
-	    cm.setCmType( cardModel.getCmType() + 1 );
-	    cm.setCmSort( i );
-	    cm.setBusId( busId );
-	    cardModelMapper.insert( cm );
-	}
-
+	JSONObject obj = JSONObject.parseObject( param );
+	MemberCardmodel cm = new MemberCardmodel();
+	cm.setCmUrl( obj.getString( "url" ).split( "upload" )[1] );
+	cm.setCmType( 1 );
+	cm.setCmSort( 0 );
+	cm.setBusId( busId );
+	cardModelMapper.insert( cm );
+	return cm.getCmId();
     }
 
     /**
@@ -237,7 +232,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    MemberCardtype memberCardtype = memberCardtypeDAO.selectById( ctId );  //会员卡类型
 	    List< MemberCardtype > list = new ArrayList<>();
 	    list.add( memberCardtype );
-	    map.put( "cardTypes", memberCardtype );
+	    map.put( "cardTypes", list );
 	    List< Map< String,Object > > gradeTypes = memberGradetypeDAO.findAllByBusIdAndCtId( busId, ctId );
 	    if ( ctId == 2 || ctId == 3 ) {
 		map.put( "fuka", 1 );
@@ -257,7 +252,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		map.put( "ismemberDate", gradeTypes.get( 0 ).get( "ismemberDate" ) );
 		if ( "0".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "ismemberDate" ) ) ) ) {
 		    MemberDate memberdate = memberDateDAO.findByBusIdAndCtId( busId, ctId );
-		    map.put( "cardTypes", memberdate );
+		    map.put( "memberdate", memberdate );
 		}
 		//员卡模板创建的等级
 		if ( "1".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "iseasy" ) ) ) ) {
@@ -290,6 +285,11 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    throw new BusinessException( ResponseMemberEnums.INVALID_SESSION );
 	}
 	Map< String,Object > map = new HashMap<>();
+
+	List<MemberCardmodel> listMap=cardModelMapper.findByType( 2 );
+	map.put( "cardModels",listMap );
+
+
 	List< Map< String,Object > > gradeTypes = memberGradetypeDAO.findAllByBusIdAndCtId( busId, ctId );
 	if ( CommonUtil.isNotEmpty( gradeTypes ) && gradeTypes.size() > 0 ) {
 	    map.put( "isleft", gradeTypes.get( 0 ).get( "isleft" ) );
@@ -834,10 +834,15 @@ public class MemberCardServiceImpl implements MemberCardService {
 		List< Map > goodsTypes = JSON.parseArray( CommonUtil.toString( publicParams.get( "goodsTypes" ) ), Map.class );
 		if ( CommonUtil.isNotEmpty( goodsTypes ) ) {
 		    for ( Map goodtype : goodsTypes ) {
+
 			MemberGiverulegoodstype grgt = new MemberGiverulegoodstype();
 			grgt.setGrId( 0 );
 			grgt.setGtId( CommonUtil.toInteger( goodtype.get( "gtId" ) ) );
-			grgt.setGiveType( CommonUtil.toInteger( goodtype.get( "giveType" ) ) );
+			if ( CommonUtil.isEmpty( goodtype.get( "money" ) ) || CommonUtil.isEmpty( goodtype.get( "number" ) ) ) {
+			    grgt.setGiveType( 2 );
+			} else {
+			    grgt.setGiveType( CommonUtil.toInteger( goodtype.get( "giveType" ) ) );
+			}
 			grgt.setMoney( CommonUtil.toDouble( goodtype.get( "money" ) ) );
 			grgt.setNumber( CommonUtil.toInteger( goodtype.get( "number" ) ) );
 			if ( CommonUtil.isNotEmpty( goodtype.get( "upperLmit" ) ) ) {
@@ -2453,5 +2458,75 @@ public class MemberCardServiceImpl implements MemberCardService {
 	memberCardOldDAO.insert( memberCardOld );
 	memberCard.deleteById( memberEntity.getMcId() );
     }
+
+
+    public Map<String,Object> findCard(Integer busId){
+        Map<String,Object> map=new HashMap<>(  );
+        map.put( "path",PropertiesUtil.getRes_web_path() );
+	List<Map<String, Object>> mapList = memberGradetypeDAO.findBybusId(busId);
+	map.put( "gradeType",mapList );
+	return map;
+    }
+
+    /**
+     * 发布会员卡
+     * @param busId
+     * @param params
+     */
+    @Transactional
+    public void publishCard(Integer busId,String params)throws BusinessException{
+        try {
+	    MemberGradetype memberGradetype = memberGradetypeDAO.findByIsesasy( busId );
+	    JSONObject jsonObject = JSONObject.parseObject( params );
+	    Integer ctId = CommonUtil.toInteger( jsonObject.get( "ctId" ) );
+	    if ( CommonUtil.isNotEmpty( memberGradetype ) && memberGradetype.getCtId() == ctId ) {
+		memberGradetypeDAO.updateByBusIdAndCtId( busId, ctId );
+	    } else {
+		memberGradetypeDAO.updateByBusIdAndCtId( busId, ctId );
+		memberGradetypeDAO.updateEasyApplyBybusId( busId );  //关闭泛会员
+	    }
+	}catch ( Exception e ){
+            LOG.error( "发布会员卡异常",e );
+            throw  new BusinessException(  ResponseEnums.ERROR );
+	}
+    }
+
+    public void deleteCard(Integer busId,Integer ctId) throws BusinessException{
+	try {
+	    Integer count = memberCardDAO.countCard1( busId, ctId );
+	    if ( count > 0 ) {
+		throw new BusinessException( ResponseMemberEnums.NO_DELETE_CARD );
+	    }
+	    List< MemberGradetype > gradeTypes = memberGradetypeDAO.findMemberGradeTypeByBusIdAndCtId( busId, ctId );
+	    // 删除卡片操作
+	    memberGradetypeDAO.deleteBybusIdAndCtId( busId, ctId );
+
+	    List< Map< String,Object > > giveRules = memberGiveruleDAO.findByBusIdAndCtId( busId, ctId );
+	    if ( giveRules.size() != 0 ) {
+		List< Integer > list = new ArrayList< Integer >();
+		for ( Map< String,Object > map : giveRules ) {
+		    if ( CommonUtil.isNotEmpty( map.get( "gr_id" ) ) ) {
+			list.add( Integer.valueOf( map.get( "gr_id" ).toString() ) );
+		    }
+		}
+		if ( list.size() > 0 ) {
+		    // 删除赠送规则
+		    memberGiveruleDAO.deleteBygrIds( list );
+		}
+	    }
+
+	    if ( gradeTypes.get( 0 ).getAssistantCard() == 1 ) {
+		//开通了副卡
+		memberGradetypeAssistantDAO.deleteByGtId( busId, ctId );
+		memberRechargegiveAssistantDAO.deleteBybusIdAndGtid( busId, ctId );
+	    }
+
+	}catch ( BusinessException e ){
+	    throw e;
+	} catch (Exception e) {
+	    throw new BusinessException( ResponseEnums.ERROR);
+	}
+    }
+
 
 }

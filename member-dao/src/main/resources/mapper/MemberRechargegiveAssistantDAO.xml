@@ -31,4 +31,9 @@
 	select * from t_member_rechargegive_assistant where busId=#{busId} and ctId=#{ctId} and fuctId=#{fuctId}
 	</select>
 
+	<delete id="deleteBybusIdAndCtId">
+		delete from t_member_rechargegive_assistant where busId=#{busId} and ctId=#{ctId}
+
+	</delete>
+
 </mapper>
