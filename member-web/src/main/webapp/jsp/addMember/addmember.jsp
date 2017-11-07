@@ -512,7 +512,7 @@ pageEncoding="UTF-8" %>
 
 
       function saveOk(memberId){
-            parent.window.postMessage(memberId,"*");
+            parent.window.postMessage("tuison("+memberId+")","*");
       }
 
 
