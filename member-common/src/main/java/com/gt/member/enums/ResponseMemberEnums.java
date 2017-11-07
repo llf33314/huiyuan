@@ -8,6 +8,8 @@ public enum ResponseMemberEnums {
     NO_DATA(4002, "数据不存在"),
     NULL(4003,"数据空值"),
     NO_PHONE_CODE(4004,"短信验证码过时或不存在"),
+    LOGIN_FAIL(4007,"用户不存在"),
+    OVERDUE_BUSUSER(4008,"商家已过期"),
 
     CARD_STATUS(5001, "会员卡已停用"),
     MEMBER_LESS_JIFEN(5002,"积分不足"),

@@ -6,7 +6,9 @@ package com.gt.member.service.memberApi;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.Member;
 import com.gt.api.enums.ResponseEnums;
+import com.gt.api.util.SessionUtils;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.common.entity.WxShop;
@@ -21,6 +23,7 @@ import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.common.dict.DictService;
+import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.*;
@@ -30,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -148,6 +152,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 
     @Autowired
     private UserConsumeDAO userConsumeMapper;
+
+    @Autowired
+    private RequestService requestService;
 
     /**
      * 查询粉丝信息
@@ -2754,5 +2761,34 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}
 
     }
+
+
+
+    public void loginMemberByPhone(HttpServletRequest request, Integer busId, String phone ) throws BusinessException{
+	try {
+	    MemberEntity memberEntity = memberDAO.findByPhone( busId, phone );
+	    if ( CommonUtil.isEmpty( memberEntity ) ) {
+		throw new BusinessException( ResponseMemberEnums.LOGIN_FAIL );
+	    }
+
+	    requestService.getWxPulbicMsg(busId);
+
+	    Member member = new Member();
+	    member.setId( memberEntity.getId() );
+	    member.setNickname( memberEntity.getNickname() );
+	    member.setIntegral( memberEntity.getIntegral() );
+	    member.setFansCurrency( memberEntity.getFansCurrency() );
+	    member.setPhone( memberEntity.getPhone() );
+	    member.setMcId( memberEntity.getMcId() );
+	    SessionUtils.setLoginMember( request,member );
+
+	}catch ( BusinessException e ){
+	    throw  e;
+	}catch ( Exception e ){
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+
+    }
+
 
 }

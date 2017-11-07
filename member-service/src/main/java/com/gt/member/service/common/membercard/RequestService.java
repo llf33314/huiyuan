@@ -1,6 +1,7 @@
 package com.gt.member.service.common.membercard;
 
 import com.gt.api.util.RequestUtils;
+import com.gt.member.exception.BusinessException;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
@@ -33,5 +34,11 @@ public interface RequestService {
      * @param sendWxMsgTemplate
      */
     public void setSendWxmsg(SendWxMsgTemplate sendWxMsgTemplate);
+
+    /**
+     * 判断商家是否过期
+     * @param busId
+     */
+    public void getWxPulbicMsg(Integer busId)throws BusinessException;
 
 }

@@ -671,4 +671,23 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
+
+    @ApiOperation( value = "loginMemberByPhone", notes = "手机号+验证码登录,验证码不足校验处理" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
+    } )
+    @ResponseBody
+    @RequestMapping( value = "/loginMemberByPhone", method = RequestMethod.POST )
+    public ServerResponse loginMemberByPhone(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer busId=CommonUtil.toInteger( requestBody.get("busId") );
+	    String phone=CommonUtil.toString( requestBody.get( "phone" ) );
+	    memberApiService.loginMemberByPhone(request,busId, phone );
+	    return ServerResponse.createBySuccess( );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+
+    }
 }

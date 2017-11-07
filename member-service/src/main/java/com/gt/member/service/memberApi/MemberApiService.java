@@ -6,6 +6,7 @@ import com.gt.member.exception.BusinessException;
 import com.gt.entityBo.PaySuccessBo;
 import com.gt.member.util.Page;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -470,6 +471,18 @@ public interface MemberApiService {
      * 流量兑换通知
      */
     public void changeFlow(Map<String,Object> params) throws BusinessException;
+
+
+    /**
+     * 手机号码登录
+     *
+     * @param busId
+     * @param phone
+     *
+     * @throws BusinessException
+     */
+    public void loginMemberByPhone( HttpServletRequest request,Integer busId, String phone ) throws BusinessException;
+
 
 
 }
