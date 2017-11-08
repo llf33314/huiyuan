@@ -496,6 +496,16 @@ pageEncoding="UTF-8" %>
             }
         })
 
+        document.onkeydown=function(event){
+            e = event ? event :(window.event ? window.event : null);
+            if(e.keyCode==13){
+                //执行的方法
+                vm.handleIconClick();
+            }
+        }
+
+
+
 
         function setTime() {
             setTimeout(function () {

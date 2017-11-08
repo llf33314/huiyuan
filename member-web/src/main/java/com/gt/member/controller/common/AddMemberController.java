@@ -92,11 +92,11 @@ public class AddMemberController {
     @ApiImplicitParam( name = "shopId", value = "门店id(没有门店请传主门店id)", paramType = "query", required = true, dataType = "int" )
     @RequestMapping( "/erpAddMember" )
     public String erpAddMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	SessionUtils.setLoginStyle( request, 1 );
-	BusUser busUser=new BusUser();
-	busUser.setId( 6711 );
-	SessionUtils.setLoginUser( request, busUser );
-	SessionUtils.setPidBusId( request, 6711 );
+//	SessionUtils.setLoginStyle( request, 1 );
+//	BusUser busUser=new BusUser();
+//	busUser.setId( 36 );
+//	SessionUtils.setLoginUser( request, busUser );
+//	SessionUtils.setPidBusId( request, 36 );
 
 	try {
 	    Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
@@ -110,7 +110,7 @@ public class AddMemberController {
 	    }
 	    LOG.error( "userId:"+userId );
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    if ( CommonUtil.isEmpty( shopId ) ) {
+	    if ( CommonUtil.isNotEmpty( shopId ) ) {
 		shopId = wxShopDAO.selectMainShopByBusId( busId ).getId();
 	    }
 	    WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersMapper.selectByUserId( busId );

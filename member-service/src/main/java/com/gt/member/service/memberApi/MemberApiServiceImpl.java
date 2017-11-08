@@ -384,7 +384,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 	    MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 	    if ( CommonUtil.isEmpty( card ) ) {
-		throw new BusinessException( ResponseMemberEnums.NO_DATA );
+		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
 	    }
 
 	    if ( card.getCtId() == 2 ) {
@@ -1815,7 +1815,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		}
 	    }
 	    if ( CommonUtil.isEmpty( card ) ) {
-		throw new BusinessException( ResponseMemberEnums.NO_DATA.getCode(), ResponseMemberEnums.NO_DATA.getMsg() );
+		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR.getCode(), ResponseMemberEnums.NOT_MEMBER_CAR.getMsg() );
 	    } else if ( card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
