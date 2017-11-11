@@ -447,44 +447,50 @@ public class MemberCardServiceImpl implements MemberCardService {
     }
 
     public void saveOrUpdateOption( String json, Integer busId ) throws BusinessException {
-	if ( CommonUtil.isEmpty( busId ) ) {
-	    throw new BusinessException( ResponseMemberEnums.INVALID_SESSION );
-	}
-	JSONObject jsonObject = JSONObject.parseObject( json );
-	MemberOption memberOption = new MemberOption();
-	memberOption.setId( CommonUtil.toInteger( jsonObject.get( "id" ) ) );
-	memberOption.setNameOption( CommonUtil.toInteger( jsonObject.get( "nameRadio" ) ) );
-	memberOption.setSexOption( CommonUtil.toInteger( jsonObject.get( "sexRadio" ) ) );
-	memberOption.setPhoneOption( CommonUtil.toInteger( jsonObject.get( "phoneRadio" ) ) );
-	memberOption.setAddrOption( CommonUtil.toInteger( jsonObject.get( "addressRadio" ) ) );
-	memberOption.setAddrDetailOption( CommonUtil.toInteger( jsonObject.get( "addressMoreRadio" ) ) );
-	memberOption.setMailOption( CommonUtil.toInteger( jsonObject.get( "emailRadio" ) ) );
-	memberOption.setGetMoneyOption( CommonUtil.toInteger( jsonObject.get( "incomeRadio" ) ) );
-	memberOption.setBirthOption( CommonUtil.toInteger( jsonObject.get( "birthRadio" ) ) );
-	memberOption.setCardOption( CommonUtil.toInteger( jsonObject.get( "idNumRadio" ) ) );
+	try {
+	    if ( CommonUtil.isEmpty( busId ) ) {
+		throw new BusinessException( ResponseMemberEnums.INVALID_SESSION );
+	    }
+	    JSONObject jsonObject = JSONObject.parseObject( json );
+	    MemberOption memberOption = new MemberOption();
+	    memberOption.setId( CommonUtil.toInteger( jsonObject.get( "id" ) ) );
+	    memberOption.setNameOption( CommonUtil.toInteger( jsonObject.get( "nameRadio" ) ) );
+	    memberOption.setSexOption( CommonUtil.toInteger( jsonObject.get( "sexRadio" ) ) );
+	    memberOption.setPhoneOption( CommonUtil.toInteger( jsonObject.get( "phoneRadio" ) ) );
+	    memberOption.setAddrOption( CommonUtil.toInteger( jsonObject.get( "addressRadio" ) ) );
+	    memberOption.setAddrDetailOption( CommonUtil.toInteger( jsonObject.get( "addressMoreRadio" ) ) );
+	    memberOption.setMailOption( CommonUtil.toInteger( jsonObject.get( "emailRadio" ) ) );
+	    memberOption.setGetMoneyOption( CommonUtil.toInteger( jsonObject.get( "incomeRadio" ) ) );
+	    memberOption.setBirthOption( CommonUtil.toInteger( jsonObject.get( "birthRadio" ) ) );
+	    memberOption.setCardOption( CommonUtil.toInteger( jsonObject.get( "idNumRadio" ) ) );
 
-	memberOption.setNameShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "nameCheck" ) ) ).get( 0 ) ) );
-	memberOption.setSexShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "sexCheck" ) ) ).get( 0 ) ) );
-	memberOption.setAddrShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "adressCheck1" ) ) ).get( 0 ) ) );
-	memberOption.setAddrShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "adressCheck" ) ) ).get( 0 ) ) );
-	memberOption.setAddrDetailShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "adressMoreCheck1" ) ) ).get( 0 ) ) );
-	memberOption.setAddrDetailShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "adressMoreCheck" ) ) ).get( 0 ) ) );
-	memberOption.setMailShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "emailCheck1" ) ) ).get( 0 ) ) );
-	memberOption.setMailShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "emailCheck" ) ) ).get( 0 ) ) );
-	memberOption.setGetMoneyShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "incomeCheck1" ) ) ).get( 0 ) ) );
-	memberOption.setGetMoneyShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "incomeCheck" ) ) ).get( 0 ) ) );
-	memberOption.setBirthShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "birthCheck1" ) ) ).get( 0 ) ) );
-	memberOption.setBirthShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "birthCheck" ) ) ).get( 0 ) ) );
-	memberOption.setCardShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "idNumCheck1" ) ) ).get( 0 ) ) );
-	memberOption.setCardShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "idNumCheck" ) ) ).get( 0 ) ) );
+	    memberOption.setNameShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "nameCheck" ) ) ).get( 0 ) ) );
+	    memberOption.setSexShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "sexCheck" ) ) ).get( 0 ) ) );
+	    memberOption.setAddrShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "adressCheck1" ) ) ).get( 0 ) ) );
+	    memberOption.setAddrShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "adressCheck" ) ) ).get( 0 ) ) );
+	    memberOption.setAddrDetailShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "adressMoreCheck1" ) ) ).get( 0 ) ) );
+	    memberOption.setAddrDetailShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "adressMoreCheck" ) ) ).get( 0 ) ) );
+	    memberOption.setMailShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "emailCheck1" ) ) ).get( 0 ) ) );
+	    memberOption.setMailShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "emailCheck" ) ) ).get( 0 ) ) );
+	    memberOption.setGetMoneyShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "incomeCheck1" ) ) ).get( 0 ) ) );
+	    memberOption.setGetMoneyShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "incomeCheck" ) ) ).get( 0 ) ) );
+	    memberOption.setBirthShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "birthCheck1" ) ) ).get( 0 ) ) );
+	    memberOption.setBirthShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "birthCheck" ) ) ).get( 0 ) ) );
+	    memberOption.setCardShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "idNumCheck1" ) ) ).get( 0 ) ) );
+	    memberOption.setCardShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "idNumCheck" ) ) ).get( 0 ) ) );
 
-	memberOption.setUploadCard( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "idCheck" ) ) ).get( 0 ) ) );
+	    memberOption.setUploadCard( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "idCheck" ) ) ).get( 0 ) ) );
 
-	memberOption.setBusId( busId );
-	if ( CommonUtil.isNotEmpty( memberOption.getId() ) ) {
-	    memberOptionDAO.updateById( memberOption );
-	} else {
-	    memberOptionDAO.insert( memberOption );
+	    memberOption.setBusId( busId );
+	    if ( CommonUtil.isNotEmpty( memberOption.getId() ) ) {
+		memberOptionDAO.updateById( memberOption );
+	    } else {
+		memberOptionDAO.insert( memberOption );
+	    }
+	}catch ( BusinessException e ){
+	    throw  e;
+	}catch ( Exception e){
+	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
 

@@ -359,7 +359,9 @@ public class CardController {
     }
 
 
-    @RequestMapping("/downPulishCardImage")
+    @ApiOperation( value = "下载会员二维码", notes = "下载会员二维码" )
+    @ResponseBody
+    @RequestMapping(value="/downPulishCardImage", method = RequestMethod.GET)
     public void downPulishCardImage(HttpServletRequest request,
 		    HttpServletResponse response, @RequestParam String url)
 		    throws IOException {
