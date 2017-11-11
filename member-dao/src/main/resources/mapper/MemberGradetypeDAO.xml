@@ -208,14 +208,14 @@
 		SELECT
 		gt.gt_id AS gtId, gt.gt_grade_name AS gtGradeName, gt.gt_name AS gtName,
 		gt.gt_name_color AS gtNameColor, gt.gt_login_url AS gtLoginUrl, gt.cm_id AS cmId, gt.gt_text_color AS gtTextColor,
-		gt.ct_id AS ctId, gt.public_id AS pulicId,
+		gt.ct_id AS ctId,
 		ct.ct_name AS ctName,cm.cm_url AS cmUrl,cm.cm_Type AS cmType,gt.cm_id AS cmId,gt.buyModel as buyModel, gt.buyMoney as buyMoney,
 		gt.costMoney as costMoney, gt.balance as balance,
-		gt.is_publish as ispulish,gt.ismemberDate,gt.isView,gt.isleft,gt.iseasy,gt.isCheck,gt.assistantCard
+		gt.is_publish as ispulish,gt.ismemberDate,gt.isView,gt.isleft,gt.iseasy,gt.isCheck,gt.assistantCard,gt.easyApply
 		FROM t_member_gradetype gt
 		INNER JOIN t_member_cardtype  ct ON gt.ct_id=ct.ct_id
 		INNER JOIN t_member_cardmodel cm ON cm.cm_id=gt.cm_id
-		WHERE gt.busId=#{busId} and gt.ct_id=#{ctId}
+		WHERE gt.busId=#{busId} and gt.ct_id=#{ctId} ORDER BY gt.iseasy DESC
 	</select>
 
 

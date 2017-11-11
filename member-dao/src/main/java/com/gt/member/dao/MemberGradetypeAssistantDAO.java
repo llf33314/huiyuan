@@ -33,6 +33,13 @@ public interface MemberGradetypeAssistantDAO extends BaseMapper<MemberGradetypeA
 
 
 
+    /**
+     * 查询卡通的副卡类型和id
+     * @param busId
+     * @param gtId
+     * @return
+     */
+    List<Map<String,Object>> findAssistantIdBygtId(@Param( "busId" ) Integer busId,@Param( "gtId" )Integer gtId);
 
 
 }

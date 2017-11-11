@@ -1,9 +1,7 @@
 package com.gt.member.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
-import com.gt.entityBo.PaySuccessBo;
 import com.gt.member.base.BaseController;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.entity.MemberCard;
@@ -671,4 +669,5 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
+
 }

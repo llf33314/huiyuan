@@ -92,6 +92,9 @@ public class MemberCommonServiceImp implements MemberCommonService {
     @Autowired
     private MemberRecommendDAO memberRecommendDAO;
 
+    @Autowired
+    private MemberRechargegiveDAO memberRechargegiveDAO;
+
 
 
     /**
@@ -954,5 +957,46 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	}
 
 	return list;
+    }
+
+
+    public Integer findRechargegive(double price, Integer grId, Integer busId,
+		    Integer ctId) throws BusinessException{
+	MemberDate memberdate = findMemeberDate(busId, ctId);
+	List<Map<String, Object>> rechargeGives = null;
+	if (CommonUtil.isNotEmpty(memberdate)) {
+	    rechargeGives = memberRechargegiveDAO.findBybusIdAndGrId(busId, grId,
+			    1);
+	} else {
+	    rechargeGives = memberRechargegiveDAO.findBybusIdAndGrId(busId, grId,
+			    0);
+	}
+	if (rechargeGives == null || rechargeGives.size() == 0) {
+	    return 0;
+	}
+	for (int i = 0; i < rechargeGives.size(); i++) {
+	    if (i + 1 == rechargeGives.size()) {
+		double money = Double.parseDouble(rechargeGives.get(i)
+				.get("money").toString());
+		if (money <= price) {
+		    return Integer.parseInt(rechargeGives.get(i)
+				    .get("giveCount").toString());
+		} else {
+		    return 0;
+		}
+	    }
+	    if (CommonUtil.isNotEmpty(rechargeGives.get(i).get("money"))) {
+		double money = Double.parseDouble(rechargeGives.get(i)
+				.get("money").toString());
+		double money1 = Double.parseDouble(rechargeGives.get(i + 1)
+				.get("money").toString());
+		if (price >= money && price < money1) {
+		    return Integer.parseInt(rechargeGives.get(i)
+				    .get("giveCount").toString());
+		}
+	    }
+
+	}
+	return 0;
     }
 }

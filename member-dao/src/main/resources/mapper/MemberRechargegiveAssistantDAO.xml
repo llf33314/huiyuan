@@ -36,4 +36,9 @@
 
 	</delete>
 
+	<select id="findByAssistantId" resultType="Map">
+		select <include refid="Base_Column_List" />  from t_member_rechargegive_assistant where busId=#{busId} and assistantId=#{assistantId}
+
+	</select>
+
 </mapper>

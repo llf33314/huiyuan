@@ -131,7 +131,6 @@ public interface MemberCommonService {
 
     /***
      * 当前立即赠送物品
-     * @param orderId
      * @throws Exception
      */
     public void findGiveRule(Integer busId,String orderCode) throws Exception;
@@ -140,4 +139,17 @@ public interface MemberCommonService {
 
 
     public List<Integer> findMemberIds(Integer memberId);
+
+    /**
+     * 主卡充值
+     * @param price
+     * @param grId
+     * @param busId
+     * @param ctId
+     * @return
+     */
+    public Integer findRechargegive(double price, Integer grId, Integer busId,
+                    Integer ctId) throws BusinessException;
+
+
 }

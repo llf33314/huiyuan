@@ -367,4 +367,18 @@ public interface MemberCardService {
      * @throws BusinessException
      */
     public void deleteCard(Integer busId,Integer ctId) throws BusinessException;
+
+    /**
+     * 查询会员卡充值信息
+     * @param busId
+     * @throws BusinessException
+     */
+    public Map<String,Object> findMemberCardByrecharge(Integer busId,String phone) throws BusinessException;
+
+    /**
+     * 会员卡充值
+     * @param busId
+     * @param params
+     */
+    public void rechargeMemberCard(Integer busId,Integer dangqianBusId,Map<String,Object> params)throws BusinessException;
 }

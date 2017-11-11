@@ -22,4 +22,12 @@ public interface MemberRechargegiveAssistantDAO extends BaseMapper<MemberRecharg
     List<Map<String,Object>> findByCtIdAndfuCtId(@Param( "busId" )Integer busId,@Param( "ctId" )Integer ctId,@Param( "fuctId" )Integer fuctId);
 
     int deleteBybusIdAndCtId(@Param("busId")Integer busId,@Param("ctId")Integer ctId);
+
+    /**
+     * 查询副卡充值信息
+     * @param busId
+     * @param assistantId
+     * @return
+     */
+    List<Map<String,Object>> findByAssistantId(@Param("busId")Integer busId ,@Param("assistantId")Integer assistantId);
 }

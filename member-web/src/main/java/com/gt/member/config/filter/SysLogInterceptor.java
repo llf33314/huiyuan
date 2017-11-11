@@ -27,6 +27,7 @@ public class SysLogInterceptor extends HandlerInterceptorAdapter {
     public void postHandle( HttpServletRequest request,
 		    HttpServletResponse response, Object handler,
 		    ModelAndView modelAndView ) throws Exception {
+
 	System.out.println( "功能日志拦截 = " );
 	if ( !handler.getClass().getName().endsWith( "DwrController" ) ) {
 	    HandlerMethod handlerMethod = (HandlerMethod) handler;
@@ -64,6 +65,8 @@ public class SysLogInterceptor extends HandlerInterceptorAdapter {
 	busUser.setId( 36 );
 	SessionUtils.setLoginUser( request, busUser );
 	SessionUtils.setPidBusId( request, 36 );
+
+	request.setCharacterEncoding("UTF-8");
 
 	return super.preHandle( request, response, handler );
     }

@@ -387,13 +387,13 @@ public class AddMemberController {
 
 	MemberQcodeWx mqw = memberQcodeWxMapper.findByBusId( userId, loginStyle);
 	String imgUrl = null;
-	if ( CommonUtil.isEmpty( mqw ) ) {
+	if ( CommonUtil.isEmpty( mqw ) || CommonUtil.isEmpty( mqw.getCodeUrl() ) ) {
 	    Map< String,Object > querymap = new HashMap<>();
 	    pIduserId=SessionUtils.getPidBusId( request );
 	    WxPublicUsersEntity wxPublicUsersEntity =wxPublicUsersMapper.selectByUserId( pIduserId );
 
 	    RequestUtils requestUtils=new RequestUtils<>(  );
-	      querymap.put( "scene_id", scene_id );
+	    querymap.put( "scene_id", scene_id );
 	    querymap.put( "publicId", wxPublicUsersEntity.getId() );
 	    requestUtils.setReqdata( querymap );
 	    String url = PropertiesUtil.getWxmp_home() + "/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/qrcodeCreateFinal.do";
@@ -401,12 +401,17 @@ public class AddMemberController {
 
 	    if ( "0".equals( CommonUtil.toString( jsonMap.get( "code" ) ) )  ) {
 		imgUrl=CommonUtil.toString( jsonMap.get( "data" ) );
-		mqw = new MemberQcodeWx();
-		mqw.setBusId( userId );
-		mqw.setBusType( loginStyle );
-		mqw.setCodeUrl( imgUrl );
-		if(CommonUtil.isNotEmpty( imgUrl )) {
-		    memberQcodeWxMapper.insert( mqw );
+		if(CommonUtil.isNotEmpty( mqw )) {
+		    MemberQcodeWx mqw1 = new MemberQcodeWx();
+		    mqw1.setBusId( userId );
+		    mqw1.setBusType( loginStyle );
+		    mqw1.setCodeUrl( imgUrl );
+		    if ( CommonUtil.isNotEmpty( imgUrl ) ) {
+			memberQcodeWxMapper.insert( mqw1 );
+		    }
+		}else{
+		    mqw.setCodeUrl( imgUrl );
+		    memberQcodeWxMapper.updateById( mqw );
 		}
 	    }
 	} else {

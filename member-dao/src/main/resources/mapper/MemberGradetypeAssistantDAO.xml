@@ -34,4 +34,9 @@
 
 	</delete>
 
+	<select id="findAssistantIdBygtId" resultType="Map">
+		select id,ctId from t_member_gradetype_assistant where busId=#{busId} and gtId=#{gtId}
+
+	</select>
+
 </mapper>

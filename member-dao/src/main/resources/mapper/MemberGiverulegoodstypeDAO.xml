@@ -51,4 +51,12 @@
 
 	</delete>
 
+	<select id="findBybusIdAndCtId" resultType="Map">
+		select
+		id as goodTypeId, grgs.gt_id as gtId, give_type as giveType  , money, number, upperLmit,gt.gt_name  ,gt.gt_unit
+		from t_member_giverulegoodstype grgs inner join t_member_goodstype gt on gt.gt_id=grgs.gt_id
+		where grgs.busId=#{busId} AND grgs.ctId=#{ctId} and give_type!=2
+
+	</select>
+
 </mapper>

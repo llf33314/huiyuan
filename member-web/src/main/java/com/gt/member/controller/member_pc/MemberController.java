@@ -570,6 +570,36 @@ public class MemberController {
 	}
     }
 
+    @ApiOperation( value = "会员卡充值信息查询", notes = "会员卡充值" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "phone", value = "手机号或卡号" , paramType = "query", required = false, dataType = "String" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findMemberCardByrecharge", method = RequestMethod.GET )
+    public ServerResponse findMemberCardByrecharge(HttpServletRequest request,
+		    HttpServletResponse response,  String phone){
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    Map<String,Object> map= memberCardService.findMemberCardByrecharge(busId,phone);
+	    return ServerResponse.createBySuccess( map  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+
+    @ApiOperation( value = "会员卡充值信息", notes = "会员卡充值" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "phone", value = "手机号或卡号" , paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "ctId", value = "选择充值卡类型" , paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "money", value = "充值金额" , paramType = "query", required = false, dataType = "double" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/rechargeMemberCard", method = RequestMethod.POST )
+    public ServerResponse rechargeMemberCard(HttpServletRequest request,
+		    HttpServletResponse response,  Map<String,Object> params){
+	return null;
+    }
 
 
 

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -347,5 +348,28 @@ public class CardController {
 	    return ServerResponse.createByError(e.getCode(),e.getMessage());
 	}
     }
+
+
+    @ApiOperation( value = "浏览链接", notes = "浏览链接" )
+    @ResponseBody
+    @RequestMapping( value = "/browse", method = RequestMethod.GET)
+    public void browse(HttpServletRequest request,
+		    HttpServletResponse response, @RequestParam String url) {
+	QRcodeKit.buildQRcode(url, 500, 500, response);
+    }
+
+
+    @RequestMapping("/downPulishCardImage")
+    public void downPulishCardImage(HttpServletRequest request,
+		    HttpServletResponse response, @RequestParam String url)
+		    throws IOException {
+	String filename = "会员卡.jpg";
+	response.addHeader("Content-Disposition", "attachment;filename="
+			+ new String(filename.replaceAll(" ", "").getBytes("utf-8"),
+			"iso8859-1"));
+	response.setContentType("application/octet-stream");
+	QRcodeKit.buildQRcode(url, 450, 450, response);
+    }
+
 
 }

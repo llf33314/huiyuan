@@ -32,9 +32,12 @@
 
 	<select id="findByBusIdAndCtId" resultType="Map">
 		SELECT
-		<include refid="Base_Column_List" />
+		 gr_id as grId , gt_id as gtId, gr_rechargeMoney as grRechargemoney ,
+		 gr_number as grNumber  , gr_discount as grDiscount, gr_giveCount, gr_giveType,
+		  gr_startDate, gr_validDate as grValidDate   ,
+         gr_upgradeType, gr_upgradeCount as grUpgradeCount, gr_equities ,delayDay, busId
 		FROM t_member_giverule
-		where busId=#{busId} and ct_id=${ctId} ORDER BY gr_id ASC
+		where busId=#{busId} and ct_id=#{ctId} ORDER BY gr_id ASC
 	</select>
 
 	<delete id="deleteBygrIds">

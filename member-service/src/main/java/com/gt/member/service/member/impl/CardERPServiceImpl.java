@@ -215,6 +215,7 @@ public class CardERPServiceImpl implements CardERPService {
 		uc.setGtId( gtId );
 		uc.setBusId( busUserEntity.getId() );
 		uc.setShopId( shopId );
+
 		String notityUrl = PropertiesUtil.getWebHome() + "/addMember/79B4DE7C/successPayBuyCard";
 		WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersDAO.selectByUserId( busUserEntity.getId() );
 
