@@ -385,6 +385,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    List<Map<String,Object>> zhukaRecharges= memberRechargegiveDAO.findBybusId( busId,ctId );
 
 	    Map< String,Object > zhukaRechargeMap = new HashMap<>();
+
 	    Integer j=0;
 	    for (  Map< String,Object >  giverule : giveRules ) {
 		List< Map< String,Object > > rechargeGiveList = new ArrayList<>();
