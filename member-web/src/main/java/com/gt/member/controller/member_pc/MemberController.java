@@ -380,7 +380,7 @@ public class MemberController {
     @ResponseBody
     @RequestMapping( value = "/findChongZhiLog", method = RequestMethod.GET )
     public ServerResponse findChongZhiLog(HttpServletRequest request,
-		    HttpServletResponse response,Map<String,Object> params){
+		    HttpServletResponse response,@RequestParam String  params){
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    Page page= memberCardService.findChongZhiLog(busId,params);
@@ -414,7 +414,7 @@ public class MemberController {
     @ResponseBody
     @RequestMapping( value = "/findDuiHuanLog", method = RequestMethod.GET )
     public ServerResponse findDuiHuanLog(HttpServletRequest request,
-		    HttpServletResponse response,Map<String,Object> params){
+		    HttpServletResponse response,@RequestParam String params){
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    Page page= memberCardService.findDuiHuanLog(busId,params);
