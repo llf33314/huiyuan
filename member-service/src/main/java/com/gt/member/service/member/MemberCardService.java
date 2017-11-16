@@ -381,4 +381,11 @@ public interface MemberCardService {
      * @param params
      */
     public void rechargeMemberCard( Integer busId, Integer dangqianBusId, Map< String,Object > params )throws BusinessException;
+
+    /**
+     * 查询商家发布的会员卡类型
+     * @param busId
+     * @return
+     */
+    public List<Map<String,Object>> findGradeTypeByBusId(Integer busId);
 }

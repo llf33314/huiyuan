@@ -2878,4 +2878,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 
     }
 
+
+
+    public List<Map<String,Object>> findGradeTypeByBusId(Integer busId){
+    	return memberGradetypeDAO.findGradeTypeByBusId(  busId);
+    }
+
 }

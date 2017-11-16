@@ -56,6 +56,23 @@ public class MemberController {
     @Autowired
     private ExportExcel exportExcel;
 
+
+    @ApiOperation( value = "查询商家发布的会员类型", notes = "查询商家发布的会员类型" )
+    @ResponseBody
+    @RequestMapping( value = "/findCardType", method = RequestMethod.GET )
+    public ServerResponse findCardType(HttpServletRequest request, HttpServletResponse response){
+
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    List<Map<String,Object>> listMap = memberCardService.findGradeTypeByBusId(busId );
+	    return ServerResponse.createBySuccess( listMap );
+	} catch ( Exception e ) {
+	    LOG.error( "查询商家发布的会员类型异常：", e );
+	    e.printStackTrace();
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), "查询会员列表异常" );
+	}
+    }
+
     @ApiOperation( value = "查询会员列表", notes = "查询会员列表" )
     @ResponseBody
     @RequestMapping( value = "/findMember", method = RequestMethod.GET )
