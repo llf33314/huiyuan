@@ -939,8 +939,14 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    Map< String,Object > map = new HashMap<>();
 	    PublicParameterset parameterset = publicParametersetDAO.findBybusId( busId );
 	    List< Map< String,Object > > memberGifts = memberGiftDAO.findBybusId( busId );
+	    SortedMap<String,Object> sortedMap=dictService.getDict( "A005" );
+	    List< Map< String,Object > > memberGiftList=new ArrayList<>(  );
+	    for ( Map< String,Object > membergift:memberGifts ){
+		membergift.put( "modelCode",sortedMap.get( CommonUtil.toString( membergift.get( "modelCode" ) ) ) );
+		memberGiftList.add( membergift );
+	    }
 	    map.put( "parameterset", parameterset );
-	    map.put( "memberGifts", memberGifts );
+	    map.put( "memberGifts", memberGiftList );
 	    return map;
 	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR );
