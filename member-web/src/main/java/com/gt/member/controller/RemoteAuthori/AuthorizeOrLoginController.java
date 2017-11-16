@@ -1,5 +1,6 @@
 package com.gt.member.controller.RemoteAuthori;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,22 +57,18 @@ public class AuthorizeOrLoginController {
 	    }
 	}
 	String requestUrl = CommonUtil.toString( map.get( "requestUrl" ) );
-	String otherRedisKey = CommonUtil.getCode();
-
-	//redis公用要调wxmp接口
-	Map< String,Object > redisMap = new HashMap<>();
-	redisMap.put( "redisKey", otherRedisKey );
-	redisMap.put( "redisValue", requestUrl );
-	redisMap.put( "setime", 300 );
-	SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmp_home()+"/8A5DA52E/redis/SetExApi.do", redisMap, PropertiesUtil.getWxmpsignKey() );
-
+	requestUrl= URLEncoder.encode( requestUrl,"UTF-8" );
 	Map< String,Object > queryMap = new HashMap< String,Object >();
-	queryMap.put( "otherRedisKey", otherRedisKey );
+	queryMap.put( "returnUrl", requestUrl );
 	queryMap.put( "browser", browser );
 	queryMap.put( "busId", busId );
 	queryMap.put( "uclogin", uclogin );
 
-	String url = PropertiesUtil.getWxmp_home()+"/remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString(  queryMap);
+	String url = PropertiesUtil.getWxmp_home()+"/remoteUserAuthoriPhoneController/79B4DE7C/authorizeMemberNew.do?queryBody=" + JSON.toJSONString(  queryMap);
 	return url;
     }
+
+
+
+
 }

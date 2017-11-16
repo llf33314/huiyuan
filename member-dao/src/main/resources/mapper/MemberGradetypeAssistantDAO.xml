@@ -20,7 +20,7 @@
 
 
 	<select id="findAssistantBygtId" resultType="java.lang.Integer">
-		select ctId from t_member_gradetype_assistant where busId=#{busId} and gtId=#{gtId}
+		select fuctId from t_member_gradetype_assistant where busId=#{busId} and gtId=#{gtId}
 
 	</select>
 
@@ -36,7 +36,6 @@
 
 	<select id="findAssistantIdBygtId" resultType="Map">
 		select id,ctId from t_member_gradetype_assistant where busId=#{busId} and gtId=#{gtId}
-
 	</select>
 
 </mapper>

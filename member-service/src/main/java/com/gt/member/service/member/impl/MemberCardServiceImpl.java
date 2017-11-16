@@ -238,7 +238,16 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    if ( ctId == 2 || ctId == 3 ) {
 		map.put( "fuka", 1 );
 		if ( gradeTypes.size() > 0 ) {
-		    Integer gtId = CommonUtil.toInteger( gradeTypes.get( 0 ).get( "gtId" ) );
+		    Integer gtId=0;
+		    if("1".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "iseasy" ) ) )){
+		        if(gradeTypes.size() > 1) {
+			    gtId = CommonUtil.toInteger( gradeTypes.get( 1 ).get( "gtId" ) );
+			    map.put( "assistantCard", gradeTypes.get( 1 ).get( "assistantCard" ) );
+			}
+		    }else{
+			gtId = CommonUtil.toInteger( gradeTypes.get( 0 ).get( "gtId" ) );
+			map.put( "assistantCard", gradeTypes.get( 0 ).get( "assistantCard" ) );
+		    }
 		    //查询开通的副卡
 		    List< Integer > assistantS = memberGradetypeAssistantDAO.findAssistantBygtId( busId, gtId );
 		    map.put( "xuanZhongfuka", assistantS );
@@ -250,7 +259,6 @@ public class MemberCardServiceImpl implements MemberCardService {
 		map.put( "iseasy",gradeTypes.get( 0 ).get( "iseasy" ) );
 		map.put( "fanhuiyuan", gradeTypes.get( 0 ).get( "easyApply" ) );
 		map.put( "shenhe", gradeTypes.get( 0 ).get( "isCheck" ) );
-		map.put( "assistantCard", gradeTypes.get( 0 ).get( "assistantCard" ) );
 		map.put( "ismemberDate", gradeTypes.get( 0 ).get( "ismemberDate" ) );
 		if ( "1".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "ismemberDate" ) ) ) ) {
 		    MemberDate memberdate = memberDateDAO.findByBusIdAndCtId( busId, ctId );
@@ -371,34 +379,54 @@ public class MemberCardServiceImpl implements MemberCardService {
 		map.put( "goodTypes", goodTypes );
 		map.put( "grEquities", giveRules.get( 0 ).get( "gr_equities" ) );
 		map.put( "upgradeType", giveRules.get( 0 ).get( "gr_upgradeType" ) );
-		if ( ctId == 2 ) {
-		    List< Double > discountS = new ArrayList<>();
-		    for ( Map< String,Object > giveRule : giveRules ) {
-			discountS.add( CommonUtil.toInteger( giveRule.get( "grDiscount" ) ) / 10.0 );
-		    }
-		    map.put( "discountS", discountS );
-		}
 	    }
+
+	    //主卡充值
+	    List<Map<String,Object>> zhukaRecharges= memberRechargegiveDAO.findBybusId( busId,ctId );
+
+	    Map< String,Object > zhukaRechargeMap = new HashMap<>();
+	    Integer j=0;
+	    for (  Map< String,Object >  giverule : giveRules ) {
+		List< Map< String,Object > > rechargeGiveList = new ArrayList<>();
+		for ( Map< String,Object > rechargeGive : zhukaRecharges ) {
+		    if ( CommonUtil.toInteger( giverule.get( "grId" ) ).equals( CommonUtil.toInteger( rechargeGive.get( "gr_id" ) ) ) ) {
+			rechargeGiveList.add( rechargeGive );
+		    }
+		}
+		zhukaRechargeMap.put( j.toString(), rechargeGiveList );
+		j++;
+	    }
+	    map.put( "zhukaRecharges", zhukaRechargeMap );
+
+
 	    List< Integer > gtIds = new ArrayList<>();
 	    for ( Map< String,Object > gradeType : gradeTypes ) {
 		Integer gtId = CommonUtil.toInteger( gradeType.get( "gtId" ) );
 		gtIds.add( gtId );
 	    }
 
-	    Integer gtId = CommonUtil.toInteger( gradeTypes.get( 0 ).get( "gtId" ) );
+	    Integer gtId =0;
+	    if("1".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "iseasy" ) ) )){
+		if(gradeTypes.size() > 1) {
+		    gtId = CommonUtil.toInteger( gradeTypes.get( 1 ).get( "gtId" ) );
+		}
+	    }else{
+		gtId = CommonUtil.toInteger( gradeTypes.get( 0 ).get( "gtId" ) );
+	    }
+
 	    //查询开通的副卡
 	    List< Integer > assistantS = memberGradetypeAssistantDAO.findAssistantBygtId( busId, gtId );
 
+	    List< Map< String,Object > > fukaList = memberGradetypeAssistantDAO.findAssistantByctId( busId, ctId );
+	    map.put( "fukaList", fukaList );
+
 	    for ( Integer asstistantCtId : assistantS ) {
-		if ( asstistantCtId == 2 ) {
-		    List< Map< String,Object > > disCountFuka = memberGradetypeAssistantDAO.findAssistantByctId( busId, 2 );
-		    map.put( "discountFuka", disCountFuka );
-		}
 		if ( asstistantCtId == 4 ) {
 		    //时效卡
 		    Map< String,Object > rechargeGiveMap = new HashMap<>();
 		    List< Map< String,Object > > rechargeGiveList = null;
 		    List< Map< String,Object > > rechargeGives = memberRechargegiveAssistantDAO.findByCtIdAndfuCtId( busId, ctId, 4 );
+		    Integer i=0;
 		    for ( Map< String,Object > gradeType : gradeTypes ) {
 			rechargeGiveList = new ArrayList<>();
 			for ( Map< String,Object > rechargeGive : rechargeGives ) {
@@ -406,28 +434,39 @@ public class MemberCardServiceImpl implements MemberCardService {
 				rechargeGiveList.add( rechargeGive );
 			    }
 			}
-			rechargeGiveMap.put( CommonUtil.toString( gradeType.get( "gtId" ) ), rechargeGiveList );
+			rechargeGiveMap.put( i.toString(), rechargeGiveList );
+			i++;
 		    }
 		    map.put( "shixiaoKaiRechargeGive", rechargeGiveMap );
 		}
-
 		if ( asstistantCtId == 5 ) {
 		    //时效卡
 		    Map< String,Object > rechargeGiveMap = new HashMap<>();
 		    List< Map< String,Object > > rechargeGiveList = null;
 		    List< Map< String,Object > > rechargeGives = memberRechargegiveAssistantDAO.findByCtIdAndfuCtId( busId, ctId, 5 );
-		    for ( Map< String,Object > gradeType : gradeTypes ) {
+		    Integer i=0;
+		     for ( Map< String,Object > gradeType : gradeTypes ) {
 			rechargeGiveList = new ArrayList<>();
 			for ( Map< String,Object > rechargeGive : rechargeGives ) {
 			    if ( CommonUtil.toInteger( gradeType.get( "gtId" ) ).equals( CommonUtil.toInteger( rechargeGive.get( "gtId" ) ) ) ) {
 				rechargeGiveList.add( rechargeGive );
 			    }
 			}
-			rechargeGiveMap.put( CommonUtil.toString( gradeType.get( "gtId" ) ), rechargeGiveList );
+			rechargeGiveMap.put(i.toString(), rechargeGiveList );
+			i++;
 		    }
 		    map.put( "ciKaKaiRechargeGive", rechargeGiveMap );
 		}
 
+		if(asstistantCtId==2){
+		    List<Map<String,Object>> discountS=new ArrayList<>(  );
+		   for(Map< String,Object > discount:fukaList){
+		       if("2".equals( CommonUtil.toString( discount.get( "fuctId" ) ) )){
+			   discountS.add( discount );
+		       }
+		   }
+		   map.put( "zhekouFuKa",discountS );
+		}
 	    }
 
 	}
@@ -784,67 +823,68 @@ public class MemberCardServiceImpl implements MemberCardService {
 				memberRechargegiveDAO.insert( rg );
 			    }
 			}
+		    }
+		}
 
-			//副卡操作 只能添加 不能修改
-			if ( assistantCard == 1 ) {
-			    List< Map > memberGradetypeAssistants = JSON.parseArray( CommonUtil.toString( map.get( "memberGradetypeAssistants" ) ), Map.class );
-			    if ( memberGradetypeAssistants.size() > 0 ) {
-				for ( Map memberGradetypeAssistant : memberGradetypeAssistants ) {
-				    MemberGradetypeAssistant mgta = new MemberGradetypeAssistant();
-				    mgta.setCtId( ctId );
-				    mgta.setGtId( gt.getGtId() );
-				    mgta.setId( CommonUtil.toInteger( memberGradetypeAssistant.get( "fukaId" ) ) );
-				    mgta.setDiscount( CommonUtil.toInteger( memberGradetypeAssistant.get( "discount" ) ) );
-				    mgta.setBusId( busUserId );
-				    mgta.setFuctId( CommonUtil.toInteger( memberGradetypeAssistant.get( "fukaCtId" ) ) );
-				    if ( CommonUtil.isEmpty( mgta.getId() ) ) {
-					memberGradetypeAssistantDAO.insert( mgta );
-				    } else {
-					memberGradetypeAssistantDAO.updateById( mgta );
-				    }
 
-				    if ( CommonUtil.isNotEmpty( memberGradetypeAssistant.get( "memberRechargegiveAssistants" ) ) ) {
-					//副卡充值
-					memberRechargegiveAssistantDAO.deleteBybusIdAndGtid( busUserId, gt.getGtId() );
+		//副卡操作 只能添加 不能修改
+		if ( assistantCard == 1 ) {
+		    List< Map > memberGradetypeAssistants = JSON.parseArray( CommonUtil.toString( map.get( "memberGradetypeAssistants" ) ), Map.class );
+		    if ( memberGradetypeAssistants.size() > 0 ) {
+			for ( Map memberGradetypeAssistant : memberGradetypeAssistants ) {
+			    MemberGradetypeAssistant mgta = new MemberGradetypeAssistant();
+			    mgta.setCtId( ctId );
+			    mgta.setGtId( gt.getGtId() );
+			    mgta.setId( CommonUtil.toInteger( memberGradetypeAssistant.get( "fukaId" ) ) );
+			    mgta.setDiscount( CommonUtil.toInteger( memberGradetypeAssistant.get( "discount" ) ) );
+			    mgta.setBusId( busUserId );
+			    mgta.setFuctId( CommonUtil.toInteger( memberGradetypeAssistant.get( "fukaCtId" ) ) );
+			    if ( CommonUtil.isEmpty( mgta.getId() ) ) {
+				memberGradetypeAssistantDAO.insert( mgta );
+			    } else {
+				memberGradetypeAssistantDAO.updateById( mgta );
+			    }
 
-					List< Map > memberRechargegiveAssistants = JSON
-							.parseArray( CommonUtil.toString( memberGradetypeAssistant.get( "memberRechargegiveAssistants" ) ), Map.class );
-					if ( memberRechargegiveAssistants.size() > 0 ) {
-					    for ( Map rechargegiveAssistant : memberRechargegiveAssistants ) {
-						MemberRechargegiveAssistant rechargea = new MemberRechargegiveAssistant();
-						rechargea.setFuctId( CommonUtil.toInteger( memberGradetypeAssistant.get( "fukaCtId" ) ) );
-						if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "giveCount" ) ) ) {
-						    rechargea.setGiveCount( CommonUtil.toInteger( rechargegiveAssistant.get( "giveCount" ) ) );
-						}
-						if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "money" ) ) ) {
-						    rechargea.setMoney( CommonUtil.toDouble( rechargegiveAssistant.get( "money" ) ) );
-						}
-						if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "number" ) ) ) {
-						    rechargea.setNumber( CommonUtil.toInteger( rechargegiveAssistant.get( "number" ) ) );
-						}
-						if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "isDate" ) ) ) {
-						    int isDate = CommonUtil.toInteger( rechargegiveAssistant.get( "isDate" ) );
-						    rechargea.setIsDate( isDate );
-						}
-						if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "validDate" ) ) ) {
-						    int validDate = CommonUtil.toInteger( rechargegiveAssistant.get( "validDate" ) );
-						    rechargea.setValidDate( validDate );
-						}
+			    if ( CommonUtil.isNotEmpty( memberGradetypeAssistant.get( "memberRechargegiveAssistants" ) ) ) {
+				//副卡充值
+				//memberRechargegiveAssistantDAO.deleteBybusIdAndGtid( busUserId, gt.getGtId() );
 
-						rechargea.setGtId( gt.getGtId() );
-						rechargea.setAssistantId( mgta.getId() );
-						rechargea.setBusId( busUserId );
-						rechargea.setCtId( ctId );
-						if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "rechargegiveAssistantId" ) ) ) {
-						    int rechargegiveAssistantId = CommonUtil.toInteger( rechargegiveAssistant.get( "rechargegiveAssistantId" ) );
-						    rechargea.setId( rechargegiveAssistantId );
-						}
-						if ( CommonUtil.isNotEmpty( rechargea.getId() ) ) {
-						    memberRechargegiveAssistantDAO.updateById( rechargea );
-						} else {
-						    memberRechargegiveAssistantDAO.insert( rechargea );
-						}
-					    }
+				List< Map > memberRechargegiveAssistants = JSON
+						.parseArray( CommonUtil.toString( memberGradetypeAssistant.get( "memberRechargegiveAssistants" ) ), Map.class );
+				if ( memberRechargegiveAssistants.size() > 0 ) {
+				    for ( Map rechargegiveAssistant : memberRechargegiveAssistants ) {
+					MemberRechargegiveAssistant rechargea = new MemberRechargegiveAssistant();
+					rechargea.setFuctId( CommonUtil.toInteger( memberGradetypeAssistant.get( "fukaCtId" ) ) );
+					if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "giveCount" ) ) ) {
+					    rechargea.setGiveCount( CommonUtil.toInteger( rechargegiveAssistant.get( "giveCount" ) ) );
+					}
+					if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "money" ) ) ) {
+					    rechargea.setMoney( CommonUtil.toDouble( rechargegiveAssistant.get( "money" ) ) );
+					}
+					if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "number" ) ) ) {
+					    rechargea.setNumber( CommonUtil.toInteger( rechargegiveAssistant.get( "number" ) ) );
+					}
+					if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "isDate" ) ) ) {
+					    int isDate = CommonUtil.toInteger( rechargegiveAssistant.get( "isDate" ) );
+					    rechargea.setIsDate( isDate );
+					}
+					if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "validDate" ) ) ) {
+					    int validDate = CommonUtil.toInteger( rechargegiveAssistant.get( "validDate" ) );
+					    rechargea.setValidDate( validDate );
+					}
+
+					rechargea.setGtId( gt.getGtId() );
+					rechargea.setAssistantId( mgta.getId() );
+					rechargea.setBusId( busUserId );
+					rechargea.setCtId( ctId );
+					if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "id" ) ) ) {
+					    int rechargegiveAssistantId = CommonUtil.toInteger( rechargegiveAssistant.get( "id" ) );
+					    rechargea.setId( rechargegiveAssistantId );
+					}
+					if ( CommonUtil.isNotEmpty( rechargea.getId() ) ) {
+					    memberRechargegiveAssistantDAO.updateById( rechargea );
+					} else {
+					    memberRechargegiveAssistantDAO.insert( rechargea );
 					}
 				    }
 				}
@@ -1306,7 +1346,23 @@ public class MemberCardServiceImpl implements MemberCardService {
     }
 
     public Map< String,Object > findMemberDetails( Integer memberId ) {
-	return memberMapper.findById( memberId ).get( 0 );
+	List<Map<String,Object>> members=memberMapper.findById( memberId );
+	if(members.size()>0){
+	    Map< String,Object > memberMap= memberMapper.findById( memberId ).get( 0 );
+	    if ( memberMap.containsKey( "nickname" ) ) {
+		try {
+		    byte[] bytes = (byte[]) memberMap.get( "nickname" );
+		    memberMap.put( "nickname", new String( bytes, "UTF-8" ) );
+		} catch ( Exception e ) {
+		    memberMap.put( "nickname", null );
+		}
+
+	    }
+	    return memberMap;
+	}else{
+	    return null;
+	}
+
     }
 
     /**
