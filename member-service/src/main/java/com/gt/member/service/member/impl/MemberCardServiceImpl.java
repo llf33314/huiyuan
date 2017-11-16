@@ -945,6 +945,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		membergift.put( "modelCode",sortedMap.get( CommonUtil.toString( membergift.get( "modelCode" ) ) ) );
 		memberGiftList.add( membergift );
 	    }
+	    map.put( "path",PropertiesUtil.getRes_web_path() );
 	    map.put( "parameterset", parameterset );
 	    map.put( "memberGifts", memberGiftList );
 	    return map;
