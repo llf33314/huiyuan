@@ -1,5 +1,7 @@
 package com.gt.member.controller.member_pc;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.SessionUtils;
 import com.gt.member.dto.ServerResponse;
@@ -326,7 +328,7 @@ public class CardController {
     @ApiOperation( value = "发布会员卡", notes = "发布会员卡" )
     @ResponseBody
     @RequestMapping( value = "/publishCard", method = RequestMethod.POST )
-    public ServerResponse publishCard(HttpServletRequest request, HttpServletResponse response,@RequestBody  String  params){
+    public ServerResponse publishCard(HttpServletRequest request, HttpServletResponse response,@RequestParam  String  params){
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.publishCard(busId,params);
@@ -338,14 +340,18 @@ public class CardController {
 
     @ApiOperation( value = "删除会员卡", notes = "删除会员卡" )
     @ResponseBody
-    @RequestMapping( value = "/deleteCard", method = RequestMethod.GET )
-    public ServerResponse deleteCard(HttpServletRequest request, HttpServletResponse response,  Integer  ctId){
+    @RequestMapping( value = "/deleteCard", method = RequestMethod.POST )
+    public ServerResponse deleteCard(HttpServletRequest request, HttpServletResponse response,@RequestParam  String  params  ){
 	try {
+	    JSONObject json= JSON.parseObject( params );
+	    Integer  ctId=CommonUtil.toInteger( json.get( "ctId" ) );
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.deleteCard(busId,ctId);
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	}catch ( Exception e ){
+	    return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
 	}
     }
 

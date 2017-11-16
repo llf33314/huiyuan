@@ -21,10 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -62,11 +59,11 @@ public class MemberController {
     @ApiOperation( value = "查询会员列表", notes = "查询会员列表" )
     @ResponseBody
     @RequestMapping( value = "/findMember", method = RequestMethod.GET )
-    public ServerResponse findMember(HttpServletRequest request, HttpServletResponse response,Map<String,Object> params ){
+    public ServerResponse findMember(HttpServletRequest request, HttpServletResponse response,@RequestParam String params ){
 
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    Page page = memberCardService.findMember(busId, params );
+	    Page page = memberCardService.findMemberPage(busId, params );
 	    return ServerResponse.createBySuccess( page );
 	} catch ( Exception e ) {
 	    LOG.error( "查询会员列表异常：", e );

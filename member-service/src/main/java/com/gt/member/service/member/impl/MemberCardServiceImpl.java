@@ -1030,9 +1030,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 	}
     }
 
-    public Page findMember( Integer busId, Map< String,Object > params ) {
+    public Page findMemberPage( Integer busId, String paramJson ) {
 	Map< String,Object > map = new HashMap<>();
 
+	Map<String,Object> params=JSONObject.toJavaObject( JSON.parseObject( paramJson ),Map.class );
 	List< Map< String,Object > > cardTypes = memberGradetypeDAO.findGradeTyeBybusId( busId );
 	if ( CommonUtil.isEmpty( params.get( "ctId" ) ) ) {
 	    if ( cardTypes.size() > 0 ) {
@@ -2570,6 +2571,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	}
     }
 
+    @Transactional
     public void deleteCard( Integer busId, Integer ctId ) throws BusinessException {
 	try {
 	    Integer count = memberCardDAO.countCard1( busId, ctId );
@@ -2592,14 +2594,26 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    // 删除赠送规则
 		    memberGiveruleDAO.deleteBygrIds( list );
 		}
-	    }
 
-	    if ( gradeTypes.get( 0 ).getAssistantCard() == 1 ) {
-		//开通了副卡
-		memberGradetypeAssistantDAO.deleteByGtId( busId, ctId );
-		memberRechargegiveAssistantDAO.deleteBybusIdAndGtid( busId, ctId );
-	    }
 
+		Integer assistantCard =0;
+		if("1".equals( CommonUtil.toString( gradeTypes.get( 0 ).getIseasy() ) )){
+		    if(gradeTypes.size() > 1) {
+			assistantCard = CommonUtil.toInteger( gradeTypes.get( 1 ).getAssistantCard() );
+		    }
+		}else{
+		    assistantCard = CommonUtil.toInteger( gradeTypes.get( 0 ).getAssistantCard() );
+		}
+
+		if ( assistantCard == 1 ) {
+		    //开通了副卡
+		    memberGradetypeAssistantDAO.deleteByGtId( busId, ctId );
+		    memberRechargegiveAssistantDAO.deleteBybusIdAndGtid( busId, ctId );
+		}
+
+		//删除赠送物品
+		memberGiverulegoodstypeDAO.deleteByBusIdAndCtId( busId,ctId );
+	    }
 	} catch ( BusinessException e ) {
 	    throw e;
 	} catch ( Exception e ) {

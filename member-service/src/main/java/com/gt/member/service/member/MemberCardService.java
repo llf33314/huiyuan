@@ -157,7 +157,7 @@ public interface MemberCardService {
      *
      * @return
      */
-    public Page findMember( Integer busId, Map< String,Object > params );
+    public Page findMemberPage( Integer busId, String params );
 
     /**
      * 批量审核
