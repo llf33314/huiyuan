@@ -12,7 +12,10 @@ import com.gt.api.util.SessionUtils;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.common.entity.WxShop;
-import com.gt.entityBo.*;
+import com.gt.entityBo.ErpRefundBo;
+import com.gt.entityBo.NewErpPaySuccessBo;
+import com.gt.entityBo.PaySuccessBo;
+import com.gt.entityBo.PayTypeBo;
 import com.gt.member.dao.*;
 import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.common.FenbiFlowRecordDAO;
@@ -21,8 +24,8 @@ import com.gt.member.dao.common.WxShopDAO;
 import com.gt.member.entity.*;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
-import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.common.dict.DictService;
+import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.service.member.SystemMsgService;
@@ -968,6 +971,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
 		MemberGiverule giveRule = giveRuleMapper.selectById( card.getGrId() );
 		map.put( "nickName", memberEntity.getNickname() );
+		map.put( "headimgurl", memberEntity.getHeadimgurl() );
 		map.put( "phone", memberEntity.getPhone() );
 		map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
 		map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
@@ -1491,8 +1495,8 @@ public class MemberApiServiceImpl implements MemberApiService {
     }
 
     public List< Map< String,Object > > findCardrecord( Integer memberId, Integer page, Integer pageSize ) {
-	List<Integer> memberIds=memberCommonService.findMemberIds( memberId );
-        return memberCardrecordNewDAO.findCardrecordByMemberId( memberIds, page * pageSize, pageSize );
+	List< Integer > memberIds = memberCommonService.findMemberIds( memberId );
+	return memberCardrecordNewDAO.findCardrecordByMemberId( memberIds, page * pageSize, pageSize );
     }
 
     public MemberCard findMemberCardByMcId( Integer mcId ) {
@@ -2243,6 +2247,7 @@ public class MemberApiServiceImpl implements MemberApiService {
     public void newPaySuccessByErpBalance( String newerpPaySuccessBo ) throws BusinessException {
 	try {
 	    NewErpPaySuccessBo erpPaySuccess = JSON.toJavaObject( JSON.parseObject( newerpPaySuccessBo ), NewErpPaySuccessBo.class );
+
 	    UserConsumeNew uc = new UserConsumeNew();
 
 	    MemberEntity memberEntity = memberDAO.selectById( erpPaySuccess.getMemberId() );
@@ -2418,9 +2423,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    if ( CommonUtil.isEmpty( uc ) ) {
 		throw new BusinessException( ResponseMemberEnums.NOT_ORDER );
 	    }
-	    if ( !DateTimeKit.laterThanNow( uc.getIsendDate() ) ) {
-		throw new BusinessException( ResponseMemberEnums.END_ORDER );
-	    }
+//	    if ( !DateTimeKit.laterThanNow( uc.getIsendDate() ) ) {
+//		throw new BusinessException( ResponseMemberEnums.END_ORDER );
+//	    }
 	    UserConsumeNew updateUc = new UserConsumeNew();
 	    updateUc.setId( uc.getId() );
 	    Double refundMoney = uc.getRefundMoney() + erfb.getRefundMoney();
@@ -2752,26 +2757,25 @@ public class MemberApiServiceImpl implements MemberApiService {
 		m1.setId( memberEntity.getId() );
 		m1.setFlow( flow );
 		memberDAO.updateById( m1 );
-		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 4, uc.getChangeFlow().doubleValue(), "流量兑换失败已退回", uc.getBusId(), flow.doubleValue(), uc.getOrderCode(), 0 );
+		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 4, uc.getChangeFlow().doubleValue(), "流量兑换失败已退回", uc.getBusId(), flow.doubleValue(),
+				uc.getOrderCode(), 0 );
 	    }
-	}catch ( BusinessException e ){
+	} catch ( BusinessException e ) {
 	    throw e;
-	}catch ( Exception e ){
+	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
 
     }
 
-
-
-    public void loginMemberByPhone(HttpServletRequest request, Integer busId, String phone ) throws BusinessException{
+    public void loginMemberByPhone( HttpServletRequest request, Integer busId, String phone ) throws BusinessException {
 	try {
 	    MemberEntity memberEntity = memberDAO.findByPhone( busId, phone );
 	    if ( CommonUtil.isEmpty( memberEntity ) ) {
 		throw new BusinessException( ResponseMemberEnums.LOGIN_FAIL );
 	    }
 
-	    requestService.getWxPulbicMsg(busId);
+	    requestService.getWxPulbicMsg( busId );
 
 	    Member member = new Member();
 	    member.setId( memberEntity.getId() );
@@ -2780,15 +2784,14 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    member.setFansCurrency( memberEntity.getFansCurrency() );
 	    member.setPhone( memberEntity.getPhone() );
 	    member.setMcId( memberEntity.getMcId() );
-	    SessionUtils.setLoginMember( request,member );
+	    SessionUtils.setLoginMember( request, member );
 
-	}catch ( BusinessException e ){
-	    throw  e;
-	}catch ( Exception e ){
+	} catch ( BusinessException e ) {
+	    throw e;
+	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
 
     }
-
 
 }

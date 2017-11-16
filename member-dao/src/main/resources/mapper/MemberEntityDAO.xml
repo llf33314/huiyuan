@@ -236,7 +236,8 @@
 	</select>
 
 	<select id="findByMemberIds" resultType="Map">
-		select id,phone,nickname,mc_id,fans_currency,flow,integral from t_wx_bus_member where busId=#{busId} and id in
+		select id,phone,nickname,mc_id,fans_currency,flow,integral from t_wx_bus_member where busId=#{busId}
+		and id in
 		<foreach close=")" collection="memberIds" item="id" open="("
 				 separator=",">
 			#{id}
