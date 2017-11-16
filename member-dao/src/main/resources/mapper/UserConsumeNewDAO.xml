@@ -61,7 +61,8 @@
 	</select>
 
 	<select id="sumXiaofei" resultType="java.lang.Double">
-		select sum(discountAfterMoney) from t_wx_user_consume_new where 	recordType=2 and ctId=#{ctId} and busId=#{busId} and payStatus=1
+		select sum(discountAfterMoney) from t_wx_user_consume_new
+		where 	recordType=2 and ctId=#{ctId} and busId=#{busId} and payStatus=1
 	</select>
 
 	<select id="buyCard" resultType="java.lang.Double">
@@ -71,7 +72,12 @@
 
 	<select id="sum7DayOrder" resultType="Map">
 		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS time, SUM(discountAfterMoney) AS discountAfterMoney FROM t_wx_user_consume_new
-		where recordType=2 and ctId=#{ctId} and busId=#{busId} and payStatus=1 and createDate <![CDATA[<=]]>#{date}
+		where recordType=2
+		<if test="ctId>0">
+			and ctId=#{ctId}
+		</if>
+		 and busId=#{busId}
+		 and payStatus=1 and createDate <![CDATA[<=]]>#{date}
 		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
 		ORDER BY time DESC  LIMIT 7
 	</select>
@@ -88,7 +94,7 @@
 
 	<select id="countJifenDuiHan" resultType="Map">
 		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS createDate, SUM(integral) as integralCount FROM t_wx_user_consume_new WHERE  busId=#{busId} and  ctId=1   GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
-		ORDER BY a1 DESC  LIMIT 7
+		ORDER BY createDate DESC  LIMIT 7
 	</select>
 
 
@@ -117,7 +123,8 @@
 
 
 	<select id="sumChongzhi7Day" resultType="Map">
-		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS createDate ,SUM(discountAfterMoney) AS discountAfterMoney FROM t_wx_user_consume_new WHERE  recordType=1  AND busId=#{busId} AND ctId=3 AND payStatus=1
+		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS createDate ,SUM(discountAfterMoney) AS discountAfterMoney
+		FROM t_wx_user_consume_new WHERE  recordType=1  AND busId=#{busId} AND ctId=3 AND payStatus=1
 		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
 		ORDER BY createDate DESC
 		LIMIT 7
@@ -150,7 +157,7 @@
 			 and memberId=#{memberId}
 		 </if>
 		<if test="date!=null">
-			and isendDate <![CDATA[>=]]> #{date}
+			and createDate <![CDATA[>=]]> #{date}
 		</if>
 		ORDER BY id DESC limit #{first},#{pageSize}
 	</select>

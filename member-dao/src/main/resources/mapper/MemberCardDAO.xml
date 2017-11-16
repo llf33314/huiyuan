@@ -64,7 +64,10 @@
 
 	<select id="countCard1" resultType="java.lang.Integer">
 		SELECT COUNT(m.mc_id) FROM  t_member_card c INNER JOIN t_wx_bus_member m ON c.`mc_id`=m.`mc_id`
-		where c.busId=#{busId} and c.ct_id =#{ctId}
+		where c.busId=#{busId}
+		 <if test="ctId>0">
+			 and c.ct_id =#{ctId}
+		 </if>
 	</select>
 
 	<select id="countCardByTime" resultType="java.lang.Integer">
@@ -133,7 +136,11 @@
 
 	<select id="findGroupBygtId" resultType="Map">
 		SELECT COUNT(c.mc_id) AS countMcId,c.gt_id,g.gt_grade_name FROM t_member_card c
-		INNER JOIN t_member_gradetype g ON c.gt_id=g.gt_id WHERE c.busId=#{busId} and c.ct_id=#{ctId} GROUP BY gt_id
+		INNER JOIN t_member_gradetype g ON c.gt_id=g.gt_id WHERE c.busId=#{busId}
+		<if test="ctId>0">
+			and c.ct_id=#{ctId}
+		</if>
+		GROUP BY gt_id
 	</select>
 
 	<select id="sumMoney" resultType="java.lang.Double">
@@ -154,6 +161,13 @@
 		LEFT JOIN t_wx_shop p ON p.id=c.shopId
 		WHERE c.busId=#{busId}
 		GROUP BY shopId,online  ORDER BY c.shopId ASC
+	</select>
+
+	<select id="sum7CardGroupByDate" resultType="Map">
+		SELECT DATE_FORMAT(receiveDate, '%Y-%m-%d') AS receiveDate, COUNT(mc_id) AS countId FROM t_member_card WHERE  busId=#{busId}
+		GROUP BY DATE_FORMAT(receiveDate, '%Y-%m-%d')
+		ORDER BY receiveDate DESC  LIMIT 7
+
 	</select>
 
 </mapper>

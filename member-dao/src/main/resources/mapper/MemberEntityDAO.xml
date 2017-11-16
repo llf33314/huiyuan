@@ -605,11 +605,22 @@
 	</select>
 
 	<select id="countJifen" resultType="java.lang.Integer">
-		select sum(m.integral) from t_wx_bus_member m inner join t_member_card c on m.mc_id=c.mc_id  where m.busId=#{busId} and c.ct_id=1
+		select sum(m.integral) from t_wx_bus_member m inner join t_member_card c on m.mc_id=c.mc_id
+		 where m.busId=#{busId}
+		  <if test="ctId>0">
+			  and c.ct_id=#{ctId}
+		  </if>
+
 	</select>
 
 	<select id="findSexGroupBySex" resultType="Map">
-		SELECT COUNT(m.id) as countId,m.sex FROM t_wx_bus_member m inner join t_member_card c on m.mc_id=c.mc_id  WHERE  m.busId=#{busId} and c.ct_id=#{ctId} and m.mc_id IS NOT NULL GROUP BY m.sex
+		SELECT COUNT(m.id) as countId,m.sex FROM t_wx_bus_member m
+		inner join t_member_card c on m.mc_id=c.mc_id  WHERE  m.busId=#{busId}
+
+		<if test="ctId>0">
+			and c.ct_id=#{ctId}
+		</if>
+		  and m.mc_id IS NOT NULL GROUP BY m.sex
 	</select>
 
 	<select id="selectByPrimaryKeys" resultMap="BaseResultMap">
@@ -664,7 +675,7 @@
 
 
 	<select id="findMemberByOldId" resultMap="BaseResultMap">
-		select * from t_wx_bus_member where busId=#{busId} and oldId like '%#{memberId}%'
+		select * from t_wx_bus_member where busId=#{busId} and oldId like CONCAT('%',#{memberId},'%')
 
 	</select>
 

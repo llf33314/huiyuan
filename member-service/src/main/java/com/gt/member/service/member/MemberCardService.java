@@ -157,7 +157,7 @@ public interface MemberCardService {
      *
      * @return
      */
-    public Page findMemberPage( Integer busId, String params );
+    public Page findMember( Integer busId, Map< String,Object > params );
 
     /**
      * 批量审核
@@ -245,7 +245,7 @@ public interface MemberCardService {
      *
      * @return
      */
-    public Page findChongZhiLog( Integer busId, Map< String,Object > params ) throws BusinessException;
+    public Page findChongZhiLog( Integer busId, String params ) throws BusinessException;
 
     /**
      * 充值记录详情
@@ -264,7 +264,7 @@ public interface MemberCardService {
      *
      * @return
      */
-    public Page findDuiHuanLog( Integer busId, Map< String,Object > params ) throws BusinessException;
+    public Page findDuiHuanLog( Integer busId, String params ) throws BusinessException;
 
     /**
      * 兑换详情
@@ -351,14 +351,14 @@ public interface MemberCardService {
      * @param busId
      * @return
      */
-    public Map<String,Object> findCard(Integer busId);
+    public Map<String,Object> findCard( Integer busId );
 
     /**
      * 发布会员卡
      * @param busId
      * @param params
      */
-    public void publishCard(Integer busId,String params)throws BusinessException;
+    public void publishCard( Integer busId, String params )throws BusinessException;
 
     /**
      * 删除会员卡信息(如果)
@@ -366,19 +366,19 @@ public interface MemberCardService {
      * @param ctId
      * @throws BusinessException
      */
-    public void deleteCard(Integer busId,Integer ctId) throws BusinessException;
+    public void deleteCard( Integer busId, Integer ctId ) throws BusinessException;
 
     /**
      * 查询会员卡充值信息
      * @param busId
      * @throws BusinessException
      */
-    public Map<String,Object> findMemberCardByrecharge(Integer busId,String phone) throws BusinessException;
+    public Map<String,Object> findMemberCardByrecharge( Integer busId, String phone ) throws BusinessException;
 
     /**
      * 会员卡充值
      * @param busId
      * @param params
      */
-    public void rechargeMemberCard(Integer busId,Integer dangqianBusId,Map<String,Object> params)throws BusinessException;
+    public void rechargeMemberCard( Integer busId, Integer dangqianBusId, Map< String,Object > params )throws BusinessException;
 }

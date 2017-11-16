@@ -238,16 +238,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    if ( ctId == 2 || ctId == 3 ) {
 		map.put( "fuka", 1 );
 		if ( gradeTypes.size() > 0 ) {
-		    Integer gtId=0;
-		    if("1".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "iseasy" ) ) )){
-		        if(gradeTypes.size() > 1) {
-			    gtId = CommonUtil.toInteger( gradeTypes.get( 1 ).get( "gtId" ) );
-			    map.put( "assistantCard", gradeTypes.get( 1 ).get( "assistantCard" ) );
-			}
-		    }else{
-			gtId = CommonUtil.toInteger( gradeTypes.get( 0 ).get( "gtId" ) );
-			map.put( "assistantCard", gradeTypes.get( 0 ).get( "assistantCard" ) );
-		    }
+		    Integer gtId = CommonUtil.toInteger( gradeTypes.get( 0 ).get( "gtId" ) );
 		    //查询开通的副卡
 		    List< Integer > assistantS = memberGradetypeAssistantDAO.findAssistantBygtId( busId, gtId );
 		    map.put( "xuanZhongfuka", assistantS );
@@ -259,6 +250,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		map.put( "iseasy",gradeTypes.get( 0 ).get( "iseasy" ) );
 		map.put( "fanhuiyuan", gradeTypes.get( 0 ).get( "easyApply" ) );
 		map.put( "shenhe", gradeTypes.get( 0 ).get( "isCheck" ) );
+		map.put( "assistantCard", gradeTypes.get( 0 ).get( "assistantCard" ) );
 		map.put( "ismemberDate", gradeTypes.get( 0 ).get( "ismemberDate" ) );
 		if ( "1".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "ismemberDate" ) ) ) ) {
 		    MemberDate memberdate = memberDateDAO.findByBusIdAndCtId( busId, ctId );
@@ -379,54 +371,34 @@ public class MemberCardServiceImpl implements MemberCardService {
 		map.put( "goodTypes", goodTypes );
 		map.put( "grEquities", giveRules.get( 0 ).get( "gr_equities" ) );
 		map.put( "upgradeType", giveRules.get( 0 ).get( "gr_upgradeType" ) );
-	    }
-
-	    //主卡充值
-	    List<Map<String,Object>> zhukaRecharges= memberRechargegiveDAO.findBybusId( busId,ctId );
-
-	    Map< String,Object > zhukaRechargeMap = new HashMap<>();
-	    Integer j=0;
-	    for (  Map< String,Object >  giverule : giveRules ) {
-		List< Map< String,Object > > rechargeGiveList = new ArrayList<>();
-		for ( Map< String,Object > rechargeGive : zhukaRecharges ) {
-		    if ( CommonUtil.toInteger( giverule.get( "grId" ) ).equals( CommonUtil.toInteger( rechargeGive.get( "gr_id" ) ) ) ) {
-			rechargeGiveList.add( rechargeGive );
+		if ( ctId == 2 ) {
+		    List< Double > discountS = new ArrayList<>();
+		    for ( Map< String,Object > giveRule : giveRules ) {
+			discountS.add( CommonUtil.toInteger( giveRule.get( "grDiscount" ) ) / 10.0 );
 		    }
+		    map.put( "discountS", discountS );
 		}
-		zhukaRechargeMap.put( j.toString(), rechargeGiveList );
-		j++;
 	    }
-	    map.put( "zhukaRecharges", zhukaRechargeMap );
-
-
 	    List< Integer > gtIds = new ArrayList<>();
 	    for ( Map< String,Object > gradeType : gradeTypes ) {
 		Integer gtId = CommonUtil.toInteger( gradeType.get( "gtId" ) );
 		gtIds.add( gtId );
 	    }
 
-	    Integer gtId =0;
-	    if("1".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "iseasy" ) ) )){
-		if(gradeTypes.size() > 1) {
-		    gtId = CommonUtil.toInteger( gradeTypes.get( 1 ).get( "gtId" ) );
-		}
-	    }else{
-		gtId = CommonUtil.toInteger( gradeTypes.get( 0 ).get( "gtId" ) );
-	    }
-
+	    Integer gtId = CommonUtil.toInteger( gradeTypes.get( 0 ).get( "gtId" ) );
 	    //查询开通的副卡
 	    List< Integer > assistantS = memberGradetypeAssistantDAO.findAssistantBygtId( busId, gtId );
 
-	    List< Map< String,Object > > fukaList = memberGradetypeAssistantDAO.findAssistantByctId( busId, ctId );
-	    map.put( "fukaList", fukaList );
-
 	    for ( Integer asstistantCtId : assistantS ) {
+		if ( asstistantCtId == 2 ) {
+		    List< Map< String,Object > > disCountFuka = memberGradetypeAssistantDAO.findAssistantByctId( busId, 2 );
+		    map.put( "discountFuka", disCountFuka );
+		}
 		if ( asstistantCtId == 4 ) {
 		    //时效卡
 		    Map< String,Object > rechargeGiveMap = new HashMap<>();
 		    List< Map< String,Object > > rechargeGiveList = null;
 		    List< Map< String,Object > > rechargeGives = memberRechargegiveAssistantDAO.findByCtIdAndfuCtId( busId, ctId, 4 );
-		    Integer i=0;
 		    for ( Map< String,Object > gradeType : gradeTypes ) {
 			rechargeGiveList = new ArrayList<>();
 			for ( Map< String,Object > rechargeGive : rechargeGives ) {
@@ -434,39 +406,28 @@ public class MemberCardServiceImpl implements MemberCardService {
 				rechargeGiveList.add( rechargeGive );
 			    }
 			}
-			rechargeGiveMap.put( i.toString(), rechargeGiveList );
-			i++;
+			rechargeGiveMap.put( CommonUtil.toString( gradeType.get( "gtId" ) ), rechargeGiveList );
 		    }
 		    map.put( "shixiaoKaiRechargeGive", rechargeGiveMap );
 		}
+
 		if ( asstistantCtId == 5 ) {
 		    //时效卡
 		    Map< String,Object > rechargeGiveMap = new HashMap<>();
 		    List< Map< String,Object > > rechargeGiveList = null;
 		    List< Map< String,Object > > rechargeGives = memberRechargegiveAssistantDAO.findByCtIdAndfuCtId( busId, ctId, 5 );
-		    Integer i=0;
-		     for ( Map< String,Object > gradeType : gradeTypes ) {
+		    for ( Map< String,Object > gradeType : gradeTypes ) {
 			rechargeGiveList = new ArrayList<>();
 			for ( Map< String,Object > rechargeGive : rechargeGives ) {
 			    if ( CommonUtil.toInteger( gradeType.get( "gtId" ) ).equals( CommonUtil.toInteger( rechargeGive.get( "gtId" ) ) ) ) {
 				rechargeGiveList.add( rechargeGive );
 			    }
 			}
-			rechargeGiveMap.put(i.toString(), rechargeGiveList );
-			i++;
+			rechargeGiveMap.put( CommonUtil.toString( gradeType.get( "gtId" ) ), rechargeGiveList );
 		    }
 		    map.put( "ciKaKaiRechargeGive", rechargeGiveMap );
 		}
 
-		if(asstistantCtId==2){
-		    List<Map<String,Object>> discountS=new ArrayList<>(  );
-		   for(Map< String,Object > discount:fukaList){
-		       if("2".equals( CommonUtil.toString( discount.get( "fuctId" ) ) )){
-			   discountS.add( discount );
-		       }
-		   }
-		   map.put( "zhekouFuKa",discountS );
-		}
 	    }
 
 	}
@@ -503,22 +464,22 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    memberOption.setBirthOption( CommonUtil.toInteger( jsonObject.get( "birthRadio" ) ) );
 	    memberOption.setCardOption( CommonUtil.toInteger( jsonObject.get( "idNumRadio" ) ) );
 
-	    memberOption.setNameShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "nameCheck" ) ) ).get( 0 ) ) );
-	    memberOption.setSexShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "sexCheck" ) ) ).get( 0 ) ) );
-	    memberOption.setAddrShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "adressCheck1" ) ) ).get( 0 ) ) );
-	    memberOption.setAddrShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "adressCheck" ) ) ).get( 0 ) ) );
-	    memberOption.setAddrDetailShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "adressMoreCheck1" ) ) ).get( 0 ) ) );
-	    memberOption.setAddrDetailShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "adressMoreCheck" ) ) ).get( 0 ) ) );
-	    memberOption.setMailShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "emailCheck1" ) ) ).get( 0 ) ) );
-	    memberOption.setMailShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "emailCheck" ) ) ).get( 0 ) ) );
-	    memberOption.setGetMoneyShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "incomeCheck1" ) ) ).get( 0 ) ) );
-	    memberOption.setGetMoneyShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "incomeCheck" ) ) ).get( 0 ) ) );
-	    memberOption.setBirthShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "birthCheck1" ) ) ).get( 0 ) ) );
-	    memberOption.setBirthShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "birthCheck" ) ) ).get( 0 ) ) );
-	    memberOption.setCardShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "idNumCheck1" ) ) ).get( 0 ) ) );
-	    memberOption.setCardShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "idNumCheck" ) ) ).get( 0 ) ) );
+	    memberOption.setNameShow1(  jsonObject.getBoolean( "nameCheck" )?1:0 );
+	    memberOption.setSexShow1(  jsonObject.getBoolean( "sexCheck" )?1:0  );
+	    memberOption.setAddrShow1(  jsonObject.getBoolean( "adressCheck1" )?1:0  );
+	    memberOption.setAddrShow(   jsonObject.getBoolean( "adressCheck" )?1:0  );
+	    memberOption.setAddrDetailShow1(  jsonObject.getBoolean( "adressMoreCheck1" )?1:0  );
+	    memberOption.setAddrDetailShow(  jsonObject.getBoolean( "adressMoreCheck" )?1:0  );
+	    memberOption.setMailShow1(jsonObject.getBoolean( "emailCheck1" )?1:0  );
+	    memberOption.setMailShow(   jsonObject.getBoolean( "emailCheck" )?1:0  );
+	    memberOption.setGetMoneyShow1( jsonObject.getBoolean( "incomeCheck1" )?1:0  );
+	    memberOption.setGetMoneyShow(   jsonObject.getBoolean( "incomeCheck" ) ?1:0  );
+	    memberOption.setBirthShow1(  jsonObject.getBoolean( "birthCheck1" )?1:0  );
+	    memberOption.setBirthShow( jsonObject.getBoolean( "birthCheck" )?1:0  );
+	    memberOption.setCardShow1(  jsonObject.getBoolean( "idNumCheck1" )?1:0  );
+	    memberOption.setCardShow(  jsonObject.getBoolean( "idNumCheck" )?1:0 );
 
-	    memberOption.setUploadCard( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "idCheck" ) ) ).get( 0 ) ) );
+	    memberOption.setUploadCard(  jsonObject.getBoolean( "idCheck" )?1:0 );
 
 	    memberOption.setBusId( busId );
 	    if ( CommonUtil.isNotEmpty( memberOption.getId() ) ) {
@@ -823,68 +784,67 @@ public class MemberCardServiceImpl implements MemberCardService {
 				memberRechargegiveDAO.insert( rg );
 			    }
 			}
-		    }
-		}
 
+			//副卡操作 只能添加 不能修改
+			if ( assistantCard == 1 ) {
+			    List< Map > memberGradetypeAssistants = JSON.parseArray( CommonUtil.toString( map.get( "memberGradetypeAssistants" ) ), Map.class );
+			    if ( memberGradetypeAssistants.size() > 0 ) {
+				for ( Map memberGradetypeAssistant : memberGradetypeAssistants ) {
+				    MemberGradetypeAssistant mgta = new MemberGradetypeAssistant();
+				    mgta.setCtId( ctId );
+				    mgta.setGtId( gt.getGtId() );
+				    mgta.setId( CommonUtil.toInteger( memberGradetypeAssistant.get( "fukaId" ) ) );
+				    mgta.setDiscount( CommonUtil.toInteger( memberGradetypeAssistant.get( "discount" ) ) );
+				    mgta.setBusId( busUserId );
+				    mgta.setFuctId( CommonUtil.toInteger( memberGradetypeAssistant.get( "fukaCtId" ) ) );
+				    if ( CommonUtil.isEmpty( mgta.getId() ) ) {
+					memberGradetypeAssistantDAO.insert( mgta );
+				    } else {
+					memberGradetypeAssistantDAO.updateById( mgta );
+				    }
 
-		//副卡操作 只能添加 不能修改
-		if ( assistantCard == 1 ) {
-		    List< Map > memberGradetypeAssistants = JSON.parseArray( CommonUtil.toString( map.get( "memberGradetypeAssistants" ) ), Map.class );
-		    if ( memberGradetypeAssistants.size() > 0 ) {
-			for ( Map memberGradetypeAssistant : memberGradetypeAssistants ) {
-			    MemberGradetypeAssistant mgta = new MemberGradetypeAssistant();
-			    mgta.setCtId( ctId );
-			    mgta.setGtId( gt.getGtId() );
-			    mgta.setId( CommonUtil.toInteger( memberGradetypeAssistant.get( "fukaId" ) ) );
-			    mgta.setDiscount( CommonUtil.toInteger( memberGradetypeAssistant.get( "discount" ) ) );
-			    mgta.setBusId( busUserId );
-			    mgta.setFuctId( CommonUtil.toInteger( memberGradetypeAssistant.get( "fukaCtId" ) ) );
-			    if ( CommonUtil.isEmpty( mgta.getId() ) ) {
-				memberGradetypeAssistantDAO.insert( mgta );
-			    } else {
-				memberGradetypeAssistantDAO.updateById( mgta );
-			    }
+				    if ( CommonUtil.isNotEmpty( memberGradetypeAssistant.get( "memberRechargegiveAssistants" ) ) ) {
+					//副卡充值
+					memberRechargegiveAssistantDAO.deleteBybusIdAndGtid( busUserId, gt.getGtId() );
 
-			    if ( CommonUtil.isNotEmpty( memberGradetypeAssistant.get( "memberRechargegiveAssistants" ) ) ) {
-				//副卡充值
-				//memberRechargegiveAssistantDAO.deleteBybusIdAndGtid( busUserId, gt.getGtId() );
+					List< Map > memberRechargegiveAssistants = JSON
+							.parseArray( CommonUtil.toString( memberGradetypeAssistant.get( "memberRechargegiveAssistants" ) ), Map.class );
+					if ( memberRechargegiveAssistants.size() > 0 ) {
+					    for ( Map rechargegiveAssistant : memberRechargegiveAssistants ) {
+						MemberRechargegiveAssistant rechargea = new MemberRechargegiveAssistant();
+						rechargea.setFuctId( CommonUtil.toInteger( memberGradetypeAssistant.get( "fukaCtId" ) ) );
+						if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "giveCount" ) ) ) {
+						    rechargea.setGiveCount( CommonUtil.toInteger( rechargegiveAssistant.get( "giveCount" ) ) );
+						}
+						if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "money" ) ) ) {
+						    rechargea.setMoney( CommonUtil.toDouble( rechargegiveAssistant.get( "money" ) ) );
+						}
+						if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "number" ) ) ) {
+						    rechargea.setNumber( CommonUtil.toInteger( rechargegiveAssistant.get( "number" ) ) );
+						}
+						if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "isDate" ) ) ) {
+						    int isDate = CommonUtil.toInteger( rechargegiveAssistant.get( "isDate" ) );
+						    rechargea.setIsDate( isDate );
+						}
+						if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "validDate" ) ) ) {
+						    int validDate = CommonUtil.toInteger( rechargegiveAssistant.get( "validDate" ) );
+						    rechargea.setValidDate( validDate );
+						}
 
-				List< Map > memberRechargegiveAssistants = JSON
-						.parseArray( CommonUtil.toString( memberGradetypeAssistant.get( "memberRechargegiveAssistants" ) ), Map.class );
-				if ( memberRechargegiveAssistants.size() > 0 ) {
-				    for ( Map rechargegiveAssistant : memberRechargegiveAssistants ) {
-					MemberRechargegiveAssistant rechargea = new MemberRechargegiveAssistant();
-					rechargea.setFuctId( CommonUtil.toInteger( memberGradetypeAssistant.get( "fukaCtId" ) ) );
-					if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "giveCount" ) ) ) {
-					    rechargea.setGiveCount( CommonUtil.toInteger( rechargegiveAssistant.get( "giveCount" ) ) );
-					}
-					if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "money" ) ) ) {
-					    rechargea.setMoney( CommonUtil.toDouble( rechargegiveAssistant.get( "money" ) ) );
-					}
-					if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "number" ) ) ) {
-					    rechargea.setNumber( CommonUtil.toInteger( rechargegiveAssistant.get( "number" ) ) );
-					}
-					if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "isDate" ) ) ) {
-					    int isDate = CommonUtil.toInteger( rechargegiveAssistant.get( "isDate" ) );
-					    rechargea.setIsDate( isDate );
-					}
-					if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "validDate" ) ) ) {
-					    int validDate = CommonUtil.toInteger( rechargegiveAssistant.get( "validDate" ) );
-					    rechargea.setValidDate( validDate );
-					}
-
-					rechargea.setGtId( gt.getGtId() );
-					rechargea.setAssistantId( mgta.getId() );
-					rechargea.setBusId( busUserId );
-					rechargea.setCtId( ctId );
-					if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "id" ) ) ) {
-					    int rechargegiveAssistantId = CommonUtil.toInteger( rechargegiveAssistant.get( "id" ) );
-					    rechargea.setId( rechargegiveAssistantId );
-					}
-					if ( CommonUtil.isNotEmpty( rechargea.getId() ) ) {
-					    memberRechargegiveAssistantDAO.updateById( rechargea );
-					} else {
-					    memberRechargegiveAssistantDAO.insert( rechargea );
+						rechargea.setGtId( gt.getGtId() );
+						rechargea.setAssistantId( mgta.getId() );
+						rechargea.setBusId( busUserId );
+						rechargea.setCtId( ctId );
+						if ( CommonUtil.isNotEmpty( rechargegiveAssistant.get( "rechargegiveAssistantId" ) ) ) {
+						    int rechargegiveAssistantId = CommonUtil.toInteger( rechargegiveAssistant.get( "rechargegiveAssistantId" ) );
+						    rechargea.setId( rechargegiveAssistantId );
+						}
+						if ( CommonUtil.isNotEmpty( rechargea.getId() ) ) {
+						    memberRechargegiveAssistantDAO.updateById( rechargea );
+						} else {
+						    memberRechargegiveAssistantDAO.insert( rechargea );
+						}
+					    }
 					}
 				    }
 				}
@@ -1007,7 +967,16 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    if ( CommonUtil.isEmpty( busId ) ) {
 		throw new BusinessException( ResponseMemberEnums.INVALID_SESSION );
 	    }
-	    MemberGift gift = (MemberGift) JSON.toJavaObject( JSON.parseObject( json ), MemberGift.class );
+	   JSONObject obj=JSON.parseObject( json );
+	    MemberGift gift=new MemberGift();
+	    gift.setBusId( busId );
+	    gift.setId( CommonUtil.toInteger(obj.get( "id" ) ) );
+	    gift.setModelCode( CommonUtil.toInteger(obj.get( "lpGiveWay" ) ) );
+	    gift.setJifen( CommonUtil.toDouble(obj.get( "lpGiveJf" ) ) );
+	    gift.setFenbi( CommonUtil.toDouble(obj.get( "lpGiveFb" ) ) );
+	    gift.setFlow( CommonUtil.toInteger(obj.get( "lpGiveLls" ) ) );
+	    gift.setTitle( CommonUtil.toString(obj.get( "lpTitle" ) ) );
+
 	    if ( CommonUtil.isNotEmpty( gift.getId() ) ) {
 		memberGiftDAO.updateById( gift );
 	    } else {
@@ -1030,10 +999,9 @@ public class MemberCardServiceImpl implements MemberCardService {
 	}
     }
 
-    public Page findMemberPage( Integer busId, String paramJson ) {
+    public Page findMember( Integer busId, Map< String,Object > params ) {
 	Map< String,Object > map = new HashMap<>();
 
-	Map<String,Object> params=JSONObject.toJavaObject( JSON.parseObject( paramJson ),Map.class );
 	List< Map< String,Object > > cardTypes = memberGradetypeDAO.findGradeTyeBybusId( busId );
 	if ( CommonUtil.isEmpty( params.get( "ctId" ) ) ) {
 	    if ( cardTypes.size() > 0 ) {
@@ -1347,23 +1315,7 @@ public class MemberCardServiceImpl implements MemberCardService {
     }
 
     public Map< String,Object > findMemberDetails( Integer memberId ) {
-	List<Map<String,Object>> members=memberMapper.findById( memberId );
-	if(members.size()>0){
-	    Map< String,Object > memberMap= memberMapper.findById( memberId ).get( 0 );
-	    if ( memberMap.containsKey( "nickname" ) ) {
-		try {
-		    byte[] bytes = (byte[]) memberMap.get( "nickname" );
-		    memberMap.put( "nickname", new String( bytes, "UTF-8" ) );
-		} catch ( Exception e ) {
-		    memberMap.put( "nickname", null );
-		}
-
-	    }
-	    return memberMap;
-	}else{
-	    return null;
-	}
-
+	return memberMapper.findById( memberId ).get( 0 );
     }
 
     /**
@@ -1941,11 +1893,10 @@ public class MemberCardServiceImpl implements MemberCardService {
      * 会员卡统计
      *
      * @param busId
-     * @param ctId
      *
      * @return
      */
-    public Map< String,Object > memberTongJi( Integer busId, Integer ctId, String startTime ) throws BusinessException {
+    public Map< String,Object > memberTongJi( Integer busId, Integer ctId, String startTime) throws BusinessException {
 	try {
 	    Map< String,Object > map = new HashMap<>();
 
@@ -1955,10 +1906,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    }
 	    map.put( "cardType", grades );
 
-	    if ( CommonUtil.isEmpty( ctId ) || ctId == 0 ) {
-		ctId = CommonUtil.toInteger( grades.get( 0 ).get( "ctId" ) );
-	    }
-	    map.put( "ctId", ctId );
+
 
 	    // 会员总数
 	    Integer countMember = memberCardDAO.countCard1( busId, ctId );
@@ -1974,11 +1922,11 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 	    // 性别分组统计
 	    List< Map< String,Object > > sexMap = memberMapper.findSexGroupBySex( busId, ctId );
-	    map.put( "sexMap", JSON.toJSONString( sexMap ) );
+	    map.put( "sexMap",  sexMap  );
 
 	    // 等级分组统计
 	    List< Map< String,Object > > cardCount = memberCardDAO.findGroupBygtId( busId, ctId );
-	    map.put( "cardCount", JSON.toJSONString( cardCount ) );
+	    map.put( "cardCount", cardCount  );
 
 	    // 查询消费总和 和售卡总和
 	    Double sumXiaofei = userConsumeNewDAO.sumXiaofei( busId, ctId );
@@ -1998,7 +1946,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		boolean flag = false;
 		for ( Map< String,Object > sumbuy : sumbuyCard ) {
 		    if ( CommonUtil.toString( sumbuy.get( "buytime1" ) ).equals( CommonUtil.toString( map1.get( "time" ) ) ) ) {
-			map1.put( "buyDiscountAfterMoney", CommonUtil.toString( map.get( "buyDiscountAfterMoney" ) ) );
+			map1.put( "buyDiscountAfterMoney", CommonUtil.toString( sumbuy.get( "buyDiscountAfterMoney" ) ) );
 			sumMemberOrder.add( map1 );
 			flag = true;
 		    }
@@ -2008,17 +1956,35 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    sumMemberOrder.add( map1 );
 		}
 	    }
+
+
 	    map.put( "sumMemberOrder", sumMemberOrder );
 	    switch ( ctId ) {
+		case 0:
+		    //查询这7天新增会员数
+		    List<Map<String,Object>> sum7Card=memberCardDAO.sum7CardGroupByDate(busId);
+		    Collections.reverse( sum7Card );
+
+		    map.put( "huiyan7Card", sum7Card  );
+
+		    // 剩余积分统计
+		    Integer shuyunJifen1 = memberMapper.countJifen( busId,0 );
+		    map.put( "shuyunJifen", shuyunJifen1 );
+
+		    // 消耗积分统计
+		    Integer xiaohaoJifen1 = userConsumeNewDAO.countUseJifen( busId );
+		    map.put( "xiaohaoJifen", xiaohaoJifen1 );
+		    break;
+
 		case 1:
 		    // 积分卡
 		    // 查询积分兑换情况
 		    List< Map< String,Object > > jifenMap = userConsumeNewDAO.countJifenDuiHan( busId );
 		    Collections.reverse( jifenMap );
-		    map.put( "jifenMap", JSONArray.toJSONString( jifenMap ) );
+		    map.put( "jifenMap",  jifenMap  );
 
 		    // 剩余积分统计
-		    Integer shuyunJifen = memberMapper.countJifen( busId );
+		    Integer shuyunJifen = memberMapper.countJifen( busId ,1);
 		    map.put( "shuyunJifen", shuyunJifen );
 
 		    // 消耗积分统计
@@ -2029,7 +1995,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    // 会员折扣总和
 		    List< Map< String,Object > > discountOrder = userConsumeNewDAO.sum7DayDiscount( busId );
 		    Collections.reverse( discountOrder );
-		    map.put( "discountOrder", JSON.toJSONString( discountOrder ) );
+		    map.put( "discountOrder",  discountOrder  );
 
 		    // 折扣总额
 		    Double disCountMoney = userConsumeNewDAO.sumDisCount( busId );
@@ -2048,7 +2014,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    // 会员充值走势
 		    List< Map< String,Object > > chongzhiMap = userConsumeNewDAO.sumChongzhi7Day( busId );
 		    Collections.reverse( chongzhiMap );
-		    map.put( "chongzhiMap", JSON.toJSONString( chongzhiMap ) );
+		    map.put( "chongzhiMap", chongzhiMap  );
 		    break;
 		case 4:
 		    // 时效卡
@@ -2059,7 +2025,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    // 查询次卡7天消费次数
 		    List< Map< String,Object > > cikaMap = userConsumeNewDAO.sumCiKa( busId );
 		    Collections.reverse( cikaMap );
-		    map.put( "cikaMap", JSON.toJSONString( cikaMap ) );
+		    map.put( "cikaMap", cikaMap  );
 
 		    // 会员剩余次数
 		    Integer sumfrequency = memberCardDAO.sumfrequency( busId );
@@ -2078,16 +2044,18 @@ public class MemberCardServiceImpl implements MemberCardService {
 	}
     }
 
-    public Page findChongZhiLog( Integer busId, Map< String,Object > params ) throws BusinessException {
+    public Page findChongZhiLog( Integer busId, String params ) throws BusinessException {
 	try {
-	    params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
-	    int pageSize = 10;
+	    JSONObject json=JSON.parseObject( params );
+	    json.put( "curPage", CommonUtil.isEmpty( json.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( json.get( "curPage" ) ) );
+
+	    int pageSize = CommonUtil.isEmpty( json.get( "pageSize" ) ) ? 10 : CommonUtil.toInteger( json.get( "pageSize" ) );
 
 	    Integer memberId = null;
-	    if ( CommonUtil.isNotEmpty( params.get( "cardNo" ) ) ) {
-		MemberEntity memberEntity = memberMapper.findByPhone( busId, CommonUtil.toString( params.get( "cardNo" ) ) );
+	    if ( CommonUtil.isNotEmpty( json.get( "cardNo" ) ) ) {
+		MemberEntity memberEntity = memberMapper.findByPhone( busId, CommonUtil.toString( json.get( "cardNo" ) ) );
 		if ( CommonUtil.isEmpty( memberEntity ) ) {
-		    MemberCard memberCard = memberCardDAO.findCardByCardNo( busId, CommonUtil.toString( params.get( "cardNo" ) ) );
+		    MemberCard memberCard = memberCardDAO.findCardByCardNo( busId, CommonUtil.toString( json.get( "cardNo" ) ) );
 		    memberEntity = memberMapper.findByMcIdAndbusId( busId, memberCard.getMcId() );
 		    if ( CommonUtil.isNotEmpty( memberEntity ) ) {
 			memberId = memberEntity.getId();
@@ -2100,20 +2068,31 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    }
 
 	    String startDate = null;
-	    if ( CommonUtil.isNotEmpty( params.get( "startTime" ) ) ) {
-		startDate = CommonUtil.toString( params.get( "startTime" ) ) + " 00:00:00";
+	    if ( CommonUtil.isNotEmpty( json.get( "startTime" ) ) ) {
+		startDate = CommonUtil.toString( json.get( "startTime" ) ) + " 00:00:00";
 	    }
 
 	    int rowCount = userConsumeNewDAO.countUserConsumeChongZhiByMemberId( busId, memberId, startDate );
 
-	    Page page = new Page( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "" );
-	    params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
-	    params.put( "maxResult", pageSize );
+	    Page page = new Page( CommonUtil.toInteger( json.get( "curPage" ) ), pageSize, rowCount, "" );
+	    json.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	    json.put( "maxResult", pageSize );
 
 	    List< Map< String,Object > > list = userConsumeNewDAO
-			    .findUserConsumeChongZhiByMemberId( busId, memberId, startDate, CommonUtil.toInteger( params.get( "firstResult" ) ),
-					    CommonUtil.toInteger( params.get( "maxResult" ) ) );
-	    page.setSubList( list );
+			    .findUserConsumeChongZhiByMemberId( busId, memberId, startDate, CommonUtil.toInteger( json.get( "firstResult" ) ),
+					    CommonUtil.toInteger( json.get( "maxResult" ) ) );
+
+
+	    List< Map< String,Object > > newList=new ArrayList<>(  );
+	    SortedMap<String,Object> map=dictService.getDict( "A003" );
+	    SortedMap<String,Object> payStatus=dictService.getDict( "A004" );
+	    for(Map< String,Object > uc:list){
+	        uc.put( "payStatus",payStatus.get( CommonUtil.toString( uc.get( "payStatus" ) )) );
+		uc.put( "dataSource",map.get( CommonUtil.toString(uc.get( "dataSource" ))) );
+		uc.put( "createDate",CommonUtil.toString( uc.get( "createDate" ) ) );
+		newList.add( uc );
+	    }
+	    page.setSubList( newList );
 	    return page;
 	} catch ( Exception e ) {
 	    LOG.error( "分页查询充值记录异常", e );
@@ -2131,24 +2110,29 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    }
 	    map.put( "nickName", memberEntity.getNickname() );
 	    map.put( "headImg", memberEntity.getHeadimgurl() );
+	    map.put( "phone", memberEntity.getPhone() );
 	    List< Map< String,Object > > cards = memberCardDAO.findCardById( memberEntity.getMcId() );
-	    map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
-	    map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
-	    map.put( "cardNo", cards.get( 0 ).get( "cardNo" ) );
+	    if(cards.size()>0) {
+		map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
+		map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
+		map.put( "cardNo", cards.get( 0 ).get( "cardNo" ) );
+	    }
 
 	    /**
 	     * 订单
 	     */
 	    map.put( "orderCode", ucNew.getOrderCode() );
-	    map.put( "dateTime", DateTimeKit.getDateTime( ucNew.getIsendDate() ) );
+	    map.put( "dateTime", DateTimeKit.getDateTime( ucNew.getCreateDate() ) );
 	    map.put( "money", ucNew.getDiscountAfterMoney() );
-	    map.put( "payStatus", ucNew.getPayStatus() );
+
+	    SortedMap< String,Object > payMap = dictService.getDict( "A004" );
+	    map.put( "payStatus", payMap.get(CommonUtil.toString(ucNew.getPayStatus()  )) );
 
 	    List< UserConsumePay > userConsumePays = userConsumePayDAO.findByUcId( ucId );
 	    SortedMap< String,Object > sortemap = dictService.getDict( "1198" );
 	    String payType = "";
 	    for ( UserConsumePay userConsumePay : userConsumePays ) {
-		payType = CommonUtil.toString( sortemap.get( userConsumePay.getPaymentType() ) ) + "   ";
+		payType = CommonUtil.toString( sortemap.get( CommonUtil.toString( userConsumePay.getPaymentType( )) ) ) + "   ";
 	    }
 	    map.put( "payType", payType );
 	    return map;
@@ -2159,16 +2143,19 @@ public class MemberCardServiceImpl implements MemberCardService {
 
     }
 
-    public Page findDuiHuanLog( Integer busId, Map< String,Object > params ) throws BusinessException {
+    public Page findDuiHuanLog( Integer busId, String params ) throws BusinessException {
 	try {
-	    params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
-	    int pageSize = 10;
+
+	    JSONObject json=JSON.parseObject( params );
+	    json.put( "curPage", CommonUtil.isEmpty( json.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( json.get( "curPage" ) ) );
+
+	    int pageSize = CommonUtil.isEmpty( json.get( "pageSize" ) ) ? 10 : CommonUtil.toInteger( json.get( "pageSize" ) );
 
 	    Integer memberId = null;
-	    if ( CommonUtil.isNotEmpty( params.get( "cardNo" ) ) ) {
-		MemberEntity memberEntity = memberMapper.findByPhone( busId, CommonUtil.toString( params.get( "cardNo" ) ) );
+	    if ( CommonUtil.isNotEmpty( json.get( "cardNo" ) ) ) {
+		MemberEntity memberEntity = memberMapper.findByPhone( busId, CommonUtil.toString( json.get( "cardNo" ) ) );
 		if ( CommonUtil.isEmpty( memberEntity ) ) {
-		    MemberCard memberCard = memberCardDAO.findCardByCardNo( busId, CommonUtil.toString( params.get( "cardNo" ) ) );
+		    MemberCard memberCard = memberCardDAO.findCardByCardNo( busId, CommonUtil.toString( json.get( "cardNo" ) ) );
 		    memberEntity = memberMapper.findByMcIdAndbusId( busId, memberCard.getMcId() );
 		    if ( CommonUtil.isNotEmpty( memberEntity ) ) {
 			memberId = memberEntity.getId();
@@ -2181,18 +2168,18 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    }
 
 	    String startDate = null;
-	    if ( CommonUtil.isNotEmpty( params.get( "startTime" ) ) ) {
-		startDate = CommonUtil.toString( params.get( "startTime" ) ) + " 00:00:00";
+	    if ( CommonUtil.isNotEmpty( json.get( "startTime" ) ) ) {
+		startDate = CommonUtil.toString( json.get( "startTime" ) ) + " 00:00:00";
 	    }
 
 	    int rowCount = userConsumeNewDAO.countUserConsumeDuiHuanByMemberId( busId, memberId, startDate );
 
-	    Page page = new Page( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "" );
-	    params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
-	    params.put( "maxResult", pageSize );
+	    Page page = new Page( CommonUtil.toInteger( json.get( "curPage" ) ), pageSize, rowCount, "" );
+	    json.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	    json.put( "maxResult", pageSize );
 
-	    List< Map< String,Object > > list = userConsumeNewDAO.findUserConsumeDuiHuanByMemberId( busId, memberId, startDate, CommonUtil.toInteger( params.get( "firstResult" ) ),
-			    CommonUtil.toInteger( params.get( "maxResult" ) ) );
+	    List< Map< String,Object > > list = userConsumeNewDAO.findUserConsumeDuiHuanByMemberId( busId, memberId, startDate, CommonUtil.toInteger( json.get( "firstResult" ) ),
+			    CommonUtil.toInteger( json.get( "maxResult" ) ) );
 	    page.setSubList( list );
 	    return page;
 	} catch ( Exception e ) {
@@ -2571,7 +2558,6 @@ public class MemberCardServiceImpl implements MemberCardService {
 	}
     }
 
-    @Transactional
     public void deleteCard( Integer busId, Integer ctId ) throws BusinessException {
 	try {
 	    Integer count = memberCardDAO.countCard1( busId, ctId );
@@ -2594,26 +2580,14 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    // 删除赠送规则
 		    memberGiveruleDAO.deleteBygrIds( list );
 		}
-
-
-		Integer assistantCard =0;
-		if("1".equals( CommonUtil.toString( gradeTypes.get( 0 ).getIseasy() ) )){
-		    if(gradeTypes.size() > 1) {
-			assistantCard = CommonUtil.toInteger( gradeTypes.get( 1 ).getAssistantCard() );
-		    }
-		}else{
-		    assistantCard = CommonUtil.toInteger( gradeTypes.get( 0 ).getAssistantCard() );
-		}
-
-		if ( assistantCard == 1 ) {
-		    //开通了副卡
-		    memberGradetypeAssistantDAO.deleteByGtId( busId, ctId );
-		    memberRechargegiveAssistantDAO.deleteBybusIdAndGtid( busId, ctId );
-		}
-
-		//删除赠送物品
-		memberGiverulegoodstypeDAO.deleteByBusIdAndCtId( busId,ctId );
 	    }
+
+	    if ( gradeTypes.get( 0 ).getAssistantCard() == 1 ) {
+		//开通了副卡
+		memberGradetypeAssistantDAO.deleteByGtId( busId, ctId );
+		memberRechargegiveAssistantDAO.deleteBybusIdAndGtid( busId, ctId );
+	    }
+
 	} catch ( BusinessException e ) {
 	    throw e;
 	} catch ( Exception e ) {

@@ -62,9 +62,9 @@ public class SysLogInterceptor extends HandlerInterceptorAdapter {
 		    HttpServletResponse response, Object handler ) throws Exception {
 	SessionUtils.setLoginStyle( request, 1 );
 	BusUser busUser=new BusUser();
-	busUser.setId( 36 );
+	busUser.setId( 42 );
 	SessionUtils.setLoginUser( request, busUser );
-	SessionUtils.setPidBusId( request, 36 );
+	SessionUtils.setPidBusId( request, 42 );
 
 	request.setCharacterEncoding("UTF-8");
 
