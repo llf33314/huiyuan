@@ -92,4 +92,11 @@ public interface MemberCardDAO extends BaseMapper<MemberCard> {
      * @return
      */
     List<Map<String, Object>> countMember(@Param("busId")Integer busId);
+
+    /**
+     * 查询7天会员新增数量
+     * @param busId
+     * @return
+     */
+    List<Map<String,Object>> sum7CardGroupByDate(@Param( "busId" )Integer busId);
 }

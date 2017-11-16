@@ -221,7 +221,7 @@ public interface MemberEntityDAO extends BaseMapper<MemberEntity > {
     /**
      * 查询会员积分卡积分剩余
      */
-    int countJifen(@Param("busId")Integer busId);
+    Integer countJifen(@Param("busId")Integer busId,@Param( "ctId" )Integer ctId);
 
     /**
      * 分类统计会员性别

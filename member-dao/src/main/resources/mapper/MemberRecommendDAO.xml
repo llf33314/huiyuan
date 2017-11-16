@@ -54,7 +54,11 @@
 		select count(t.id) from t_member_recommend t inner join
 		t_wx_bus_member m on
 		m.id=t.memberId
-		where m.busId=#{busId} and t.ctId=#{ctId} and
+		where m.busId=#{busId}
+		<if test="ctId>0">
+			and t.ctId=#{ctId}
+		</if>
+		 and
 		t.isUser=1
 	</select>
 

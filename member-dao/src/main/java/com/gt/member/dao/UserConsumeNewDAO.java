@@ -72,7 +72,7 @@ public interface UserConsumeNewDAO extends BaseMapper<UserConsumeNew> {
      * @param busId
      * @return
      */
-    int countUseJifen(@Param("busId")Integer busId);
+    Integer countUseJifen(@Param("busId")Integer busId);
 
 
     /**
