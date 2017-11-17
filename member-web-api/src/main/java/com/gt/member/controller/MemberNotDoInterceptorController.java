@@ -50,4 +50,21 @@ public class MemberNotDoInterceptorController {
 	}
 
     }
+
+    @ApiOperation( value = "短信发送成功通知", notes = "短信发送成功通知" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "msgId", value = "发送消息模板id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "status", value = "状态0:发送成功,-1:发送失败", paramType = "query", required = true, dataType = "int" )
+
+    } )
+    @ResponseBody
+    @RequestMapping( value = "/smsNotice", method = RequestMethod.POST )
+    public ServerResponse smsNotice(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String,Object> params ){
+	try {
+	    memberApiService.changeFlow( params );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
 }

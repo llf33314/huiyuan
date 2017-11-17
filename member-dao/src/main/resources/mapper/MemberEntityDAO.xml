@@ -262,7 +262,7 @@
 
 
 	<select id="findBymcIds" resultType="Map">
-		select id from t_wx_bus_member where busId=#{busId} and mc_id
+		select id,phone from t_wx_bus_member where busId=#{busId} and mc_id
 		in
 		<foreach close=")" collection="mcIds" item="mcId" open="("
 				 separator=",">

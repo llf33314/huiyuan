@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author pengjiangli
- * @since 2017-10-18
+ * @since 2017-11-16
  */
 @Data
 @Accessors(chain = true)
@@ -52,6 +52,15 @@ public class MemberNoticeuser extends Model<MemberNoticeuser> {
 	private Date createDate;
 	@TableId(value="id", type= IdType.AUTO)
 	private Integer id;
+    /**
+     * 发送短信返回的id
+     */
+	@TableField("msgId")
+	private Integer msgId;
+    /**
+     * 手机号码
+     */
+	private String phone;
 
 
 	@Override
@@ -69,6 +78,8 @@ public class MemberNoticeuser extends Model<MemberNoticeuser> {
 			", sendDate=" + sendDate +
 			", createDate=" + createDate +
 			", id=" + id +
+			", msgId=" + msgId +
+			", phone=" + phone +
 			"}";
 	}
 }

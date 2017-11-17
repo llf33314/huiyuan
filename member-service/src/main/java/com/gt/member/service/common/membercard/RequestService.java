@@ -25,7 +25,7 @@ public interface RequestService {
      * 短信发送
      * @param requestUtils
      */
-    public void sendSms(RequestUtils<OldApiSms> requestUtils);
+    public String sendSms(RequestUtils<OldApiSms> requestUtils);
 
 
     public String sendSmsNew(RequestUtils<NewApiSms > requestUtils);

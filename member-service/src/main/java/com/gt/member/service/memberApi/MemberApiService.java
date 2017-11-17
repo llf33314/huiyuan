@@ -477,6 +477,11 @@ public interface MemberApiService {
      */
     public void changeFlow( Map< String,Object > params ) throws BusinessException;
 
-
+    /**
+     * 短信通知回调
+     * @param params
+     * @throws BusinessException
+     */
+    public void smsNotice(Map<String,Object> params) throws  BusinessException;
 
 }

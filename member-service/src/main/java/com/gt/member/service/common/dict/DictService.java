@@ -25,6 +25,15 @@ public interface DictService {
 
 
     /**
+     * 根据类型获取字典详细信息
+     * @param type
+     * @return
+     */
+    public List<Map<String, Object>> getDictbyList(String type) throws BusinessException;
+
+
+
+    /**
      * 根据类型获取字典的值
      * @param type
      * @return

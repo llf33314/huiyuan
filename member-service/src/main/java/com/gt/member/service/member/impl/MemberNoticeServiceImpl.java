@@ -6,9 +6,7 @@ package com.gt.member.service.member.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.gt.api.bean.session.BusUser;
 import com.gt.api.enums.ResponseEnums;
-import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.RequestUtils;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.member.dao.*;
@@ -19,6 +17,7 @@ import com.gt.member.entity.MemberNoticeuser;
 import com.gt.member.entity.SystemNotice;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
+import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.MemberNoticeService;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.DateTimeKit;
@@ -40,9 +39,6 @@ import java.util.*;
 public class MemberNoticeServiceImpl implements MemberNoticeService {
 
     private static final Logger LOG = Logger.getLogger( MemberNoticeServiceImpl.class );
-
-    //发送短信
-    private static final String SEND_SMS = "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do";
 
     @Autowired
     private SystemNoticeDAO systemNoticeDAO;
@@ -70,6 +66,9 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 
     @Autowired
     private BusUserDAO busUserDAO;
+
+    @Autowired
+    private RequestService requestService;
 
     /**
      * 系统通知设置
@@ -242,6 +241,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 			    nu.setMsgType( 0 );
 			    nu.setNoticeId( memberNotice.getId() );
 			    nu.setStatus( 2 );
+			    nu.setPhone( CommonUtil.toString( member.get( "phone" ) ) );
 			    nu.setSendDate( memberNotice.getSendDate() );
 			    list.add( nu );
 			}
@@ -256,7 +256,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	    if ( memberNotice.getSendType() == 0 ) {
 		if ( memberNotice.getSendSms() == 1 ) {
 		    // 如果立即发送
-		    sendNotice(memberNotice.getId());
+		    sendNotice( memberNotice.getId() );
 		}
 	    }
 
@@ -272,62 +272,78 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
     public void sendNotice( Integer id ) throws BusinessException {
 	try {
 	    MemberNotice memberNotice = memberNoticeDAO.selectById( id );
-
 	    List< Map< String,Object > > memberNoticeUsers = memberNoticeuserDAO.findByNoticeId( id );
-
-	    List< Integer > memberIds = null;
-	    StringBuffer  sb = new StringBuffer();;
-	    Map< String,Object > params = new HashMap< String,Object >();
-	    List< Integer > ctId = null;
-	    List< Map< String,Object > > members = null;
-
+	    StringBuffer phoneSb = new StringBuffer();
+	    List<Integer> ids = new ArrayList<>();
+	    Integer i = 0;
 	    for ( Map< String,Object > map : memberNoticeUsers ) {
-		// 修改方式状态
-		memberIds = new ArrayList< Integer >();
-		Integer memberId = CommonUtil.toInteger( map.get( "busId" ) );
-		memberIds.add( memberId );
-		Integer busId = memberNotice.getBusId();
-		members = memberMapper.findByMemberIds( busId, memberIds );
-		for ( Map< String,Object > member : members ) {
-		    if ( CommonUtil.isNotEmpty( member.get( "phone" ) ) ) {
-			sb.append( member.get( "phone" ) + "," );
-		    }
+		if ( CommonUtil.isNotEmpty( map.get( "phone" ) ) ) {
+		    phoneSb.append( map.get( "phone" ) + "," );
+		    ids.add( CommonUtil.toInteger( map.get( "id" ) ) );
 		}
-	    }
-
-	    try {
-		if ( CommonUtil.isNotEmpty( sb.toString() ) ) {
-		    String phone = sb.substring( 0, sb.lastIndexOf( "," ) );
-		    String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
+		//粉丝在100条内
+		if ( memberNoticeUsers.size() < 100 ) {
 		    RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
-
+		    String phone = phoneSb.toString();
+		    phone = phone.substring( 0, phone.lastIndexOf( "," ) );
 		    OldApiSms oldApiSms = new OldApiSms();
 		    oldApiSms.setMobiles( phone );
 		    oldApiSms.setContent( memberNotice.getSmsContent() );
 		    oldApiSms.setCompany( PropertiesUtil.getSms_name() );
-		    oldApiSms.setBusId( memberNotice.getBusId() );
+		    oldApiSms.setBusId( memberNotice.getId() );
 		    oldApiSms.setModel( 3 );
 		    requestUtils.setReqdata( oldApiSms );
 		    try {
-			String smsStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+			String result = requestService.sendSms( requestUtils );
+			JSONObject json=JSON.parseObject( result );
+
+			if("0".equals( CommonUtil.toString( json.get( "code" ) ) )) {
+			    JSONObject jsonOb=JSON.parseObject(json.getString( "data" ));
+			    memberNoticeuserDAO.updateByIds( ids,CommonUtil.toInteger( jsonOb.get("msgid") ) );
+			}
+			ids.clear();
 		    } catch ( Exception e ) {
 			LOG.error( "短信发送失败", e );
-			throw new BusinessException( ResponseEnums.ERROR );
+		    }
+		} else {
+		    if ( ( i % 100 == 0 ) || ( i + 1 == memberNoticeUsers.size() ) ) {
+			phoneSb = new StringBuffer();
+			RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
+			String phone = phoneSb.toString();
+			String phones = phone.substring( 0, phone.lastIndexOf( "," ) );
+			phones = phones.substring( 0, phones.lastIndexOf( "," ) );
+			OldApiSms oldApiSms = new OldApiSms();
+			oldApiSms.setMobiles( phones );
+			oldApiSms.setContent( memberNotice.getSmsContent() );
+			oldApiSms.setCompany( PropertiesUtil.getSms_name() );
+			oldApiSms.setBusId( memberNotice.getId() );
+			oldApiSms.setModel( 3 );
+			String notifyUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/smsNotice";
+			oldApiSms.setNotifyUrl( notifyUrl );
+			requestUtils.setReqdata( oldApiSms );
+			try {
+			    String result = requestService.sendSms( requestUtils );
+			    JSONObject json = JSON.parseObject( result );
+
+			    if ( "0".equals( CommonUtil.toString( json.get( "code" ) ) ) ) {
+				JSONObject jsonOb = JSON.parseObject( json.getString( "data" ) );
+				memberNoticeuserDAO.updateByIds( ids, CommonUtil.toInteger( jsonOb.get( "msgid" ) ) );
+			    }
+			    ids.clear();
+			} catch ( Exception e ) {
+			    LOG.error( "短信发送失败", e );
+			}
 		    }
 		}
-
-	    } catch ( Exception e ) {
-		LOG.error( "循环发送信息异常", e );
-		throw new BusinessException( ResponseEnums.ERROR );
+		i++;
 	    }
+	} catch( Exception e) {
+	    LOG.error( "发送消息异常", e );
+	    throw new BusinessException( ResponseEnums.ERROR );
 
-    } catch(Exception e){
-	LOG.error( "发送消息异常", e );
-	throw new BusinessException( ResponseEnums.ERROR );
+	}
 
     }
-
-}
 
     /**
      * 修改消息状态
@@ -395,70 +411,10 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 		}
 	    }
 	    if ( memberNotice.getSendSms() == 1 ) {
-		sendNoticebyMemberIds( memberNotice, memberIds );
+		//sendNoticebyMemberIds( memberNotice, memberIds );
 	    }
 	} catch ( Exception e ) {
 	    LOG.error( "方法sendNoticeToUser:发送信息给用户异常" );
-	    throw new BusinessException( ResponseEnums.ERROR );
-	}
-    }
-
-    /**
-     * 会员管理选择会员发送短信
-     */
-    public void sendNoticebyMemberIds( MemberNotice memberNotice, String memberIds ) {
-	try {
-	    if ( CommonUtil.isEmpty( memberNotice ) ) {
-		return;
-	    }
-	    StringBuffer sb = null;
-	    Map< String,Object > params = new HashMap< String,Object >();
-	    List< Integer > ctId = null;
-	    sb = new StringBuffer();
-	    // 修改方式状态
-	    BusUserEntity busUser = busUserDAO.selectById( memberNotice.getBusId() );
-	    if ( CommonUtil.isEmpty( busUser ) ) {
-		return;
-	    }
-
-	    String[] ids = memberIds.split( "," );
-	    List< Integer > memberList = new ArrayList<>();
-	    for ( int i = 0; i < ids.length; i++ ) {
-		if ( CommonUtil.isNotEmpty( ids[i] ) ) {
-		    memberList.add( CommonUtil.toInteger( ids[i] ) );
-		}
-	    }
-	    // 通知某个人群
-	    List< Map< String,Object > > members = memberMapper.findByMemberIds( memberNotice.getBusId(), memberList );
-	    if ( CommonUtil.isEmpty( members ) || members.size() <= 0 ) {
-		return;
-	    }
-	    for ( Map< String,Object > member : members ) {
-		if ( CommonUtil.isNotEmpty( member.get( "phone" ) ) ) {
-		    sb.append( member.get( "phone" ) + "," );
-		}
-	    }
-
-	    if ( CommonUtil.isNotEmpty( sb.toString() ) ) {
-		String phone = sb.substring( 0, sb.lastIndexOf( "," ) );
-		String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
-		RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
-
-		OldApiSms oldApiSms = new OldApiSms();
-		oldApiSms.setMobiles( phone );
-		oldApiSms.setContent( memberNotice.getSmsContent() );
-		oldApiSms.setCompany( PropertiesUtil.getSms_name() );
-		oldApiSms.setBusId( busUser.getId() );
-		oldApiSms.setModel( 3 );
-		requestUtils.setReqdata( oldApiSms );
-		try {
-		    String smsStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
-		} catch ( Exception e ) {
-		    LOG.error( "短信发送失败", e );
-		}
-	    }
-	} catch ( Exception e ) {
-	    LOG.error( "发送消息异常", e );
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }

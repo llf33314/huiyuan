@@ -982,6 +982,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    parameterset.setButtonUrl( CommonUtil.toString( map.get( "buttonUrl" ) ) );
 		}
 	    }
+	    parameterset.setId( CommonUtil.toInteger( map.get( "id" ) ) );
 	    if ( CommonUtil.isNotEmpty( parameterset.getId() ) ) {
 		publicParametersetDAO.updateById( parameterset );
 	    } else {
@@ -1002,11 +1003,14 @@ public class MemberCardServiceImpl implements MemberCardService {
      *
      * @return
      */
-    public MemberGift editGift( Integer id ) {
+    public Map<String,Object>  editGift( Integer id ) {
+        Map<String,Object> map=new HashMap<>(  );
 	if ( id > 0 ) {
 	    MemberGift memberGift = memberGiftDAO.selectById( id );
-	    return memberGift;
+	    map.put( "memberGift",memberGift );
 	}
+	List<Map<String,Object>> modelCodeList=dictService.getDictbyList( "A005" );
+	map.put( "modelCodeList",modelCodeList );
 	return null;
     }
 
@@ -1015,7 +1019,18 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    if ( CommonUtil.isEmpty( busId ) ) {
 		throw new BusinessException( ResponseMemberEnums.INVALID_SESSION );
 	    }
-	    MemberGift gift = (MemberGift) JSON.toJavaObject( JSON.parseObject( json ), MemberGift.class );
+	    JSONObject obj=JSON.parseObject(  json);
+	    MemberGift gift =new MemberGift();
+	    gift.setTitle( CommonUtil.toString( obj.get( "title" ) ) );
+	    gift.setFlow( CommonUtil.toInteger( obj.get( "flow" ) ) );
+	    gift.setFenbi( CommonUtil.toDouble(obj.get( "fenbi" )));
+	    gift.setJifen( CommonUtil.toDouble( obj.get( "jifen" ) ) );
+	    gift.setModelCode( CommonUtil.toInteger( obj.get( "modelCode" ) ) );
+	    gift.setId( CommonUtil.toInteger( obj.get( "id" ) ) );
+	    gift.setBusId( busId );
+
+
+
 	    if ( CommonUtil.isNotEmpty( gift.getId() ) ) {
 		memberGiftDAO.updateById( gift );
 	    } else {

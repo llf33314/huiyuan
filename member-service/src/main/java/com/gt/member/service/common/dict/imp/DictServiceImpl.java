@@ -43,6 +43,16 @@ public class DictServiceImpl implements DictService {
 	}
     }
 
+    /**
+     * 根据类型获取字典详细信息
+     * @param type
+     * @return
+     */
+    public List<Map<String, Object>> getDictbyList(String type) throws BusinessException{
+	List<Map<String, Object>> list =  dictItemsDAO.getDictReturnKeyAndValue( type );
+	return list;
+    }
+
     @Override
     public String getDictRuturnValue( String type, Integer key ) throws BusinessException {
 	try {

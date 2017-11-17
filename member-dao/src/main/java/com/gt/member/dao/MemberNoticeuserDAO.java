@@ -33,4 +33,11 @@ public interface MemberNoticeuserDAO extends BaseMapper<MemberNoticeuser> {
     int saveList(@Param("noticeUsers") List<MemberNoticeuser> noticeUsers);
 
     MemberNoticeuser findByNoticeIdAndMemberId(@Param("noticeId") Integer noticeId,@Param("memberId")Integer memberId);
+
+    /**
+     * 修改短信发送信息
+     * @param ids
+     * @param msgId
+     */
+    void updateByIds(@Param("ids")List<Integer> ids,@Param( "msgId" ) Integer msgId);
 }

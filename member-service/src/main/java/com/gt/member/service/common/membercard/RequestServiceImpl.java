@@ -54,9 +54,10 @@ public class RequestServiceImpl implements RequestService {
 
     }
 
-    public void sendSms(RequestUtils<OldApiSms> requestUtils){
+    public String sendSms(RequestUtils<OldApiSms> requestUtils){
 	String url=PropertiesUtil.getWxmp_home()+SEND_SMS;
 	String smsStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
+    	return smsStr;
     }
 
 

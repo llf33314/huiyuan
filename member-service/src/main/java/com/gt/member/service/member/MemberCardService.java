@@ -137,7 +137,7 @@ public interface MemberCardService {
      *
      * @return
      */
-    public MemberGift editGift( Integer id );
+    public Map<String,Object> editGift( Integer id );
 
     /**
      * 保存或修改礼品设置
