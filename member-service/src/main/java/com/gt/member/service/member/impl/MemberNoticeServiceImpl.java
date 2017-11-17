@@ -98,6 +98,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	    if ( CommonUtil.isEmpty( busId ) ) {
 		throw new BusinessException( ResponseMemberEnums.INVALID_SESSION );
 	    }
+
 	    List< SystemNotice > systemNotices = JSONArray.parseArray( json, SystemNotice.class );
 	    if ( systemNotices.size() != 0 ) {
 		for ( SystemNotice systemNotice : systemNotices ) {

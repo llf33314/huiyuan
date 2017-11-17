@@ -61,7 +61,7 @@ public class MemberNotDoInterceptorController {
     @RequestMapping( value = "/smsNotice", method = RequestMethod.POST )
     public ServerResponse smsNotice(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String,Object> params ){
 	try {
-	    memberApiService.changeFlow( params );
+	    memberApiService.smsNotice( params );
 	    return ServerResponse.createBySuccess(  );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );

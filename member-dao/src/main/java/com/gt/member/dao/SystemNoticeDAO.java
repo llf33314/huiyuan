@@ -20,5 +20,33 @@ public interface SystemNoticeDAO extends BaseMapper<SystemNotice> {
 
     SystemNotice findBybusIdAndCallType(@Param("busId") Integer busId,@Param("callType") Byte callType);
 
-    List<Map<String, Object>> findBybusIdEq7(@Param("busIds") List<Integer> busId);
+    /**
+     * 查询积分清0系统消息
+     * @param busId
+     * @return
+     */
+    List<Map<String, Object>> findMsgBybusIdEq13(@Param("busIds") List<Integer> busId);
+
+
+    /**
+     * 查询积分清0系统短信消息
+     * @param busId
+     * @return
+     */
+    List<Map<String, Object>> findSmsBybusIdEq13(@Param("busIds") List<Integer> busId);
+
+
+    /**
+     * 生日消息提醒
+     * @param busId
+     * @return
+     */
+    List<Map<String, Object>> findMsgBybusIdEq10();
+
+    /**
+     * 生日短信提醒
+     * @param busId
+     * @return
+     */
+    List<Map<String, Object>> findSmsBybusIdEq10();
 }

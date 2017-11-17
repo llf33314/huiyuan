@@ -82,4 +82,10 @@
 
 	</select>
 
+
+	<update id="updateByMsgIdAndPhone">
+		update t_member_noticeuser set status=#{status} where msgId=#{msgId} and phone=#{phone}
+
+	</update>
+
 </mapper>

@@ -17,6 +17,7 @@ import java.util.Map;
  * @since 2017-07-25
  */
 public interface MemberNoticeDAO extends BaseMapper<MemberNotice> {
+
     public List<Map<String, Object>> findMemberNotice(@Param("busId")Integer busId,@Param( "sendStuts" )Integer sendStuts,
                                                       @Param("fristpage") Integer fristpage,@Param("pagesize") Integer pagesize);
 
@@ -31,10 +32,18 @@ public interface MemberNoticeDAO extends BaseMapper<MemberNotice> {
     public List<Map<String, Object>> findBySendStruts(@Param("busId")Integer busId);
 
     /**
-     * 查询所有未发送的消息
+     * 查询所有未发送的短信消息
      * @return
      */
     public List<Map<String, Object>> findAllNotSend(@Param("sendDate")Date sendDate);
 
+
+    /**
+     * 查询所有未发送的会员消息
+     * @return
+     */
+    public Integer findAllNotSendByMsg(@Param("sendDate")Date sendDate);
+
     public int updateNotice(@Param("sendDate")Date sendDate);
+
 }

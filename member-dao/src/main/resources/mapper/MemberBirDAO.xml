@@ -26,4 +26,13 @@
 		</foreach>
 	</insert>
 
+	<select id="findAll" resultType="Map">
+		select * from t_member_bir
+	</select>
+
+	<select id="deleteAll">
+		delete from t_member_bir
+
+	</select>
+
 </mapper>

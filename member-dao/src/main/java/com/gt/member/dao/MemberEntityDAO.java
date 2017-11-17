@@ -274,4 +274,10 @@ public interface MemberEntityDAO extends BaseMapper<MemberEntity > {
      * @param memberId
      */
     void updateMcIdBymemberId(@Param( "memberId" )Integer memberId);
+
+    /**
+     * 查询会员今天会员生日
+     * @return
+     */
+    List<Map<String,Object>> findMemberBir();
 }

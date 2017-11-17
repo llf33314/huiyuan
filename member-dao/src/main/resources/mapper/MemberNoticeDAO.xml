@@ -45,6 +45,11 @@
 		select <include refid="Base_Column_List" /> from t_member_notice where sendStuts=0 and sendSms=1 and sendDate<![CDATA[ <= ]]> #{sendDate}
 	</select>
 
+	<select id="findAllNotSendByMsg" resultType="java.lang.Integer">
+		select count(id) from t_member_notice where sendStuts=0 and sendMsg=1 and sendDate<![CDATA[ <= ]]> #{sendDate}
+
+	</select>
+
 	<update id="updateNotice" >
 		update t_member_notice set sendStuts=1 where sendStuts=0 and sendType=1 and sendDate<![CDATA[ <= ]]> #{sendDate}
 	</update>

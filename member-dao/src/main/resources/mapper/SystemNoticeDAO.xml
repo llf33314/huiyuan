@@ -31,11 +31,30 @@
 	</select>
 
 
-	<select id="findBybusIdEq7" resultType="Map">
-		select msgStatus,smsStatus,busId from system_notice where callType=13 and busId in
+	<select id="findMsgBybusIdEq13" resultType="Map">
+		select msgStatus,smsStatus,busId from system_notice where callType=13 and msgStatus=1 and busId in
 		<foreach close=")" collection="busIds" item="b" open="(" separator=",">
 			#{b}
 		</foreach>
 	</select>
+
+	<select id="findSmsBybusIdEq13" resultType="Map">
+		select msgStatus,smsStatus,busId from system_notice where callType=13 and smsStatus=1 and busId in
+		<foreach close=")" collection="busIds" item="b" open="(" separator=",">
+			#{b}
+		</foreach>
+	</select>
+
+	<select id="findMsgBybusIdEq10" resultType="Map">
+		select msgStatus,smsStatus,busId from system_notice where callType=10  and msgStatus=1
+
+	</select>
+
+	<select id="findSmsBybusIdEq10" resultType="Map">
+		select msgStatus,smsStatus,busId from system_notice where callType=10  and smsStatus=1
+
+	</select>
+
+
 
 </mapper>

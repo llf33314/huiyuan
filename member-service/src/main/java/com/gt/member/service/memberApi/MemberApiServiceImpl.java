@@ -155,6 +155,9 @@ public class MemberApiServiceImpl implements MemberApiService {
     @Autowired
     private UserConsumeDAO userConsumeMapper;
 
+    @Autowired
+    private MemberNoticeuserDAO memberNoticeuserDAO;
+
     /**
      * 查询粉丝信息
      *
@@ -2776,6 +2779,22 @@ public class MemberApiServiceImpl implements MemberApiService {
      */
     public void smsNotice(Map<String,Object> params) throws  BusinessException{
         //msgId,phone,status
+	try {
+	    Integer msgId = CommonUtil.toInteger( params.get( "msgId" ) );
+	    String phone = CommonUtil.toString( params.get( "phone" ) );
+	    Integer status = CommonUtil.toInteger( params.get( "status" ) );
+
+	    //正常已发送
+	    if ( status == 0 ) {
+		memberNoticeuserDAO.updateByMsgIdAndPhone( msgId, phone, 4 );
+	    } else {
+		memberNoticeuserDAO.updateByMsgIdAndPhone( msgId, phone, 5 );
+	    }
+	}catch ( Exception e ){
+	    LOG.error( "短信通知回调异常,请求参数:"+JSON.toJSONString( params ),e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+
     }
 
 

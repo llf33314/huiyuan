@@ -40,4 +40,11 @@ public interface MemberNoticeuserDAO extends BaseMapper<MemberNoticeuser> {
      * @param msgId
      */
     void updateByIds(@Param("ids")List<Integer> ids,@Param( "msgId" ) Integer msgId);
+
+    /**
+     * 修改短信发送状态
+     * @param msgId
+     * @param phone
+     */
+    void updateByMsgIdAndPhone(@Param( "msgId" ) Integer msgId,@Param( "phone" )String phone,@Param( "status" )Integer status);
 }

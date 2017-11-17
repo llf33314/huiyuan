@@ -156,7 +156,6 @@ public class CardController {
 	    LOG.error( "保存会员卡设置异常：", e );
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
-
     }
 
     @ApiOperation( value = "会员卡资料设置", notes = "会员卡资料设置" )
@@ -222,8 +221,8 @@ public class CardController {
     public ServerResponse editGift(HttpServletRequest request, HttpServletResponse response,Integer id){
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    MemberGift memberGift= memberCardService.editGift( id);
-	    return ServerResponse.createBySuccess(memberGift);
+	    Map<String,Object> map= memberCardService.editGift( id);
+	    return ServerResponse.createBySuccess(map);
 	} catch ( Exception e ) {
 	    return ServerResponse.createByError("错误");
 	}
@@ -232,7 +231,7 @@ public class CardController {
     @ApiOperation( value = "保存或修改礼品设置", notes = "保存或修改礼品设置" )
     @ResponseBody
     @RequestMapping( value = "/saveOrUpdateGift", method = RequestMethod.POST )
-    public ServerResponse saveOrUpdateGift(HttpServletRequest request, HttpServletResponse response,String  json){
+    public ServerResponse saveOrUpdateGift(HttpServletRequest request, HttpServletResponse response,@RequestParam  String  json){
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.saveOrUpdateGift( json,busId);

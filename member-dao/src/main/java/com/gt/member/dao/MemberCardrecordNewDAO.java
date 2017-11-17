@@ -4,6 +4,7 @@ import com.gt.member.entity.MemberCardrecordNew;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -22,5 +23,21 @@ public interface MemberCardrecordNewDAO extends BaseMapper<MemberCardrecordNew> 
 
     List<Map<String,Object>> findCardrecordByMemberIdAndRecordType( @Param( "memberIds" ) List<Integer> memberIds, @Param( "recordType" ) Integer recordType, @Param( "page" ) Integer page,
 		    @Param( "pageSize" ) Integer pageSize );
+
+    /**
+     * 查询前年赠送积分情况
+     * @param busIds
+     * @return
+     */
+    List<Map<String, Object>> sumByBusId(@Param("busIds")List<Integer> busIds,@Param("startDate")Date startDate,@Param("endDate")Date endDate);
+
+    /**
+     * 查询去年消费积分
+     * @param busIds
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    List<Map<String, Object>> sumCurrentByBusId(@Param("busIds")List<Integer> busIds,@Param("startDate")Date startDate,@Param("endDate")Date endDate);
 
 }

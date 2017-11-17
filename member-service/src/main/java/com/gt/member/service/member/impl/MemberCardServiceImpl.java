@@ -32,6 +32,7 @@ import com.gt.member.export.ExcelStyle;
 import com.gt.member.service.bo.ErrorWorkbook;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.common.membercard.MemberCommonService;
+import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.util.*;
 
@@ -54,8 +55,6 @@ public class MemberCardServiceImpl implements MemberCardService {
 
     private static final Logger LOG = Logger.getLogger( MemberCardServiceImpl.class );
 
-    //发送短信
-    private final String SEND_SMS = "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do";
 
     @Autowired
     private MemberCardmodelDAO cardModelMapper;
@@ -155,6 +154,9 @@ public class MemberCardServiceImpl implements MemberCardService {
 
     @Autowired
     private MemberOldDAO memberOldDAO;
+
+    @Autowired
+    private RequestService requestService;
 
     /**
      * 查询会员卡类型
@@ -1011,7 +1013,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	}
 	List<Map<String,Object>> modelCodeList=dictService.getDictbyList( "A005" );
 	map.put( "modelCodeList",modelCodeList );
-	return null;
+	return map;
     }
 
     public void saveOrUpdateGift( String json, Integer busId ) throws BusinessException {
@@ -1227,7 +1229,6 @@ public class MemberCardServiceImpl implements MemberCardService {
 		content = "尊敬的用户您好：您的会员卡,商家已审核通过,各种会员权益等您来体验！";
 	    }
 	    if ( CommonUtil.isNotEmpty( phoneSb.toString() ) ) {
-		String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
 		RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
 
 		OldApiSms oldApiSms = new OldApiSms();
@@ -1238,7 +1239,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		oldApiSms.setModel( 3 );
 		requestUtils.setReqdata( oldApiSms );
 		try {
-		    String smsStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+		    String smsStr = requestService.sendSms( requestUtils );
 		} catch ( Exception e ) {
 		    LOG.error( "短信发送失败", e );
 		}
@@ -1281,7 +1282,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		content = "尊敬的用户您好：您的会员卡,商家已审核通过,各种会员权益等您来体验！";
 	    }
 
-	    String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
+
 	    RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
 
 	    OldApiSms oldApiSms = new OldApiSms();
@@ -1292,7 +1293,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    oldApiSms.setModel( 3 );
 	    requestUtils.setReqdata( oldApiSms );
 	    try {
-		String smsStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+		String smsStr = requestService.sendSms( requestUtils );
 	    } catch ( Exception e ) {
 		LOG.error( "短信发送失败", e );
 	    }

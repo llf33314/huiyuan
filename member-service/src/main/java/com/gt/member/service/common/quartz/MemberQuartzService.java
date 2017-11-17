@@ -52,10 +52,6 @@ public interface MemberQuartzService {
 	 * 短信发送
 	 */
 	public void birthdaySms();
-	
-	/**
-	 * 数据统计
-	 */
-	public void tongji();
+
 	
 }
