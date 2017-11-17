@@ -1016,6 +1016,14 @@ public class MemberCardServiceImpl implements MemberCardService {
 	return map;
     }
 
+    public void deleteGift( Integer id )throws BusinessException{
+	try {
+	    memberGiftDAO.deleteById( id );
+	}catch ( Exception e ){
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
     public void saveOrUpdateGift( String json, Integer busId ) throws BusinessException {
 	try {
 	    if ( CommonUtil.isEmpty( busId ) ) {

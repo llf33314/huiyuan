@@ -63,7 +63,7 @@ public interface MemberNoticeService {
      * @param params
      * @return
      */
-    public Page findMemberNotice( Integer busId, Map< String,Object > params );
+    public Page findMemberNotice( Integer busId, String params );
 
 
     /**

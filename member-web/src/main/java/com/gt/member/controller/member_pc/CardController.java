@@ -48,14 +48,13 @@ public class CardController {
     @Autowired
     private MemberNoticeService memberNoticeService;
 
-
     @ApiOperation( value = "查询没有创建的会员卡类型", notes = "查询会员卡类型" )
     @ResponseBody
     @RequestMapping( value = "/findCardType", method = RequestMethod.GET )
     public ServerResponse findCardType( HttpServletRequest request, HttpServletResponse response ) {
 	try {
-	   Integer busId= SessionUtils.getPidBusId( request );
-	    List< MemberCardtype > cardTypes = memberCardService.findCardType(busId );
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    List< MemberCardtype > cardTypes = memberCardService.findCardType( busId );
 	    return ServerResponse.createBySuccess( cardTypes );
 	} catch ( Exception e ) {
 	    LOG.error( "查询会员卡类型异常：", e );
@@ -84,7 +83,7 @@ public class CardController {
     @ApiImplicitParams( @ApiImplicitParam( name = "ctId", value = "会员卡类型id", paramType = "query", required = false, dataType = "int" ) )
     @ResponseBody
     @RequestMapping( value = "/editGradeTypeSecond", method = RequestMethod.GET )
-    public ServerResponse editGradeTypeSecond( HttpServletRequest request, HttpServletResponse response, Integer ctId) {
+    public ServerResponse editGradeTypeSecond( HttpServletRequest request, HttpServletResponse response, Integer ctId ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    Map< String,Object > map = memberCardService.editGradeTypeSecond( busId, ctId );
@@ -102,7 +101,7 @@ public class CardController {
     public ServerResponse findCardModel( HttpServletRequest request, HttpServletResponse response ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    Map<String,Object> map = memberCardService.findCardModelByBusId( busId );
+	    Map< String,Object > map = memberCardService.findCardModelByBusId( busId );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( Exception e ) {
 	    LOG.error( "查询卡片背景模板异常：", e );
@@ -118,8 +117,8 @@ public class CardController {
     public ServerResponse saveCardModel( HttpServletRequest request, HttpServletResponse response, @RequestParam String param ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    Integer cmId=  memberCardService.saveCardModel( busId, param );
-	    return ServerResponse.createBySuccess(cmId);
+	    Integer cmId = memberCardService.saveCardModel( busId, param );
+	    return ServerResponse.createBySuccess( cmId );
 	} catch ( Exception e ) {
 	    LOG.error( "查询卡片背景模板异常：", e );
 	    e.printStackTrace();
@@ -134,8 +133,8 @@ public class CardController {
     public ServerResponse editGradeTypeThird( HttpServletRequest request, HttpServletResponse response, Integer ctId ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	 Map<String,Object> map=   memberCardService.editGradeTypeThird( busId, ctId );
-	    return ServerResponse.createBySuccess(map);
+	    Map< String,Object > map = memberCardService.editGradeTypeThird( busId, ctId );
+	    return ServerResponse.createBySuccess( map );
 	} catch ( Exception e ) {
 	    LOG.error( "会员卡新增和修改第3步页面异常：", e );
 	    e.printStackTrace();
@@ -151,7 +150,7 @@ public class CardController {
 	Integer busId = SessionUtils.getPidBusId( request );
 	try {
 	    memberCardService.saveOrUpdateGradeType( gradeType, busId );
-	    return ServerResponse.createBySuccess(  );
+	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    LOG.error( "保存会员卡设置异常：", e );
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -191,11 +190,11 @@ public class CardController {
     @ApiOperation( value = "通用设置", notes = "通用设置" )
     @ResponseBody
     @RequestMapping( value = "/findtongYongSet", method = RequestMethod.GET )
-    public ServerResponse findtongYongSet(HttpServletRequest request, HttpServletResponse response){
+    public ServerResponse findtongYongSet( HttpServletRequest request, HttpServletResponse response ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    Map<String,Object> map=memberCardService.findtongyongSet( busId );
-	    return ServerResponse.createBySuccess(map);
+	    Map< String,Object > map = memberCardService.findtongyongSet( busId );
+	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
 	    LOG.error( "查询通用设置失败异常：", e );
 	    return ServerResponse.createByError( "查询通用设置失败" );
@@ -205,65 +204,77 @@ public class CardController {
     @ApiOperation( value = "保存通用设置", notes = "保存通用设置" )
     @ResponseBody
     @RequestMapping( value = "/saveTongyongSet", method = RequestMethod.POST )
-    public ServerResponse saveTongyongSet(HttpServletRequest request, HttpServletResponse response,String json){
+    public ServerResponse saveTongyongSet( HttpServletRequest request, HttpServletResponse response, String json ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    memberCardService.saveTongyongSet( json,busId );
+	    memberCardService.saveTongyongSet( json, busId );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError(e.getCode(), e.getMessage());
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
 
     @ApiOperation( value = "编辑礼品", notes = "编辑礼品" )
     @ResponseBody
     @RequestMapping( value = "/editGift", method = RequestMethod.GET )
-    public ServerResponse editGift(HttpServletRequest request, HttpServletResponse response,Integer id){
+    public ServerResponse editGift( HttpServletRequest request, HttpServletResponse response, Integer id ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    Map<String,Object> map= memberCardService.editGift( id);
-	    return ServerResponse.createBySuccess(map);
+	    Map< String,Object > map = memberCardService.editGift( id );
+	    return ServerResponse.createBySuccess( map );
 	} catch ( Exception e ) {
-	    return ServerResponse.createByError("错误");
+	    return ServerResponse.createByError( "错误" );
+	}
+    }
+
+    @ApiOperation( value = "删除礼品", notes = "删除礼品" )
+    @ResponseBody
+    @RequestMapping( value = "/deleteGift", method = RequestMethod.GET )
+    public ServerResponse deleteGift( HttpServletRequest request, HttpServletResponse response, Integer id ) {
+	try {
+	    memberCardService.deleteGift( id );
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
 
     @ApiOperation( value = "保存或修改礼品设置", notes = "保存或修改礼品设置" )
     @ResponseBody
     @RequestMapping( value = "/saveOrUpdateGift", method = RequestMethod.POST )
-    public ServerResponse saveOrUpdateGift(HttpServletRequest request, HttpServletResponse response,@RequestParam  String  json){
+    public ServerResponse saveOrUpdateGift( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    memberCardService.saveOrUpdateGift( json,busId);
+	    memberCardService.saveOrUpdateGift( json, busId );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
 
     @ApiOperation( value = "查询系统通知", notes = "查询系统通知" )
     @ResponseBody
     @RequestMapping( value = "/findSystemNotice", method = RequestMethod.GET )
-    public ServerResponse findSystemNotice(HttpServletRequest request, HttpServletResponse response){
+    public ServerResponse findSystemNotice( HttpServletRequest request, HttpServletResponse response ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    Map<String,Object> map= memberNoticeService.findSystemNotice(busId);
-	    return ServerResponse.createBySuccess(map);
+	    Map< String,Object > map = memberNoticeService.findSystemNotice( busId );
+	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
 
     @ApiOperation( value = "保存系统通知", notes = "保存系统通知" )
     @ResponseBody
     @RequestMapping( value = "/saveSystemNotice", method = RequestMethod.POST )
-    public ServerResponse saveSystemNotice(HttpServletRequest request, HttpServletResponse response,String json){
+    public ServerResponse saveSystemNotice( HttpServletRequest request, HttpServletResponse response, String json ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    memberNoticeService.saveSystemNotice(busId,json);
+	    memberNoticeService.saveSystemNotice( busId, json );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
 
@@ -271,41 +282,40 @@ public class CardController {
     @ApiImplicitParams( @ApiImplicitParam( name = "param", value = "分页参数", paramType = "query", required = false, dataType = "Integer" ) )
     @ResponseBody
     @RequestMapping( value = "/findMemberNotice", method = RequestMethod.GET )
-    public ServerResponse findMemberNotice(HttpServletRequest request, HttpServletResponse response,Map<String, Object> param){
+    public ServerResponse findMemberNotice( HttpServletRequest request, HttpServletResponse response, @RequestParam String param ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	   Page  page=memberNoticeService.findMemberNotice(busId,param);
-	    return ServerResponse.createBySuccess(page);
+	    Page page = memberNoticeService.findMemberNotice( busId, param );
+	    return ServerResponse.createBySuccess( page );
 	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
 
     @ApiOperation( value = "编辑会员消息", notes = "编辑会员消息" )
     @ResponseBody
     @RequestMapping( value = "/editMemberNotice", method = RequestMethod.GET )
-    public ServerResponse editMemberNotice(HttpServletRequest request, HttpServletResponse response,Integer id){
+    public ServerResponse editMemberNotice( HttpServletRequest request, HttpServletResponse response, Integer id ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    Map<String,Object>  map=memberNoticeService.editMemberNotice(busId,id);
-	    return ServerResponse.createBySuccess(map);
+	    Map< String,Object > map = memberNoticeService.editMemberNotice( busId, id );
+	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
-
 
     @ApiOperation( value = "保存会员消息", notes = "保存会员消息" )
     @ApiImplicitParams( @ApiImplicitParam( name = "sendDate", value = "发送时间", paramType = "query", required = false, dataType = "String" ) )
     @ResponseBody
     @RequestMapping( value = "/saveMemberNotice", method = RequestMethod.POST )
-    public ServerResponse saveMemberNotice(HttpServletRequest request, HttpServletResponse response,String json,String sendDate){
+    public ServerResponse saveMemberNotice( HttpServletRequest request, HttpServletResponse response, String json, String sendDate ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    memberNoticeService.saveMemberNotice(busId,json,sendDate);
+	    memberNoticeService.saveMemberNotice( busId, json, sendDate );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
 
@@ -313,85 +323,76 @@ public class CardController {
     @ApiImplicitParams( @ApiImplicitParam( name = "id", value = "id", paramType = "query", required = false, dataType = "String" ) )
     @ResponseBody
     @RequestMapping( value = "/deleteMemberNotice", method = RequestMethod.GET )
-    public ServerResponse deleteMemberNotice(HttpServletRequest request, HttpServletResponse response,Integer id){
+    public ServerResponse deleteMemberNotice( HttpServletRequest request, HttpServletResponse response, Integer id ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    memberNoticeService.deleteMemberNotice(id);
+	    memberNoticeService.deleteMemberNotice( id );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
 
     }
 
-
     @ApiOperation( value = "查询会员卡发布信息", notes = "查询会员卡发布信息" )
     @ResponseBody
     @RequestMapping( value = "/findCard", method = RequestMethod.GET )
-    public ServerResponse findCard(HttpServletRequest request, HttpServletResponse response){
+    public ServerResponse findCard( HttpServletRequest request, HttpServletResponse response ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	   Map<String,Object> map=memberCardService.findCard(busId);
-	    return ServerResponse.createBySuccess(map);
+	    Map< String,Object > map = memberCardService.findCard( busId );
+	    return ServerResponse.createBySuccess( map );
 	} catch ( Exception e ) {
-	    LOG.error( "查询会员卡发布信息异常",e );
-	    return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
+	    LOG.error( "查询会员卡发布信息异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
     @ApiOperation( value = "发布会员卡", notes = "发布会员卡" )
     @ResponseBody
     @RequestMapping( value = "/publishCard", method = RequestMethod.POST )
-    public ServerResponse publishCard(HttpServletRequest request, HttpServletResponse response,@RequestParam  String  params){
+    public ServerResponse publishCard( HttpServletRequest request, HttpServletResponse response, @RequestParam String params ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    memberCardService.publishCard(busId,params);
+	    memberCardService.publishCard( busId, params );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
 
     @ApiOperation( value = "删除会员卡", notes = "删除会员卡" )
     @ResponseBody
     @RequestMapping( value = "/deleteCard", method = RequestMethod.POST )
-    public ServerResponse deleteCard(HttpServletRequest request, HttpServletResponse response,@RequestParam  String  params  ){
+    public ServerResponse deleteCard( HttpServletRequest request, HttpServletResponse response, @RequestParam String params ) {
 	try {
-	    JSONObject json= JSON.parseObject( params );
-	    Integer  ctId=CommonUtil.toInteger( json.get( "ctId" ) );
+	    JSONObject json = JSON.parseObject( params );
+	    Integer ctId = CommonUtil.toInteger( json.get( "ctId" ) );
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    memberCardService.deleteCard(busId,ctId);
+	    memberCardService.deleteCard( busId, ctId );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError(e.getCode(),e.getMessage());
-	}catch ( Exception e ){
-	    return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
 
-
     @ApiOperation( value = "浏览链接", notes = "浏览链接" )
     @ResponseBody
-    @RequestMapping( value = "/browse", method = RequestMethod.GET)
-    public void browse(HttpServletRequest request,
-		    HttpServletResponse response, @RequestParam String url) {
-	QRcodeKit.buildQRcode(url, 500, 500, response);
+    @RequestMapping( value = "/browse", method = RequestMethod.GET )
+    public void browse( HttpServletRequest request, HttpServletResponse response, @RequestParam String url ) {
+	QRcodeKit.buildQRcode( url, 500, 500, response );
     }
-
 
     @ApiOperation( value = "下载会员二维码", notes = "下载会员二维码" )
     @ResponseBody
-    @RequestMapping(value="/downPulishCardImage", method = RequestMethod.GET)
-    public void downPulishCardImage(HttpServletRequest request,
-		    HttpServletResponse response, @RequestParam String url)
-		    throws IOException {
+    @RequestMapping( value = "/downPulishCardImage", method = RequestMethod.GET )
+    public void downPulishCardImage( HttpServletRequest request, HttpServletResponse response, @RequestParam String url ) throws IOException {
 	String filename = "会员卡.jpg";
-	response.addHeader("Content-Disposition", "attachment;filename="
-			+ new String(filename.replaceAll(" ", "").getBytes("utf-8"),
-			"iso8859-1"));
-	response.setContentType("application/octet-stream");
-	QRcodeKit.buildQRcode(url, 450, 450, response);
+	response.addHeader( "Content-Disposition", "attachment;filename=" + new String( filename.replaceAll( " ", "" ).getBytes( "utf-8" ), "iso8859-1" ) );
+	response.setContentType( "application/octet-stream" );
+	QRcodeKit.buildQRcode( url, 450, 450, response );
     }
-
 
 }

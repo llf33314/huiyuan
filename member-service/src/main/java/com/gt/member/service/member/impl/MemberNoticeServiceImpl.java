@@ -360,26 +360,9 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 
     }
 
-    /**
-     * 修改消息状态
-     *
-     * @param noticeId
-     * @param sendstuts
-     */
-    public void updateMemberNotice( Integer noticeId, int sendstuts ) throws BusinessException {
-	try {
-	    // 修改方式状态
-	    MemberNotice memberNotice = new MemberNotice();
-	    memberNotice.setId( noticeId );
-	    memberNotice.setSendStuts( sendstuts );
-	    memberNotice.setSendDate( new Date() );
-	    memberNoticeDAO.updateById( memberNotice );
-	} catch ( Exception e ) {
-	    throw new BusinessException( ResponseEnums.ERROR );
-	}
-    }
 
-    public Page findMemberNotice( Integer busId, Map< String,Object > params ) {
+    public Page findMemberNotice( Integer busId, String paramsStr ) {
+        Map<String,Object> params=JSON.toJavaObject( JSON.parseObject( paramsStr ),Map.class );
 	params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	int pageSize = 10;
 	Integer sendStuts = 1;

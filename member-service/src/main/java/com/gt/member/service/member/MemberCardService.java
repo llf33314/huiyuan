@@ -140,6 +140,15 @@ public interface MemberCardService {
     public Map<String,Object> editGift( Integer id );
 
     /**
+     * 删除礼品设置
+     *
+     * @param id
+     *
+     * @return
+     */
+    public void deleteGift( Integer id )throws BusinessException;
+
+    /**
      * 保存或修改礼品设置
      *
      * @param json
