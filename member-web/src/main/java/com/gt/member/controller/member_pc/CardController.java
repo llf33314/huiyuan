@@ -309,6 +309,21 @@ public class CardController {
 	}
     }
 
+    @ApiOperation( value = "删除会员消息", notes = "删除会员消息" )
+    @ApiImplicitParams( @ApiImplicitParam( name = "id", value = "id", paramType = "query", required = false, dataType = "String" ) )
+    @ResponseBody
+    @RequestMapping( value = "/deleteMemberNotice", method = RequestMethod.GET )
+    public ServerResponse deleteMemberNotice(HttpServletRequest request, HttpServletResponse response,Integer id){
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    memberNoticeService.deleteMemberNotice(id);
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	}
+
+    }
+
 
     @ApiOperation( value = "查询会员卡发布信息", notes = "查询会员卡发布信息" )
     @ResponseBody

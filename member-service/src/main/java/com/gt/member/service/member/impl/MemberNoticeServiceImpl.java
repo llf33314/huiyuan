@@ -189,6 +189,9 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 
 	    if ( CommonUtil.isNotEmpty( memberNotice.getId() ) ) {
 		memberNoticeDAO.updateById( memberNotice );
+		//删除之前信息
+		memberNoticeuserDAO.deleteByNoticeId(  memberNotice.getId());
+
 	    } else {
 		memberNoticeDAO.insert( memberNotice );
 	    }
@@ -268,6 +271,17 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
 
+    }
+
+    @Transactional
+    public void deleteMemberNotice(Integer id) throws BusinessException{
+        try {
+	    memberNoticeuserDAO.deleteByNoticeId( id );
+	    memberNoticeDAO.deleteById( id );
+	}catch ( Exception  e){
+            LOG.error( "删除会员通知消息异常",e );
+            throw  new BusinessException( ResponseEnums.ERROR );
+	}
     }
 
     public void sendNotice( Integer id ) throws BusinessException {

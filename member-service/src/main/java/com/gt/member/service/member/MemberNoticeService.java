@@ -52,6 +52,12 @@ public interface MemberNoticeService {
     public void saveMemberNotice( Integer busId, String json, String sendDate ) throws  BusinessException;
 
     /**
+     * 删除会员消息
+     * @param id
+     */
+    public void deleteMemberNotice(Integer id)throws BusinessException;
+
+    /**
      * 分页查询
      * @param busId
      * @param params

@@ -30,7 +30,8 @@
 
 	<select id="findMemberNotice" resultType="Map">
 		select   <include refid="Base_Column_List" />
-		from t_member_notice where busId=#{busId} and sendStuts=#{sendStuts} ORDER BY id DESC LIMIT #{fristpage},#{pagesize}
+		from t_member_notice where busId=#{busId} and sendStuts=#{sendStuts}
+		ORDER BY id DESC LIMIT #{fristpage},#{pagesize}
 	</select>
 
 	<select id="countMemberNotice" resultType="java.lang.Integer">
