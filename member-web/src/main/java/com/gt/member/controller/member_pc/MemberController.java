@@ -141,7 +141,7 @@ public class MemberController {
     @ResponseBody
     @RequestMapping( value = "/addIntegralAndfenbi", method = RequestMethod.POST )
     public ServerResponse addIntegralAndfenbi(HttpServletRequest request,
-		    HttpServletResponse response,String json){
+		    HttpServletResponse response,@RequestParam  String json){
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.addIntegralAndfenbi(busId, json);
@@ -209,6 +209,9 @@ public class MemberController {
 	}
     }
 
+
+
+
     @ApiOperation( value = "查询会员详情", notes = "查询会员详情" )
     @ApiImplicitParams({
 		    @ApiImplicitParam( name = "memberId", value = "会员id", paramType = "query", required = false, dataType = "int" )
@@ -228,9 +231,12 @@ public class MemberController {
 	}
     }
 
+
+
+
     @ApiOperation( value = "导入实体卡", notes = "导入实体卡" )
     @ResponseBody
-    @RequestMapping( value = "/upLoadMember", method = RequestMethod.GET )
+    @RequestMapping( value = "/upLoadMember", method = RequestMethod.POST )
     public ServerResponse upLoadMember(HttpServletRequest request,
 		    HttpServletResponse response){
 	LOG.info("调用导入实体卡");
