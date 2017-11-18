@@ -1,6 +1,8 @@
 package com.gt.member.controller.member_pc;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.SessionUtils;
 import com.gt.member.dto.ServerResponse;
@@ -10,6 +12,7 @@ import com.gt.member.export.ExportExcel;
 import com.gt.member.service.bo.ErrorWorkbook;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.service.member.MemberNoticeService;
+import com.gt.member.util.CommonUtil;
 import com.gt.member.util.Page;
 import com.gt.member.util.RedisCacheUtil;
 import io.swagger.annotations.Api;
@@ -98,8 +101,11 @@ public class MemberController {
     @ResponseBody
     @RequestMapping( value = "/cardBatchApplyChecked", method = RequestMethod.POST )
     public ServerResponse cardBatchApplyChecked(HttpServletRequest request,
-		    HttpServletResponse response,String memberIds,Integer ischecked){
+		    HttpServletResponse response,@RequestParam String params ){
 	try {
+	    JSONObject obj= JSON.parseObject( params );
+	    String memberIds= CommonUtil.toString(obj.get( "memberIds" ));
+	    Integer ischecked=CommonUtil.toInteger(  obj.get( "ischecked" ));
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.cardBatchApplyChecked(busId, memberIds,ischecked );
 	    return ServerResponse.createBySuccess(  );
@@ -107,6 +113,9 @@ public class MemberController {
 	    LOG.error( "会员批量审核异常：", e );
 	    e.printStackTrace();
 	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	}catch ( Exception e ){
+	    LOG.error( "会员批量审核异常：", e );
+	    return ServerResponse.createByError("错误");
 	}
     }
 
@@ -119,8 +128,11 @@ public class MemberController {
     @ResponseBody
     @RequestMapping( value = "/cardApplyCheckedByOne", method = RequestMethod.POST )
     public ServerResponse cardApplyCheckedByOne(HttpServletRequest request,
-		    HttpServletResponse response,Integer memberId,Integer ischecked){
+		    HttpServletResponse response,@RequestParam String params){
 	try {
+	    JSONObject obj= JSON.parseObject( params );
+	    Integer memberId= CommonUtil.toInteger(obj.get( "memberId" ));
+	    Integer ischecked=CommonUtil.toInteger(  obj.get( "ischecked" ));
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.cardApplyCheckedByOne(busId, memberId,ischecked );
 	    return ServerResponse.createBySuccess(  );
@@ -128,6 +140,9 @@ public class MemberController {
 	    LOG.error( "会员卡审核异常：", e );
 	    e.printStackTrace();
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}catch ( Exception e ){
+	    LOG.error( "会员批量审核异常：", e );
+	    return ServerResponse.createByError("错误");
 	}
     }
 
