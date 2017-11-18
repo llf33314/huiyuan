@@ -321,15 +321,25 @@
 		select
 		count(id)
 		from t_duofen_card_get g
-		where g.state=0 and g.memberId
-		in
-		<foreach close=")" collection="memberIds" item="m" open="(" separator=",">
-			#{m}
+		where g.state=0 and
+		<foreach close=")" collection="memberIds" item="or" open="(" separator=",">
+			g.memberId=#{m}
 		</foreach>
+	</select>
 
 
+	<select id="findReceiveByMemberId" resultType="java.lang.Integer">
+		SELECT
+		cardReceiveId
+		FROM t_duofen_card_get g
+		WHERE g.getType=4 AND g.state=0 and
+		<foreach close=")" collection="memberIds" item="m" open="(" separator="or">
+			g.memberId =#{m}
+		</foreach>
+		GROUP BY cardReceiveId
 
 	</select>
+
 
 
 </mapper>

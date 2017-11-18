@@ -170,17 +170,16 @@
         <dependency>
             <groupId>com.gt.wxmp</groupId>
             <artifactId>lfx_wxmp_entity</artifactId>
-            <version>1.0.11</version>
+            <version>1.0.12</version>
         </dependency>
 
 
         <!--会员实体包-->
         <dependency>
             <groupId>com.gt.member</groupId>
-            <artifactId>Member_bo</artifactId>
+            <artifactId>member_bo</artifactId>
             <version>1.0.4</version>
         </dependency>
-
 
         <!-- mybatisPlus代码生成模板引擎 -->
         <dependency>
@@ -367,6 +366,8 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+
+
         </plugins>
     </build>
 

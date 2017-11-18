@@ -94,9 +94,9 @@ public class AddMemberController {
     public String erpAddMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 //	SessionUtils.setLoginStyle( request, 1 );
 //	BusUser busUser=new BusUser();
-//	busUser.setId( 36 );
+//	busUser.setId( 8811 );
 //	SessionUtils.setLoginUser( request, busUser );
-//	SessionUtils.setPidBusId( request, 36 );
+//	SessionUtils.setPidBusId( request, 8811 );
 
 	try {
 	    Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
@@ -110,7 +110,8 @@ public class AddMemberController {
 	    }
 	    LOG.error( "userId:"+userId );
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    if ( CommonUtil.isNotEmpty( shopId ) ) {
+
+	    if ( CommonUtil.isEmpty( shopId ) ) {  //门店为空的时候查询主店铺
 		shopId = wxShopDAO.selectMainShopByBusId( busId ).getId();
 	    }
 	    WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersMapper.selectByUserId( busId );

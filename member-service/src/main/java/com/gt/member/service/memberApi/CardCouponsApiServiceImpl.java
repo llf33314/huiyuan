@@ -1583,7 +1583,12 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 
     public List< Map< String,Object > > findMeiRongDuofenCardByMemberId( Integer memberId ) {
 	List< Integer > memberIds = memberApiService.findMemberIds( memberId );
-	return duofenCardReceiveMapper.findMeiRongCardReceviceByMemberId( memberIds );
+	List< Integer > receiveIds=duofenCardGetMapper.findReceiveByMemberId(memberIds);
+	if(receiveIds.size()>0){
+	    return duofenCardReceiveMapper.findMeiRongCardReceviceByReceiveIds( receiveIds );
+	}
+	return null;
+
     }
 
     public List< Map< String,Object > > findMeiRongCardGetByMemberId( Integer memberId, Integer receiceId ) {

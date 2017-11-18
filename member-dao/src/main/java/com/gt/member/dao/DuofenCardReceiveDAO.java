@@ -172,5 +172,5 @@ public interface DuofenCardReceiveDAO extends BaseMapper<DuofenCardReceive> {
      */
     List<Map<String, Object>> findCardRecevice(@Param("busId")Integer busId,@Param("receiveDate")Date receiveDate);
 
-    List<Map<String,Object>> findMeiRongCardReceviceByMemberId(@Param( "memberIds" )List<Integer> memberIds);
+    List<Map<String,Object>> findMeiRongCardReceviceByReceiveIds(@Param( "receiveIds" )List<Integer> receiveIds);
 }
