@@ -370,7 +370,7 @@ public interface MemberCardService {
     public void publishCard( Integer busId, String params )throws BusinessException;
 
     /**
-     * 删除会员卡信息(如果)
+     * 删除会员卡信息
      * @param busId
      * @param ctId
      * @throws BusinessException
@@ -389,7 +389,7 @@ public interface MemberCardService {
      * @param busId
      * @param params
      */
-    public void rechargeMemberCard( Integer busId, Integer dangqianBusId, Map< String,Object > params )throws BusinessException;
+    public void rechargeMemberCard( Integer busId, Integer dangqianBusId, String jsonObj )throws BusinessException;
 
     /**
      * 查询商家发布的会员卡类型

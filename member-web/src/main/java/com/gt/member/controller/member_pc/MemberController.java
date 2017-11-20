@@ -632,8 +632,16 @@ public class MemberController {
     @ResponseBody
     @RequestMapping( value = "/rechargeMemberCard", method = RequestMethod.POST )
     public ServerResponse rechargeMemberCard(HttpServletRequest request,
-		    HttpServletResponse response,  Map<String,Object> params){
-	return null;
+		    HttpServletResponse response,  String params){
+
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    Integer dangqianbusId = SessionUtils.getLoginUser( request ).getId();
+	   	memberCardService.rechargeMemberCard(busId,dangqianbusId,params);
+	    return ServerResponse.createBySuccess(   );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
     }
 
 
