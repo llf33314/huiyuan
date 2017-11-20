@@ -187,7 +187,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 	    if ( CommonUtil.isEmpty( card ) ) {
 		throw new BusinessException( ResponseMemberEnums.MEMBER_NOT_CARD.getCode(), ResponseMemberEnums.MEMBER_NOT_CARD.getMsg() );
-	    } else if ( card.getCardStatus() == 1 ) {
+	    } else if (card.getIsChecked()==0 || card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
 		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
@@ -388,7 +388,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 	    if ( CommonUtil.isEmpty( card ) ) {
 		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
-	    }if ( card.getCardStatus() == 1 ) {
+	    }if (card.getIsChecked()==0 || card.getCardStatus() == 1 ) {
 		return 1.0;
 	    }
 
@@ -465,7 +465,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}
 	MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 	if ( CommonUtil.isEmpty( card ) ) {
-	    throw new BusinessException( ResponseMemberEnums.CARD_STATUS );
+	    throw new BusinessException( ResponseMemberEnums.MEMBER_NOT_CARD );
 	}
 	return card.getCtId();
     }
@@ -790,7 +790,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    if ( CommonUtil.isEmpty( card ) ) {
 		throw new BusinessException( ResponseMemberEnums.MEMBER_NOT_CARD.getCode(), ResponseMemberEnums.MEMBER_NOT_CARD.getMsg() );
 
-	    } else if ( card.getCardStatus() == 1 ) {
+	    } else if (card.getIsChecked()==0 || card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
 		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
@@ -967,7 +967,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 	    if ( CommonUtil.isEmpty( card ) ) {
 		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR.getCode(), ResponseMemberEnums.NOT_MEMBER_CAR.getMsg() );
-	    } else if ( card.getCardStatus() == 1 ) {
+	    } else if (card.getIsChecked()==0 || card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
 		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
@@ -1518,7 +1518,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 	    if ( CommonUtil.isEmpty( card ) ) {
 		throw new BusinessException( ResponseMemberEnums.MEMBER_NOT_CARD.getCode(), ResponseMemberEnums.MEMBER_NOT_CARD.getMsg() );
-	    } else if ( card.getCardStatus() == 1 ) {
+	    } else if (card.getIsChecked()==0 || card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
 		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
@@ -1837,7 +1837,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 	    if ( CommonUtil.isEmpty( card ) ) {
 		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR.getCode(), ResponseMemberEnums.NOT_MEMBER_CAR.getMsg() );
-	    } else if ( card.getCardStatus() == 1 ) {
+	    } else if (card.getIsChecked()==0|| card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
 		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
