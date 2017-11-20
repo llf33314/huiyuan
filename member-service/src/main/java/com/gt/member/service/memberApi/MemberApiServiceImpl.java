@@ -388,6 +388,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 	    if ( CommonUtil.isEmpty( card ) ) {
 		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
+	    }if ( card.getCardStatus() == 1 ) {
+		return 1.0;
 	    }
 
 	    if ( card.getCtId() == 2 ) {
@@ -1516,7 +1518,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 	    if ( CommonUtil.isEmpty( card ) ) {
 		throw new BusinessException( ResponseMemberEnums.MEMBER_NOT_CARD.getCode(), ResponseMemberEnums.MEMBER_NOT_CARD.getMsg() );
-
 	    } else if ( card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
@@ -1536,11 +1537,27 @@ public class MemberApiServiceImpl implements MemberApiService {
 		map.put( "memberId", memberEntity.getId() );
 		map.put( "cardId", card.getMcId() );
 
+
 		Double fenbiMoeny = memberCommonService.currencyCount( null, memberEntity.getFansCurrency() );
 		map.put( "fenbiMoeny", fenbiMoeny );
+		map.put( "getFenbiMoeny", 10 );
 
 		Double jifenMoeny = memberCommonService.integralCount( null, new Double( memberEntity.getIntegral() ), memberEntity.getBusId() );
 		map.put( "jifenMoeny", jifenMoeny );
+		PublicParameterset ps = publicParameterSetMapper.findBybusId( memberEntity.getBusId() );
+		if ( CommonUtil.isNotEmpty( ps ) ) {
+		    map.put( "getJifenMoeny", ps.getStartMoney() );
+		    map.put( "jifenRatio", ps.getIntegralRatio() );
+		    map.put( "jifenStartMoney", ps.getStartMoney() );
+		}
+
+		SortedMap< String,Object > dict = dictService.getDict( "1058" );
+		Double ratio = CommonUtil.toDouble( dict.get( "1" ) );
+		map.put( "fenbiRatio", ratio );
+		map.put( "fenbiStartMoney", 10 );
+
+
+
 
 		WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersMapper.selectByUserId( memberEntity.getBusId() );
 
@@ -2384,9 +2401,13 @@ public class MemberApiServiceImpl implements MemberApiService {
 		userConsumePayDAO.insert( userConsumePay );
 	    }
 
-	    if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-		//立即送 TODO
-		//findGiveRule( uc.getOrderCode(), "消费会员赠送", (byte) 1 );
+	    if ( CommonUtil.isNotEmpty( memberEntity.getMcId() )) {
+		if(erpPaySuccess.getIsDiatelyGive()==1 ) {
+		    //立即送 TODO
+		    //findGiveRule( uc.getOrderCode(), "消费会员赠送", (byte) 1 );
+		}else if(erpPaySuccess.getIsDiatelyGive()==0){
+		    //延迟送
+		}
 	    }
 
 	    if ( !bool ) {

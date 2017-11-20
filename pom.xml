@@ -178,7 +178,7 @@
         <dependency>
             <groupId>com.gt.member</groupId>
             <artifactId>member_bo</artifactId>
-            <version>1.0.4</version>
+            <version>1.0.6-SNAPSHOT</version>
         </dependency>
 
         <!-- mybatisPlus代码生成模板引擎 -->
