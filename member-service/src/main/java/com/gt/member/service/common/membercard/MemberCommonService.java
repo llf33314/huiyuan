@@ -126,14 +126,14 @@ public interface MemberCommonService {
       */
     public void giveFansCurrency( Integer memberId,  Double fenbi ) throws BusinessException;
 
-    public void tuijianGive( MemberRecommend recommend );
-
-
-    /***
-     * 当前立即赠送物品
-     * @throws Exception
+    /**
+     * 扣除商家粉币,不操作粉丝数据 不足则不扣除
+     * @param busId
+     * @param fenbi
      */
-    public void findGiveRule(Integer busId,String orderCode) throws Exception;
+    public boolean deductionFansCurrency(Integer busId,Double fenbi);
+
+    public void tuijianGive( MemberRecommend recommend );
 
 
 
@@ -148,8 +148,38 @@ public interface MemberCommonService {
      * @param ctId
      * @return
      */
-    public Integer findRechargegive(double price, Integer grId, Integer busId,
+    public MemberRechargegive findRechargegive(double price, Integer grId, Integer busId,
                     Integer ctId) throws BusinessException;
+
+    /**
+     * 查询时效卡的充值
+     * @return
+     */
+    public List<Integer> findTimeCard(Double money, Integer busId)throws BusinessException;
+
+    /**
+     * 副卡充值
+     * @param price
+     * @param gtId
+     * @param busId
+     * @param ctId
+     * @return
+     */
+    public MemberRechargegiveAssistant findAssistantrechargegive(double price, Integer gtId, Integer busId,
+                    Integer fuctId) throws BusinessException;
+
+    /**
+     * 会员赠送物品延迟送
+     * @param orderNo
+     */
+    public void findGiveRuleDelay(String orderNo);
+
+
+    /***
+     * 当前立即赠送物品
+     * @throws Exception
+     */
+    public void findGiveRule(String orderCode);
 
 
 }

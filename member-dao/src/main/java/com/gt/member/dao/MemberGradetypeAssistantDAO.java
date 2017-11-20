@@ -41,5 +41,13 @@ public interface MemberGradetypeAssistantDAO extends BaseMapper<MemberGradetypeA
      */
     List<Map<String,Object>> findAssistantIdBygtId(@Param( "busId" ) Integer busId,@Param( "gtId" )Integer gtId);
 
+    /**
+     * 查询粉丝会员卡等级副卡信息
+     * @param busId
+     * @param gtId
+     * @param fuctId
+     * @return
+     */
+    MemberGradetypeAssistant  findAssistantBygtIdAndFuctId(@Param( "busId" ) Integer busId,@Param( "gtId" )Integer  gtId,@Param( "fuctId" )Integer  fuctId);
 
 }

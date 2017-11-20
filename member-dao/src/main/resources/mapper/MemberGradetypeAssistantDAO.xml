@@ -38,4 +38,8 @@
 		select id,ctId from t_member_gradetype_assistant where busId=#{busId} and gtId=#{gtId}
 	</select>
 
+	<select id="findAssistantBygtIdAndFuctId" resultMap="BaseResultMap">
+		select * from t_member_gradetype_assistant where busId=#{busId} and gtId=#{gtId} and fuctId=#{fuctId}
+	</select>
+
 </mapper>

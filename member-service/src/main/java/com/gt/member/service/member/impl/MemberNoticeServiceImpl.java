@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
+import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.RequestUtils;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.member.dao.*;
@@ -19,10 +20,7 @@ import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.MemberNoticeService;
-import com.gt.member.util.CommonUtil;
-import com.gt.member.util.DateTimeKit;
-import com.gt.member.util.Page;
-import com.gt.member.util.PropertiesUtil;
+import com.gt.member.util.*;
 import com.gt.util.entity.param.sms.OldApiSms;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +100,12 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	    List< SystemNotice > systemNotices = JSONArray.parseArray( json, SystemNotice.class );
 	    if ( systemNotices.size() != 0 ) {
 		for ( SystemNotice systemNotice : systemNotices ) {
+		    if(systemNotice.getSmsStatus()==1 ){
+		        String smsContent=systemNotice.getSmsContent();
+		        if(smsContent.length()>70){
+		            throw new BusinessException( ResponseMemberEnums.SMS_BIG_THAN_70 );
+			}
+		    }
 		    systemNotice.setBusId( busId );
 		    if ( CommonUtil.isNotEmpty( systemNotice.getId() ) ) {
 			systemNoticeDAO.updateById( systemNotice );
@@ -127,7 +131,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	    List< Map< String,Object > > listMap = memberGradetypeDAO.findGradeTyeBybusId( busId );
 	    map.put( "gradeType", listMap );
 	    Integer count = 0;
-	    if ( id != 0 ) {
+	    if ( CommonUtil.isNotEmpty( id ) ) {
 		MemberNotice notice = memberNoticeDAO.selectById( id );
 		String noticeUser = notice.getNoticeUser();
 		if ( "0".equals( noticeUser ) ) {
@@ -141,7 +145,6 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 		    count = memberCardDAO.countCard( busId, ctIds );
 		}
 		map.put( "notice", notice );
-		map.put( "imagePath", PropertiesUtil.getRes_web_path() );
 		map.put( "memberCount", count );
 	    }
 
@@ -153,6 +156,26 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
+    }
+
+    public Integer countMember(String ctIds,Integer busId){
+	int count = 0;
+        if ("0".equals(ctIds)) {
+	    // 查询公众号下所有会员
+	    count = memberCardDAO.countCardAll(busId);
+	} else {
+	    if (ctIds != null && !"".equals(ctIds)) {
+		String[] str = ctIds.split(",");
+		List<Integer> list = new ArrayList<Integer>();
+		for (int i = 0; i < str.length; i++) {
+		    if (CommonUtil.isNotEmpty(str[i])) {
+			list.add(Integer.valueOf(str[i]));
+		    }
+		}
+		count = memberCardDAO.countCard(busId, list);
+	    }
+	}
+	return count;
     }
 
     @Transactional
@@ -175,7 +198,14 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	    memberNotice.setSendSms( CommonUtil.toInteger( obj.get( "sendSms" ) ) );
 	    memberNotice.setTitle( CommonUtil.toString( obj.get( "title" ) ) );
 	    memberNotice.setNoticeUser( CommonUtil.toString( obj.get( "noticeUser" ) ) );
-	    memberNotice.setSmsContent( CommonUtil.toString( obj.get( "smsContent" ) ) );
+	    if(CommonUtil.isNotEmpty( obj.get( "smsContent" ) )){
+	        String smsContent=CommonUtil.toString( obj.get( "smsContent" ) );
+	        if(smsContent.length()>70){
+	            throw new BusinessException( ResponseMemberEnums.SMS_BIG_THAN_70 );
+		}
+		memberNotice.setSmsContent( smsContent );
+	    }
+
 	    memberNotice.setSendType( CommonUtil.toInteger( obj.get( "sendType" ) ) );
 	    if ( CommonUtil.isNotEmpty( sendDate ) ) {
 		Date date = DateTimeKit.parse( sendDate, "yyyy-MM-dd HH:mm:ss" );

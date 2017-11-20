@@ -131,7 +131,7 @@
 		gt.gt_id AS gtId,gt.gt_grade_name as gradeName,gt.isCheck,gt.applyType,gt.buyModel,gt.giveIntegral,
 		gt.isView,gt.giveflow, gt.givefenbi,gt.isUploadImg,gt.imgExplain,gt.ct_id as ctId,gt.giveMoney, gt.pickMoney
 		FROM t_member_gradetype gt
-		WHERE gt.busId=#{busId} AND gt.ct_id=#{ctId} and gt.iseasy=0 ORDER BY gt.gt_id ASC
+		WHERE gt.busId=#{busId} AND gt.ct_id=#{ctId} and gt.iseasy=0 and is_publish=1 ORDER BY gt.gt_id ASC
 	</select>
 
     <update id="updateByCtId">

@@ -912,5 +912,20 @@ public class CommonUtil {
 	response.getWriter().flush();
 	response.getWriter().close();
     }
+
+    /**
+     * 浮点数比较
+     * @param a
+     * @param b
+     * @return
+     */
+    public static boolean compareTo( BigDecimal a, Integer b){
+	BigDecimal c = new BigDecimal(b);
+	if(a.compareTo(c)==0 || a.compareTo(c)==1){
+	    return true;
+	}else{
+	    return false;
+	}
+    }
 	
 }

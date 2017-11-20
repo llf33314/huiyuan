@@ -121,7 +121,7 @@ public class MemberController {
 
     @ApiOperation( value = "会员卡审核", notes = "会员卡审核" )
     @ApiImplicitParams({
-		    @ApiImplicitParam( name = "memberId", value = "会员卡memberId集合逗号隔开", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "memberId", value = "会员卡memberId", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "ischecked", value = "审核状态 0不通过 1通过", paramType = "query", required = false, dataType = "int" )
 
     })

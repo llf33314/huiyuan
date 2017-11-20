@@ -30,7 +30,7 @@
 		delete from t_member_rechargegive where busId=#{busId} and gr_id=#{grId}
 	</delete>
 
-	<select id="findBybusIdAndGrId" resultType="Map">
+	<select id="findBybusIdAndGrId" resultMap="BaseResultMap">
 		select * from t_member_rechargegive where busId=#{busId} and gr_id=#{grId} and isDate=#{isDate} order by money asc
 	</select>
 

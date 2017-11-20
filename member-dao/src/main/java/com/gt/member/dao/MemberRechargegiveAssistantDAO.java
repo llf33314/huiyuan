@@ -30,4 +30,12 @@ public interface MemberRechargegiveAssistantDAO extends BaseMapper<MemberRecharg
      * @return
      */
     List<Map<String,Object>> findByAssistantId(@Param("busId")Integer busId ,@Param("assistantId")Integer assistantId);
+
+    /**
+     * 查询会员当前等级充值信息
+     * @param busId
+     * @param gtId
+     * @return
+     */
+    List<MemberRechargegiveAssistant> findByBusIdAndGtId(@Param("busId")Integer busId,@Param("gtId")Integer gtId);
 }

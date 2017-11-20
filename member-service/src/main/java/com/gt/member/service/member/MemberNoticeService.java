@@ -43,6 +43,13 @@ public interface MemberNoticeService {
     public Map<String,Object> editMemberNotice( Integer busId, Integer id ) throws  BusinessException;
 
     /**
+     * 统计会员卡数量
+     * @param ctIds
+     * @param busId
+     * @return
+     */
+    public Integer countMember(String ctIds,Integer busId);
+    /**
      * 保存会员发送通知
      * @param busId
      * @param json

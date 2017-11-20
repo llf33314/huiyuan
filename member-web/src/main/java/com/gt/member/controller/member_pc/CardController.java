@@ -305,6 +305,22 @@ public class CardController {
 	}
     }
 
+
+    @ApiOperation( value = "统计会员数量", notes = "统计会员数量" )
+    @ResponseBody
+    @RequestMapping(value ="/countMember", method = RequestMethod.GET)
+    public ServerResponse countMember(HttpServletRequest request,
+		    HttpServletResponse response, @RequestParam String ctIds){
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    int count= memberNoticeService.countMember( ctIds,busId );
+	    return ServerResponse.createBySuccess( count );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( "错误" );
+	}
+
+    }
+
     @ApiOperation( value = "保存会员消息", notes = "保存会员消息" )
     @ApiImplicitParams( @ApiImplicitParam( name = "sendDate", value = "发送时间", paramType = "query", required = false, dataType = "String" ) )
     @ResponseBody

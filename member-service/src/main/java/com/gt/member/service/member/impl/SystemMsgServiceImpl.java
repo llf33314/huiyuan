@@ -47,7 +47,8 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 
     @Override
     public boolean jifenMsg( MemberCardrecordNew cardRecord, MemberEntity memberEntity ) {
-	SystemNotice systemNotice = systemNoticeDAO.findBybusIdAndCallType( memberEntity.getBusId(), (byte) 2 );
+	try {
+        SystemNotice systemNotice = systemNoticeDAO.findBybusIdAndCallType( memberEntity.getBusId(), (byte) 2 );
 	// 公众号消息推送
 	if ( CommonUtil.isNotEmpty( systemNotice ) && systemNotice.getPublicMsg() == 1 ) {
 	    WxPublicUsersEntity wxPublicUsers = wxPublicUsersDAO.selectByUserId( memberEntity.getBusId() );
@@ -69,7 +70,9 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 	    requestService.setSendWxmsg( sendWxMsgTemplate );
 	    return true;
 	}
-
+	}catch ( Exception e ){
+	    LOG.error( "会员卡积分提醒异常",e );
+	}
 	return false;
     }
 
@@ -87,26 +90,29 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 
     @Override
     public boolean upgradeMemberMsg( MemberEntity memberEntity, String cardNo, String dateTime ) {
-	SystemNotice systemNotice = systemNoticeDAO.findBybusIdAndCallType( memberEntity.getBusId(), (byte) 7 );
-	// 公众号消息推送
-	if ( CommonUtil.isNotEmpty( systemNotice ) && systemNotice.getPublicMsg() == 1 ) {
-	    WxPublicUsersEntity wxPublicUsers = wxPublicUsersDAO.selectByUserId( memberEntity.getBusId() );
-	    SendWxMsgTemplate sendWxMsgTemplate = new SendWxMsgTemplate();
-	    sendWxMsgTemplate.setId( systemNotice.getPublicIdMsgId() );
-	    sendWxMsgTemplate.setMemberId( memberEntity.getId() );
-	    sendWxMsgTemplate.setUrl( PropertiesUtil.getWebHome() + "/phoneMemberController/" + memberEntity.getBusId() + "/79B4DE7C/findMember_1.do" );
+	try {
+	    SystemNotice systemNotice = systemNoticeDAO.findBybusIdAndCallType( memberEntity.getBusId(), (byte) 7 );
+	    // 公众号消息推送
+	    if ( CommonUtil.isNotEmpty( systemNotice ) && systemNotice.getPublicMsg() == 1 ) {
+		WxPublicUsersEntity wxPublicUsers = wxPublicUsersDAO.selectByUserId( memberEntity.getBusId() );
+		SendWxMsgTemplate sendWxMsgTemplate = new SendWxMsgTemplate();
+		sendWxMsgTemplate.setId( systemNotice.getPublicIdMsgId() );
+		sendWxMsgTemplate.setMemberId( memberEntity.getId() );
+		sendWxMsgTemplate.setUrl( PropertiesUtil.getWebHome() + "/phoneMemberController/" + memberEntity.getBusId() + "/79B4DE7C/findMember_1.do" );
 
-	    List< Object > list = new ArrayList< Object >();
-	    // first,keyword1,keyword2,keyword3,keyword4,remark
-	    list.add( "会员升级通知" );
-	    list.add( cardNo );
-	    list.add( dateTime );
-	    list.add( "通知详情：请到公众号会员卡信息将会体现" );
-	    sendWxMsgTemplate.setObjs( list );
-	    requestService.setSendWxmsg( sendWxMsgTemplate );
-	    return true;
+		List< Object > list = new ArrayList< Object >();
+		// first,keyword1,keyword2,keyword3,keyword4,remark
+		list.add( "会员升级通知" );
+		list.add( cardNo );
+		list.add( dateTime );
+		list.add( "通知详情：请到公众号会员卡信息将会体现" );
+		sendWxMsgTemplate.setObjs( list );
+		requestService.setSendWxmsg( sendWxMsgTemplate );
+		return true;
+	    }
+	}catch ( Exception e ){
+	    LOG.error( "会员卡升级通知异常",e );
 	}
-
 	return false;
     }
 

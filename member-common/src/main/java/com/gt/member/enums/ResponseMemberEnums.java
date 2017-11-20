@@ -11,6 +11,9 @@ public enum ResponseMemberEnums {
     VERIFICATION_BUSUSER(4005,"用户权限不足,请登录主账户操作"),  //判断主账户信息
     USERGRANT(4006,"粉丝未授权"),
     LOGIN_FAIL(4007,"用户不存在"),
+    QUERY_SHOP_BUSID(4008,"查询子账户管理的门店信息异常"),
+    MANAGE_SHOP_THAN2(4009,"用户管理了多个门店,不能操作当前业务"),
+
 
     CARD_STATUS(5001, "会员卡已停用"),
     MEMBER_LESS_JIFEN(5002,"积分不足"),
@@ -33,6 +36,9 @@ public enum ResponseMemberEnums {
     LESS_THAN_FLOE(5019,"流量不足"),
     ERROR_CHARGE_FLOW(5020,""),  //流量兑换失败
     NO_DELETE_CARD(5021,"会员卡已经领取,不能删除会员卡"),
+    SMS_BIG_THAN_70(5022,"短信内容请输入70字以内"),
+    NOT_RECHARGE(5023,"未查询到改充值规则"),
+    NOT_TIME_CARD(5024,"未查询到时效卡充值规则"),
 
 
 

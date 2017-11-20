@@ -1,5 +1,6 @@
 package com.gt.member.service.common.membercard;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.HttpClienUtils;
@@ -12,9 +13,11 @@ import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
+import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,6 +39,9 @@ public class RequestServiceImpl implements RequestService {
     private final static String VERSION_BUS_PID="/8A5DA52E/childBusUserApi/VersionBusPid.do";
 
     private final static String CHANGE_FLOW_URL="/8A5DA52E/fenbiflow/6F6D9AD2/79B4DE7C/adcServices.do";
+
+    //查询门店信息
+    private final static String WXSHOP_BYBUSID= "8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/queryWxShopByBusId.do";
 
 
     public String codeConsume(String cardId,String code,Integer busId) throws Exception{
@@ -110,6 +116,22 @@ public class RequestServiceImpl implements RequestService {
 	return changeFlowStr;
     }
 
+
+    public List<WsWxShopInfoExtend > findShopsByBusId(Integer busId){
+	String url=PropertiesUtil.getWxmp_home()+WXSHOP_BYBUSID;
+	RequestUtils<Integer> requestUtils=new RequestUtils<>(  );
+	requestUtils.setReqdata( busId );
+	String shopStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
+	JSONObject json= JSON.parseObject(  shopStr);
+	if("0".equals( json.getString( "code" ))){
+	    List<WsWxShopInfoExtend > wxShopInfoExtends=JSON.parseArray( json.getString( "data" ), WsWxShopInfoExtend.class);
+	    return wxShopInfoExtends;
+	}else{
+	    throw new BusinessException( ResponseMemberEnums.QUERY_SHOP_BUSID );
+	}
+
+
+    }
 
 
 }

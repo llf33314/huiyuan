@@ -59,4 +59,8 @@
 
 	</select>
 
+	<select id="findGriveGoodByBusIdAndCtId" resultType="BaseResultMap">
+		select * from t_member_giverulegoodstype where busId=#{busId} AND ctId=#{ctId} and give_type!=2
+	</select>
+
 </mapper>

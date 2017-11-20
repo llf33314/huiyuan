@@ -6,6 +6,10 @@ import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
+import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 请求接口
@@ -52,5 +56,12 @@ public interface RequestService {
      * @return
      */
     public String changeFlow(RequestUtils<AdcServicesInfo > requestUtils);
+
+    /**
+     * 根据当前用户 查询当前用户的门店信息
+     * @param busId
+     * @return
+     */
+    public List<WsWxShopInfoExtend > findShopsByBusId(Integer busId) throws BusinessException;
 
 }

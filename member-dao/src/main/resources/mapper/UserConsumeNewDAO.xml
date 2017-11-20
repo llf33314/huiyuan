@@ -147,7 +147,7 @@
 
 
 	<select id="findOneByCode" resultMap="BaseResultMap">
-		select * from t_wx_user_consume_new where orderCode=#{orderCode}
+		select * from t_wx_user_consume_new where orderCode=#{orderCode} limit 1
 	</select>
 
 
