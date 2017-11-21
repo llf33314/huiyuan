@@ -625,6 +625,26 @@ public class CardCouponseApiController {
         }
     }
 
+    @ApiOperation(value = "（墨盒）领取优惠券", notes = "（墨盒）领取优惠券")
+    @ApiImplicitParams( {
+                    @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int"),
+                    @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int"),
+                    @ApiImplicitParam(name = "code", value = "卡包code值", paramType = "query", required = true, dataType = "string")
+    } )
+
+    @ResponseBody
+    @RequestMapping (value = "/lingquDuofenCardReceive",method = RequestMethod.POST)
+    public ServerResponse lingquDuofenCardReceive(HttpServletRequest request,
+                    HttpServletResponse response,@RequestBody String param){
+        try {
+            cardCouponsApiService.lingquDuofenCardReceive(param);
+            return ServerResponse.createBySuccess();
+        }catch ( Exception e ){
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
+        }
+
+    }
+
 
 
 

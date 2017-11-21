@@ -1,5 +1,6 @@
 package com.gt.member.service.memberApi;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.HttpClienUtils;
@@ -1630,5 +1631,79 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     public List<Map<String,Object>> findDuofenByMianfei(Integer busId){
         List<Map<String,Object>> list= duofenCardReceiveMapper.findMoHeCardReceviceBybusId( busId,new Date(  ) );
         return list;
+    }
+
+    @Transactional
+    public void lingquDuofenCardReceive(String params)throws BusinessException{
+      try{
+        Map<String,Object> map= JSON.parseObject( JSON.toJSONString( params ),Map.class );
+        Integer memberId=CommonUtil.toInteger( map.get( "memberId" ) );
+        Integer busId=CommonUtil.toInteger( map.get( "busId" ) );
+        String code=CommonUtil.toString( map.get( "code" ) );
+	DuofenCardReceive receives = duofenCardReceiveMapper.findByCode( busId,code );
+	String[] strId = receives.getCardIds().split( "," );
+	List< Integer > ids = new ArrayList< Integer >();
+	for ( String str : strId ) {
+	    if ( CommonUtil.isNotEmpty( str ) ) {
+		ids.add( CommonUtil.toInteger( str ) );
+	    }
+	}
+
+	List< Map< String,Object > > cardMlist = JsonReflectUtil.json2List( receives.getCardMessage() );
+
+	MemberEntity memberEntity = memberMapper.selectById( memberId );
+	if ( ids.size() > 0 ) {
+	    List< DuofenCardGet > list = new ArrayList< DuofenCardGet >();
+	    List< DuofenCard > duofencards = duofenCardMapper.findInCardIds( ids );
+	    for ( DuofenCard duofenCard : duofencards ) {
+		for ( Map< String,Object > card : cardMlist ) {
+		    if ( duofenCard.getId().equals( CommonUtil.toInteger( card.get( "cardId" ) ) ) ) {
+			DuofenCardGet dfg = new DuofenCardGet();
+			dfg.setCardId( duofenCard.getId() );
+			dfg.setGetType( 2 );
+			dfg.setState( 0 );
+			dfg.setCode( getCode( 12 ) );
+			dfg.setGetDate( new Date() );
+			dfg.setCardReceiveId( receives.getId() );
+			dfg.setMemberId( memberId );
+			dfg.setPublicId( memberEntity.getPublicId() );
+			dfg.setFriendMemberId( "" );
+			dfg.setBusId( memberEntity.getBusId() );
+			if ( "DATE_TYPE_FIX_TIME_RANGE".equals( duofenCard.getType() ) ) {
+			    dfg.setStartTime( duofenCard.getBeginTimestamp() );
+			    dfg.setEndTime( duofenCard.getEndTimestamp() );
+			} else {
+			    dfg.setStartTime( DateTimeKit.addDate( new Date(), duofenCard.getFixedBeginTerm() ) );
+			    dfg.setEndTime( DateTimeKit.addDate( new Date(), duofenCard.getFixedTerm() ) );
+			}
+			dfg.setBusId( memberEntity.getBusId() );
+			list.add( dfg );
+		    }
+		}
+	    }
+
+	    duofenCardGetMapper.insertList( list );
+
+	    // 短信通知
+	    if ( receives.getIsCallSms() == 1 ) {
+		try {
+		    RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
+		    OldApiSms oldApiSms = new OldApiSms();
+		    oldApiSms.setMobiles( receives.getMobilePhone() );
+		    oldApiSms.setContent( "用户领取了" + receives.getCardIds() + "包,包中有：" + receives.getCardsName() + "优惠券" );
+		    oldApiSms.setCompany( PropertiesUtil.getSms_name() );
+		    oldApiSms.setBusId( memberEntity.getBusId() );
+		    oldApiSms.setModel( 12 );
+		    requestUtils.setReqdata( oldApiSms );
+		    requestService.sendSms( requestUtils );
+		} catch ( Exception e ) {
+		    LOG.error( "短信发送失败", e );
+		}
+	    }
+	}
+    } catch ( Exception e ) {
+	LOG.error( "墨盒领取优惠券异常", e );
+	throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+    }
     }
 }

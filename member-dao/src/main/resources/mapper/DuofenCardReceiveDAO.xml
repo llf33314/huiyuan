@@ -175,7 +175,7 @@
 	</select>
 
 	<select id="findMoHeCardReceviceBybusId" resultType="Map">
-		select id,cardsName,backColor,receiveDate from t_duofen_card_receive where  busId=#{busId}  and deliveryAddr=0 and deliveryType=1 and state=1  and (receiveDate <![CDATA[>=]]> #{receiveDate} or receiveDate is null) order by id desc
+		select id,cardsName,backColor,receiveDate,code from t_duofen_card_receive where  busId=#{busId}  and deliveryAddr=0 and deliveryType=1 and state=1  and (receiveDate <![CDATA[>=]]> #{receiveDate} or receiveDate is null) order by id desc
 
 	</select>
 
