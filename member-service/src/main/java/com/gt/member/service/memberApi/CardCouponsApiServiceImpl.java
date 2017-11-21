@@ -1626,4 +1626,9 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 	Integer count = cardGets + countWxCard;
 	return count;
     }
+
+    public List<Map<String,Object>> findDuofenByMianfei(Integer busId){
+        List<Map<String,Object>> list= duofenCardReceiveMapper.findMoHeCardReceviceBybusId( busId,new Date(  ) );
+        return list;
+    }
 }

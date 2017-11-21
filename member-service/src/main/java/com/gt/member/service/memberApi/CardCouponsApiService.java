@@ -341,4 +341,11 @@ public interface CardCouponsApiService {
      * @throws BusinessException
      */
     public Integer countMemberDuofenCard(Integer memberId) throws BusinessException;
+
+    /**
+     * 魔盒免费领取
+     * @param busId
+     * @return
+     */
+    public List<Map<String,Object>> findDuofenByMianfei(Integer busId);
 }

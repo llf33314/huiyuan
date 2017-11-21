@@ -609,6 +609,21 @@ public class CardCouponseApiController {
 
     }
 
+    @ApiOperation(value = "（墨盒）投放包", notes = "（墨盒）投放包")
+    @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
+    @ResponseBody
+    @RequestMapping (value = "/findDuofenByMianfei",method = RequestMethod.POST)
+    public ServerResponse findDuofenByMianfei(HttpServletRequest request,
+                    HttpServletResponse response,@RequestBody String param){
+        try {
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer busId= CommonUtil.toInteger( requestBody.get( "busId" ) );
+            List<Map<String,Object>> list=cardCouponsApiService.findDuofenByMianfei(busId);
+            return ServerResponse.createBySuccess(list);
+        }catch ( Exception e ){
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
+        }
+    }
 
 
 
