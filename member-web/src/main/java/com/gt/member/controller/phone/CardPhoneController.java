@@ -95,18 +95,6 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	}
     }
 
-    @ApiOperation( value = "购买会员卡支付回调", notes = "购买会员卡支付回调" )
-    @ResponseBody
-    @RequestMapping( value = "/buyMemberCard", method = RequestMethod.GET )
-    public ServerResponse buyMemberCard( HttpServletRequest request, HttpServletResponse response,@RequestParam String json ) {
-	try {
-	    Map< String,Object > params=JSON.toJavaObject( JSON.parseObject( json ),Map.class );
-	    memberCardPhoneService.buyMemberCard( params );
-	    return ServerResponse.createBySuccess();
-	} catch ( Exception e ) {
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
-	}
-    }
 
     @ApiOperation( value = "查询会员卡信息", notes = "查询会员卡信息" )
     @ResponseBody
@@ -267,8 +255,8 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	}catch ( BusinessException e){
 	    return ServerResponse.createByError(e.getCode(),e.getMessage());
 	}
-
     }
+
 
 
 

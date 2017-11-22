@@ -39,6 +39,8 @@ public enum ResponseMemberEnums {
     SMS_BIG_THAN_70(5022,"短信内容请输入70字以内"),
     NOT_RECHARGE(5023,"未查询到改充值规则"),
     NOT_TIME_CARD(5024,"未查询到时效卡充值规则"),
+    PLEASE_GET_CARD(5025,"请领取会员卡"),
+    PLEASE_BINDING_PHONE(5026,"请绑定手机号码"),
 
 
 

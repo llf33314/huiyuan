@@ -122,6 +122,9 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
     @Autowired
     private WxShopDAO wxShopDAO;
 
+    @Autowired
+    private MemberCardDAO memberCardDAO;
+
     public String wxPayWay( UserConsumeNew consumeNew, int payType ) throws Exception {
 	SubQrPayParams subQrPayParams = new SubQrPayParams();
 	subQrPayParams.setTotalFee( consumeNew.getDiscountAfterMoney() );
@@ -133,8 +136,8 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	subQrPayParams.setMemberId( consumeNew.getMemberId() );//会员id
 	subQrPayParams.setDesc( "购买会员卡" );//描述
 	subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
-	String returnUrl = PropertiesUtil.getWebHome() + "/phoneOrder/79B4DE7C/orderList.do";
-	String sucessUrl = PropertiesUtil.getWebHome() + "/memberPhone/member/buyMemberCard.do";
+	String returnUrl = PropertiesUtil.getWebHome() + "/memberPhone/cardPhone/findMember.do";
+	String sucessUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/paySuccess.do";
 	subQrPayParams.setReturnUrl( returnUrl );
 	subQrPayParams.setNotifyUrl( sucessUrl );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
 	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
@@ -300,11 +303,6 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		memberMapper.updateById( memberEntity1 );
 
 		Integer payType = CommonUtil.toInteger( params.get( "payType" ) );
-		if ( payType == 0 ) {
-		    payType = 2;
-		} else if ( payType == 1 ) {
-		    payType = 1;
-		}
 		String url = wxPayWay( uc, payType );
 		throw new BusinessException( ResponseMemberEnums.PLEASE_BUY_CARD.getCode(), url );
 	    }
@@ -408,6 +406,18 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 	    MemberEntity memberEntity = memberEntityDAO.selectById( member.getId() );
 	    map.put( "member", memberEntity );
+
+	    if(CommonUtil.isEmpty( memberEntity.getMcId() )){
+		throw new BusinessException( ResponseMemberEnums.PLEASE_GET_CARD );
+	    }
+	    if(CommonUtil.isEmpty( memberEntity.getPhone() )){
+		throw new BusinessException( ResponseMemberEnums.PLEASE_BINDING_PHONE );
+	    }
+
+	    MemberCard cardEntity=memberCardDAO.selectById( memberEntity.getMcId() );
+	    if(cardEntity.getIsChecked()==0 || cardEntity.getCardStatus()==1){
+		throw new BusinessException( ResponseMemberEnums.CARD_STATUS );
+	    }
 
 	    MemberFind memberfind = memberFindDAO.findByQianDao( member.getBusid() );
 	    map.put( "qindaoJifen", memberfind.getIntegral() );
