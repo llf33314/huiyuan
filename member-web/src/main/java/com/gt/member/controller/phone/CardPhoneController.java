@@ -59,8 +59,9 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/findLingquData", method = RequestMethod.GET )
-    public ServerResponse findLingquData( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+    public ServerResponse findLingquData( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
+	    Map< String,Object > params=JSON.toJavaObject( JSON.parseObject( json ),Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    Member member = SessionUtils.getLoginMember( request, busId );
 	    if ( CommonUtil.isEmpty( member ) ) {
@@ -84,8 +85,9 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/linquMemberCard", method = RequestMethod.GET )
-    public ServerResponse linquMemberCard( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+    public ServerResponse linquMemberCard( HttpServletRequest request, HttpServletResponse response,@RequestParam String json ) {
 	try {
+	    Map< String,Object > params=JSON.toJavaObject( JSON.parseObject( json ),Map.class );
 	    memberCardPhoneService.linquMemberCard( params );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
@@ -96,8 +98,9 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "购买会员卡支付回调", notes = "购买会员卡支付回调" )
     @ResponseBody
     @RequestMapping( value = "/buyMemberCard", method = RequestMethod.GET )
-    public ServerResponse buyMemberCard( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+    public ServerResponse buyMemberCard( HttpServletRequest request, HttpServletResponse response,@RequestParam String json ) {
 	try {
+	    Map< String,Object > params=JSON.toJavaObject( JSON.parseObject( json ),Map.class );
 	    memberCardPhoneService.buyMemberCard( params );
 	    return ServerResponse.createBySuccess();
 	} catch ( Exception e ) {
@@ -108,16 +111,10 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "查询会员卡信息", notes = "查询会员卡信息" )
     @ResponseBody
     @RequestMapping( value = "/findMember", method = RequestMethod.GET )
-    public ServerResponse findMember( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+    public ServerResponse findMember( HttpServletRequest request, HttpServletResponse response,@RequestParam String json) {
 	try {
+	    Map< String,Object > params=JSON.toJavaObject( JSON.parseObject( json ),Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
-	    Member member = SessionUtils.getLoginMember( request, busId );
-	    if ( CommonUtil.isEmpty( member ) ) {
-		String url = authorizeMember( request, response, params );
-		if ( CommonUtil.isNotEmpty( url ) ) {
-		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), url );
-		}
-	    }
 	    Map< String,Object > map = memberCardPhoneService.findMember( request, busId );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( Exception e ) {
@@ -128,8 +125,17 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "查询会员权益", notes = "查询会员权益" )
     @ResponseBody
     @RequestMapping( value = "/findMemberEquities", method = RequestMethod.GET )
-    public ServerResponse findMemberEquities( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
-	return null;
+    public ServerResponse findMemberEquities( HttpServletRequest request, HttpServletResponse response, @RequestParam String json) {
+	try {
+	    Map< String,Object > params=JSON.toJavaObject( JSON.parseObject( json ),Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    Map< String,Object > map = memberCardPhoneService.findMemberEquities( member );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+
     }
 
 
@@ -139,8 +145,9 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 
     @ResponseBody
     @RequestMapping( value = "/findCardrecordNew", method = RequestMethod.GET )
-    public ServerResponse findCardrecordNew( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+    public ServerResponse findCardrecordNew( HttpServletRequest request, HttpServletResponse response,@RequestParam String json ) {
 	try {
+	    Map< String,Object > params=JSON.toJavaObject( JSON.parseObject( json ),Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    Member member = SessionUtils.getLoginMember( request, busId );
 	    Map< String,Object > map = memberCardPhoneService.findCardrecordNew( params, member.getId(), 4 );
@@ -153,8 +160,9 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "查询会员积分记录", notes = "查询会员积分记录" )
     @ResponseBody
     @RequestMapping( value = "/findCardrecordNewJifen", method = RequestMethod.GET )
-    public ServerResponse findCardrecordNewJifen( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+    public ServerResponse findCardrecordNewJifen( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
+	    Map< String,Object > params=JSON.toJavaObject( JSON.parseObject( json ),Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    Member member = SessionUtils.getLoginMember( request, busId );
 	    Map< String,Object > map = memberCardPhoneService.findCardrecordNew( params, member.getId(), 2 );
@@ -169,8 +177,9 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "查询会员粉币记录", notes = "查询会员粉币记录" )
     @ResponseBody
     @RequestMapping( value = "/findCardrecordNewFenbi", method = RequestMethod.GET )
-    public ServerResponse findCardrecordNewFenbi( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+    public ServerResponse findCardrecordNewFenbi( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
+	    Map< String,Object > params=JSON.toJavaObject( JSON.parseObject( json ),Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    Member member = SessionUtils.getLoginMember( request, busId );
 	    Map< String,Object > map = memberCardPhoneService.findCardrecordNew( params, member.getId(), 3 );
@@ -184,8 +193,9 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "查询会员流量记录", notes = "查询会员流量记录" )
     @ResponseBody
     @RequestMapping( value = "/findCardrecordNewFlow", method = RequestMethod.GET )
-    public ServerResponse findCardrecordNewFlow( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+    public ServerResponse findCardrecordNewFlow( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
+	    Map< String,Object > params=JSON.toJavaObject( JSON.parseObject( json ),Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    Member member = SessionUtils.getLoginMember( request, busId );
 	    Map< String,Object > map = memberCardPhoneService.findCardrecordNew( params, member.getId(), 4 );
@@ -199,8 +209,9 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "查询商家流量信息", notes = "查询商家流量信息" )
     @ResponseBody
     @RequestMapping( value = "/findBusUserFlow", method = RequestMethod.GET )
-    public ServerResponse findBusUserFlow(HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params){
+    public ServerResponse findBusUserFlow(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
 	try {
+	    Map< String,Object > params=JSON.toJavaObject( JSON.parseObject( json ),Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    List<BusFlow> busFlows = memberCardPhoneService.findBusUserFlow(busId);
 	    return ServerResponse.createBySuccess( busFlows );
@@ -212,13 +223,16 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "流量兑换", notes = "流量兑换" )
     @ResponseBody
     @RequestMapping( value = "/changeFlow", method = RequestMethod.POST )
-    public ServerResponse changeFlow(HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params){
+    public ServerResponse changeFlow(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
 	try {
+	    Map< String,Object > params=JSON.toJavaObject( JSON.parseObject( json ),Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    Member member=SessionUtils.getLoginMember( request,busId );
 	    memberCardPhoneService.changeFlow(params,member.getId());
 	    return ServerResponse.createBySuccess(  );
-	} catch ( Exception e ) {
+	}catch ( BusinessException e){
+	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	}catch ( Exception e ) {
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
@@ -226,10 +240,36 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 
     @ApiOperation( value = "查询商家设置会员卡充值信息", notes = "查询商家设置会员卡充值信息" )
     @ResponseBody
-    @RequestMapping( value = "/findRecharge", method = RequestMethod.GET )
-    public ServerResponse findRecharge(HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params){
-	return null;
+    @RequestMapping( value = "/findRecharge", method = RequestMethod.POST )
+    public ServerResponse findRecharge(HttpServletRequest request, HttpServletResponse response,@RequestParam String json){
+
+	try {
+	    Map< String,Object > params=JSON.toJavaObject( JSON.parseObject( json ),Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member=SessionUtils.getLoginMember( request,busId );
+	    memberCardPhoneService.findRecharge(json,busId,member.getId());
+	    return ServerResponse.createBySuccess(  );
+	}catch ( BusinessException e){
+	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	}
     }
+
+    @ApiOperation( value = "会员卡充值", notes = "会员卡充值" )
+    @ResponseBody
+    @RequestMapping( value = "/rechargeMemberCard", method = RequestMethod.POST )
+    public ServerResponse rechargeMemberCard(HttpServletRequest request, HttpServletResponse response,@RequestParam String json){
+	try {
+	    Map< String,Object > params=JSON.toJavaObject( JSON.parseObject( json ),Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member=SessionUtils.getLoginMember( request,busId );
+	    String url= memberCardPhoneService.rechargeMemberCard(json,busId,member.getId());
+	    return ServerResponse.createBySuccess( url );
+	}catch ( BusinessException e){
+	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	}
+
+    }
+
 
 
 

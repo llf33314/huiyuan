@@ -1,15 +1,13 @@
 package com.gt.member.service.member.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.KeysUtil;
 import com.gt.api.util.RequestUtils;
 import com.gt.api.util.SessionUtils;
-import com.gt.common.entity.AlipayUser;
-import com.gt.common.entity.BusFlow;
-import com.gt.common.entity.BusUserEntity;
-import com.gt.common.entity.WxPublicUsersEntity;
+import com.gt.common.entity.*;
 import com.gt.member.dao.*;
 import com.gt.member.dao.common.*;
 import com.gt.member.dto.ServerResponse;
@@ -26,6 +24,7 @@ import com.gt.member.util.DateTimeKit;
 import com.gt.member.util.PropertiesUtil;
 import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
 import com.gt.util.entity.param.pay.SubQrPayParams;
+import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.ibatis.builder.BuilderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +34,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 手机端会员卡
@@ -113,6 +109,18 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
     @Autowired
     private RequestService requestService;
+
+    @Autowired
+    private MemberRechargegiveDAO memberRechargegiveDAO;
+
+    @Autowired
+    private MemberRechargegiveAssistantDAO memberRechargegiveAssistantDAO;
+
+    @Autowired
+    private MemberGradetypeAssistantDAO memberGradetypeAssistantDAO;
+
+    @Autowired
+    private WxShopDAO wxShopDAO;
 
     public String wxPayWay( UserConsumeNew consumeNew, int payType ) throws Exception {
 	SubQrPayParams subQrPayParams = new SubQrPayParams();
@@ -541,5 +549,150 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
         MemberCard memberCard=cardMapper.selectById( memberEntity.getMcId() );
       MemberGiverule memberGiverule=  memberGiveruleDAO.selectById( memberCard.getGrId() );
 	return  null;
+    }
+
+
+    /**
+     * 会员权益
+     * @param member
+     * @return
+     */
+    public Map<String,Object> findMemberEquities(Member member) throws BusinessException{
+	try {
+	    Map<String,Object> map=new HashMap<>(  );
+	    MemberEntity memberEntity = memberMapper.selectById(member.getId());
+	    MemberCard card = cardMapper.selectById(member.getMcId());
+	    if (CommonUtil.isNotEmpty(card)) {
+		List<Map<String, Object>> giveRules = memberGiveruleDAO.findBybusIdAndCtId1(member.getBusid(), card.getCtId());
+		map.put("giveRules", giveRules);
+
+		List<Map<String, Object>> recharges = memberRechargegiveDAO.findBybusId(member.getBusid(), card.getCtId());
+		map.put("recharges", recharges);
+	    }
+	    return map;
+	}
+	catch (Exception e) {
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+
+
+    public Map<String,Object> findRecharge(String json,Integer busId,Integer memberId)throws  BusinessException {
+	try {
+	    JSONObject jsonObject = JSON.parseObject( json );
+	    Map< String,Object > map = new HashMap<>();
+	    MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
+	    MemberCard memberCard = cardMapper.selectById( memberEntity.getMcId() );
+	    MemberDate memberDate = memberCommonService.findMemeberDate( busId, memberCard.getCtId() );
+	    Integer chongzhiCtId = CommonUtil.toInteger( jsonObject.get( "chongzhiCtId" ) );
+
+	    if ( memberCard.getCtId() != 4 && memberCard.getCtId() == chongzhiCtId ) {
+		if ( CommonUtil.isNotEmpty( memberDate ) ) {
+		    List< MemberRechargegive > recharges = memberRechargegiveDAO.findBybusIdAndGrId( busId, memberCard.getGrId(), 1 );
+		    map.put( "recharges", recharges );
+		    map.put( "cardDate", "1" );
+		} else {
+		    List< MemberRechargegive > recharges = memberRechargegiveDAO.findBybusIdAndGrId( busId, memberCard.getGrId(), 0 );
+		    map.put( "recharges", recharges );
+		    map.put( "cardDate", "0" );
+		}
+	    }
+	    if ( memberCard.getCtId() == 4 && memberCard.getCtId() == chongzhiCtId ) {
+		//时效卡
+		List< Map< String,Object > > xiaoshikaRecharges = memberGiveruleDAO.findByBusIdAndCtId( busId, 4 );
+		map.put( "xiaoshikaRecharges", xiaoshikaRecharges );
+	    }
+
+	    //查询会员模板是否开通副卡
+	    MemberGradetype gradetype = memberGradetypeDAO.selectById( memberCard.getGtId() );
+	    if ( gradetype.getAssistantCard() == 1 ) {
+		//卡通副卡
+		MemberGradetypeAssistant memberGradetypeAssistant = memberGradetypeAssistantDAO.findAssistantBygtIdAndFuctId( busId, memberCard.getGtId(), chongzhiCtId );
+		if ( chongzhiCtId == 4 ) {
+		    //副卡时效卡
+		    List< Map< String,Object > > rechargegiveAssistant = memberRechargegiveAssistantDAO.findByAssistantId( busId, memberGradetypeAssistant.getId() );
+		    map.put( "shixiaokarechargegive", rechargegiveAssistant );
+		}
+
+		if ( chongzhiCtId == 5 ) {
+		    //副卡次卡
+		    List< Map< String,Object > > rechargegiveAssistant = memberRechargegiveAssistantDAO.findByAssistantId( busId, memberGradetypeAssistant.getId() );
+		    map.put( "cikakarechargegive", rechargegiveAssistant );
+		}
+	    }
+	    return map;
+	}catch ( Exception e ){
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+
+    }
+
+
+    public String  rechargeMemberCard(String json,Integer busId,Integer memberId)throws  BusinessException{
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+
+	    Integer ctId = CommonUtil.toInteger( params.get( "ctId" ) );  //充值选择的卡片
+	    Double money = CommonUtil.toDouble( params.get( "money" ) );
+	    String returnUrl = CommonUtil.toString( params.get( "returnUrl" ) );
+	    Integer payWay = CommonUtil.toInteger( params.get( "payWay" ) );
+	    MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
+	    MemberCard card = cardMapper.selectById( memberEntity.getMcId() );
+	    if ( CommonUtil.isEmpty( card ) ) {
+		throw new BusinessException( ResponseMemberEnums.MEMBER_NOT_CARD );
+	    }
+
+	    // 获取当前登录人所属门店
+	    Integer shopId = 0;
+	    WxShop wxShop = wxShopDAO.selectMainShopByBusId( busId );
+	    if ( CommonUtil.isNotEmpty( wxShop ) ) {
+		shopId = wxShop.getId();
+	    }
+
+	    // 添加会员记录
+	    UserConsumeNew uc = new UserConsumeNew();
+	    uc.setBusId( busId );
+	    uc.setMemberId( memberEntity.getId() );
+	    uc.setMcId( card.getMcId() );
+	    uc.setCtId( card.getCtId() );
+	    uc.setGtId( card.getGtId() );
+	    uc.setRecordType( 1 );
+	    uc.setUcType( 7 );
+	    uc.setTotalMoney( money );
+	    uc.setDiscountAfterMoney( money );
+	    uc.setCreateDate( new Date() );
+	    uc.setPayStatus( 0 );
+	    uc.setIschongzhi( 1 );
+	    uc.setFukaCtId( ctId );
+
+
+	    String orderCode = CommonUtil.getMEOrderCode();
+	    uc.setOrderCode( orderCode );
+	    userConsumeNewDAO.insert( uc );
+
+	    //微信和支付支付
+	    SubQrPayParams sub = new SubQrPayParams();
+	    sub.setTotalFee( uc.getDiscountAfterMoney() );
+	    sub.setModel( 2 );
+	    sub.setBusId( busId );
+	    sub.setAppidType( 0 );
+	    sub.setOrderNum( uc.getOrderCode() );
+	    sub.setMemberId( uc.getMemberId() );
+	    sub.setDesc( "会员卡充值" );
+	    sub.setIsreturn( 1 );
+	    sub.setReturnUrl( returnUrl );
+	    String notifyUrl = PropertiesUtil.getWebHome() + "memberNodoInterceptor/memberNotDo/paySuccess";
+	    sub.setNotifyUrl( notifyUrl );
+	    sub.setIsSendMessage( 0 );
+	    sub.setPayWay( payWay );
+	    String url = requestService.payApi( sub );
+	    return url;
+	}catch ( BusinessException e ){
+	    throw  e;
+	}catch(Exception e){
+	    LOG.error( "充值调用支付异常",e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
     }
 }

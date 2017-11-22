@@ -21,6 +21,9 @@ public interface MemberRechargegiveDAO extends BaseMapper<MemberRechargegive> {
 
     int deleteBybusIdAndGrid(@Param("busId")Integer busId,@Param("grId")Integer grId);
 
+    List<Map<String,Object>> findBybusIdAndGrId1(@Param("busId")Integer busId, @Param("grId")Integer grId, @Param("isDate")Integer isDate);
+
+
     List<MemberRechargegive> findBybusIdAndGrId(@Param("busId")Integer busId, @Param("grId")Integer grId, @Param("isDate")Integer isDate);
 
 }

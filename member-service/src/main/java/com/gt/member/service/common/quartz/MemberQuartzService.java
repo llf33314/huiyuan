@@ -53,5 +53,7 @@ public interface MemberQuartzService {
 	 */
 	public void birthdaySms();
 
+
+
 	
 }

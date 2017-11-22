@@ -4,12 +4,15 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.HttpClienUtils;
+import com.gt.api.util.KeysUtil;
 import com.gt.api.util.RequestUtils;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
+import com.gt.member.util.EncryptUtil;
 import com.gt.member.util.PropertiesUtil;
 import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
+import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
@@ -42,6 +45,8 @@ public class RequestServiceImpl implements RequestService {
 
     //查询门店信息
     private final static String WXSHOP_BYBUSID= "8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/queryWxShopByBusId.do";
+
+    private final static String PAY_API="/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do";
 
 
     public String codeConsume(String cardId,String code,Integer busId) throws Exception{
@@ -129,8 +134,17 @@ public class RequestServiceImpl implements RequestService {
 	}else{
 	    throw new BusinessException( ResponseMemberEnums.QUERY_SHOP_BUSID );
 	}
+    }
 
 
+    /**
+     * 微信支付包 多粉钱包支付
+     * @return
+     */
+    public String payApi(SubQrPayParams subQrPayParams)throws  Exception{
+	String obj=KeysUtil.getEncString(JSON.toJSONString( subQrPayParams ));
+	String url=PropertiesUtil.getWxmp_home()+PAY_API;
+	return url;
     }
 
 

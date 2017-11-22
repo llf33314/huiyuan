@@ -484,4 +484,10 @@ public interface MemberApiService {
      */
     public void smsNotice(Map<String,Object> params) throws  BusinessException;
 
+    /**
+     * 支付成功回调
+     * @param params
+     */
+    public void paySuccess(Map<String,Object> params)throws BusinessException;
+
 }

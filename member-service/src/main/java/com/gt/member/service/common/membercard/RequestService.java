@@ -3,6 +3,7 @@ package com.gt.member.service.common.membercard;
 import com.gt.api.util.RequestUtils;
 import com.gt.member.exception.BusinessException;
 import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
+import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
@@ -64,4 +65,10 @@ public interface RequestService {
      */
     public List<WsWxShopInfoExtend > findShopsByBusId(Integer busId) throws BusinessException;
 
+
+    /**
+     * 微信支付包 多粉钱包支付
+     * @return
+     */
+    public String payApi(SubQrPayParams subQrPayParams)throws  Exception;
 }

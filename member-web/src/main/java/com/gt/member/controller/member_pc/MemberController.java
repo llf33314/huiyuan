@@ -76,6 +76,23 @@ public class MemberController {
 	}
     }
 
+
+    @ApiOperation( value = "查询商家会员卡等级类型", notes = "查询商家会员卡等级类型" )
+    @ResponseBody
+    @RequestMapping( value = "/findGradeType", method = RequestMethod.GET )
+    public ServerResponse findGradeType(HttpServletRequest request, HttpServletResponse response,@RequestParam Integer ctId){
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    List<Map<String,Object>> listMap = memberCardService.findGradeTypeByCtId(busId,ctId );
+	    return ServerResponse.createBySuccess( listMap );
+	} catch ( Exception e ) {
+	    LOG.error( "查询商家发布的会员类型异常：", e );
+	    e.printStackTrace();
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), "查询会员列表异常" );
+	}
+    }
+
+
     @ApiOperation( value = "查询会员列表", notes = "查询会员列表" )
     @ResponseBody
     @RequestMapping( value = "/findMember", method = RequestMethod.GET )
@@ -324,11 +341,11 @@ public class MemberController {
     @ResponseBody
     @RequestMapping( value = "/exportMember", method = RequestMethod.GET )
     public void exportMember(HttpServletRequest request,
-		    HttpServletResponse response, String json){
+		    HttpServletResponse response, @RequestParam Integer ctId,@RequestParam Integer gtId){
 	Integer busId = SessionUtils.getPidBusId( request );
 
 	List<Map<String, Object>> listMap = memberCardService.findMember(busId,
-			json);
+			ctId,gtId);
 	try {
 	    SXSSFWorkbook wb = exportExcel.todo((byte) 1, listMap);
 	    response.reset();

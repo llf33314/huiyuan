@@ -229,4 +229,6 @@ public interface MemberGradetypeDAO extends BaseMapper<MemberGradetype> {
 
     List<MemberGradetype> findMemberGradeTypeByBusIdAndCtId(@Param( "busId" )Integer busId,@Param( "ctId" )Integer ctId);
 
+
+    List<Map<String,Object>> findGradeTypeByCtId(@Param( "busId" )Integer busId,@Param( "ctId" )Integer ctId);
 }

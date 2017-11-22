@@ -326,4 +326,10 @@
 
 	</select>
 
+
+	<select id="findGradeTypeByCtId" resultType="Map">
+		select gt_id,gt_grade_name from t_member_gradetype where busId=#{busId} and ct_id=#{ctId}
+
+	</select>
+
 </mapper>

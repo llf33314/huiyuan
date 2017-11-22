@@ -1,5 +1,6 @@
 package com.gt.member.service.member;
 
+import com.gt.api.bean.session.Member;
 import com.gt.common.entity.BusFlow;
 import com.gt.member.exception.BusinessException;
 
@@ -63,4 +64,31 @@ public interface MemberCardPhoneService {
      * @return
      */
     public List<Map<String,Object>> findRecharge(Map<String,Object> params) throws BusinessException;
+
+    /**
+     * 会员权益
+     * @param member
+     * @return
+     */
+    public Map<String,Object> findMemberEquities(Member member) throws BusinessException;
+
+    /**
+     * 查询会员卡充值信息
+     * @param json
+     * @param busId
+     * @param memberId
+     * @return
+     * @throws BusinessException
+     */
+    public Map<String,Object> findRecharge(String json,Integer busId,Integer memberId)throws  BusinessException;
+
+    /**
+     * 会员卡充值
+     * @param json
+     * @param busId
+     * @param memberId
+     * @return
+     * @throws BusinessException
+     */
+    public String rechargeMemberCard(String json,Integer busId,Integer memberId)throws  BusinessException;
 }

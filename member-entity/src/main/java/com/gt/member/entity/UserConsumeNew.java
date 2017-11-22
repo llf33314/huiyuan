@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author pengjiangli
- * @since 2017-10-19
+ * @since 2017-11-22
  */
 @Data
 @Accessors(chain = true)
@@ -78,7 +78,7 @@ public class UserConsumeNew extends Model<UserConsumeNew> {
      */
 	private Double fenbi;
     /**
-     * 消费次数
+     * 次数
      */
 	private Integer uccount;
     /**
@@ -139,6 +139,11 @@ public class UserConsumeNew extends Model<UserConsumeNew> {
 	@TableField("isendDate")
 	private Date isendDate;
     /**
+     * 退款金额
+     */
+	@TableField("refundMoney")
+	private Double refundMoney;
+    /**
      * 订单号
      */
 	@TableField("orderCode")
@@ -154,7 +159,7 @@ public class UserConsumeNew extends Model<UserConsumeNew> {
 	@TableField("createDate")
 	private Date createDate;
     /**
-     * 支付状态 0未支付 1已支付 2支付失败 3退单
+     * 支付状态 0未支付 1已支付 2支付失败 3退单 4部分退单
      */
 	@TableField("payStatus")
 	private Integer payStatus;
@@ -163,25 +168,13 @@ public class UserConsumeNew extends Model<UserConsumeNew> {
      */
 	@TableField("balanceCount")
 	private Integer balanceCount;
-
     /**
-     * 剩余流量
-     */
-    	@TableField("flowbalance")
-	private Integer flowbalance;
-
-    /**
-     * 退款金额
-     */
-	@TableField("refundMoney")
-	private Double refundMoney;
-    /**
-     * 退粉币值
+     * 退粉币
      */
 	@TableField("refundFenbi")
 	private Double refundFenbi;
     /**
-     * 退积分值
+     * 退积分
      */
 	@TableField("refundJifen")
 	private Integer refundJifen;
@@ -190,6 +183,15 @@ public class UserConsumeNew extends Model<UserConsumeNew> {
      */
 	@TableField("refundDate")
 	private Date refundDate;
+    /**
+     * 流量剩余
+     */
+	private Integer flowbalance;
+    /**
+     * 副卡id
+     */
+	@TableField("fukaCtId")
+	private Integer fukaCtId;
 
 
 	@Override
@@ -224,15 +226,17 @@ public class UserConsumeNew extends Model<UserConsumeNew> {
 			", isend=" + isend +
 			", ischongzhi=" + ischongzhi +
 			", isendDate=" + isendDate +
+			", refundMoney=" + refundMoney +
 			", orderCode=" + orderCode +
 			", shopId=" + shopId +
 			", createDate=" + createDate +
 			", payStatus=" + payStatus +
 			", balanceCount=" + balanceCount +
-			", refundMoney=" + refundMoney +
 			", refundFenbi=" + refundFenbi +
 			", refundJifen=" + refundJifen +
 			", refundDate=" + refundDate +
+			", flowbalance=" + flowbalance +
+			", fukaCtId=" + fukaCtId +
 			"}";
 	}
 }

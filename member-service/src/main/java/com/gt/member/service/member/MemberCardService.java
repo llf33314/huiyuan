@@ -214,7 +214,7 @@ public interface MemberCardService {
 
     public SXSSFWorkbook errorMember( List< ErrorWorkbook > wbs );
 
-    public List< Map< String,Object > > findMember( Integer busId, String json );
+    public List< Map< String,Object > > findMember( Integer busId,  Integer ctId, Integer gtId );
 
     /**
      * 查询会员卡信息
@@ -397,4 +397,12 @@ public interface MemberCardService {
      * @return
      */
     public List<Map<String,Object>> findGradeTypeByBusId(Integer busId);
+
+
+    /**
+     * 查询商家发布的会员卡类型等级
+     * @param busId
+     * @return
+     */
+    public List<Map<String,Object>> findGradeTypeByCtId(Integer busId,Integer ctId);
 }

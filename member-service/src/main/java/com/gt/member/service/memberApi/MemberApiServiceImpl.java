@@ -318,9 +318,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 	MemberDate memberdate = memberCommonService.findMemeberDate( busId, ctId );
 	List< Map< String,Object > > rechargeGives = null;
 	if ( CommonUtil.isNotEmpty( memberdate ) ) {
-	    rechargeGives = rechargeGiveMapper.findBybusIdAndGrId( busId, grId, 1 );
+	    rechargeGives = rechargeGiveMapper.findBybusIdAndGrId1( busId, grId, 1 );
 	} else {
-	    rechargeGives = rechargeGiveMapper.findBybusIdAndGrId( busId, grId, 0 );
+	    rechargeGives = rechargeGiveMapper.findBybusIdAndGrId1( busId, grId, 0 );
 	}
 	if ( rechargeGives == null || rechargeGives.size() == 0 ) {
 	    return 0;
@@ -679,9 +679,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 	// 判断会员日
 	MemberDate memberDate = memberCommonService.findMemeberDate( busId, card.getCtId() );
 	if ( CommonUtil.isNotEmpty( memberDate ) ) {
-	    recharges = rechargeGiveMapper.findBybusIdAndGrId( busId, card.getGrId(), 1 );
+	    recharges = rechargeGiveMapper.findBybusIdAndGrId1( busId, card.getGrId(), 1 );
 	} else {
-	    recharges = rechargeGiveMapper.findBybusIdAndGrId( busId, card.getGrId(), 0 );
+	    recharges = rechargeGiveMapper.findBybusIdAndGrId1( busId, card.getGrId(), 0 );
 	}
 	return recharges;
     }
@@ -1842,11 +1842,11 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 		MemberDate memberDate = memberCommonService.findMemeberDate( memberEntity.getBusId(), card.getCtId() );
 		if ( CommonUtil.isNotEmpty( memberDate ) ) {
-		    List< Map< String,Object > > recharges = rechargeGiveMapper.findBybusIdAndGrId( busId, card.getGrId(), 1 );
+		    List< Map< String,Object > > recharges = rechargeGiveMapper.findBybusIdAndGrId1( busId, card.getGrId(), 1 );
 		    map.put( "recharges", recharges );
 		    map.put( "cardDate", "1" );
 		} else {
-		    List< Map< String,Object > > recharges = rechargeGiveMapper.findBybusIdAndGrId( busId, card.getGrId(), 0 );
+		    List< Map< String,Object > > recharges = rechargeGiveMapper.findBybusIdAndGrId1( busId, card.getGrId(), 0 );
 		    map.put( "recharges", recharges );
 		    map.put( "cardDate", "0" );
 		}
@@ -2797,6 +2797,168 @@ public class MemberApiServiceImpl implements MemberApiService {
 
     }
 
+    public void paySuccess(Map<String,Object> params)throws BusinessException {
+	try {
+	    String orderCode = CommonUtil.toString( params.get( "out_trade_no" ) );
+	    UserConsumeNew uc = userConsumeNewDAO.findOneByCode( orderCode );
+	    if ( CommonUtil.isEmpty( uc ) ) {
+		throw new BusinessException( ResponseMemberEnums.NOT_ORDER );
+	    }
+	    Integer ctId = uc.getFukaCtId();
+	    MemberCard card = memberCardDAO.selectById( uc.getMcId() );
+	    Double money = uc.getDiscountAfterMoney();
+	    Integer busId = uc.getBusId();
+	    Integer memberId = uc.getMemberId();
 
+	    UserConsumeNew uc1 = new UserConsumeNew();
+	    uc1.setId( uc.getId() );
+	    Integer numberCount = 0;
+	    //判断是否主卡充值 还是 副卡充值
+	    if ( uc.getCtId() == ctId ) {
+		//主卡充值 赠送数量
+		if ( ctId == 4 ) {
+		    MemberCard newCard = new MemberCard();
+		    newCard.setMcId( card.getMcId() );
 
+		    //时效卡
+		    List< Integer > dateCount = memberCommonService.findTimeCard( money, busId );
+		    Date expireDate = card.getExpireDate();
+		    if ( expireDate == null ) {
+			newCard.setExpireDate( DateTimeKit.addMonths( dateCount.get( 0 ) ) );
+		    } else {
+			if ( DateTimeKit.laterThanNow( card.getExpireDate() ) ) {
+			    newCard.setExpireDate( DateTimeKit.addMonths( expireDate, dateCount.get( 0 ) ) );
+			} else {
+			    newCard.setExpireDate( DateTimeKit.addMonths( new Date(), dateCount.get( 0 ) ) );
+			}
+		    }
+		    // 会员日延期多少天
+		    if ( dateCount.size() > 1 ) {
+			newCard.setExpireDate( DateTimeKit.addDate( newCard.getExpireDate(), dateCount.get( 1 ) ) );
+		    }
+		    memberCardDAO.updateById( newCard );
+		    memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, 0.0, uc.getOrderCode(), 0 );
+
+		} else if ( ctId == 3 ) {
+		    MemberRechargegive rechargegive = memberCommonService.findRechargegive( money, card.getGrId(), busId, card.getCtId() );
+		    //储值卡充值
+		    MemberCard newCard = new MemberCard();
+		    newCard.setMcId( card.getMcId() );
+
+		    if ( CommonUtil.isNotEmpty( rechargegive ) ) {
+			money = money + rechargegive.getGiveCount(); //充值+赠送金额
+		    }
+		    Double balance = money + card.getMoney();
+		    newCard.setMoney( balance );
+		    memberCardDAO.updateById( newCard );
+
+		    memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, balance, uc.getOrderCode(), 0 );
+
+		    uc1.setBalance( balance );
+
+		} else if ( ctId == 5 ) {
+		    MemberRechargegive rechargegive = memberCommonService.findRechargegive( money, card.getGrId(), busId, card.getCtId() );
+		    //次卡充值
+		    //储值卡充值
+		    MemberCard newCard = new MemberCard();
+		    newCard.setMcId( card.getMcId() );
+		    if ( CommonUtil.isEmpty( rechargegive ) ) {
+			throw new BusinessException( ResponseMemberEnums.NOT_RECHARGE );
+		    }
+		    numberCount = rechargegive.getNumber();
+		    Integer frequency = card.getFrequency();
+		    frequency = frequency + rechargegive.getGiveCount() + rechargegive.getNumber(); //充值+赠送金额
+		    numberCount = rechargegive.getNumber() + rechargegive.getGiveCount();
+		    newCard.setFrequency( frequency );
+		    memberCardDAO.updateById( newCard );
+		    uc1.setBalanceCount( frequency );
+
+		    memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, frequency.doubleValue(), uc.getOrderCode(), 0 );
+		}
+
+	    } else {
+		//副卡充值
+		MemberRechargegiveAssistant rechargegiveAssistant = memberCommonService.findAssistantrechargegive( money, card.getGtId(), busId, ctId );
+		if ( CommonUtil.isEmpty( rechargegiveAssistant ) ) {
+		    throw new BusinessException( ResponseMemberEnums.NOT_RECHARGE );
+		}
+		//次卡充值 赠送数量
+		if ( ctId == 4 ) {
+		    MemberCard newCard = new MemberCard();
+		    newCard.setMcId( card.getMcId() );
+
+		    //时效卡
+		    Date expireDate = card.getExpireDate();
+		    if ( expireDate == null ) {
+			newCard.setExpireDate( DateTimeKit.addMonths( rechargegiveAssistant.getValidDate() ) );
+		    } else {
+			if ( DateTimeKit.laterThanNow( card.getExpireDate() ) ) {
+			    newCard.setExpireDate( DateTimeKit.addMonths( expireDate, rechargegiveAssistant.getValidDate() ) );
+			} else {
+			    newCard.setExpireDate( DateTimeKit.addMonths( new Date(), rechargegiveAssistant.getValidDate() ) );
+			}
+		    }
+		    memberCardDAO.updateById( newCard );
+		} else if ( ctId == 3 ) {
+		    //储值卡充值
+		    MemberCard newCard = new MemberCard();
+		    newCard.setMcId( card.getMcId() );
+		    money = money + rechargegiveAssistant.getGiveCount(); //充值+赠送金额
+		    Double balance = money + card.getMoney();
+		    newCard.setMoney( balance );
+		    memberCardDAO.updateById( newCard );
+		    memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, balance, uc.getOrderCode(), 0 );
+		    uc1.setBalance( balance );
+
+		} else if ( ctId == 5 ) {
+		    //次卡充值
+		    //储值卡充值
+		    MemberCard newCard = new MemberCard();
+		    newCard.setMcId( card.getMcId() );
+		    Integer frequency = card.getFrequency();
+
+		    frequency = frequency + rechargegiveAssistant.getGiveCount() + rechargegiveAssistant.getNumber(); //充值+赠送金额
+		    numberCount = rechargegiveAssistant.getNumber() + rechargegiveAssistant.getGiveCount();
+		    newCard.setFrequency( frequency );
+		    memberCardDAO.updateById( newCard );
+		    uc1.setBalanceCount( frequency );
+
+		    memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, frequency.doubleValue(), uc.getOrderCode(), 0 );
+		}
+
+	    }
+
+	    uc1.setPayStatus( 1 );
+	    userConsumeNewDAO.updateById( uc1 );
+	    UserConsumePay userConsumePay = new UserConsumePay();
+	    userConsumePay.setPayMoney( uc.getDiscountAfterMoney() );
+	    userConsumePay.setUcId( uc1.getId() );
+
+	    //支付类型(0:微信，1：支付宝2：多粉钱包),
+	    Integer payType = CommonUtil.toInteger( params.get( "payType" ) );
+	    if ( payType == 0 ) {
+		userConsumePay.setPaymentType( 1 );
+	    } else if ( payType == 1 ) {
+		userConsumePay.setPaymentType( 0 );
+	    } else if ( payType == 2 ) {
+		userConsumePay.setPaymentType( 15 );
+	    }
+
+	    userConsumePayDAO.insert( userConsumePay );
+
+	    MemberEntity member = memberDAO.selectById( uc.getMemberId() );
+	    if ( uc.getCtId() == 3 ) {
+		systemMsgService.sendChuzhiCard( member, money );
+	    } else if ( uc.getCtId() == 4 ) {
+		systemMsgService.sendCikaCard( member, money, numberCount );
+	    }
+
+	    //立即送
+	    memberCommonService.findGiveRule( orderCode );
+	}catch ( BusinessException e ){
+	    throw e;
+	}catch ( Exception e ){
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
 }

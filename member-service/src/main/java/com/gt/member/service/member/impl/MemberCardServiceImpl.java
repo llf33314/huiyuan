@@ -1822,11 +1822,7 @@ public class MemberCardServiceImpl implements MemberCardService {
     }
 
     @Override
-    public List< Map< String,Object > > findMember( Integer busId, String json ) {
-
-	JSONObject jsonObject = JSONObject.parseObject( json );
-	Integer ctId = CommonUtil.toInteger( jsonObject.get( "ctId" ) );
-	Integer gtId = CommonUtil.toInteger( jsonObject.get( "gtId" ) );
+    public List< Map< String,Object > > findMember( Integer busId,  Integer ctId, Integer gtId ) {
 	List< Map< String,Object > > list = memberMapper.findMember( busId, "", ctId, gtId );
 	List< Map< String,Object > > memberList = new ArrayList< Map< String,Object > >();
 	for ( Map< String,Object > map : list ) {
@@ -2858,6 +2854,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    uc.setCreateDate( new Date() );
 	    uc.setPayStatus( 1 );
 	    uc.setIschongzhi( 1 );
+	    uc.setFukaCtId( ctId );
 
 	    Integer numberCount = 0;
 	    //判断是否主卡充值 还是 副卡充值
@@ -2986,6 +2983,13 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    String orderCode = CommonUtil.getMEOrderCode();
 	    uc.setOrderCode( orderCode );
 	    userConsumeNewDAO.insert( uc );
+
+
+	    UserConsumePay userConsumePay=new UserConsumePay();
+	    userConsumePay.setPayMoney( uc.getDiscountAfterMoney() );
+	    userConsumePay.setUcId( uc.getId() );
+	    userConsumePay.setPaymentType( 10 );
+	    userConsumePayDAO.insert( userConsumePay );
 	    //立即送
 	    memberCommonService.findGiveRule( orderCode );
 	}catch ( Exception e ){
@@ -3000,5 +3004,11 @@ public class MemberCardServiceImpl implements MemberCardService {
     public List<Map<String,Object>> findGradeTypeByBusId(Integer busId){
     	return memberGradetypeDAO.findGradeTypeByBusId(  busId);
     }
+
+
+    public List<Map<String,Object>> findGradeTypeByCtId(Integer busId,Integer ctId){
+	return memberGradetypeDAO.findGradeTypeByCtId( busId,ctId );
+    }
+
 
 }
