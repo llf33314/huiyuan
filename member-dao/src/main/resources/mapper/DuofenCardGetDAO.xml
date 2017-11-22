@@ -99,7 +99,7 @@
 		c.reduce_cost, c.discount,  c.color,  c.time_limit,
 		c.type,
 		c.least_cost, c.addUser,
-		c.card_status, c.image,c.location_id_list,
+		c.card_status, c.image,c.location_id_list,c.begin_timestamp as startTime, c.end_timestamp as endTime,
 		c.timeType,g.id as gId, g.code,c.title
 		from t_duofen_card_get g inner join t_duofen_card c on c.id=g.cardId
 		where   g.state=0 and (g.memberId=#{memberId} or g.friendMemberId like '%${memberId}%') GROUP BY c.id
