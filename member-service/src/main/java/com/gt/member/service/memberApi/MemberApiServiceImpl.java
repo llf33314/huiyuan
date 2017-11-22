@@ -809,6 +809,17 @@ public class MemberApiServiceImpl implements MemberApiService {
 		map.put( "memberId", memberEntity.getId() );
 		map.put( "cardId", card.getMcId() );
 
+
+		//查询粉丝等级
+		List<Map<String,Object>> gradeTypes=gradeTypeMapper.findAllBybusId( memberEntity.getBusId(),card.getCtId() );
+		Integer dengji=0;
+		for ( Map<String,Object> gradeType:gradeTypes ){
+		    dengji++;
+		    if(CommonUtil.toInteger( cards.get( 0 ).get( "gt_id" ) ).equals( CommonUtil.toInteger(gradeType.get( "gt_id" )  ) )){
+		        map.put( "dengji",dengji );
+		    }
+		}
+
 		Double fenbiMoeny = memberCommonService.currencyCount( null, memberEntity.getFansCurrency() );
 		map.put( "fenbiMoeny", fenbiMoeny );
 
@@ -2390,6 +2401,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 				banlan.doubleValue(), erpPaySuccess.getOrderCode(), 0 );
 
 	    }
+	    uc.setPayStatus(1);
 	    userConsumeNewDAO.insert( uc );
 
 	    //保存支付记录
