@@ -512,7 +512,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    updateMember.setId( memberId );
 	    Double yueFenbi = m.getFansCurrency() + fenbi;
 	    updateMember.setFansCurrency( yueFenbi );
-	    memberEntityDAO.updateById( m );
+	    memberEntityDAO.updateById( updateMember );
 	} catch ( BusinessException e ) {
 	    LOG.error( "商家赠送粉币", e );
 	    throw new BusinessException( e.getCode(), e.getMessage() );
