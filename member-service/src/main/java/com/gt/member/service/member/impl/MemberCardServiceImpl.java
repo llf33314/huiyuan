@@ -512,22 +512,22 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    memberOption.setBirthOption( CommonUtil.toInteger( jsonObject.get( "birthRadio" ) ) );
 	    memberOption.setCardOption( CommonUtil.toInteger( jsonObject.get( "idNumRadio" ) ) );
 
-	    memberOption.setNameShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "nameCheck" ) ) ).get( 0 ) ) );
-	    memberOption.setSexShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "sexCheck" ) ) ).get( 0 ) ) );
-	    memberOption.setAddrShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "adressCheck1" ) ) ).get( 0 ) ) );
-	    memberOption.setAddrShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "adressCheck" ) ) ).get( 0 ) ) );
-	    memberOption.setAddrDetailShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "adressMoreCheck1" ) ) ).get( 0 ) ) );
-	    memberOption.setAddrDetailShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "adressMoreCheck" ) ) ).get( 0 ) ) );
-	    memberOption.setMailShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "emailCheck1" ) ) ).get( 0 ) ) );
-	    memberOption.setMailShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "emailCheck" ) ) ).get( 0 ) ) );
-	    memberOption.setGetMoneyShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "incomeCheck1" ) ) ).get( 0 ) ) );
-	    memberOption.setGetMoneyShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "incomeCheck" ) ) ).get( 0 ) ) );
-	    memberOption.setBirthShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "birthCheck1" ) ) ).get( 0 ) ) );
-	    memberOption.setBirthShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "birthCheck" ) ) ).get( 0 ) ) );
-	    memberOption.setCardShow1( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "idNumCheck1" ) ) ).get( 0 ) ) );
-	    memberOption.setCardShow( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "idNumCheck" ) ) ).get( 0 ) ) );
+	    memberOption.setNameShow1( jsonObject.getBoolean( "nameCheck" ) ==true?1:0 );
+	    memberOption.setSexShow1( jsonObject.getBoolean( "sexCheck" ) ==true?1:0 );
+	    memberOption.setAddrShow1(jsonObject.getBoolean( "adressCheck1" )==true?1:0 );
+	    memberOption.setAddrShow( jsonObject.getBoolean( "adressCheck" ) ==true?1:0 );
+	    memberOption.setAddrDetailShow1( jsonObject.getBoolean( "adressMoreCheck1" )==true?1:0 );
+	    memberOption.setAddrDetailShow( jsonObject.getBoolean( "adressMoreCheck" )==true?1:0 );
+	    memberOption.setMailShow1( jsonObject.getBoolean( "emailCheck1" )==true?1:0 );
+	    memberOption.setMailShow( jsonObject.getBoolean( "emailCheck" )==true?1:0);
+	    memberOption.setGetMoneyShow1( jsonObject.getBoolean( "incomeCheck1" )==true?1:0);
+	    memberOption.setGetMoneyShow(jsonObject.getBoolean( "incomeCheck" )==true?1:0 );
+	    memberOption.setBirthShow1( jsonObject.getBoolean( "birthCheck1" )==true?1:0);
+	    memberOption.setBirthShow( jsonObject.getBoolean( "birthCheck" ) ==true?1:0 );
+	    memberOption.setCardShow1(jsonObject.getBoolean( "idNumCheck1" ) ==true?1:0 );
+	    memberOption.setCardShow( jsonObject.getBoolean( "idNumCheck" ) ==true?1:0);
 
-	    memberOption.setUploadCard( CommonUtil.toInteger( JSON.parseArray( CommonUtil.toString( jsonObject.get( "idCheck" ) ) ).get( 0 ) ) );
+	    memberOption.setUploadCard( jsonObject.getBoolean( "idCheck" ) ==true?1:0 );
 
 	    memberOption.setBusId( busId );
 	    if ( CommonUtil.isNotEmpty( memberOption.getId() ) ) {
