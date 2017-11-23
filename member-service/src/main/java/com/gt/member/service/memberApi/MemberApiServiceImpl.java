@@ -1700,6 +1700,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    }
 
 		}
+		return memberList;
 
 	    }
 	    return null;
