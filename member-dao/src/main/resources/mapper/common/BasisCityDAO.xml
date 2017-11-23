@@ -20,5 +20,9 @@
 		SELECT id,city_code,city_name FROM basis_city t WHERE city_level=2
 	</select>
 
+	<select id="findBaseisCityByCode" resultType="Map">
+		SELECT * FROM basis_city WHERE city_parent IN (SELECT id FROM basis_city t WHERE city_code=#{cityCode} )
+
+	</select>
 
 </mapper>

@@ -3,6 +3,7 @@ package com.gt.member.dao.common;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.common.entity.BasisCity;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -22,4 +23,6 @@ public interface BasisCityDAO extends BaseMapper<BasisCity > {
      * @return
      */
     List<Map<String,Object>> findBasisCity();
+
+    List<Map<String,Object>> findBaseisCityByCode(@Param( "cityCode" ) String cityCode);
 }

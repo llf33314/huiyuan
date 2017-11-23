@@ -25,12 +25,14 @@
 		<result column="lingquNum" property="lingquNum" />
 		<result column="userNum" property="userNum" />
 		<result column="cardName" property="cardName" />
+		<result column="getMemberId" property="getMemberId" />
+		<result column="isGive" property="isGive" />
 	</resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, memberId, name, phone, ischeck, code, ctId, image, isUser, integral, fenbi, flow, datetime, retext, money, reType,
-         cardId, recommendType, lingquNum, userNum, cardName
+         cardId, recommendType, lingquNum, userNum, cardName,getMemberId,isGive
     </sql>
 
 

@@ -8,6 +8,7 @@ import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.member.dao.*;
+import com.gt.member.dao.common.BasisCityDAO;
 import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.common.WxPublicUsersDAO;
 import com.gt.member.entity.*;
@@ -103,6 +104,9 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
     @Autowired
     private MemberGiveconsumeNewDAO memberGiveconsumeNewDAO;
+
+    @Autowired
+    private BasisCityDAO basisCityDAO;
 
     /**
      * 粉币计算
@@ -1053,6 +1057,11 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    return null;
 	}
 	return null;
+    }
+
+
+    public List<Map<String,Object>> findCityByCityCode(String cityCode){
+	return basisCityDAO.findBaseisCityByCode( cityCode );
     }
 
 }

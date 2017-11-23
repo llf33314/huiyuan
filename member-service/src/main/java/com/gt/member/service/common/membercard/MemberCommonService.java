@@ -181,5 +181,11 @@ public interface MemberCommonService {
      */
     public void findGiveRule(String orderCode);
 
+    /**
+     * 查询省市区信息
+     * @param cityCode
+     * @return
+     */
+    public List<Map<String,Object>> findCityByCityCode(String cityCode);
 
 }

@@ -119,8 +119,8 @@
 		select count(mc_id) from t_member_card where  busId=#{busId} and systemcode=#{systemcode}
 	</select>
 
-	<select id="findBySystemCode" resultType="Map">
-		select * from t_member_card where  busId=#{busId} and systemcode=#{systemcode}
+	<select id="findBySystemCode" resultMap="BaseResultMap">
+		select * from t_member_card where  busId=#{busId} and systemcode=#{systemcode} limit 1
 	</select>
 
 	<select id="findCardByCtIdsAndGtIds" resultType="Map">

@@ -63,7 +63,7 @@ public interface MemberCardDAO extends BaseMapper<MemberCard> {
 
     Integer countBySystemCode(@Param("busId") Integer busId,@Param("systemcode")String systemCode);
 
-    List<Map<String, Object>> findBySystemCode(@Param("busId") Integer busId,@Param("systemcode")String systemCode);
+    MemberCard findBySystemCode(@Param("busId") Integer busId,@Param("systemcode")String systemCode);
 
 
     List<Map<String,Object>> findCardByCtIdsAndGtIds(@Param("publicId") Integer publicId,@Param("ctIds")List<Integer> ctIds,@Param("gtIds")List<Integer> gtIds);

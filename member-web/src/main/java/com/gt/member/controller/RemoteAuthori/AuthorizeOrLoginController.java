@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
 import com.gt.api.bean.session.Member;
+import com.gt.api.util.KeysUtil;
 import com.gt.api.util.SessionUtils;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.member.util.CommonUtil;
@@ -57,7 +58,7 @@ public class AuthorizeOrLoginController {
 	    }
 	}
 	String requestUrl = CommonUtil.toString( map.get( "requestUrl" ) );
-	requestUrl= URLEncoder.encode( requestUrl,"UTF-8" );
+	requestUrl= KeysUtil.getEncString( requestUrl );
 	Map< String,Object > queryMap = new HashMap< String,Object >();
 	queryMap.put( "returnUrl", requestUrl );
 	queryMap.put( "browser", browser );

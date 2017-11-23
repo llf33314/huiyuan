@@ -1,8 +1,9 @@
 package com.gt.member.entity;
 
-import com.baomidou.mybatisplus.annotations.TableId;
-import java.util.Date;
 import com.baomidou.mybatisplus.enums.IdType;
+import java.util.Date;
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableName;
 import java.io.Serializable;
@@ -17,7 +18,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author pengjiangli
- * @since 2017-07-25
+ * @since 2017-11-23
  */
 @Data
 @Accessors(chain = true)
@@ -31,6 +32,7 @@ public class MemberRecommend extends Model<MemberRecommend> {
     /**
      * 推荐人
      */
+	@TableField("memberId")
 	private Integer memberId;
     /**
      * 被推人姓名
@@ -51,6 +53,7 @@ public class MemberRecommend extends Model<MemberRecommend> {
     /**
      * 卡片类型
      */
+	@TableField("ctId")
 	private Integer ctId;
     /**
      * 图片
@@ -59,6 +62,7 @@ public class MemberRecommend extends Model<MemberRecommend> {
     /**
      * 是否使用 0未使用 1使用
      */
+	@TableField("isUser")
 	private Integer isUser;
     /**
      * 赠送积分
@@ -87,27 +91,43 @@ public class MemberRecommend extends Model<MemberRecommend> {
     /**
      * 推荐方式  0推荐码  1二维码推荐 2链接推荐
      */
+	@TableField("reType")
 	private Integer reType;
     /**
      * 用户领取的卡券id（t_duofen_card_get）
      */
+	@TableField("cardId")
 	private Integer cardId;
     /**
      * 推荐内容 0会员卡 1优惠券
      */
+	@TableField("recommendType")
 	private Integer recommendType;
     /**
      * 领取数量
      */
+	@TableField("lingquNum")
 	private Integer lingquNum;
     /**
      * 使用数量
      */
+	@TableField("userNum")
 	private Integer userNum;
     /**
      * 优惠券名称
      */
+	@TableField("cardName")
 	private String cardName;
+    /**
+     * 领取粉丝id
+     */
+	@TableField("getMemberId")
+	private Integer getMemberId;
+    /**
+     * 是否赠送 0未赠送 1已赠送
+     */
+	@TableField("isGive")
+	private Integer isGive;
 
 
 	@Override
@@ -139,6 +159,8 @@ public class MemberRecommend extends Model<MemberRecommend> {
 			", lingquNum=" + lingquNum +
 			", userNum=" + userNum +
 			", cardName=" + cardName +
+			", getMemberId=" + getMemberId +
+			", isGive=" + isGive +
 			"}";
 	}
 }

@@ -121,7 +121,7 @@
 
     <select id="findBybusIdAndCtId3" resultType="Map">
 		select gt_id, gt_grade_name,isUploadImg,imgExplain,isCheck,giveflow, givefenbi,applyType,
-		giveIntegral,giveMoney from t_member_gradetype
+		giveIntegral,giveMoney,isrecommend from t_member_gradetype
 		where busId=#{busId} and ct_id=#{ctId} and  iseasy=0 order by gt_id
 	</select>
 

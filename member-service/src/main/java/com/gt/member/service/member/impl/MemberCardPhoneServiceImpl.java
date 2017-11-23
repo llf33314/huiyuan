@@ -22,8 +22,10 @@ import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.DateTimeKit;
 import com.gt.member.util.PropertiesUtil;
+import com.gt.member.util.RedisCacheUtil;
 import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
 import com.gt.util.entity.param.pay.SubQrPayParams;
+import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.ibatis.builder.BuilderException;
 import org.slf4j.Logger;
@@ -125,6 +127,12 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
     @Autowired
     private MemberCardDAO memberCardDAO;
 
+    @Autowired
+    private RedisCacheUtil redisCacheUtil;
+
+    @Autowired
+    private MemberRecommendDAO memberRecommendDAO;
+
     public String wxPayWay( UserConsumeNew consumeNew, int payType ) throws Exception {
 	SubQrPayParams subQrPayParams = new SubQrPayParams();
 	subQrPayParams.setTotalFee( consumeNew.getDiscountAfterMoney() );
@@ -187,56 +195,94 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
      * @throws Exception
      */
     @Transactional
-    public void linquMemberCard( Map< String,Object > params ) throws BusinessException {
+    public void linquMemberCard( Map< String,Object > params,Integer memberId ) throws BusinessException {
 	try {
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    String phone = CommonUtil.toString( params.get( "phone" ) );
+	    String code = CommonUtil.toString( params.get( "code" ) );
+	    Integer ctId=CommonUtil.toInteger( params.get( "ctId" ) );
+	    String value=redisCacheUtil.get( phone + "_" + code );
+	    if(CommonUtil.isEmpty( value )){
+	        throw new BusinessException( ResponseMemberEnums.NO_PHONE_CODE );
+	    }
+	    Integer gtId = CommonUtil.toInteger( params.get( "gtId" ) );
+	    Integer shopId =0;
+	    WxShop wxShop=wxShopDAO.selectMainShopByBusId( busId );
+	    if(CommonUtil.isNotEmpty( wxShop )){
+		shopId=wxShop.getId();
+	    }
+	    // 根据卡片类型 查询第一等级
+	    MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
+	    // 判断相同的手机号码存在会员卡
+	    memberCommonService.newMemberMerge(memberEntity,busId,phone);
 
+	    //判断商家会员卡数量是否充足
 	    int count = cardMapper.countCardisBinding( busId );
-
 	    BusUserEntity busUserEntity = busUserDAO.selectById( busId );
-
 	    String dictNum = dictService.dictBusUserNum( busId, busUserEntity.getLevel(), 4, "1093" ); // 多粉 翼粉
 	    if ( CommonUtil.toInteger( dictNum ) < count ) {
 		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_COUNT );
 	    }
 
-	    String phone = CommonUtil.toString( params.get( "phone" ) );
-	    MemberEntity memberEntity = null;
-	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
-		Integer memberId = CommonUtil.toInteger( params.get( "memberId" ) );
-		memberEntity = memberMapper.selectById( memberId );
-		memberCommonService.newMemberMerge( memberEntity, busId, phone );
-	    } else {
-		memberEntity = memberMapper.findByPhone( busUserEntity.getId(), phone );
-	    }
 
-	    if ( CommonUtil.isEmpty( memberEntity ) ) {
-		// 新增用户
-		memberEntity = new MemberEntity();
-		memberEntity.setPhone( phone );
-		memberEntity.setBusId( busUserEntity.getId() );
-		memberEntity.setLoginMode( 1 );
-		memberEntity.setNickname( "Fans_" + phone.substring( 4 ) );
-		memberMapper.insert( memberEntity );
-		MemberParameter memberParameter = memberParameterMapper.findByMemberId( memberEntity.getId() );
-		if ( CommonUtil.isEmpty( memberParameter ) ) {
-		    MemberParameter mp = new MemberParameter();
-		    mp.setMemberId( memberEntity.getId() );
-		    memberParameterMapper.insert( mp );
-		}
-	    } else {
-		if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-		    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
-		}
-	    }
-
-	    Integer ctId = CommonUtil.toInteger( params.get( "ctId" ) );
-	    Integer gtId = CommonUtil.toInteger( params.get( "gtId" ) );
-	    Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
-
-	    // 根据卡片类型 查询第一等级
 	    List< Map< String,Object > > gradeTypes = memberGradetypeDAO.findBybusIdAndCtId3( memberEntity.getBusId(), ctId );
 	    if ( CommonUtil.toInteger( gradeTypes.get( 0 ).get( "applyType" ) ) != 3 ) {
+		MemberEntity member1=new MemberEntity();
+		member1.setId( memberId );
+		member1.setPhone( phone );
+		if (CommonUtil.isNotEmpty(params.get("name"))) {
+		    member1.setName(params.get("name").toString());
+		}
+		if (CommonUtil.isNotEmpty(params.get("sex"))) {
+		    member1.setSex(CommonUtil.toInteger(params.get("sex")));
+		}
+		if (CommonUtil.isNotEmpty(params.get("birth"))) {
+		    member1.setBirth(DateTimeKit.parseDate(params.get("birth")
+				    .toString()));
+		}
+		if (CommonUtil.isNotEmpty(params.get("email"))) {
+		    member1.setEmail(params.get("email").toString());
+		}
+		if (CommonUtil.isNotEmpty(params.get("cardId"))) {
+		    member1.setCardId(params.get("cardId").toString());
+		}
+		MemberParameter mp = memberParameterMapper
+				.findByMemberId(memberId);
+		if (CommonUtil.isEmpty(mp)) {
+		    mp = new MemberParameter();
+		}
+		boolean flag = false;
+		if (CommonUtil.isNotEmpty(params.get("provice"))) {
+		    mp.setProvinceCode(params.get("provice").toString());
+		    flag = true;
+		}
+		if (CommonUtil.isNotEmpty(params.get("city"))) {
+		    mp.setCityCode(params.get("city").toString());
+		    flag = true;
+		}
+		if (CommonUtil.isNotEmpty(params.get("countyCode"))) {
+		    mp.setCountyCode(params.get("countyCode").toString());
+		    flag = true;
+		}
+		if (CommonUtil.isNotEmpty(params.get("address"))) {
+		    mp.setAddress(params.get("address").toString());
+		    flag = true;
+		}
+		if (CommonUtil.isNotEmpty(params.get("getMoney"))) {
+		    mp.setGetMoney(CommonUtil.toDouble(params.get("getMoney")));
+		    flag = true;
+		}
+		if (flag) {
+		    if (CommonUtil.isEmpty(mp.getId())) {
+			mp.setMemberId(memberId);
+			memberParameterMapper.insert(mp);
+		    } else {
+			mp.setId(mp.getId());
+			memberParameterMapper.updateById(mp);
+		    }
+		}
+
+
 		//非购买会员卡  直接分配会员卡
 		MemberCard card = new MemberCard();
 		card.setIsChecked( 1 );
@@ -254,8 +300,11 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		    MemberGiverule giveRule = memberGiveruleDAO
 				    .findBybusIdAndGtIdAndCtId( memberEntity.getBusId(), Integer.parseInt( gradeTypes.get( 0 ).get( "gt_id" ).toString() ), ctId );
 		    card.setGrId( giveRule.getGrId() );
+		}else{
+		    throw new BusinessException( ResponseMemberEnums.NULL );
 		}
-		card.setBusId( memberEntity.getBusId() );
+
+		card.setBusId( busId );
 		card.setReceiveDate( new Date() );
 		card.setIsbinding( 1 );
 
@@ -263,15 +312,112 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		card.setOnline( 0 );
 		cardMapper.insert( card );
 
-		MemberEntity memberEntity1 = new MemberEntity();
-		memberEntity1.setMcId( card.getMcId() );
-		memberEntity1.setId( memberEntity.getId() );
-		memberEntity1.setPhone( phone );
-		memberMapper.updateById( memberEntity1 );
+		member1.setMcId( card.getMcId() );
+		member1.setId( memberEntity.getId() );
+		member1.setPhone( phone );
+		memberMapper.updateById( member1 );
+		// 发送短信通知
+		systemMsgService.sendNewMemberMsg(member1);
 
-		// 新增会员短信通知
-		systemMsgService.sendNewMemberMsg( memberEntity );
+		//<!------推荐会员卡赠送------>
+		Integer isCheck=CommonUtil.toInteger(gradeTypes.get( 0 ).get( "isCheck" )  );
+		Integer isrecommend=CommonUtil.toInteger( gradeTypes.get( 0 ).get( "isrecommend" ) );
+		// 推荐赠送积分 粉币 流量
+		if (CommonUtil.isNotEmpty(params.get("tuijianCode")) && isrecommend==1) {
+		    String tuijianCode=CommonUtil.toString(params.get("tuijianCode")  );
+		    //推荐
+		    MemberCard memberCard=cardMapper.findBySystemCode( busId,tuijianCode );
+		    if(CommonUtil.isNotEmpty( memberCard )) {
+			MemberEntity member2=memberMapper.findByMcIdAndbusId( busId,memberCard.getMcId() );
+			boolean bool = false;
+			MemberEntity member3 = new MemberEntity();
+			member3.setId( member2.getId() );
+			MemberRecommend recommend=new MemberRecommend();
+			recommend.setMemberId( member2.getId() );
+			recommend.setCode(tuijianCode);
+			if ( CommonUtil.isNotEmpty( gradeTypes.get( 0 ).get( "giveflow" ) ) && CommonUtil.toInteger( gradeTypes.get( 0 ).get( "giveflow" ) ) > 0 ) {
+			    Integer giveFlow=CommonUtil.toInteger( gradeTypes.get( 0 ).get( "giveflow" ) );
+			    recommend.setFlow( giveFlow );
 
+			    if(isCheck==1) {
+				Integer balaceFlow = member2.getFlow() + giveFlow;
+				member3.setFlow( balaceFlow );
+				memberCommonService.saveCardRecordOrderCodeNew( memberId, 4, giveFlow.doubleValue(), "推荐赠送", busId, balaceFlow.doubleValue(), "", 1 );
+				bool = true;
+			    }
+			}
+
+			if ( CommonUtil.isNotEmpty(gradeTypes.get( 0 ).get( "givefenbi" )  ) && CommonUtil.toInteger( gradeTypes.get( 0 ).get( "givefenbi" )  ) > 0 ) {
+			    Integer fenbi=CommonUtil.toInteger( gradeTypes.get( 0 ).get( "givefenbi" )  );
+			    recommend.setFenbi( fenbi );
+			    if(isCheck==1) {
+				Double balaceFenbi = member2.getFansCurrency() + fenbi;
+				member3.setFansCurrency( balaceFenbi );
+				memberCommonService.saveCardRecordOrderCodeNew( memberId, 3, fenbi.doubleValue(), "推荐赠送", busId, balaceFenbi, "", 1 );
+				bool = true;
+			    }
+			}
+
+			if ( CommonUtil.isNotEmpty( gradeTypes.get( 0 ).get( "giveIntegral" )  ) && CommonUtil.toInteger( gradeTypes.get( 0 ).get( "giveIntegral" )  ) > 0 ) {
+			    Integer giveIntegral=CommonUtil.toInteger( gradeTypes.get( 0 ).get( "giveIntegral" )  );
+			    recommend.setIntegral( giveIntegral );
+			    if(isCheck==1) {
+				Integer balaceIntegral = member2.getIntegral() + giveIntegral;
+				member3.setIntegral( balaceIntegral );
+				memberCommonService.saveCardRecordOrderCodeNew( memberId, 2, giveIntegral.doubleValue(), "推荐赠送", busId, balaceIntegral.doubleValue(), "", 1 );
+				bool = true;
+			    }
+			}
+			if ( bool ) {
+			    memberMapper.updateById( member3 );
+			}
+
+			if ( CommonUtil.isNotEmpty( gradeTypes.get( 0 ).get( "giveMoney" )  ) && CommonUtil.toDouble( gradeTypes.get( 0 ).get( "giveMoney" )  ) > 0  ) {
+			    Double giveMoney=CommonUtil.toDouble( gradeTypes.get( 0 ).get( "giveMoney" )  );
+			    recommend.setMoney( giveMoney );
+			    if(isCheck==1) {
+				Double balaceMoney = memberCard.getGiveMoney() + giveMoney;
+				MemberCard newC = new MemberCard();
+				newC.setMcId( memberCard.getMcId() );
+				newC.setGiveMoney( balaceMoney );
+				cardMapper.updateById( newC );
+				memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, giveMoney, "推荐赠送", busId, balaceMoney, "", 1 );
+			    }
+			}
+			recommend.setGetMemberId(memberId);
+			recommend.setIsUser( 1);
+			if(isCheck==0){
+			    recommend.setIsGive(1);
+			}
+			//添加推荐记录
+			memberRecommendDAO.insert( recommend );
+		    }
+		}
+		// 如果会员卡需要审核发送短信提醒商家审核
+		if (isCheck == 0) {
+		    // ischecked==0时会员卡需要审核
+		    // 判断商家ID不为空时查询该商家的手机号是否填写
+		    BusUserEntity busUser = busUserDAO
+				    .selectById(busId);
+		    if (CommonUtil.isNotEmpty(busUser.getPhone())) {// 商家手机号不为空就发送短信提醒商家审核
+			// 发送短信
+			RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
+
+			OldApiSms oldApiSms = new OldApiSms();
+			oldApiSms.setMobiles( busUser.getPhone() );
+			oldApiSms.setContent("尊敬的商家,手机号：" + phone
+					+ "，已提交会员卡申请，请尽快审核。 " );
+			oldApiSms.setCompany( PropertiesUtil.getSms_name() );
+			oldApiSms.setBusId( memberEntity.getBusId() );
+			oldApiSms.setModel( 3 );
+			requestUtils.setReqdata( oldApiSms );
+			try {
+			    requestService.sendSms( requestUtils );
+			} catch ( Exception e ) {
+			    LOG.error( "短信发送失败", e );
+			}
+		    }
+		}
 	    } else {
 		//购买会员卡
 		MemberGradetype gradeType = memberGradetypeDAO.selectById( gtId );
@@ -457,6 +603,8 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    map.put( "unionUrl", unionUrl );
 
 	    return map;
+	}catch ( BusinessException e ){
+	    throw e;
 	} catch ( Exception e ) {
 	    LOG.error( "查询会员信息异常", e );
 	    throw new BusinessException( ResponseEnums.ERROR );
