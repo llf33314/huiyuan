@@ -237,10 +237,10 @@
 
 	<select id="findByMemberIds" resultType="Map">
 		select id,phone,nickname,mc_id,fans_currency,flow,integral from t_wx_bus_member where busId=#{busId}
-		and id in
+		and
 		<foreach close=")" collection="memberIds" item="id" open="("
-				 separator=",">
-			#{id}
+				 separator="or">
+			id=#{id}
 		</foreach>
 
 	</select>
