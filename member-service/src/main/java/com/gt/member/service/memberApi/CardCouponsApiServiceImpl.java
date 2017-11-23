@@ -1636,7 +1636,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     @Transactional
     public void lingquDuofenCardReceive(String params)throws BusinessException{
       try{
-        Map<String,Object> map= JSON.parseObject( JSON.toJSONString( params ),Map.class );
+        Map<String,Object> map=  JSON.toJavaObject( JSON.parseObject( params ),Map.class );
         Integer memberId=CommonUtil.toInteger( map.get( "memberId" ) );
         Integer busId=CommonUtil.toInteger( map.get( "busId" ) );
         String code=CommonUtil.toString( map.get( "code" ) );
