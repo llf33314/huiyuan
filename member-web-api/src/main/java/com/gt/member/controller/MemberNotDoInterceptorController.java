@@ -3,6 +3,7 @@ package com.gt.member.controller;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.memberApi.MemberApiService;
+import com.gt.member.service.memberApi.MemberNodoInterceptorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -32,7 +33,7 @@ public class MemberNotDoInterceptorController {
     private static final Logger LOG = Logger.getLogger( MemberNotDoInterceptorController.class );
 
     @Autowired
-    private MemberApiService memberApiService;
+    private MemberNodoInterceptorService memberNodoInterceptorService;
 
     @ApiOperation( value = "流量兑换通知", notes = "流量兑换通知" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "id", value = "订单id", paramType = "query", required = true, dataType = "int" ),
@@ -43,7 +44,7 @@ public class MemberNotDoInterceptorController {
     @RequestMapping( value = "/changeFlow", method = RequestMethod.POST )
     public ServerResponse changeFlow(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String,Object> params ){
 	try {
-	    memberApiService.changeFlow( params );
+	    memberNodoInterceptorService.changeFlow( params );
 	    return ServerResponse.createBySuccess(  );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -61,7 +62,7 @@ public class MemberNotDoInterceptorController {
     @RequestMapping( value = "/smsNotice", method = RequestMethod.POST )
     public ServerResponse smsNotice(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String,Object> params ){
 	try {
-	    memberApiService.smsNotice( params );
+	    memberNodoInterceptorService.smsNotice( params );
 	    return ServerResponse.createBySuccess(  );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -79,10 +80,29 @@ public class MemberNotDoInterceptorController {
     @RequestMapping( value = "/paySuccess", method = RequestMethod.POST )
     public ServerResponse paySuccess(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String,Object> params ){
 	try {
-	    memberApiService.paySuccess( params );
+	    memberNodoInterceptorService.paySuccess( params );
 	    return ServerResponse.createBySuccess(  );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
+    }
+
+
+    @ApiOperation( value = "购买会员卡支付成功回调", notes = "购买会员卡支付成功回调" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "out_trade_no", value = "订单号", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "payType", value = "0:微信，1：支付宝2：多粉钱包", paramType = "query", required = true, dataType = "int" )
+
+
+    } )
+    @ResponseBody
+    @RequestMapping( value = "/buyCardPaySuccess", method = RequestMethod.POST )
+    public ServerResponse buyCardPaySuccess(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String,Object> params){
+	try {
+	    memberNodoInterceptorService.buyCardPaySuccess( params );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+
     }
 }

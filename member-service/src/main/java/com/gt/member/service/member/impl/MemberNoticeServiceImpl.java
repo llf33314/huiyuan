@@ -223,7 +223,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	        memberNotice.setSendStuts(3);
 	    }
 
-	    if ( CommonUtil.isNotEmpty( memberNotice.getId() ) ) {
+	    if ( memberNotice.getId()>0 ) {
 		memberNoticeDAO.updateById( memberNotice );
 		//删除之前信息
 		memberNoticeuserDAO.deleteByNoticeId(  memberNotice.getId());

@@ -36,10 +36,12 @@ public class MemberNotice extends Model<MemberNotice> {
     /**
      * 通知图片路径
      */
+    @TableField("img_url")
 	private String imgUrl;
     /**
      *  -1:没有人群 0所有 逗号隔开
      */
+    @TableField("notice_user")
 	private String noticeUser;
     /**
      *  0立即方式 1定时发送 2保存

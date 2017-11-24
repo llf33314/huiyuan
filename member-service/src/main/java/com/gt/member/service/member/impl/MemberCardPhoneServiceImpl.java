@@ -145,7 +145,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	subQrPayParams.setDesc( "购买会员卡" );//描述
 	subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
 	String returnUrl = PropertiesUtil.getWebHome() + "/memberPhone/cardPhone/findMember.do";
-	String sucessUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/paySuccess.do";
+	String sucessUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/buyCardPaySuccess.do";
 	subQrPayParams.setReturnUrl( returnUrl );
 	subQrPayParams.setNotifyUrl( sucessUrl );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
 	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
@@ -169,7 +169,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	// 登录页面 暂时使用 uc端 进入 使用支付宝
 	AlipayUser alipayUser = alipayUserMapper.selectByBusId( busId );
 	if ( browser.equals( 99 ) && CommonUtil.isNotEmpty( alipayUser ) ) {
-	    map.put( "payType", 0 );  //支付宝支付
+	    map.put( "payType", 2 );  //支付宝支付
 	}
 
 	WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper.selectByUserId( busId );
@@ -188,6 +188,15 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	map.put( "basisCitys", basisCitys );
 	return map;
     }
+
+    public List<Map<String,Object>> findBuyGradeTypes(String json){
+        JSONObject params=JSON.parseObject( json );
+        Integer busId=CommonUtil.toInteger( params.get( "busId" ) );
+	Integer ctId=CommonUtil.toInteger( params.get( "ctId" ) );
+	List<Map<String, Object>> gradeTypes = memberGradetypeDAO.findAllBybusId(busId, ctId);
+	return gradeTypes;
+    }
+
 
     /**
      * uc端注册并领取会员卡
@@ -852,5 +861,31 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    LOG.error( "充值调用支付异常",e );
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
+    }
+
+    public Map<String,Object> findMemberUser(Map<String,Object> params,Integer memberId) throws BusinessException{
+	Map<String,Object> map=new HashMap<>(  );
+
+        Integer busId=CommonUtil.toInteger( params.get( "busId" ) );
+	// 查询会员资料设置
+	MemberOption memberOption = memberOptionDAO.findByBusId(busId);
+	map.put( "memberOption",memberOption );
+	MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
+	map.put( "member",memberEntity );
+	MemberParameter memberParamter = memberParameterMapper.findByMemberId(memberId);
+	map.put( "memberParamter",memberParamter );
+	List<Map<String,Object>> provinceList=basisCityDAO.findBasisCity();
+	map.put( "provinceList",provinceList );
+	if(CommonUtil.isNotEmpty( memberParamter ) && CommonUtil.isNotEmpty( memberParamter.getProvinceCode() ) ){
+	    List<Map<String,Object>> cityList=basisCityDAO.findBaseisCityByCode(memberParamter.getProvinceCode());
+	    map.put( "cityList",cityList );
+	}
+
+	if(CommonUtil.isNotEmpty( memberParamter ) && CommonUtil.isNotEmpty( memberParamter.getCityCode() ) ){
+	    List<Map<String,Object>> countyList=basisCityDAO.findBaseisCityByCode(memberParamter.getCityCode());
+	    map.put( "countyList",countyList );
+	}
+	 return map;
+
     }
 }

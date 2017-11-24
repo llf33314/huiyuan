@@ -60,8 +60,8 @@
 		status, sendDate)
 		values
 		<foreach collection="noticeUsers" index="index" item="n" separator=",">
-			(#{n.busid,jdbcType=INTEGER}, #{n.noticeid,jdbcType=INTEGER}, #{n.msgtype,jdbcType=TINYINT},
-			#{n.status,jdbcType=TINYINT}, #{n.senddate,jdbcType=TIMESTAMP})
+			(#{n.busId,jdbcType=INTEGER}, #{n.noticeId,jdbcType=INTEGER}, #{n.msgType,jdbcType=TINYINT},
+			#{n.status,jdbcType=TINYINT}, #{n.sendDate,jdbcType=TIMESTAMP})
 		</foreach>
 	</insert>
 

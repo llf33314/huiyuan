@@ -91,7 +91,10 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    Map< String,Object > returnMap = memberCardPhoneService.findLingquData( request, busId );
 	    returnMap.put( "member", member );
 	    return ServerResponse.createBySuccess( returnMap );
-	} catch ( Exception e ) {
+	}catch ( BusinessException e){
+	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	}
+	catch ( Exception e ) {
 	    LOG.error( "查询会员卡类型异常：", e );
 	    e.printStackTrace();
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), "查询会员卡类型异常" );
@@ -101,16 +104,18 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "选择省市区", notes = "选择省市区" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
 		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "cityCode", value = "请求市去code", paramType = "query", required = false, dataType = "int" ) }
+		    @ApiImplicitParam( name = "cityCode", value = "请求市区code", paramType = "query", required = false, dataType = "int" ) }
 		    )
     @ResponseBody
-    @RequestMapping( value = "/findCityByCityCode", method = RequestMethod.GET )
+    @RequestMapping( value = "/findCityByCityCode", method = RequestMethod.POST )
     public ServerResponse findCityByCityCode(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    String cityCode=CommonUtil.toString( params.get( "cityCode" ) );
 	    List<Map<String,Object>> listMap=memberCommonService.findCityByCityCode(cityCode);
 	    return ServerResponse.createBySuccess( listMap );
+	}catch ( BusinessException e){
+	    return ServerResponse.createByError(e.getCode(),e.getMessage());
 	} catch ( Exception e ) {
 	    LOG.error( "查询会员卡类型异常：", e );
 	    e.printStackTrace();
@@ -146,12 +151,30 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    } else {
 		return ServerResponse.createByError( "发送失败:" + returnJson.get( "msg" ) );
 	    }
+	}catch ( BusinessException e){
+	    return ServerResponse.createByError(e.getCode(),e.getMessage());
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    LOG.error( "短信发送失败", e );
 	    return ServerResponse.createByError();
 	}
     }
+
+
+    @ApiOperation( value = "查询购买等级信息", notes = "查询购买等级信息" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
+		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/findBuyGradeTypes", method = RequestMethod.GET )
+    public ServerResponse findBuyGradeTypes( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
+	try {
+	    List<Map<String,Object>> listMap=memberCardPhoneService.findBuyGradeTypes( json);
+	    return ServerResponse.createBySuccess(listMap);
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
 
     @ApiOperation( value = "领取会员卡", notes = "领取会员卡" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
@@ -390,6 +413,28 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
+    }
+
+    @ApiOperation( value = "查询会员资料", notes = "查询会员资料" )
+    @ResponseBody
+    @RequestMapping( value = "/findMemberUser", method = RequestMethod.POST )
+    public ServerResponse findMemberUser(HttpServletRequest request, HttpServletResponse response, @RequestParam String json ){
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    Map<String,Object> map = memberCardPhoneService.findMemberUser( params, member.getId() );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError(  );
+	}
+
     }
 
 }

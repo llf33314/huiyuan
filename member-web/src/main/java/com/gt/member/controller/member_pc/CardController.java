@@ -325,10 +325,10 @@ public class CardController {
     @ApiImplicitParams( @ApiImplicitParam( name = "sendDate", value = "发送时间", paramType = "query", required = false, dataType = "String" ) )
     @ResponseBody
     @RequestMapping( value = "/saveMemberNotice", method = RequestMethod.POST )
-    public ServerResponse saveMemberNotice( HttpServletRequest request, HttpServletResponse response, String json, String sendDate ) {
+    public ServerResponse saveMemberNotice( HttpServletRequest request, HttpServletResponse response,@RequestParam String json ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    memberNoticeService.saveMemberNotice( busId, json, sendDate );
+	    memberNoticeService.saveMemberNotice( busId, json );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );

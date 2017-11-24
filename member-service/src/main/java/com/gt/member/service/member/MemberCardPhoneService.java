@@ -21,6 +21,13 @@ public interface MemberCardPhoneService {
     public Map<String,Object> findLingquData( HttpServletRequest request, Integer busId );
 
     /**
+     * 查询购买会员卡等级信息
+     * @param json
+     * @return
+     */
+    public List<Map<String,Object>> findBuyGradeTypes(String json);
+
+    /**
      * 领取会员卡
      * @param params
      * @return
@@ -91,4 +98,13 @@ public interface MemberCardPhoneService {
      * @throws BusinessException
      */
     public String rechargeMemberCard(String json,Integer busId,Integer memberId)throws  BusinessException;
+
+    /**
+     * 查询会员卡资料
+     * @param params
+     * @param memberId
+     * @return
+     * @throws BusinessException
+     */
+    public Map<String,Object> findMemberUser(Map<String,Object> params,Integer memberId) throws BusinessException;
 }
