@@ -179,7 +179,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
     }
 
     @Transactional
-    public void saveMemberNotice( Integer busId, String json, String sendDate ) throws BusinessException {
+    public void saveMemberNotice( Integer busId, String json ) throws BusinessException {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
 	    if ( CommonUtil.isEmpty( busId ) ) {
@@ -206,7 +206,10 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 		memberNotice.setSmsContent( smsContent );
 	    }
 
+	    String sendDate=CommonUtil.toString( obj.get( "sendDate" ) );
 	    memberNotice.setSendType( CommonUtil.toInteger( obj.get( "sendType" ) ) );
+
+
 	    if ( CommonUtil.isNotEmpty( sendDate ) ) {
 		Date date = DateTimeKit.parse( sendDate, "yyyy-MM-dd HH:mm:ss" );
 		memberNotice.setSendDate( date );
@@ -215,6 +218,9 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	    memberNotice.setCreateDate( new Date() );
 	    if ( memberNotice.getSendType() == 0 ) {
 		memberNotice.setSendDate( new Date() );
+	    }
+	    if(memberNotice.getSendType()==2){
+	        memberNotice.setSendStuts(3);
 	    }
 
 	    if ( CommonUtil.isNotEmpty( memberNotice.getId() ) ) {
