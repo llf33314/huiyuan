@@ -810,6 +810,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		map.put( "cardId", card.getMcId() );
 
 
+
 		//查询粉丝等级
 		List<Map<String,Object>> gradeTypes=gradeTypeMapper.findAllBybusId( memberEntity.getBusId(),card.getCtId() );
 		Integer dengji=0;
