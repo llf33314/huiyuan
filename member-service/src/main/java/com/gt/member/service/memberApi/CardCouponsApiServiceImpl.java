@@ -1706,4 +1706,31 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 	throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
     }
     }
+
+    public DuofenCard findDuofenCardGetOne(String params){
+	try {
+	    JSONObject json=JSON.parseObject( params );
+	    Integer cardId=CommonUtil.toInteger( json.get( "cardId" ) );
+	    return duofenCardMapper.selectById( cardId );
+	}catch ( Exception e ){
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+    public List<DuofenCard> findDuofenCardGets(String params){
+	try {
+	    JSONObject json = JSON.parseObject( params );
+	    String cardIds = CommonUtil.toString( json.get( "cardIds" ) );
+	    String[] str = cardIds.split( "," );
+	    List< Integer > cardIdList = new ArrayList<>();
+	    for ( int i = 0; i < str.length; i++ ) {
+		if ( CommonUtil.isNotEmpty( str[i] ) ) {
+		    cardIdList.add( CommonUtil.toInteger( str[i] ) );
+		}
+	    }
+	    return duofenCardMapper.findInCardIds( cardIdList );
+	}catch ( Exception e ){
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
 }

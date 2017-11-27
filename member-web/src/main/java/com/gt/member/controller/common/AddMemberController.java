@@ -94,9 +94,9 @@ public class AddMemberController {
     public String erpAddMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 //	SessionUtils.setLoginStyle( request, 1 );
 //	BusUser busUser=new BusUser();
-//	busUser.setId( 8811 );
+//	busUser.setId( 42 );
 //	SessionUtils.setLoginUser( request, busUser );
-//	SessionUtils.setPidBusId( request, 8811 );
+//	SessionUtils.setPidBusId( request, 42 );
 
 	try {
 	    Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
@@ -125,8 +125,10 @@ public class AddMemberController {
 	    request.setAttribute( "shopId", shopId );
 	    List< Map< String,Object > > mapList = gradeTypeMapper.findBybusId1( busId );//查询该商户下的卡片类型
 	    request.setAttribute( "mapList", JSON.toJSON( mapList ) );
+	    List< Map< String,Object > > gradeTypes=new ArrayList<>(  );
+	    request.setAttribute( "gradeTypes", JSON.toJSON( gradeTypes ) );
 	    if ( mapList.size() > 0 ) {
-		List< Map< String,Object > > gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, CommonUtil.toInteger( mapList.get( 0 ).get( "ctId" ) ) );
+		gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, CommonUtil.toInteger( mapList.get( 0 ).get( "ctId" ) ) );
 		if ( gradeTypes.size() > 0 ) {
 		    if ( "3".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "applyType" ) ) ) ) {
 			request.setAttribute( "gradeTypes", JSON.toJSON( gradeTypes ) );

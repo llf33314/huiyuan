@@ -642,9 +642,36 @@ public class CardCouponseApiController {
         }catch ( Exception e ){
             return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
         }
-
     }
 
+
+    @ApiOperation(value = "查询单张多粉优惠券信息", notes = "查询单张多粉优惠券信息")
+    @ApiImplicitParam(name = "cardId", value = "粉丝领取的卡券id（cId）", paramType = "query", required = true, dataType = "int")
+    @ResponseBody
+    @RequestMapping (value = "/findDuofenCardGetOne",method = RequestMethod.POST)
+    public ServerResponse findDuofenCardGetOne(HttpServletRequest request,
+                    HttpServletResponse response,@RequestBody String param){
+        try {
+             DuofenCard duofenCard= cardCouponsApiService.findDuofenCardGetOne(param);
+            return ServerResponse.createBySuccess(duofenCard);
+        }catch ( Exception e ){
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
+        }
+    }
+
+    @ApiOperation(value = "查询多张多粉优惠券信息", notes = "查询单张多粉优惠券信息")
+    @ApiImplicitParam(name = "cardIds", value = "粉丝领取的卡券id（cId）集合字符串  逗号隔开", paramType = "query", required = true, dataType = "int")
+    @ResponseBody
+    @RequestMapping (value = "/findDuofenCardGets",method = RequestMethod.POST)
+    public ServerResponse findDuofenCardGets(HttpServletRequest request,
+                    HttpServletResponse response,@RequestBody String param){
+        try {
+            List<DuofenCard> duofenCards= cardCouponsApiService.findDuofenCardGets(param);
+            return ServerResponse.createBySuccess(duofenCards);
+        }catch ( Exception e ){
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
+        }
+    }
 
 
 

@@ -200,4 +200,5 @@ public interface DuofenCardGetDAO extends BaseMapper<DuofenCardGet> {
    Integer countCardGetByMemberId(@Param("memberIds")List<Integer> memberIds);
 
    List<Integer> findReceiveByMemberId(@Param("memberIds")List<Integer> memberIds);
+
 }

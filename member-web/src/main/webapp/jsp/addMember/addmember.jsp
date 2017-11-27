@@ -204,8 +204,8 @@ pageEncoding="UTF-8" %>
                 }
             },
             mounted(){
-                var gradeTypes='${gradeTypes}';
-                var mapList='${mapList}';
+                var gradeTypes=${gradeTypes};
+                var mapList=${mapList};
                 if(mapList!=""){
                     this.options=mapList;
                     this.cardType=mapList[0].ctId;

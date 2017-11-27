@@ -99,11 +99,13 @@
 
 	<select id="findInCardIds" parameterType="map" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List" />
-		from t_duofen_card where  id in
+		from t_duofen_card
+		<where>
 		<foreach close=")" collection="cardIds" item="cardId" open="("
-				 separator=",">
-			#{cardId}
+				 separator="or">
+			id=#{cardId}
 		</foreach>
+		</where>
 	</select>
 
 

@@ -299,11 +299,17 @@ public class CardERPServiceImpl implements CardERPService {
 		} else {
 		    card.setFrequency( 0 );
 		}
-	    } else {
+	    } else if(card.getCtId()==3) {
 		if ( CommonUtil.isNotEmpty( gradeType.getBalance() ) ) {
 		    card.setMoney( new Double( gradeType.getBalance() ) );
 		} else {
 		    card.setMoney( 0.0 );
+		}
+	    }else if(card.getCtId()==4){
+		if ( CommonUtil.isNotEmpty( gradeType.getBalance() ) ) {
+		    card.setExpireDate( DateTimeKit.addMonths( CommonUtil.toDouble( gradeType.getBalance() ).intValue()  )  );
+		} else {
+		    card.setExpireDate( new Date(  ));
 		}
 	    }
 

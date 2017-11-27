@@ -355,4 +355,18 @@ public interface CardCouponsApiService {
      * @throws BusinessException
      */
     public void lingquDuofenCardReceive(String params)throws BusinessException;
+
+    /**
+     * 查询单张优惠券信息
+     * @param params
+     * @return
+     */
+    public DuofenCard findDuofenCardGetOne(String params);
+
+    /**
+     * 查询多张优惠券信息
+     * @param params
+     * @return
+     */
+    public List<DuofenCard> findDuofenCardGets(String params);
 }
