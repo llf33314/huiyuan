@@ -542,10 +542,11 @@ public class MemberController {
     @ResponseBody
     @RequestMapping( value = "/findXiaoFeiLog", method = RequestMethod.GET )
     public ServerResponse findXiaoFeiLog(HttpServletRequest request,
-		    HttpServletResponse response,Map<String,Object> params){
+		    HttpServletResponse response,@RequestParam String params){
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    Page page= memberCardService.findXiaoFeiLog(busId,params);
+	    Map< String,Object > param = JSON.toJavaObject( JSON.parseObject( params ), Map.class );
+	    Page page= memberCardService.findXiaoFeiLog(busId,param);
 	    return ServerResponse.createBySuccess( page  );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
