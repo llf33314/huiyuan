@@ -170,7 +170,7 @@
 			and memberId=#{memberId}
 		</if>
 		<if test="date!=null">
-			and isendDate <![CDATA[>=]]> #{date}
+			and createDate <![CDATA[>=]]> #{date}
 		</if>
 	</select>
 
@@ -180,7 +180,7 @@
 			and memberId=#{memberId}
 		</if>
 		<if test="date!=null">
-			and isendDate <![CDATA[>=]]> #{date}
+			and createDate <![CDATA[>=]]> #{date}
 		</if>
 		ORDER BY id DESC limit #{first},#{pageSize}
 	</select>
@@ -192,7 +192,7 @@
 			and memberId=#{memberId}
 		</if>
 		<if test="date!=null">
-			and isendDate <![CDATA[>=]]> #{date}
+			and createDate <![CDATA[>=]]> #{date}
 		</if>
 	</select>
 
@@ -204,7 +204,7 @@
 			and memberId=#{memberId}
 		</if>
 		<if test="date!=null">
-			and isendDate <![CDATA[>=]]> #{date}
+			and createDate <![CDATA[>=]]> #{date}
 		</if>
 	</select>
 
@@ -215,7 +215,7 @@
 			and memberId=#{memberId}
 		</if>
 		<if test="date!=null">
-			and isendDate <![CDATA[>=]]> #{date}
+			and createDate <![CDATA[>=]]> #{date}
 		</if>
 		ORDER BY id DESC limit #{first},#{pageSize}
 	</select>
@@ -230,7 +230,7 @@
 			and payStatus=#{payStatus}
 		</if>
 		<if test="date!=null">
-			and isendDate <![CDATA[>=]]> #{date}
+			and createDate <![CDATA[>=]]> #{date}
 		</if>
 	</select>
 
@@ -244,7 +244,7 @@
 			and payStatus=#{payStatus}
 		</if>
 		<if test="date!=null">
-			and isendDate <![CDATA[>=]]> #{date}
+			and createDate <![CDATA[>=]]> #{date}
 		</if>
 		ORDER BY id DESC limit #{first},#{pageSize}
 	</select>
