@@ -1113,11 +1113,11 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    }
 	    String startDate = null;
 	    if ( CommonUtil.isNotEmpty( params.get( "startDate" ) ) ) {
-		startDate = CommonUtil.toString( params.get( "startDate" ) ) + " 00:00:00";
+		startDate = CommonUtil.toString( params.get( "startDate" ) );
 	    }
 	    String endDate = null;
 	    if ( CommonUtil.isNotEmpty( params.get( "endDate" ) ) ) {
-		endDate = CommonUtil.toString( params.get( "endDate" ) ) + " 23:59:59";
+		endDate = CommonUtil.toString( params.get( "endDate" ) );
 	    }
 
 	    Object phone1 = params.get( "phone" );
@@ -2157,11 +2157,11 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 	    String startDate = null;
 	    if ( CommonUtil.isNotEmpty( json.get( "startTime" ) ) ) {
-		startDate = CommonUtil.toString( json.get( "startTime" ) ) + " 00:00:00";
+		startDate = CommonUtil.toString( json.get( "startTime" ) );
 	    }
 	    String endDate=null;
 	    if ( CommonUtil.isNotEmpty( json.get( "endTime" ) ) ) {
-		endDate = CommonUtil.toString( json.get( "endTime" ) ) + " 59:59:59";
+		endDate = CommonUtil.toString( json.get( "endTime" ) ) ;
 	    }
 
 	    int rowCount = userConsumeNewDAO.countUserConsumeChongZhiByMemberId( busId, memberId, startDate,endDate );
@@ -2258,11 +2258,11 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 	    String startDate = null;
 	    if ( CommonUtil.isNotEmpty( json.get( "startTime" ) ) ) {
-		startDate = CommonUtil.toString( json.get( "startTime" ) ) + " 00:00:00";
+		startDate = CommonUtil.toString( json.get( "startTime" ) );
 	    }
 	    String endDate=null;
 	    if ( CommonUtil.isNotEmpty( json.get( "endTime" ) ) ) {
-		endDate = CommonUtil.toString( json.get( "endTime" ) ) + " 59:59:59";
+		endDate = CommonUtil.toString( json.get( "endTime" ) ) ;
 	    }
 
 	    int rowCount = userConsumeNewDAO.countUserConsumeDuiHuanByMemberId( busId, memberId, startDate ,endDate);
@@ -2344,12 +2344,12 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 	    String startDate = null;
 	    if ( CommonUtil.isNotEmpty( params.get( "startTime" ) ) ) {
-		startDate = CommonUtil.toString( params.get( "startTime" ) ) + " 00:00:00";
+		startDate = CommonUtil.toString( params.get( "startTime" ) ) ;
 	    }
 
 	    String endDate=null;
 	    if ( CommonUtil.isNotEmpty( params.get( "endTime" ) ) ) {
-		endDate = CommonUtil.toString( params.get( "endTime" ) ) + " 59:59:59";
+		endDate = CommonUtil.toString( params.get( "endTime" ) );
 	    }
 
 	    int rowCount = userConsumeNewDAO.countUserConsumeCikaByMemberId( busId, memberId, startDate,endDate );
@@ -2438,12 +2438,12 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 	    String startDate = null;
 	    if ( CommonUtil.isNotEmpty( params.get( "startTime" ) ) ) {
-		startDate = CommonUtil.toString( params.get( "startTime" ) ) + " 00:00:00";
+		startDate = CommonUtil.toString( params.get( "startTime" ) );
 	    }
 
 	    String endDate=null;
 	    if ( CommonUtil.isNotEmpty( params.get( "endTime" ) ) ) {
-		endDate = CommonUtil.toString( params.get( "endTime" ) ) + " 59:59:59";
+		endDate = CommonUtil.toString( params.get( "endTime" ) );
 	    }
 
 	    Integer payStatus = null;
