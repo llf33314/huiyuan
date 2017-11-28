@@ -572,7 +572,6 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    if ( cardEntity.getIsChecked() == 0 || cardEntity.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS );
 	    }
-	    map.put("card",cardEntity );
 
 	    MemberFind memberfind = memberFindDAO.findByQianDao( memberEntity.getBusId() );
 	    if(CommonUtil.isNotEmpty( memberfind )) {
@@ -601,7 +600,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 	    // 根据卡号查询信息
 	    List< Map< String,Object > > card = cardMapper.findCardById( memberEntity.getMcId() );
-	    map.put( "isleft", card.get( 0 ).get( "isleft" ) );
+	    map.put( "card", card );
 
 	    if ( CommonUtil.isEmpty( memberEntity.getHeadimgurl() ) ) {
 		MemberParameter mp = memberParameterMapper.findByMemberId( memberEntity.getId() );
@@ -619,7 +618,6 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 	    map.put( "path",PropertiesUtil.getRes_web_path() );
 	    MemberGradetype memberGradetype=memberGradetypeDAO.selectById( cardEntity.getGtId() );
-	    map.put( "memberGradetype", memberGradetype );
 
 	    if(cardEntity.getCtId()==2) {
 		MemberGiverule giveRule = memberGiveruleDAO.findBybusIdAndGtIdAndCtId( memberEntity.getBusId(), cardEntity.getGtId(), cardEntity.getCtId() );
@@ -919,4 +917,47 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
     public List<BusFlow> findBusFlowByBusId(Integer busId){
        return busFlowDAO.getBusFlowsByUserId( busId );
     }
+
+    @Transactional
+    public void qiandao(Integer memberId,Integer busId)throws BusinessException {
+	try {
+	    MemberFind memberFind = memberFindDAO.findByQianDao( busId );
+	    if ( CommonUtil.isEmpty( memberFind ) ) {
+		throw new BusinessException( ResponseMemberEnums.NOT_SET_QIANDAO );
+	    }
+	    MemberParameter memberParameter = memberParameterMapper.findByMemberId( memberId );
+	    if ( CommonUtil.isNotEmpty( memberParameter.getSignDate() ) && DateTimeKit.isSameDay( memberParameter.getSignDate(), new Date() ) ) {
+		throw new BusinessException( ResponseMemberEnums.MEMBER_QIANDAO );
+	    }
+
+	    MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
+	    Integer balaceJifen = memberEntity.getIntegral() + memberFind.getIntegral();
+
+	    MemberEntity m = new MemberEntity();
+	    m.setId( memberId );
+	    m.setIntegral( balaceJifen );
+	    memberMapper.updateById( m );
+
+	    if ( CommonUtil.isEmpty( memberParameter ) ) {
+		memberParameter = new MemberParameter();
+		memberParameter.setMemberId( memberId );
+		memberParameter.setSignDate( new Date() );
+		memberParameterMapper.insert( memberParameter );
+	    } else {
+		MemberParameter mp = new MemberParameter();
+		mp.setId( memberParameter.getId() );
+		mp.setSignDate( new Date() );
+		memberParameterMapper.updateById( mp );
+	    }
+	    memberCommonService.saveCardRecordOrderCodeNew( memberId, 2, memberFind.getIntegral().doubleValue(), "签到送积分", busId, balaceJifen.doubleValue(), "", 1 );
+	} catch ( BusinessException e ) {
+	    throw e;
+	} catch ( Exception e ) {
+	    LOG.error( "签到失败", e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+
+	}
+    }
+
+
 }
