@@ -475,4 +475,28 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     }
 
 
+    @ApiOperation( value = "用户签到", notes = "用户签到" )
+    @ResponseBody
+    @RequestMapping( value = "/qiandao", method = RequestMethod.POST )
+    public ServerResponse qiandao(HttpServletRequest request, HttpServletResponse response, @RequestParam String json )  {
+
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	     memberCardPhoneService.qiandao(member.getId(),busId );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	}catch ( Exception e ){
+	    return ServerResponse.createByError(  );
+	}
+    }
+
 }

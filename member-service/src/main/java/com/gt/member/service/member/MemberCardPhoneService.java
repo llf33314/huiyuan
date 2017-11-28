@@ -115,4 +115,11 @@ public interface MemberCardPhoneService {
      */
     public String findCardNoByMemberId(Integer memberId);
 
+    /**
+     * 签到送积分
+     * @param memberId
+     * @param busId
+     */
+    public void qiandao(Integer memberId,Integer busId)throws BusinessException;
+
 }
