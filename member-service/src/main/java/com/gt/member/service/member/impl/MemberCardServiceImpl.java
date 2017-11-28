@@ -2142,10 +2142,12 @@ public class MemberCardServiceImpl implements MemberCardService {
 		MemberEntity memberEntity = memberMapper.findByPhone( busId, CommonUtil.toString( json.get( "cardNo" ) ) );
 		if ( CommonUtil.isEmpty( memberEntity ) ) {
 		    MemberCard memberCard = memberCardDAO.findCardByCardNo( busId, CommonUtil.toString( json.get( "cardNo" ) ) );
-		    memberEntity = memberMapper.findByMcIdAndbusId( busId, memberCard.getMcId() );
-		    if ( CommonUtil.isNotEmpty( memberEntity ) ) {
-			memberId = memberEntity.getId();
-		    } else {
+		    if(CommonUtil.isNotEmpty( memberCard )) {
+			memberEntity = memberMapper.findByMcIdAndbusId( busId, memberCard.getMcId() );
+			if ( CommonUtil.isNotEmpty( memberEntity ) ) {
+			    memberId = memberEntity.getId();
+			}
+		    }else {
 			memberId = 0;
 		    }
 		} else {
@@ -2237,10 +2239,12 @@ public class MemberCardServiceImpl implements MemberCardService {
 		MemberEntity memberEntity = memberMapper.findByPhone( busId, CommonUtil.toString( json.get( "cardNo" ) ) );
 		if ( CommonUtil.isEmpty( memberEntity ) ) {
 		    MemberCard memberCard = memberCardDAO.findCardByCardNo( busId, CommonUtil.toString( json.get( "cardNo" ) ) );
-		    memberEntity = memberMapper.findByMcIdAndbusId( busId, memberCard.getMcId() );
-		    if ( CommonUtil.isNotEmpty( memberEntity ) ) {
-			memberId = memberEntity.getId();
-		    } else {
+		    if(CommonUtil.isNotEmpty( memberCard )){
+			memberEntity = memberMapper.findByMcIdAndbusId( busId, memberCard.getMcId() );
+			if ( CommonUtil.isNotEmpty( memberEntity ) ) {
+			    memberId = memberEntity.getId();
+			}
+		    }else {
 			memberId = 0;
 		    }
 		} else {
@@ -2312,15 +2316,17 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	    int pageSize = 10;
 
-	    Integer memberId = 0;
+	    Integer memberId = null;
 	    if ( CommonUtil.isNotEmpty( params.get( "cardNo" ) ) ) {
 		MemberEntity memberEntity = memberMapper.findByPhone( busId, CommonUtil.toString( params.get( "cardNo" ) ) );
 		if ( CommonUtil.isEmpty( memberEntity ) ) {
 		    MemberCard memberCard = memberCardDAO.findCardByCardNo( busId, CommonUtil.toString( params.get( "cardNo" ) ) );
-		    memberEntity = memberMapper.findByMcIdAndbusId( busId, memberCard.getMcId() );
-		    if ( CommonUtil.isNotEmpty( memberEntity ) ) {
-			memberId = memberEntity.getId();
-		    } else {
+		    if(CommonUtil.isNotEmpty( memberCard )) {
+			memberEntity = memberMapper.findByMcIdAndbusId( busId, memberCard.getMcId() );
+			if ( CommonUtil.isNotEmpty( memberEntity ) ) {
+			    memberId = memberEntity.getId();
+			}
+		    }else {
 			memberId = 0;
 		    }
 		} else {
@@ -2399,15 +2405,17 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	    int pageSize = 10;
 
-	    Integer memberId = 0;
+	    Integer memberId = null;
 	    if ( CommonUtil.isNotEmpty( params.get( "cardNo" ) ) ) {
 		MemberEntity memberEntity = memberMapper.findByPhone( busId, CommonUtil.toString( params.get( "cardNo" ) ) );
 		if ( CommonUtil.isEmpty( memberEntity ) ) {
 		    MemberCard memberCard = memberCardDAO.findCardByCardNo( busId, CommonUtil.toString( params.get( "cardNo" ) ) );
-		    memberEntity = memberMapper.findByMcIdAndbusId( busId, memberCard.getMcId() );
-		    if ( CommonUtil.isNotEmpty( memberEntity ) ) {
-			memberId = memberEntity.getId();
-		    } else {
+		    if(CommonUtil.isNotEmpty( memberCard )) {
+			memberEntity = memberMapper.findByMcIdAndbusId( busId, memberCard.getMcId() );
+			if ( CommonUtil.isNotEmpty( memberEntity ) ) {
+			    memberId = memberEntity.getId();
+			}
+		    }else{
 			memberId = 0;
 		    }
 		} else {
