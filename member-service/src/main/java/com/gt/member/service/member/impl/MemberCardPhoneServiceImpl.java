@@ -575,7 +575,12 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    map.put("card",cardEntity );
 
 	    MemberFind memberfind = memberFindDAO.findByQianDao( member.getBusid() );
-	    map.put( "qindaoJifen", memberfind.getIntegral() );
+	    if(CommonUtil.isNotEmpty( memberfind )) {
+		map.put( "qindaoJifen", memberfind.getIntegral() );
+		map.put( "userQindao",1 );
+	    }else{
+		map.put( "userQindao",0 );
+	    }
 
 	    MemberParameter memberParameter = memberParameterMapper.findByMemberId( member.getId() );
 	    if ( CommonUtil.isEmpty( memberParameter ) ) {
