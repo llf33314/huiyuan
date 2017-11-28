@@ -18,7 +18,7 @@ spring:
   host: 113.106.202.51
   port: 6379
   password: gt@123456
-  database: 4
+  database: 3
 
  session:
   store-type: redis
@@ -26,7 +26,7 @@ spring:
 
 datasource:
  druid:
-   url: jdbc:mysql://113.106.202.51:3306/gt_aliyuan?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
+   url: jdbc:mysql://113.106.202.51:3306/gt_aliyun?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
    username: root
    password: gt123456
    driver-class-name: com.mysql.jdbc.Driver
@@ -85,10 +85,10 @@ web:
  redis_ip: 113.106.202.51
  redis_port: 6379
  redis_password: gt@123456
- redis_database: 3
+ redis_database: 0
  res_image_path: /home/server/project/staticSource/upload  #图片存放路径
 
- res_web_path: https://192.168.2.240   #图片域名
+ res_web_path: http://maint.yifriend.net/upload/   #图片域名
 
   #图片资源ftp ip
  static_source_ftp_ip: 120.25.154.127
@@ -98,6 +98,8 @@ web:
  static_source_ftp_user: gt123456
  #图片资源ftp密码
  static_source_ftp_password: gt12345612
+
+ untion_url: https://union.deeptel.com.cn
 
 
  #多粉 11510 微站 14202

@@ -97,7 +97,7 @@ web:
  static_source_ftp_password: gt12345612
 
   #多粉 11510 微站 14202
-  sms_tmplId: 11510
+ sms_tmplId: 11510
 
 redisSession:
  domainName: .deeptel.com.cn

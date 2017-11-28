@@ -3,9 +3,6 @@ package com.gt.member.service;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.member.BasicTest;
 import com.gt.member.dao.MemberCardDAO;
-import com.gt.member.dao.MemberDAO;
-import com.gt.member.entity.Member;
-import com.gt.member.entity.MemberCard;
 import com.gt.member.service.memberApi.MemberApiService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,8 +18,6 @@ public class MemberApiServiceTest extends BasicTest{
     @Autowired
     private MemberApiService memberApiService;
 
-    @Autowired
-    private MemberDAO memberDAO;
 
 
     @Autowired
@@ -37,5 +32,4 @@ public class MemberApiServiceTest extends BasicTest{
         //	Member member = memberDAO.selectById( 194 );
 	Assert.assertNotNull( map );
 	logger.info( "======>> {}", JSONObject.toJSONString( map ) );
-    }
-}
+    }}

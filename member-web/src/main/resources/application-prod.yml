@@ -76,12 +76,12 @@ server:
     timeout: 30
 
 web:
- webHome: http://nb.member.deeptel.com.cn/
- wxmp_home: http://nb.deeptel.com.cn/
+ webHome: https://nb.member.deeptel.com.cn/
+ wxmp_home: https://nb.deeptel.com.cn/
  wxmpsignKey: WXMP2017
  cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6
  sms_name: 多粉平台
- socket_url: http://183.47.242.2:8881
+ socket_url: https://socket1.duofriend.com
  redis_ip: 113.106.202.51
  redis_port: 6379
  redis_password: gt@123456
@@ -97,7 +97,7 @@ web:
  static_source_ftp_password: gt12345612
 
   #多粉 11510 微站 14202
-  sms_tmplId: 11510
+ sms_tmplId: 11510
 
 
 redisSession:
