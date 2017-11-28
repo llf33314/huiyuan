@@ -504,10 +504,11 @@ public class MemberController {
     @ResponseBody
     @RequestMapping( value = "/findCiKaLog", method = RequestMethod.GET )
     public ServerResponse findCiKaLog(HttpServletRequest request,
-		    HttpServletResponse response,Map<String,Object> params){
+		    HttpServletResponse response,@RequestParam String params){
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    Page page= memberCardService.findCikaLog(busId,params);
+	    Map< String,Object > param = JSON.toJavaObject( JSON.parseObject( params ), Map.class );
+	    Page page= memberCardService.findCikaLog(busId,param);
 	    return ServerResponse.createBySuccess( page  );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
