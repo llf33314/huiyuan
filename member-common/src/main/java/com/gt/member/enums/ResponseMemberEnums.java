@@ -41,6 +41,7 @@ public enum ResponseMemberEnums {
     NOT_TIME_CARD(5024,"未查询到时效卡充值规则"),
     PLEASE_GET_CARD(5025,"请领取会员卡"),
     PLEASE_BINDING_PHONE(5026,"请绑定手机号码"),
+    GET_JBARCODE_ERROR(5027,"条形码异常"),
 
 
 

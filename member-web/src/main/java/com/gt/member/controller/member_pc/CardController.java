@@ -411,4 +411,6 @@ public class CardController {
 	QRcodeKit.buildQRcode( url, 450, 450, response );
     }
 
+
+
 }

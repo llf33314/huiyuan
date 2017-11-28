@@ -107,4 +107,12 @@ public interface MemberCardPhoneService {
      * @throws BusinessException
      */
     public Map<String,Object> findMemberUser(Map<String,Object> params,Integer memberId) throws BusinessException;
+
+    /**
+     * 查询粉丝会员卡卡号 并加密
+     * @param memberId
+     * @return
+     */
+    public String findCardNoByMemberId(Integer memberId);
+
 }

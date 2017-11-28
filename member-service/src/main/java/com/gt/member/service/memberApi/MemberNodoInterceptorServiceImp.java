@@ -88,7 +88,7 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 				uc.getOrderCode(), 0 );
 	    } else {
 		//兑换失败  流量回滚
-		MemberEntity memberEntity = memberDAO.selectById( uc.getId() );
+		MemberEntity memberEntity = memberDAO.selectById( uc.getMemberId() );
 		if ( CommonUtil.isEmpty( memberEntity ) ) {
 		    memberEntity = memberDAO.findByMcIdAndbusId( uc.getBusId(), uc.getMcId() );
 		}

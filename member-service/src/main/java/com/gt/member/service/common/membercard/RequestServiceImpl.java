@@ -147,5 +147,9 @@ public class RequestServiceImpl implements RequestService {
 	return url;
     }
 
+    public String loginImg(Integer busId){
+        return null;
+    }
+
 
 }

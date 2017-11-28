@@ -131,7 +131,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	    List< Map< String,Object > > listMap = memberGradetypeDAO.findGradeTyeBybusId( busId );
 	    map.put( "gradeType", listMap );
 	    Integer count = 0;
-	    if ( CommonUtil.isNotEmpty( id ) ) {
+	    if ( id>0 ) {
 		MemberNotice notice = memberNoticeDAO.selectById( id );
 		String noticeUser = notice.getNoticeUser();
 		if ( "0".equals( noticeUser ) ) {

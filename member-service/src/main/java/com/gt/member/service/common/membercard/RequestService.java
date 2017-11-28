@@ -71,4 +71,11 @@ public interface RequestService {
      * @return
      */
     public String payApi(SubQrPayParams subQrPayParams)throws  Exception;
+
+    /**
+     * 查询手机端login图片地址
+     * @param busId
+     * @return
+     */
+    public String loginImg(Integer busId);
 }

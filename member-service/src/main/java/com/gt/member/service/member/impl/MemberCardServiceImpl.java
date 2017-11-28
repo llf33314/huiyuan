@@ -2137,7 +2137,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 	    int pageSize = CommonUtil.isEmpty( json.get( "pageSize" ) ) ? 10 : CommonUtil.toInteger( json.get( "pageSize" ) );
 
-	    Integer memberId = null;
+	    Integer memberId = 0;
 	    if ( CommonUtil.isNotEmpty( json.get( "cardNo" ) ) ) {
 		MemberEntity memberEntity = memberMapper.findByPhone( busId, CommonUtil.toString( json.get( "cardNo" ) ) );
 		if ( CommonUtil.isEmpty( memberEntity ) ) {
@@ -2312,7 +2312,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	    int pageSize = 10;
 
-	    Integer memberId = null;
+	    Integer memberId = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "cardNo" ) ) ) {
 		MemberEntity memberEntity = memberMapper.findByPhone( busId, CommonUtil.toString( params.get( "cardNo" ) ) );
 		if ( CommonUtil.isEmpty( memberEntity ) ) {
@@ -2390,7 +2390,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	    int pageSize = 10;
 
-	    Integer memberId = null;
+	    Integer memberId = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "cardNo" ) ) ) {
 		MemberEntity memberEntity = memberMapper.findByPhone( busId, CommonUtil.toString( params.get( "cardNo" ) ) );
 		if ( CommonUtil.isEmpty( memberEntity ) ) {
