@@ -566,10 +566,13 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 //		throw new BusinessException( ResponseMemberEnums.PLEASE_BINDING_PHONE );
 //	    }
 
+	    //会员卡信息
+
 	    MemberCard cardEntity = memberCardDAO.selectById( memberEntity.getMcId() );
 	    if ( cardEntity.getIsChecked() == 0 || cardEntity.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS );
 	    }
+	    map.put("card",cardEntity );
 
 	    MemberFind memberfind = memberFindDAO.findByQianDao( member.getBusid() );
 	    map.put( "qindaoJifen", memberfind.getIntegral() );
@@ -598,7 +601,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    if ( CommonUtil.isEmpty( member.getHeadimgurl() ) ) {
 		MemberParameter mp = memberParameterMapper.findByMemberId( member.getId() );
 		if ( CommonUtil.isNotEmpty( mp ) ) {
-		    map.put( "headimg", mp.getHeadImg() );
+		    map.put( "headimg", PropertiesUtil.getRes_web_path()+mp.getHeadImg() );
 		}
 	    } else {
 		map.put( "headimg", member.getHeadimgurl() );
@@ -607,6 +610,30 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    // 联盟卡查询
 	    String unionUrl = PropertiesUtil.getUntion_url() + "/cardPhone/#/toUnionCard?busId=" + busId;
 	    map.put( "unionUrl", unionUrl );
+
+
+	    map.put( "path",PropertiesUtil.getRes_web_path() );
+	    MemberGradetype memberGradetype=memberGradetypeDAO.selectById( cardEntity.getGtId() );
+	    map.put( "memberGradetype", memberGradetype );
+
+	    if(cardEntity.getCtId()==2) {
+		MemberGiverule giveRule = memberGiveruleDAO.findBybusIdAndGtIdAndCtId( member.getBusid(), cardEntity.getGtId(), cardEntity.getCtId() );
+		map.put( "zhuKadiscount",giveRule.getGrDiscount()/10.0 );
+	    }
+
+	    if(memberGradetype.getAssistantCard()==1){
+	        //卡通副卡
+		List<Integer> fuCardList=memberGradetypeAssistantDAO.findAssistantBygtId( busId,cardEntity.getGtId() );
+		map.put( "fuCardList",fuCardList );  //卡通副卡集合
+		for(Integer fuka:fuCardList){
+		    //查询折扣卡折扣
+		    if(fuka==2){
+			MemberGradetypeAssistant memberGradetypeAssistant= memberGradetypeAssistantDAO.findAssistantBygtIdAndFuctId( busId,cardEntity.getGtId(),2);
+			map.put( "fuKadiscount",memberGradetypeAssistant.getDiscount()/10.0);
+		     }
+		}
+	    }
+
 
 	    return map;
 	} catch ( BusinessException e ) {
