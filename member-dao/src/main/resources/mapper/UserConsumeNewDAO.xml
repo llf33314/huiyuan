@@ -154,7 +154,7 @@
 
 	<select id="findUserConsumeChongZhiByMemberId" resultType="Map">
 		select * from t_wx_user_consume_new where busId=#{busId} and recordType=1
-		 <if test="memberId>0">
+		 <if test="memberId!=null">
 			 and memberId=#{memberId}
 		 </if>
 		<if test="date!=null">
@@ -166,7 +166,7 @@
 
 	<select id="countUserConsumeChongZhiByMemberId" resultType="java.lang.Integer">
 		select count(id) from t_wx_user_consume_new where busId=#{busId} and recordType=1
-		<if test="memberId>0">
+		<if test="memberId!=null">
 			and memberId=#{memberId}
 		</if>
 		<if test="date!=null">
@@ -176,7 +176,7 @@
 
 	<select id="findUserConsumeDuiHuanByMemberId" resultType="Map">
 		select * from t_wx_user_consume_new where busId=#{busId} and recordType=0 and  ucType=5
-		<if test="memberId>0">
+		<if test="memberId!=null">
 			and memberId=#{memberId}
 		</if>
 		<if test="date!=null">
@@ -188,7 +188,7 @@
 
 	<select id="countUserConsumeDuiHuanByMemberId" resultType="java.lang.Integer">
 		select count(id) from t_wx_user_consume_new where busId=#{busId} recordType=0 and  ucType=5
-		<if test="memberId>0">
+		<if test="memberId!=null">
 			and memberId=#{memberId}
 		</if>
 		<if test="date!=null">
@@ -200,7 +200,7 @@
 
 	<select id="countUserConsumeCikaByMemberId" resultType="java.lang.Integer">
 		select count(id) from t_wx_user_consume_new where busId=#{busId} and recordType=2 and  ucType=133
-		<if test="memberId>0">
+		<if test="memberId!=null">
 			and memberId=#{memberId}
 		</if>
 		<if test="date!=null">
@@ -211,7 +211,7 @@
 
 	<select id="findUserConsumeCikaByMemberId" resultType="Map">
 		select * from t_wx_user_consume_new where busId=#{busId} and recordType=2 and  ucType=133
-		<if test="memberId>0">
+		<if test="memberId!=null">
 			and memberId=#{memberId}
 		</if>
 		<if test="date!=null">
@@ -223,7 +223,7 @@
 
 	<select id="countUserConsumeXiaoFeiByMemberId" resultType="java.lang.Integer">
 		select count(id) from t_wx_user_consume_new where busId=#{busId} and recordType=2
-		<if test="memberId>0">
+		<if test="memberId!=null">
 			and memberId=#{memberId}
 		</if>
 		<if test="payStatus!=null">
@@ -237,7 +237,7 @@
 
 	<select id="findUserConsumeXiaoFeiByMemberId" resultType="Map">
 		select * from t_wx_user_consume_new where busId=#{busId} and recordType=2
-		<if test="memberId>0">
+		<if test="memberId!=null">
 			and memberId=#{memberId}
 		</if>
 		<if test="payStatus!=null">

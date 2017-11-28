@@ -630,11 +630,9 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		    if(fuka==2){
 			MemberGradetypeAssistant memberGradetypeAssistant= memberGradetypeAssistantDAO.findAssistantBygtIdAndFuctId( busId,cardEntity.getGtId(),2);
 			map.put( "fuKadiscount",memberGradetypeAssistant.getDiscount()/10.0);
-		     }
+		    }
 		}
 	    }
-
-
 	    return map;
 	} catch ( BusinessException e ) {
 	    throw e;
