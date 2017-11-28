@@ -600,7 +600,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 	    // 根据卡号查询信息
 	    List< Map< String,Object > > card = cardMapper.findCardById( memberEntity.getMcId() );
-	    map.put( "card", card );
+	    map.put( "card", card.get( 0 ) );
 
 	    if ( CommonUtil.isEmpty( memberEntity.getHeadimgurl() ) ) {
 		MemberParameter mp = memberParameterMapper.findByMemberId( memberEntity.getId() );

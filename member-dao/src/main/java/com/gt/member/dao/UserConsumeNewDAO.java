@@ -110,27 +110,27 @@ public interface UserConsumeNewDAO extends BaseMapper<UserConsumeNew> {
     Integer userCiKa(@Param("busId")Integer busId);
 
 
-    List<Map<String,Object>> findUserConsumeChongZhiByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("date")String date,@Param("first")Integer first,
+    List<Map<String,Object>> findUserConsumeChongZhiByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("startDate")String startDate,@Param("endDate")String endDate,@Param("first")Integer first,
                     @Param("pageSize")Integer pageSize);
 
-    Integer countUserConsumeChongZhiByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("date")String date);
+    Integer countUserConsumeChongZhiByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("startDate")String startDate,@Param("endDate")String endDate);
 
 
-    List<Map<String,Object>> findUserConsumeDuiHuanByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("date")String date,@Param("first")Integer first,
+    List<Map<String,Object>> findUserConsumeDuiHuanByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("startDate")String startDate,@Param("endDate")String endDate,@Param("first")Integer first,
                     @Param("pageSize")Integer pageSize);
 
-    Integer countUserConsumeDuiHuanByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("date")String date);
+    Integer countUserConsumeDuiHuanByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("startDate")String startDate,@Param("endDate")String endDate);
 
 
-    List<Map<String,Object>> findUserConsumeCikaByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("date")String date,@Param("first")Integer first,
+    List<Map<String,Object>> findUserConsumeCikaByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("startDate")String startDate,@Param("endDate")String endDate,@Param("first")Integer first,
                     @Param("pageSize")Integer pageSize);
 
-    Integer countUserConsumeCikaByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("date")String date);
+    Integer countUserConsumeCikaByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("startDate")String startDate,@Param("endDate")String endDate);
 
 
-    List<Map<String,Object>> findUserConsumeXiaoFeiByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("date")String date,@Param("payStatus")Integer payStatus,@Param("first")Integer first,
+    List<Map<String,Object>> findUserConsumeXiaoFeiByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("startDate")String startDate,@Param("endDate")String endDate,@Param("payStatus")Integer payStatus,@Param("first")Integer first,
                     @Param("pageSize")Integer pageSize);
 
-    Integer countUserConsumeXiaoFeiByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("date")String date,@Param("payStatus")Integer payStatus);
+    Integer countUserConsumeXiaoFeiByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("startDate")String startDate,@Param("endDate")String endDate,@Param("payStatus")Integer payStatus);
 
 }

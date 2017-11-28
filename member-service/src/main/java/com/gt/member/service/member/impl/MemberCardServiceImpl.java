@@ -2159,15 +2159,19 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    if ( CommonUtil.isNotEmpty( json.get( "startTime" ) ) ) {
 		startDate = CommonUtil.toString( json.get( "startTime" ) ) + " 00:00:00";
 	    }
+	    String endDate=null;
+	    if ( CommonUtil.isNotEmpty( json.get( "endTime" ) ) ) {
+		endDate = CommonUtil.toString( json.get( "endTime" ) ) + " 59:59:59";
+	    }
 
-	    int rowCount = userConsumeNewDAO.countUserConsumeChongZhiByMemberId( busId, memberId, startDate );
+	    int rowCount = userConsumeNewDAO.countUserConsumeChongZhiByMemberId( busId, memberId, startDate,endDate );
 
 	    Page page = new Page( CommonUtil.toInteger( json.get( "curPage" ) ), pageSize, rowCount, "" );
 	    json.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
 	    json.put( "maxResult", pageSize );
 
 	    List< Map< String,Object > > list = userConsumeNewDAO
-			    .findUserConsumeChongZhiByMemberId( busId, memberId, startDate, CommonUtil.toInteger( json.get( "firstResult" ) ),
+			    .findUserConsumeChongZhiByMemberId( busId, memberId, startDate,endDate, CommonUtil.toInteger( json.get( "firstResult" ) ),
 					    CommonUtil.toInteger( json.get( "maxResult" ) ) );
 
 
@@ -2256,14 +2260,18 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    if ( CommonUtil.isNotEmpty( json.get( "startTime" ) ) ) {
 		startDate = CommonUtil.toString( json.get( "startTime" ) ) + " 00:00:00";
 	    }
+	    String endDate=null;
+	    if ( CommonUtil.isNotEmpty( json.get( "endTime" ) ) ) {
+		endDate = CommonUtil.toString( json.get( "endTime" ) ) + " 59:59:59";
+	    }
 
-	    int rowCount = userConsumeNewDAO.countUserConsumeDuiHuanByMemberId( busId, memberId, startDate );
+	    int rowCount = userConsumeNewDAO.countUserConsumeDuiHuanByMemberId( busId, memberId, startDate ,endDate);
 
 	    Page page = new Page( CommonUtil.toInteger( json.get( "curPage" ) ), pageSize, rowCount, "" );
 	    json.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
 	    json.put( "maxResult", pageSize );
 
-	    List< Map< String,Object > > list = userConsumeNewDAO.findUserConsumeDuiHuanByMemberId( busId, memberId, startDate, CommonUtil.toInteger( json.get( "firstResult" ) ),
+	    List< Map< String,Object > > list = userConsumeNewDAO.findUserConsumeDuiHuanByMemberId( busId, memberId, startDate,endDate, CommonUtil.toInteger( json.get( "firstResult" ) ),
 			    CommonUtil.toInteger( json.get( "maxResult" ) ) );
 	    page.setSubList( list );
 	    return page;
@@ -2339,13 +2347,18 @@ public class MemberCardServiceImpl implements MemberCardService {
 		startDate = CommonUtil.toString( params.get( "startTime" ) ) + " 00:00:00";
 	    }
 
-	    int rowCount = userConsumeNewDAO.countUserConsumeCikaByMemberId( busId, memberId, startDate );
+	    String endDate=null;
+	    if ( CommonUtil.isNotEmpty( params.get( "endTime" ) ) ) {
+		endDate = CommonUtil.toString( params.get( "endTime" ) ) + " 59:59:59";
+	    }
+
+	    int rowCount = userConsumeNewDAO.countUserConsumeCikaByMemberId( busId, memberId, startDate,endDate );
 
 	    Page page = new Page( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "" );
 	    params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
 	    params.put( "maxResult", pageSize );
 
-	    List< Map< String,Object > > list = userConsumeNewDAO.findUserConsumeCikaByMemberId( busId, memberId, startDate, CommonUtil.toInteger( params.get( "firstResult" ) ),
+	    List< Map< String,Object > > list = userConsumeNewDAO.findUserConsumeCikaByMemberId( busId, memberId, startDate,endDate, CommonUtil.toInteger( params.get( "firstResult" ) ),
 			    CommonUtil.toInteger( params.get( "maxResult" ) ) );
 	    List< Map< String,Object > > newList=new ArrayList<>(  );
 	    SortedMap<String,Object> map=dictService.getDict( "A003" );
@@ -2428,19 +2441,24 @@ public class MemberCardServiceImpl implements MemberCardService {
 		startDate = CommonUtil.toString( params.get( "startTime" ) ) + " 00:00:00";
 	    }
 
+	    String endDate=null;
+	    if ( CommonUtil.isNotEmpty( params.get( "endTime" ) ) ) {
+		endDate = CommonUtil.toString( params.get( "endTime" ) ) + " 59:59:59";
+	    }
+
 	    Integer payStatus = null;
 	    if ( CommonUtil.isNotEmpty( params.get( "payStatus" ) ) ) {
 		payStatus = CommonUtil.toInteger( params.get( "payStatus" ) );
 	    }
 
-	    int rowCount = userConsumeNewDAO.countUserConsumeXiaoFeiByMemberId( busId, memberId, startDate, payStatus );
+	    int rowCount = userConsumeNewDAO.countUserConsumeXiaoFeiByMemberId( busId, memberId, startDate,endDate, payStatus );
 
 	    Page page = new Page( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "" );
 	    params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
 	    params.put( "maxResult", pageSize );
 
 	    List< Map< String,Object > > list = userConsumeNewDAO
-			    .findUserConsumeXiaoFeiByMemberId( busId, memberId, startDate, payStatus, CommonUtil.toInteger( params.get( "firstResult" ) ),
+			    .findUserConsumeXiaoFeiByMemberId( busId, memberId, startDate,endDate, payStatus, CommonUtil.toInteger( params.get( "firstResult" ) ),
 					    CommonUtil.toInteger( params.get( "maxResult" ) ) );
 
 	    SortedMap< String,Object > sortemap = dictService.getDict( "1197" );
