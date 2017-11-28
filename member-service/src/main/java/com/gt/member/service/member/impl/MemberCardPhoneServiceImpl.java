@@ -574,7 +574,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    }
 	    map.put("card",cardEntity );
 
-	    MemberFind memberfind = memberFindDAO.findByQianDao( member.getBusid() );
+	    MemberFind memberfind = memberFindDAO.findByQianDao( memberEntity.getBusId() );
 	    if(CommonUtil.isNotEmpty( memberfind )) {
 		map.put( "qindaoJifen", memberfind.getIntegral() );
 		map.put( "userQindao",1 );
@@ -582,7 +582,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		map.put( "userQindao",0 );
 	    }
 
-	    MemberParameter memberParameter = memberParameterMapper.findByMemberId( member.getId() );
+	    MemberParameter memberParameter = memberParameterMapper.findByMemberId( memberEntity.getId() );
 	    if ( CommonUtil.isEmpty( memberParameter ) ) {
 		request.setAttribute( "qiandao", 0 );
 	    } else {
@@ -594,22 +594,22 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    }
 
 	    // 查询我的消息
-	    int systemCount = systemnoticecallDAO.findCountByMemberId( member.getId() );
-	    int noticeCount = noticeUserMapper.findCountNotice( member.getId(), new Date() );
+	    int systemCount = systemnoticecallDAO.findCountByMemberId( memberEntity.getId() );
+	    int noticeCount = noticeUserMapper.findCountNotice( memberEntity.getId(), new Date() );
 	    int count = systemCount + noticeCount;
 	    map.put( "count", count );
 
 	    // 根据卡号查询信息
-	    List< Map< String,Object > > card = cardMapper.findCardById( member.getMcId() );
+	    List< Map< String,Object > > card = cardMapper.findCardById( memberEntity.getMcId() );
 	    map.put( "isleft", card.get( 0 ).get( "isleft" ) );
 
-	    if ( CommonUtil.isEmpty( member.getHeadimgurl() ) ) {
-		MemberParameter mp = memberParameterMapper.findByMemberId( member.getId() );
+	    if ( CommonUtil.isEmpty( memberEntity.getHeadimgurl() ) ) {
+		MemberParameter mp = memberParameterMapper.findByMemberId( memberEntity.getId() );
 		if ( CommonUtil.isNotEmpty( mp ) ) {
 		    map.put( "headimg", PropertiesUtil.getRes_web_path()+mp.getHeadImg() );
 		}
 	    } else {
-		map.put( "headimg", member.getHeadimgurl() );
+		map.put( "headimg", memberEntity.getHeadimgurl() );
 	    }
 
 	    // 联盟卡查询
@@ -622,7 +622,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    map.put( "memberGradetype", memberGradetype );
 
 	    if(cardEntity.getCtId()==2) {
-		MemberGiverule giveRule = memberGiveruleDAO.findBybusIdAndGtIdAndCtId( member.getBusid(), cardEntity.getGtId(), cardEntity.getCtId() );
+		MemberGiverule giveRule = memberGiveruleDAO.findBybusIdAndGtIdAndCtId( memberEntity.getBusId(), cardEntity.getGtId(), cardEntity.getCtId() );
 		map.put( "zhuKadiscount",giveRule.getGrDiscount()/10.0 );
 	    }
 
