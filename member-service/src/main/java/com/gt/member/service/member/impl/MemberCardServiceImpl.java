@@ -2341,7 +2341,16 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 	    List< Map< String,Object > > list = userConsumeNewDAO.findUserConsumeCikaByMemberId( busId, memberId, startDate, CommonUtil.toInteger( params.get( "firstResult" ) ),
 			    CommonUtil.toInteger( params.get( "maxResult" ) ) );
-	    page.setSubList( list );
+	    List< Map< String,Object > > newList=new ArrayList<>(  );
+	    SortedMap<String,Object> map=dictService.getDict( "A003" );
+	    SortedMap<String,Object> payStatus=dictService.getDict( "A004" );
+	    for(Map< String,Object > uc:list){
+		uc.put( "payStatus",payStatus.get( CommonUtil.toString( uc.get( "payStatus" ) )) );
+		uc.put( "dataSource",map.get( CommonUtil.toString(uc.get( "dataSource" ))) );
+		uc.put( "createDate",CommonUtil.toString( uc.get( "createDate" ) ) );
+		newList.add( uc );
+	    }
+	    page.setSubList( newList );
 	    return page;
 	} catch ( Exception e ) {
 	    LOG.error( "分页查询次卡记录异常", e );
@@ -2437,7 +2446,17 @@ public class MemberCardServiceImpl implements MemberCardService {
 		}
 		userConsumes.add( map );
 	    }
-	    page.setSubList( userConsumes );
+
+	    List< Map< String,Object > > newList=new ArrayList<>(  );
+	    SortedMap<String,Object> map=dictService.getDict( "A003" );
+	    SortedMap<String,Object> payStatusMap=dictService.getDict( "A004" );
+	    for(Map< String,Object > uc:userConsumes){
+		uc.put( "payStatus",payStatusMap.get( CommonUtil.toString( uc.get( "payStatus" ) )) );
+		uc.put( "dataSource",map.get( CommonUtil.toString(uc.get( "dataSource" ))) );
+		uc.put( "createDate",CommonUtil.toString( uc.get( "createDate" ) ) );
+		newList.add( uc );
+	    }
+	    page.setSubList( newList );
 	    return page;
 	} catch ( Exception e ) {
 	    LOG.error( "分页查询消费记录异常", e );
