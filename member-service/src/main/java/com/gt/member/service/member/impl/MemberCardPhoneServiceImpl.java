@@ -649,6 +649,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	Map< String,Object > map = new HashMap<>();
 	Integer page = CommonUtil.toInteger( params.get( "page" ) );
 	Integer pageSize = 10;
+	page=page*pageSize;
 
 	//
 	List< Integer > memberIds = memberCommonService.findMemberIds( memberId );
