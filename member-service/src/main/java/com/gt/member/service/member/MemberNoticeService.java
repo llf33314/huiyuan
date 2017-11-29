@@ -81,5 +81,12 @@ public interface MemberNoticeService {
      */
     public void sendNoticeToUser( Integer id, String memberIds ) throws BusinessException;
 
+    /**
+     * 查询会员发送信息状态
+     * @param params
+     * @return
+     */
+    public Page findNoticeUser(String params,Integer busId)throws BusinessException;
+
 
 }

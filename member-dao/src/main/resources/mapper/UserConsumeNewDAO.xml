@@ -201,7 +201,7 @@
 
 
 	<select id="countUserConsumeDuiHuanByMemberId" resultType="java.lang.Integer">
-		select count(id) from t_wx_user_consume_new where busId=#{busId} recordType=0 and  ucType=5
+		select count(id) from t_wx_user_consume_new where busId=#{busId} and recordType=0 and  ucType=5
 		<if test="memberId!=null">
 			and memberId=#{memberId}
 		</if>

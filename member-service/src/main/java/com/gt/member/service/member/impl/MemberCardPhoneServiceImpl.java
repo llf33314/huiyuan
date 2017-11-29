@@ -960,4 +960,17 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
     }
 
 
+
+    public List<Map<String,Object>> findSystemNotice(Integer memberId){
+	List<Map<String, Object>> systemNotices=systemnoticecallDAO.findByMemberId( memberId );
+	systemnoticecallDAO.updateByMemberId(memberId);
+	return systemNotices;
+    }
+
+    public List<Map<String,Object>> findMemberNotice(Integer memberId){
+	List<Map<String, Object>> noticeUsers = noticeUserMapper.findNotice(memberId, DateTimeKit.getDateTime());
+	noticeUserMapper.updateStatus(memberId);
+	return noticeUsers;
+    }
+
 }

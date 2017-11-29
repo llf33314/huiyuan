@@ -70,7 +70,6 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @Autowired
     private MemberCommonService memberCommonService;
 
-
     @ApiOperation( value = "查询手机端login图片地址", notes = "查询手机端login图片地址" )
     @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "int" )
     @ResponseBody
@@ -78,8 +77,8 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     public ServerResponse findLoginImg( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
-	    Integer busId=CommonUtil.toInteger( params.get( "busId" ) );
-	    String loginImg= requestService.loginImg( busId );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    String loginImg = requestService.loginImg( busId );
 	    return ServerResponse.createBySuccess( loginImg );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -89,8 +88,6 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    return ServerResponse.createByError();
 	}
     }
-
-
 
     @ApiOperation( value = "查询领取会员卡页面数据", notes = "查询领取会员卡页面数据" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
@@ -407,8 +404,8 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    Map<String,Object> map= memberCardPhoneService.findRecharge( json, busId, member.getId() );
-	    return ServerResponse.createBySuccess(map);
+	    Map< String,Object > map = memberCardPhoneService.findRecharge( json, busId, member.getId() );
+	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
@@ -460,7 +457,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	Member member = SessionUtils.getLoginMember( request, busId );
 	String cardNO = memberCardPhoneService.findCardNoByMemberId( member.getId() );
-	QRcodeKit.buildQRcode(cardNO, 500, 500, response);
+	QRcodeKit.buildQRcode( cardNO, 500, 500, response );
     }
 
     @ApiOperation( value = "向商家支付扫码条形码", notes = "向商家支付扫码条形码" )
@@ -471,14 +468,13 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	Member member = SessionUtils.getLoginMember( request, busId );
 	String cardNO = memberCardPhoneService.findCardNoByMemberId( member.getId() );
-	JBarcodeUtil.getJbarCode(cardNO, response);
+	JBarcodeUtil.getJbarCode( cardNO, response );
     }
-
 
     @ApiOperation( value = "用户签到", notes = "用户签到" )
     @ResponseBody
     @RequestMapping( value = "/qiandao", method = RequestMethod.POST )
-    public ServerResponse qiandao(HttpServletRequest request, HttpServletResponse response, @RequestParam String json )  {
+    public ServerResponse qiandao( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
@@ -490,12 +486,60 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	     memberCardPhoneService.qiandao(member.getId(),busId );
-	    return ServerResponse.createBySuccess(  );
+	    memberCardPhoneService.qiandao( member.getId(), busId );
+	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError(e.getCode(),e.getMessage());
-	}catch ( Exception e ){
-	    return ServerResponse.createByError(  );
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError();
+	}
+    }
+
+    @ApiOperation( value = "查询系统消息", notes = "查询系统消息" )
+    @ResponseBody
+    @RequestMapping( value = "/findSystemNotice", method = RequestMethod.POST )
+    public ServerResponse findSystemNotice( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    List< Map< String,Object > > mapList = memberCardPhoneService.findSystemNotice( member.getId() );
+	    return ServerResponse.createBySuccess( mapList );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    LOG.error( "查询系统信息异常",e );
+	    return ServerResponse.createByError();
+	}
+    }
+
+    @ApiOperation( value = "查询会员消息", notes = "查询会员消息" )
+    @ResponseBody
+    @RequestMapping( value = "/findMemberNotice", method = RequestMethod.POST )
+    public ServerResponse findMemberNotice(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    List< Map< String,Object > > mapList = memberCardPhoneService.findMemberNotice( member.getId() );
+	    return ServerResponse.createBySuccess( mapList );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    LOG.error( "查询会员信息异常",e );
+	    return ServerResponse.createByError();
 	}
     }
 

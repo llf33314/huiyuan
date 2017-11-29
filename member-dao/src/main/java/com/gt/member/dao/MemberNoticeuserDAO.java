@@ -47,4 +47,22 @@ public interface MemberNoticeuserDAO extends BaseMapper<MemberNoticeuser> {
      * @param phone
      */
     void updateByMsgIdAndPhone(@Param( "msgId" ) Integer msgId,@Param( "phone" )String phone,@Param( "status" )Integer status);
+
+    /**
+     * 总数量
+     * @param noticeId
+     * @param status
+     * @return
+     */
+    Integer countNoticeuser(@Param( "noticeId" ) Integer noticeId,@Param( "status" )Integer status);
+
+    /**
+     * 分页查询
+     * @param noticeId
+     * @param status
+     * @param fristpage
+     * @param pagesize
+     * @return
+     */
+    List<Map<String,Object>> findNoticeuser(@Param( "noticeId" ) Integer noticeId,@Param( "status" )Integer status,@Param("fristpage") Integer fristpage,@Param("pagesize") Integer pagesize);
 }

@@ -347,8 +347,25 @@ public class CardController {
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
-
     }
+
+    @ApiOperation( value = "会员短信发送状态", notes = "会员短信发送状态" )
+    @ResponseBody
+    @RequestMapping( value = "/findNoticeUser", method = RequestMethod.GET )
+    public ServerResponse findNoticeUser( HttpServletRequest request, HttpServletResponse response,@RequestParam String params){
+
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    Page page=memberNoticeService.findNoticeUser( params,busId );
+	    return ServerResponse.createBySuccess(page);
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}catch ( Exception e ){
+	    LOG.error("查询数据异常",e);
+	    return ServerResponse.createByError(  );
+	}
+    }
+
 
     @ApiOperation( value = "查询会员卡发布信息", notes = "查询会员卡发布信息" )
     @ResponseBody
