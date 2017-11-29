@@ -393,7 +393,7 @@ public class MemberController {
 		    @ApiImplicitParam( name = "intergral", value = "兑换积分", paramType = "query", required = false, dataType = "int" )
     })
     @ResponseBody
-    @RequestMapping( value = "/intergralConsume", method = RequestMethod.POST )
+    @RequestMapping( value = "/intergralConsume", method = RequestMethod.GET )
     public ServerResponse intergralConsume(HttpServletRequest request,
 		    HttpServletResponse response,String cardNo,Integer intergral){
 	try {
