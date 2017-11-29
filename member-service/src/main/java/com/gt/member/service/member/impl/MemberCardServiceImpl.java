@@ -2137,7 +2137,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 	    int pageSize = CommonUtil.isEmpty( json.get( "pageSize" ) ) ? 10 : CommonUtil.toInteger( json.get( "pageSize" ) );
 
-	    Integer memberId = 0;
+	    Integer memberId = null;
 	    if ( CommonUtil.isNotEmpty( json.get( "cardNo" ) ) ) {
 		MemberEntity memberEntity = memberMapper.findByPhone( busId, CommonUtil.toString( json.get( "cardNo" ) ) );
 		if ( CommonUtil.isEmpty( memberEntity ) ) {
@@ -2213,7 +2213,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    map.put( "orderCode", ucNew.getOrderCode() );
 	    map.put( "dateTime", DateTimeKit.getDateTime( ucNew.getIsendDate() ) );
 	    map.put( "money", ucNew.getDiscountAfterMoney() );
-	    map.put( "payStatus", ucNew.getPayStatus() );
+	    SortedMap<String,Object> payStatus=dictService.getDict( "A004" );
+	    map.put( "payStatus", payStatus.get( CommonUtil.toString( ucNew.getPayStatus() ))  );
 
 	    List< UserConsumePay > userConsumePays = userConsumePayDAO.findByUcId( ucId );
 	    SortedMap< String,Object > sortemap = dictService.getDict( "1198" );
@@ -2525,7 +2526,9 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    map.put( "refundJifen", ucNew.getRefundJifen() );
 	    map.put( "refundDate", DateTimeKit.getDateTime( ucNew.getRefundDate() ) );
 
-	    map.put( "payStatus", ucNew.getPayStatus() );
+	    SortedMap<String,Object> payStatus=dictService.getDict( "A004" );
+	    map.put( "payStatus", payStatus.get( CommonUtil.toString( ucNew.getPayStatus() ))  );
+
 	    List< UserConsumePay > userConsumePays = userConsumePayDAO.findByUcId( ucId );
 	    SortedMap< String,Object > sortemap = dictService.getDict( "1198" );
 	    String payType = "";
