@@ -89,7 +89,7 @@
 	</update>
 
 	<select id="countNoticeuser" resultType="java.lang.Integer">
-		select count(id) from t_member_noticeuser
+		select count(n.id) from t_member_noticeuser n
 		inner join t_wx_bus_member w on n.busId=w.id
 		where noticeId=#{noticeId}
 		<if test="status>0">
