@@ -89,17 +89,21 @@
 	</update>
 
 	<select id="countNoticeuser" resultType="java.lang.Integer">
-		select count(id) from t_member_noticeuser where noticeId=#{noticeId}
+		select count(id) from t_member_noticeuser
+		inner join t_wx_bus_member w on n.busId=w.id
+		where noticeId=#{noticeId}
 		<if test="status>0">
-			#{status}=#{status}
+			and status=#{status}
 		</if>
 	</select>
 
 
 	<select id="findNoticeuser" resultType="Map">
-		select * from t_member_noticeuser where noticeId=#{noticeId}
+		select n.*,w.nickName from t_member_noticeuser n
+		inner join t_wx_bus_member w on n.busId=w.id
+		where n.noticeId=#{noticeId}
 		<if test="status>0">
-			#{status}=#{status}
+			 and status=#{status}
 		</if>
 		LIMIT #{fristpage},#{pagesize}
 
