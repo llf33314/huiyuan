@@ -63,4 +63,7 @@ public interface MemberRecommendDAO extends BaseMapper<MemberRecommend> {
      * @return
      */
     int findRecommendByphone(@Param("phone")String phone,@Param("memberId")Integer memberId);
+
+
+
 }

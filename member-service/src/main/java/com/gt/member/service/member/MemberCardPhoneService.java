@@ -136,4 +136,11 @@ public interface MemberCardPhoneService {
      */
     public List<Map<String,Object>> findMemberNotice(Integer memberId);
 
+    /**
+     * 查询推荐信息
+     * @param memberId
+     * @return
+     */
+    public Map<String,Object> findRecommend(Integer memberId )throws  BusinessException;
+
 }

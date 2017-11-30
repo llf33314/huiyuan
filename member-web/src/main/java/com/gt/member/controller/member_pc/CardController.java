@@ -355,8 +355,7 @@ public class CardController {
     public ServerResponse findNoticeUser( HttpServletRequest request, HttpServletResponse response,@RequestParam String params){
 
 	try {
-	    Integer busId = SessionUtils.getPidBusId( request );
-	    Page page=memberNoticeService.findNoticeUser( params,busId );
+	    Page page=memberNoticeService.findNoticeUser( params );
 	    return ServerResponse.createBySuccess(page);
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );

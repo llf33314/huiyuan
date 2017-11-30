@@ -454,7 +454,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
     }
 
 
-    public Page findNoticeUser(String paramstr,Integer busId)throws BusinessException{
+    public Page findNoticeUser(String paramstr)throws BusinessException{
 	Map<String,Object> params=JSON.toJavaObject( JSON.parseObject( paramstr ),Map.class );
 	params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	int pageSize = 10;
@@ -462,12 +462,14 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	if ( CommonUtil.isNotEmpty( params.get( "status" ) ) ) {
 	    status = CommonUtil.toInteger( params.get( "status" ) );
 	}
-	int rowCount = memberNoticeuserDAO.countNoticeuser( busId, status );
+	Integer noticeId=CommonUtil.toInteger( params.get( "noticeId" ) );
+
+	int rowCount = memberNoticeuserDAO.countNoticeuser( noticeId, status );
 
 	Page page = new Page( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "" );
 	params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
 
-	List< Map< String,Object > > list = memberNoticeuserDAO.findNoticeuser( busId, status, Integer.parseInt( params.get( "firstResult" ).toString() ), pageSize );
+	List< Map< String,Object > > list = memberNoticeuserDAO.findNoticeuser( noticeId, status, Integer.parseInt( params.get( "firstResult" ).toString() ), pageSize );
 	page.setSubList( list );
 	return page;
     }

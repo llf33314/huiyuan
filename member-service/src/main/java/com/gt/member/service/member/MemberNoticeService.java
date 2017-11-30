@@ -86,7 +86,7 @@ public interface MemberNoticeService {
      * @param params
      * @return
      */
-    public Page findNoticeUser(String params,Integer busId)throws BusinessException;
+    public Page findNoticeUser(String params)throws BusinessException;
 
 
 }

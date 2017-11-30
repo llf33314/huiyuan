@@ -543,4 +543,13 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	}
     }
 
+
+
+    @ApiOperation( value = "查询推荐信息", notes = "查询推荐信息" )
+    @ResponseBody
+    @RequestMapping( value = "/findRecommend", method = RequestMethod.POST )
+    public ServerResponse findRecommend(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
+	return null;
+    }
+
 }
