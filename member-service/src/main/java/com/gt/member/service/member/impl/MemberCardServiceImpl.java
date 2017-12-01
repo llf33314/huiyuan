@@ -2826,10 +2826,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 		//查询会员模板是否开通副卡
 		MemberGradetype gradetype = memberGradetypeDAO.selectById( card.getGtId() );
+		List< Integer > ctIds = new ArrayList<>();
 		if ( gradetype.getAssistantCard() == 1 ) {
 		    //卡通副卡
 		    List< Map< String,Object > > mapList = memberGradetypeAssistantDAO.findAssistantIdBygtId( busId, gradetype.getGtId() );
-		    List< Integer > ctIds = new ArrayList<>();
 		    if ( mapList.size() > 0 ) {
 			for ( Map< String,Object > asstistant : mapList ) {
 			    Integer ctId = CommonUtil.toInteger( asstistant.get( "ctId" ) );
@@ -2850,11 +2850,12 @@ public class MemberCardServiceImpl implements MemberCardService {
 				map.put( "cikakarechargegive", rechargegiveAssistant );
 			    }
 			    ctIds.add( ctId );
-
 			}
 		    }
-		    ctIds.add( card.getCtId() );
 		}
+
+		ctIds.add( card.getCtId() );
+		map.put( "chongzhiCtId",ctIds );
 
 		return map;
 	    }

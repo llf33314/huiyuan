@@ -142,7 +142,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
 		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
-    @RequestMapping( value = "/sendMsg" )
+    @RequestMapping( value = "/sendMsg" ,method =RequestMethod.POST )
     public ServerResponse sendMsg( HttpServletResponse response, HttpServletRequest request, @RequestParam String json ) {
 	try {
 	    Map< String,Object > map = JSON.parseObject( json, Map.class );
@@ -199,7 +199,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    Member member = SessionUtils.getLoginMember( request, busId );
-	    memberCardPhoneService.linquMemberCard( params, member.getBusid() );
+	    memberCardPhoneService.linquMemberCard( params, member.getId() );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
