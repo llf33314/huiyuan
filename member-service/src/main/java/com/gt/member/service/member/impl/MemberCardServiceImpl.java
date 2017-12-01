@@ -2826,12 +2826,13 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 		//查询会员模板是否开通副卡
 		MemberGradetype gradetype = memberGradetypeDAO.selectById( card.getGtId() );
-		List< Integer > ctIds = new ArrayList<>();
+		List< Map<String,Object> > ctIds = new ArrayList<>();
 		if ( gradetype.getAssistantCard() == 1 ) {
 		    //卡通副卡
 		    List< Map< String,Object > > mapList = memberGradetypeAssistantDAO.findAssistantIdBygtId( busId, gradetype.getGtId() );
 		    if ( mapList.size() > 0 ) {
 			for ( Map< String,Object > asstistant : mapList ) {
+			    Map<String,Object> fuCtName=new HashMap<>(  );
 			    Integer fuctId = CommonUtil.toInteger( asstistant.get( "fuctId" ) );
 			    Integer assistantId = CommonUtil.toInteger( asstistant.get( "id" ) );
 			    //查询副卡充值信息
@@ -2842,19 +2843,34 @@ public class MemberCardServiceImpl implements MemberCardService {
 				//副卡时效卡
 				List< Map< String,Object > > rechargegiveAssistant = memberRechargegiveAssistantDAO.findByAssistantId( busId, assistantId );
 				map.put( "shixiaokarechargegive", rechargegiveAssistant );
+				fuCtName.put( "name","时效卡" );
 			    }
 
 			    if ( fuctId == 5 ) {
 				//副卡次卡
 				List< Map< String,Object > > rechargegiveAssistant = memberRechargegiveAssistantDAO.findByAssistantId( busId, assistantId );
 				map.put( "cikakarechargegive", rechargegiveAssistant );
+				fuCtName.put( "name","次卡" );
 			    }
-			    ctIds.add( fuctId );
+			    fuCtName.put("id",fuctId);
+			    ctIds.add( fuCtName );
 			}
 		    }
 		}
-
-		ctIds.add( card.getCtId() );
+		Map<String,Object> ctName=new HashMap<>(  );
+		if(card.getCtId()==3){
+		    ctName.put( "id",3 );
+		    ctName.put( "name","储值卡" );
+		}
+		if(card.getCtId()==4){
+		    ctName.put( "id",4 );
+		    ctName.put( "name","时效卡" );
+		}
+		if(card.getCtId()==5){
+		    ctName.put( "id",5 );
+		    ctName.put( "name","次卡" );
+		}
+		ctIds.add( ctName );
 		map.put( "chongzhiCtId",ctIds );
 
 		return map;
