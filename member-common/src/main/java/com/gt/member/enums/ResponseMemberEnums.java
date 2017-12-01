@@ -44,6 +44,7 @@ public enum ResponseMemberEnums {
     GET_JBARCODE_ERROR(5027,"条形码异常"),
     NOT_SET_QIANDAO(5028,"商家未设置签到"),
     MEMBER_QIANDAO(5029,"亲,你已经签到过"),
+    NOT_RECHARGE_JFIEN(5030,"积分卡不能充值"),
 
 
 

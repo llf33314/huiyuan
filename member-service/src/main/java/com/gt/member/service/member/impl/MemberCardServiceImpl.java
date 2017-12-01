@@ -2785,6 +2785,12 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    } else if ( card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
+	        //
+		if(card.getCtId()==1){
+		    throw new BusinessException( ResponseMemberEnums.NOT_RECHARGE_JFIEN );
+		}
+
+
 		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
 		MemberGiverule giveRule = memberGiveruleDAO.selectById( card.getGrId() );
 		map.put( "nickName", memberEntity.getNickname() );
