@@ -11,9 +11,8 @@ spring:
   name: zhangmz-SpringBoot
  profiles:
 #  active: dev
-  active: test
-#  active: prod
-#  active: formal
+#  active: test
+  active: prod
   # SpringMvc 配置
  mvc:
   view:

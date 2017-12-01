@@ -210,10 +210,12 @@ public class AddMemberController {
 //	    oldApiSms.setModel(9);
 	    NewApiSms newApiSms=new NewApiSms();
 	    newApiSms.setMobile( telNo );
-	    newApiSms.setParamsStr( "会员短信校验码:"+no );
+	    newApiSms.setParamsStr(no );
 	    newApiSms.setBusId(busId);
 	    newApiSms.setModel(9);
-	    newApiSms.setTmplId( Long.parseLong(PropertiesUtil.getSms_tmplId())  );
+
+	    newApiSms.setTmplId( Long.parseLong(PropertiesUtil.getSmstmplId())  );
+	    requestUtils.setReqdata( newApiSms );
 	    try {
 		String smsStr = requestService.sendSmsNew( requestUtils );
 		JSONObject json=JSONObject.parseObject( smsStr );
@@ -230,13 +232,13 @@ public class AddMemberController {
 		map.put( "result", false );
 		map.put( "msg", "获取短信验证码失败" );
 	    }
-	    CommonUtil.write( response, map );
 	}catch ( Exception e ){
 	    e.printStackTrace();
 	    LOG.error( "短信发送失败", e );
 	    map.put( "result", false );
 	    map.put( "msg", "获取短信验证码失败" );
 	}
+	CommonUtil.write( response, map );
     }
 
     /**

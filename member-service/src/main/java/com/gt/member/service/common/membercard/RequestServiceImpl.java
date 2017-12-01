@@ -12,6 +12,7 @@ import com.gt.member.util.PropertiesUtil;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import java.util.Map;
  * Created by Administrator on 2017/10/24.
  */
 @Service
+@Slf4j
 public class RequestServiceImpl implements RequestService {
     //微信卡券核销
     private final String CODE_CONSUME = "/8A5DA52E/wxcardapi/6F6D9AD2/79B4DE7C/codeConsume.do";
@@ -56,6 +58,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     public String sendSmsNew( RequestUtils< NewApiSms > requestUtils ) {
+	log.error( "短信参数:"+JSONObject.toJSONString( requestUtils ) );
 	String url = PropertiesUtil.getWxmp_home() + SEND_SMS_NEW;
 	String smsStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
 	return smsStr;

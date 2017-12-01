@@ -36,7 +36,7 @@ import java.util.Map;
  */
 @Api( value = "粉丝和会员接口", description = "粉丝和会员接口" )
 @Controller
-@RequestMapping( "/memberAPI/member" )
+@RequestMapping( "/memberAPI/member/" )
 public class MemberApiController extends BaseController {
 
     private static final Logger LOG = Logger.getLogger( MemberApiController.class );

@@ -2290,10 +2290,15 @@ public class MemberApiServiceImpl implements MemberApiService {
     public void newPaySuccessByErpBalance( String newerpPaySuccessBo ) throws BusinessException {
 	try {
 	    NewErpPaySuccessBo erpPaySuccess = JSON.toJavaObject( JSON.parseObject( newerpPaySuccessBo ), NewErpPaySuccessBo.class );
+	    MemberEntity memberEntity = memberDAO.selectById( erpPaySuccess.getMemberId() );
 
+
+	   UserConsumeNew consumeNew= userConsumeNewDAO.findByCode(memberEntity.getBusId(), erpPaySuccess.getOrderCode() );
+	   if(CommonUtil.isNotEmpty( consumeNew )){
+	       throw new BusinessException( ResponseMemberEnums.REPEAT_ORDER );
+	   }
 	    UserConsumeNew uc = new UserConsumeNew();
 
-	    MemberEntity memberEntity = memberDAO.selectById( erpPaySuccess.getMemberId() );
 
 	    //会员消费记录添加
 	    uc.setBusId( memberEntity.getBusId() );
