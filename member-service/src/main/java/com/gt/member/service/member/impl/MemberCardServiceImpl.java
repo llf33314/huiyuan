@@ -2832,24 +2832,24 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    List< Map< String,Object > > mapList = memberGradetypeAssistantDAO.findAssistantIdBygtId( busId, gradetype.getGtId() );
 		    if ( mapList.size() > 0 ) {
 			for ( Map< String,Object > asstistant : mapList ) {
-			    Integer ctId = CommonUtil.toInteger( asstistant.get( "ctId" ) );
+			    Integer fuctId = CommonUtil.toInteger( asstistant.get( "fuctId" ) );
 			    Integer assistantId = CommonUtil.toInteger( asstistant.get( "id" ) );
 			    //查询副卡充值信息
-			    if ( ctId == 2 ) {
+			    if ( fuctId == 2 ) {
 				continue;
 			    }
-			    if ( ctId == 4 ) {
+			    if ( fuctId == 4 ) {
 				//副卡时效卡
 				List< Map< String,Object > > rechargegiveAssistant = memberRechargegiveAssistantDAO.findByAssistantId( busId, assistantId );
 				map.put( "shixiaokarechargegive", rechargegiveAssistant );
 			    }
 
-			    if ( ctId == 5 ) {
+			    if ( fuctId == 5 ) {
 				//副卡次卡
 				List< Map< String,Object > > rechargegiveAssistant = memberRechargegiveAssistantDAO.findByAssistantId( busId, assistantId );
 				map.put( "cikakarechargegive", rechargegiveAssistant );
 			    }
-			    ctIds.add( ctId );
+			    ctIds.add( fuctId );
 			}
 		    }
 		}

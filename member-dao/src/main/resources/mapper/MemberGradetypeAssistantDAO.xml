@@ -35,7 +35,7 @@
 	</delete>
 
 	<select id="findAssistantIdBygtId" resultType="Map">
-		select id,ctId from t_member_gradetype_assistant where busId=#{busId} and gtId=#{gtId}
+		select id,ctId,fuctId from t_member_gradetype_assistant where busId=#{busId} and gtId=#{gtId}
 	</select>
 
 	<select id="findAssistantBygtIdAndFuctId" resultMap="BaseResultMap">
