@@ -2827,6 +2827,22 @@ public class MemberCardServiceImpl implements MemberCardService {
 		//查询会员模板是否开通副卡
 		MemberGradetype gradetype = memberGradetypeDAO.selectById( card.getGtId() );
 		List< Map<String,Object> > ctIds = new ArrayList<>();
+		Map<String,Object> ctName=new HashMap<>(  );
+		if(card.getCtId()==3){
+		    ctName.put( "id",3 );
+		    ctName.put( "name","储值卡" );
+		}
+		if(card.getCtId()==4){
+		    ctName.put( "id",4 );
+		    ctName.put( "name","时效卡" );
+		}
+		if(card.getCtId()==5){
+		    ctName.put( "id",5 );
+		    ctName.put( "name","次卡" );
+		}
+		ctIds.add( ctName );
+
+
 		if ( gradetype.getAssistantCard() == 1 ) {
 		    //卡通副卡
 		    List< Map< String,Object > > mapList = memberGradetypeAssistantDAO.findAssistantIdBygtId( busId, gradetype.getGtId() );
@@ -2849,7 +2865,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 			    if ( fuctId == 5 ) {
 				//副卡次卡
 				List< Map< String,Object > > rechargegiveAssistant = memberRechargegiveAssistantDAO.findByAssistantId( busId, assistantId );
-				map.put( "cikakarechargegive", rechargegiveAssistant );
+				map.put( "cikarechargegive", rechargegiveAssistant );
 				fuCtName.put( "name","次卡" );
 			    }
 			    fuCtName.put("id",fuctId);
@@ -2857,20 +2873,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 			}
 		    }
 		}
-		Map<String,Object> ctName=new HashMap<>(  );
-		if(card.getCtId()==3){
-		    ctName.put( "id",3 );
-		    ctName.put( "name","储值卡" );
-		}
-		if(card.getCtId()==4){
-		    ctName.put( "id",4 );
-		    ctName.put( "name","时效卡" );
-		}
-		if(card.getCtId()==5){
-		    ctName.put( "id",5 );
-		    ctName.put( "name","次卡" );
-		}
-		ctIds.add( ctName );
+
 		map.put( "chongzhiCtId",ctIds );
 
 		return map;
