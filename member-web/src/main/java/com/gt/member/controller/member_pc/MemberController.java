@@ -577,11 +577,12 @@ public class MemberController {
     @ResponseBody
     @RequestMapping( value = "/findMemberCommend", method = RequestMethod.GET )
     public ServerResponse findMemberCommend(HttpServletRequest request,
-		    HttpServletResponse response,Map<String,Object> params){
+		    HttpServletResponse response,@RequestParam  String  params){
 	try {
+	    Map<String,Object> map=JSON.parseObject( params,Map.class );
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    params.put( "recommendType",0 );
-	    Page page= memberCardService.findCommend(busId,params);
+	    map.put( "recommendType",0 );
+	    Page page= memberCardService.findCommend(busId,map);
 	    return ServerResponse.createBySuccess( page  );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
