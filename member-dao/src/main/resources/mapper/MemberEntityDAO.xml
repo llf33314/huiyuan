@@ -482,7 +482,7 @@
 	</select>
 
 	<select id="findCommend" resultType="Map">
-		select t.id, t.name, t.phone AS tphone, t.ischeck, t.ctId, t.image,
+		select t.id, t.name, t.ischeck, t.ctId,
 		t.isUser,t.datetime,t.cardName,t.recommendType,
 		m.nickname,
 		m.phone as mphone,t.integral,t.fenbi,t.flow,t.money  from
@@ -493,7 +493,7 @@
 		</if>
 
 		<if test="search!=null">
-			and (t.name=#{search} or t.phone=#{search})
+			and t.phone=#{search}
 		</if>
 		order by t.id desc
 		limit #{fristpage},#{pagesize}

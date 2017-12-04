@@ -2545,7 +2545,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	try {
 	    params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	    int pageSize = 10;
-	    Object search1 = params.get( "search" );
+	    Object search1 = params.get( "phone" );
 	    String search = null;
 	    if ( CommonUtil.isNotEmpty( search1 ) ) {
 		search = search1.toString();

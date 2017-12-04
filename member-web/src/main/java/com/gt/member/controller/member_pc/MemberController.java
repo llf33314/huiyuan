@@ -572,7 +572,7 @@ public class MemberController {
 
     @ApiOperation( value = "工作台--推荐--会员推荐", notes = "会员推荐" )
     @ApiImplicitParams({
-		    @ApiImplicitParam( name = "cardNo", value = "卡号、手机号" , paramType = "query", required = false, dataType = "String" )
+		    @ApiImplicitParam( name = "phone", value = "卡号、手机号" , paramType = "query", required = false, dataType = "String" )
     })
     @ResponseBody
     @RequestMapping( value = "/findMemberCommend", method = RequestMethod.GET )
@@ -591,7 +591,7 @@ public class MemberController {
 
     @ApiOperation( value = "工作台--推荐--优惠券推荐", notes = "会员推荐" )
     @ApiImplicitParams({
-		    @ApiImplicitParam( name = "cardNo", value = "卡号、手机号" , paramType = "query", required = false, dataType = "String" )
+		    @ApiImplicitParam( name = "phone", value = "卡号、手机号" , paramType = "query", required = false, dataType = "String" )
     })
     @ResponseBody
     @RequestMapping( value = "/findCardCommend", method = RequestMethod.GET )
