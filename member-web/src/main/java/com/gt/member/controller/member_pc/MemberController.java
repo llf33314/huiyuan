@@ -596,11 +596,12 @@ public class MemberController {
     @ResponseBody
     @RequestMapping( value = "/findCardCommend", method = RequestMethod.GET )
     public ServerResponse findCardCommend(HttpServletRequest request,
-		    HttpServletResponse response,Map<String,Object> params){
+		    HttpServletResponse response,@RequestParam  String params  ){
 	try {
+	    Map<String,Object> map=JSON.parseObject( params,Map.class );
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    params.put( "recommendType",1 );
-	    Page page= memberCardService.findCommend(busId,params);
+	    map.put( "recommendType",1 );
+	    Page page= memberCardService.findCommend(busId,map);
 	    return ServerResponse.createBySuccess( page  );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -614,10 +615,11 @@ public class MemberController {
     @ResponseBody
     @RequestMapping( value = "/findPickLog", method = RequestMethod.GET )
     public ServerResponse findPickLog(HttpServletRequest request,
-		    HttpServletResponse response,Map<String,Object> params){
+		    HttpServletResponse response,@RequestParam String params){
 	try {
+	    Map<String,Object> map=JSON.parseObject( params,Map.class );
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    Page page= memberCardService.findPickLog(busId,params);
+	    Page page= memberCardService.findPickLog(busId,map);
 	    return ServerResponse.createBySuccess( page  );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
