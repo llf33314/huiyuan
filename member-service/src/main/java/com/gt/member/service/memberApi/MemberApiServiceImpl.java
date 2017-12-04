@@ -652,13 +652,13 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 	    // 短信判断
 
-	    if ( CommonUtil.isEmpty( redisCacheUtil.get( code ) ) ) {
-		throw new BusinessException( ResponseMemberEnums.NO_PHONE_CODE );
-	    }
+//	    if ( CommonUtil.isEmpty( redisCacheUtil.get( code ) ) ) {
+//		throw new BusinessException( ResponseMemberEnums.NO_PHONE_CODE );
+//	    }
 	    // 查询要绑定的手机号码
 	    MemberEntity oldMemberEntity = memberDAO.findByPhone( busId, phone );
 
-	    redisCacheUtil.del( code );
+//	    redisCacheUtil.del( code );
 
 	    if ( CommonUtil.isEmpty( oldMemberEntity ) ) {
 		// 新用户

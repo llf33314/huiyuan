@@ -150,7 +150,6 @@ public class MemberApiController extends BaseController {
 
     @ApiOperation( value = "小程序绑定手机号码", notes = "小程序绑定手机号码 返回member对象数据" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "code", value = "短信校验码", paramType = "query", required = true, dataType = "String" ),
 		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String" ),
 		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
@@ -203,7 +202,7 @@ public class MemberApiController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "根据id查询粉丝信息id集合", notes = "根据id查询粉丝信息id集合" )
+    @ApiOperation( value = "根据memberId查询粉丝信息id集合", notes = "根据id查询粉丝信息id集合" )
     @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
     @ResponseBody
     @RequestMapping( value = "/findMemberIdsByid", method = RequestMethod.POST )
