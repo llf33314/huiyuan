@@ -477,7 +477,7 @@
 			and t.recommendType=#{recommendType}
 		</if>
 		<if test="search!=null">
-			and (t.name=#{search} or t.phone=#{search})
+			and m.phone=#{search}
 		</if>
 	</select>
 
@@ -493,7 +493,7 @@
 		</if>
 
 		<if test="search!=null">
-			and t.phone=#{search}
+			and m.phone=#{search}
 		</if>
 		order by t.id desc
 		limit #{fristpage},#{pagesize}
