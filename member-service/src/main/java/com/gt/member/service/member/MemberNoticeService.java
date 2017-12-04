@@ -88,5 +88,13 @@ public interface MemberNoticeService {
      */
     public Page findNoticeUser(String params)throws BusinessException;
 
+    /**
+     *  重新发送短信
+     * @param params
+     * @param busId
+     * @throws BusinessException
+     */
+    public void resendNoticeUser(String params) throws BusinessException;
+
 
 }

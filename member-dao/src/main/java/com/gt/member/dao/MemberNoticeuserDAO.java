@@ -65,4 +65,11 @@ public interface MemberNoticeuserDAO extends BaseMapper<MemberNoticeuser> {
      * @return
      */
     List<Map<String,Object>> findNoticeuser(@Param( "noticeId" ) Integer noticeId,@Param( "status" )Integer status,@Param("fristpage") Integer fristpage,@Param("pagesize") Integer pagesize);
+
+    /**
+     * 查询未发送成功的信息
+     * @param noticeId
+     * @return
+     */
+    List<Map<String,Object>> findReSendNoticeUser(@Param( "noticeId" )Integer noticeId);
 }

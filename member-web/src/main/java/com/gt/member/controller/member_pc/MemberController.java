@@ -644,7 +644,7 @@ public class MemberController {
 
     @ApiOperation( value = "会员卡充值信息", notes = "会员卡充值" )
     @ApiImplicitParams({
-		    @ApiImplicitParam( name = "phone", value = "手机号或卡号" , paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "cardNo", value = "手机号或卡号" , paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "ctId", value = "选择充值卡类型" , paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "money", value = "充值金额" , paramType = "query", required = false, dataType = "double" )
     })
@@ -656,7 +656,7 @@ public class MemberController {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    Integer dangqianbusId = SessionUtils.getLoginUser( request ).getId();
-	   	memberCardService.rechargeMemberCard(busId,dangqianbusId,params);
+	    memberCardService.rechargeMemberCard(busId,dangqianbusId,params);
 	    return ServerResponse.createBySuccess(   );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );

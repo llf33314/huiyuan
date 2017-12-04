@@ -473,4 +473,85 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	page.setSubList( list );
 	return page;
     }
+
+
+
+    public void resendNoticeUser(String params) throws BusinessException {
+	try {
+	    Map< String,Object > paramaMap = JSON.toJavaObject( JSON.parseObject( params ), Map.class );
+	    Integer noticeId = CommonUtil.toInteger( paramaMap.get( "noticeId" ) );
+	    List< Map< String,Object > > memberNoticeUsers = memberNoticeuserDAO.findReSendNoticeUser( noticeId );
+	    MemberNotice memberNotice = memberNoticeDAO.selectById( noticeId );
+
+	    StringBuffer phoneSb = new StringBuffer();
+	    List< Integer > ids = new ArrayList<>();
+	    Integer i = 0;
+	    for ( Map< String,Object > map : memberNoticeUsers ) {
+		if ( CommonUtil.isNotEmpty( map.get( "phone" ) ) ) {
+		    phoneSb.append( map.get( "phone" ) + "," );
+		    ids.add( CommonUtil.toInteger( map.get( "id" ) ) );
+		}
+		//粉丝在100条内
+		if ( memberNoticeUsers.size() < 100 ) {
+		    RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
+		    String phone = phoneSb.toString();
+		    phone = phone.substring( 0, phone.lastIndexOf( "," ) );
+		    OldApiSms oldApiSms = new OldApiSms();
+		    oldApiSms.setMobiles( phone );
+		    oldApiSms.setContent( memberNotice.getSmsContent() );
+		    oldApiSms.setCompany( PropertiesUtil.getSms_name() );
+		    oldApiSms.setBusId( memberNotice.getId() );
+		    oldApiSms.setModel( 3 );
+		    requestUtils.setReqdata( oldApiSms );
+		    try {
+			String result = requestService.sendSms( requestUtils );
+			JSONObject json = JSON.parseObject( result );
+
+			if ( "0".equals( CommonUtil.toString( json.get( "code" ) ) ) ) {
+			    JSONObject jsonOb = JSON.parseObject( json.getString( "data" ) );
+			    memberNoticeuserDAO.updateByIds( ids, CommonUtil.toInteger( jsonOb.get( "msgid" ) ) );
+			}
+			ids.clear();
+		    } catch ( Exception e ) {
+			LOG.error( "短信发送失败", e );
+		    }
+		} else {
+		    if ( ( i % 100 == 0 ) || ( i + 1 == memberNoticeUsers.size() ) ) {
+			phoneSb = new StringBuffer();
+			RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
+			String phone = phoneSb.toString();
+			String phones = phone.substring( 0, phone.lastIndexOf( "," ) );
+			phones = phones.substring( 0, phones.lastIndexOf( "," ) );
+			OldApiSms oldApiSms = new OldApiSms();
+			oldApiSms.setMobiles( phones );
+			oldApiSms.setContent( memberNotice.getSmsContent() );
+			oldApiSms.setCompany( PropertiesUtil.getSms_name() );
+			oldApiSms.setBusId( memberNotice.getId() );
+			oldApiSms.setModel( 3 );
+			String notifyUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/smsNotice";
+			oldApiSms.setNotifyUrl( notifyUrl );
+			requestUtils.setReqdata( oldApiSms );
+			try {
+			    String result = requestService.sendSms( requestUtils );
+			    JSONObject json = JSON.parseObject( result );
+
+			    if ( "0".equals( CommonUtil.toString( json.get( "code" ) ) ) ) {
+				JSONObject jsonOb = JSON.parseObject( json.getString( "data" ) );
+				memberNoticeuserDAO.updateByIds( ids, CommonUtil.toInteger( jsonOb.get( "msgid" ) ) );
+			    }
+			    ids.clear();
+			} catch ( Exception e ) {
+			    LOG.error( "短信发送失败", e );
+			}
+		    }
+		}
+		i++;
+	    }
+	} catch ( Exception e ) {
+	    LOG.error( "发送消息异常", e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+
+	}
+    }
+
 }

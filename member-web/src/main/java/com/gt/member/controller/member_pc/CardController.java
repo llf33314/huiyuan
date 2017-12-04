@@ -365,6 +365,25 @@ public class CardController {
 	}
     }
 
+    @ApiOperation( value = "重新发送短信", notes = "重新发送短信" )
+    @ApiImplicitParams( @ApiImplicitParam( name = "noticeId", value = "会员短信消息id", paramType = "query", required = false, dataType = "String" ) )
+    @ResponseBody
+    @RequestMapping( value = "/resendNoticeUser", method = RequestMethod.POST )
+    public ServerResponse resendNoticeUser(HttpServletRequest request, HttpServletResponse response,@RequestParam String params){
+
+	try {
+	    memberNoticeService.resendNoticeUser( params );
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}catch ( Exception e ){
+	    LOG.error("重新发送短信异常",e);
+	    return ServerResponse.createByError(  );
+	}
+    }
+
+
+
 
     @ApiOperation( value = "查询会员卡发布信息", notes = "查询会员卡发布信息" )
     @ResponseBody

@@ -1991,8 +1991,6 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    }
 	    map.put( "cardType", grades );
 
-
-
 	    // 会员总数
 	    Integer countMember = memberCardDAO.countCard1( busId, ctId );
 	    map.put( "countMember", countMember );
@@ -2797,6 +2795,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		map.put( "phone", memberEntity.getPhone() );
 		map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
 		map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
+		map.put( "expireDate",DateTimeKit.format( card.getExpireDate() ) );
 		map.put( "cardNo", card.getCardNo() );
 		map.put( "ctId", card.getCtId() );
 		map.put( "discount", giveRule.getGrDiscount() / 10 );
@@ -3066,6 +3065,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    userConsumePayDAO.insert( userConsumePay );
 	    //立即送
 	    memberCommonService.findGiveRule( orderCode );
+	}catch ( BusinessException e ){
+	    throw  e;
 	}catch ( Exception e ){
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
