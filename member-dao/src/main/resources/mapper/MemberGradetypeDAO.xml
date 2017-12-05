@@ -314,5 +314,11 @@
 
 	</select>
 
+	<select id="findGradeTypeDengji" resultType="java.lang.Integer">
+		select count(*) as dengji from t_member_gradetype where busId=#{busId}
+		AND iseasy=0 GROUP BY ct_id ORDER BY dengji DESC LIMIT 1
+
+	</select>
+
 
 </mapper>

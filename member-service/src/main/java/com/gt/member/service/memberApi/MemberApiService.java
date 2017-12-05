@@ -483,6 +483,11 @@ public interface MemberApiService {
      */
     public void loginMemberByPhone( HttpServletRequest request,Integer busId, String phone ) throws BusinessException;
 
-
+    /**
+     * 查询会员卡等级
+     * @param busId
+     * @return
+     */
+    public Integer findCardDengji(Integer busId);
 
 }

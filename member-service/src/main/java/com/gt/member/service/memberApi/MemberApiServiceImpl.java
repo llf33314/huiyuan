@@ -2851,7 +2851,10 @@ public class MemberApiServiceImpl implements MemberApiService {
 	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
+    }
 
+    public Integer findCardDengji(Integer busId){
+       return  gradeTypeMapper.findGradeTypeDengji( busId );
     }
 
 }

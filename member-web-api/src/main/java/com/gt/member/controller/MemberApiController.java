@@ -683,6 +683,23 @@ public class MemberApiController extends BaseController {
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
-
     }
+
+    @ApiOperation( value = "查询会员卡最高等级", notes = "查询会员卡最高等级" )
+    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
+    @ResponseBody
+    @RequestMapping( value = "/findCardDengji", method = RequestMethod.POST )
+    public ServerResponse findCardDengji(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer busId=CommonUtil.toInteger( requestBody.get("busId") );
+	    Integer dengji=memberApiService.findCardDengji(busId);
+	    return ServerResponse.createBySuccess(dengji );
+	} catch ( Exception e ) {
+	    LOG.error( "查询会员卡最高等级异常",e );
+	    return ServerResponse.createByError( );
+	}
+    }
+
 }
