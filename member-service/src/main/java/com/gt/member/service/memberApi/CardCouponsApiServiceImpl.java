@@ -1528,16 +1528,24 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 	    if ( CommonUtil.isEmpty( stateMap ) || stateMap.size() == 0 ) {
 		throw new BusinessException( ResponseMemberEnums.COUPONSE_NO_EXIST.getCode(), ResponseMemberEnums.COUPONSE_NO_EXIST.getMsg() );
 	    }
+	    Integer storeId = CommonUtil.toInteger( params.get( "storeId" ) );
+
+
+
+
 	    for ( Map< String,Object > map2 : stateMap ) {
 		if ( "1".equals( CommonUtil.toString( map2.get( "state" ) ) ) || "2".equals( CommonUtil.toString( map2.get( "state" ) ) ) ) {
 		    throw new BusinessException( ResponseMemberEnums.COUPONSE_NO_GUOQI.getCode(), ResponseMemberEnums.COUPONSE_NO_GUOQI.getMsg() );
+		}
+		String location_id_list=CommonUtil.toString( map2.get( "location_id_list" ) );
+		if(!location_id_list.contains( storeId.toString() )){
+		    throw new BusinessException( ResponseMemberEnums.COUPONSE_NOT_USE_SHOP);
 		}
 	    }
 
 	    if ( CommonUtil.isEmpty( params.get( "storeId" ) ) ) {
 		duofenCardGetMapper.updateByCodes( codeList ); // 卡券核销
 	    } else {
-		Integer storeId = CommonUtil.toInteger( params.get( "storeId" ) );
 		duofenCardGetMapper.updateStoreIdByCodes( codeList, storeId ); // 卡券核销
 	    }
 

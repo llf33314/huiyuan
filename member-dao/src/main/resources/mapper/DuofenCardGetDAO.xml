@@ -268,8 +268,9 @@
 
 
 	<select id="findByCodes" resultType="Map">
-		select state,cardId,recommendId from t_duofen_card_get where  code in
-
+		select state,cardId,recommendId,location_id_list from t_duofen_card_get g
+		INNER JOIN t_duofen_card  c ON g.`cardId`=c.id
+		where  g.code in
 		<foreach close=")" collection="codes" item="code" open="(" separator=",">
 			#{code}
 		</foreach>

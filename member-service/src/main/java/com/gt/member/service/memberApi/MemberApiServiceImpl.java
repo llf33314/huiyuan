@@ -639,7 +639,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 		throw new BusinessException( ResponseMemberEnums.NULL );
 	    }
 
-
 	    if ( CommonUtil.isEmpty( phone ) ) {
 		throw new BusinessException( ResponseMemberEnums.NULL );
 	    }
@@ -1008,6 +1007,17 @@ public class MemberApiServiceImpl implements MemberApiService {
 		map.put( "integral", memberEntity.getIntegral() );
 		map.put( "memberId", memberEntity.getId() );
 		map.put( "cardId", card.getMcId() );
+
+
+		//查询粉丝等级
+		List<Map<String,Object>> gradeTypes=gradeTypeMapper.findAllBybusId( memberEntity.getBusId(),card.getCtId() );
+		Integer dengji=0;
+		for ( Map<String,Object> gradeType:gradeTypes ){
+		    dengji++;
+		    if(CommonUtil.toInteger( cards.get( 0 ).get( "gt_id" ) ).equals( CommonUtil.toInteger(gradeType.get( "gt_id" )  ) )){
+			map.put( "dengji",dengji );
+		    }
+		}
 
 		Double fenbiMoeny = memberCommonService.currencyCount( null, memberEntity.getFansCurrency() );
 		map.put( "fenbiMoeny", fenbiMoeny );

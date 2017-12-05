@@ -33,6 +33,7 @@ public enum ResponseMemberEnums {
     COUPONSE_NO_NUM_TODAY(6003,"券包您今天已领取完"),
     COUPONSE_NO_EXIST(6004,"卡券不存在"),
     COUPONSE_NO_GUOQI(6005,"卡券过期或已核销,不能执行卡券核销操作"),
+    COUPONSE_NOT_USE_SHOP(6006,"卡券不能在当前门店使用"),
 
 
 
