@@ -631,7 +631,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
     @Transactional
     @Override
-    public MemberEntity bingdingPhone( Integer memberId, String phone, String code, Integer busId ) throws BusinessException {
+    public MemberEntity bingdingPhone( Integer memberId, String phone, Integer busId ) throws BusinessException {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
 	    // 短信校验
@@ -639,9 +639,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 		throw new BusinessException( ResponseMemberEnums.NULL );
 	    }
 
-	    if ( CommonUtil.isEmpty( code ) ) {
-		throw new BusinessException( ResponseMemberEnums.NULL );
-	    }
 
 	    if ( CommonUtil.isEmpty( phone ) ) {
 		throw new BusinessException( ResponseMemberEnums.NULL );

@@ -160,8 +160,7 @@ public class MemberApiController extends BaseController {
 	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
 	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
 	    String phone = CommonUtil.toString( requestBody.get( "phone" ) );
-	    String code = CommonUtil.toString( requestBody.get( "code" ) );
-	    MemberEntity memberEntity = memberApiService.bingdingPhone( memberId, phone, code, busId );
+	    MemberEntity memberEntity = memberApiService.bingdingPhone( memberId, phone, busId );
 	    return ServerResponse.createBySuccess( memberEntity );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );

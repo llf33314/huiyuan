@@ -127,7 +127,7 @@ public interface MemberApiService {
      * 小程序绑定手机号码
      * @return
      */
-    public MemberEntity bingdingPhone( Integer memberId, String phone, String code, Integer busId ) throws BusinessException;
+    public MemberEntity bingdingPhone( Integer memberId, String phone,  Integer busId ) throws BusinessException;
 
     /*
      *
