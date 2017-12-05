@@ -414,10 +414,10 @@ public class MemberController {
     @ResponseBody
     @RequestMapping( value = "/memberTongJi", method = RequestMethod.GET )
     public ServerResponse memberTongJi(HttpServletRequest request,
-		    HttpServletResponse response,Integer ctId,String startdate){
+		    HttpServletResponse response,Integer ctId){
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    Map<String,Object> map= memberCardService.memberTongJi(busId,ctId,startdate);
+	    Map<String,Object> map= memberCardService.memberTongJi(busId,ctId);
 	    return ServerResponse.createBySuccess(map  );
 	} catch ( BusinessException e ) {
 	    LOG.error( "积分兑换异常：", e );
@@ -425,6 +425,27 @@ public class MemberController {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
+
+
+    @ApiOperation( value = "工作台——会员卡统计7天售卡和销售", notes = "工作台——会员卡统计7天售卡和销售" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "ctId", value = "会员卡类型 第一次默认传0" , paramType = "query", required = false, dataType = "int" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/sum7DayOrder", method = RequestMethod.GET )
+    public ServerResponse sum7DayOrder(HttpServletRequest request,
+		    HttpServletResponse response,Integer ctId,String startdate){
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    Map<String,Object> map= memberCardService.sum7DayOrder(busId,ctId,startdate);
+	    return ServerResponse.createBySuccess(map  );
+	} catch ( BusinessException e ) {
+	    LOG.error( "积分兑换异常：", e );
+	    e.printStackTrace();
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
 
 
     @ApiOperation( value = "交易记录——充值记录", notes = "充值记录" )

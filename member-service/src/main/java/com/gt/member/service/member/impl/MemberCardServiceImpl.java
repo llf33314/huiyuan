@@ -1981,7 +1981,7 @@ public class MemberCardServiceImpl implements MemberCardService {
      *
      * @return
      */
-    public Map< String,Object > memberTongJi( Integer busId, Integer ctId, String startTime) throws BusinessException {
+    public Map< String,Object > memberTongJi( Integer busId, Integer ctId) throws BusinessException {
 	try {
 	    Map< String,Object > map = new HashMap<>();
 
@@ -2016,32 +2016,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    Double buyCard = userConsumeNewDAO.buyCard( busId, ctId );
 	    map.put( "sumXiaofei", sumXiaofei );
 	    map.put( "buyCard", buyCard );
-	    // 表格 7销售总额和售卡总额
-	    Date date = new Date();
-	    if ( CommonUtil.isNotEmpty( startTime ) ) {
-		date = DateTimeKit.parse( startTime, "yyyy/MM/dd" );
-	    }
-	    List< Map< String,Object > > sumdayOrder = userConsumeNewDAO.sum7DayOrder( busId, ctId, date );
 
-	    List< Map< String,Object > > sumbuyCard = userConsumeNewDAO.sum7DayBuyCard( busId, ctId, date );
-	    List< Map< String,Object > > sumMemberOrder = new ArrayList< Map< String,Object > >();
-	    for ( Map< String,Object > map1 : sumdayOrder ) {
-		boolean flag = false;
-		for ( Map< String,Object > sumbuy : sumbuyCard ) {
-		    if ( CommonUtil.toString( sumbuy.get( "buytime1" ) ).equals( CommonUtil.toString( map1.get( "time" ) ) ) ) {
-			map1.put( "buyDiscountAfterMoney", CommonUtil.toString( sumbuy.get( "buyDiscountAfterMoney" ) ) );
-			sumMemberOrder.add( map1 );
-			flag = true;
-		    }
-		}
-		if ( !flag ) {
-		    map1.put( "buyDiscountAfterMoney", 0 );
-		    sumMemberOrder.add( map1 );
-		}
-	    }
-
-
-	    map.put( "sumMemberOrder", sumMemberOrder );
 	    switch ( ctId ) {
 		case 0:
 		    //查询这7天新增会员数
@@ -2126,6 +2101,63 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
+
+    public Map<String,Object> sum7DayOrder(Integer busId, Integer ctId, String startTime)throws BusinessException{
+	try {
+	    Map< String,Object > map = new HashMap<>();
+	    // 表格 7销售总额和售卡总额
+	    Date date = new Date();
+	    if ( CommonUtil.isNotEmpty( startTime ) ) {
+		date = DateTimeKit.parse( startTime, "yyyy/MM/dd" );
+	    }
+	    List< Map< String,Object > > sumdayOrder = userConsumeNewDAO.sum7DayOrder( busId, ctId, date );
+
+	    List< Map< String,Object > > sumbuyCard = userConsumeNewDAO.sum7DayBuyCard( busId, ctId, date );
+	    List< Map< String,Object > > sumMemberOrder = new ArrayList< Map< String,Object > >();
+
+	    if ( sumdayOrder.size() > sumbuyCard.size() ) {
+		for ( Map< String,Object > map1 : sumdayOrder ) {
+		    boolean flag = false;
+		    for ( Map< String,Object > sumbuy : sumbuyCard ) {
+			if ( CommonUtil.toString( sumbuy.get( "buytime1" ) ).equals( CommonUtil.toString( map1.get( "time" ) ) ) ) {
+			    map1.put( "buyDiscountAfterMoney", CommonUtil.toString( sumbuy.get( "buyDiscountAfterMoney" ) ) );
+			    sumMemberOrder.add( map1 );
+			    flag = true;
+			}
+		    }
+		    if ( !flag ) {
+			map1.put( "buyDiscountAfterMoney", 0 );
+			sumMemberOrder.add( map1 );
+		    }
+		}
+
+	    } else {
+		for ( Map< String,Object > sumbuy : sumbuyCard ) {
+		    boolean flag = false;
+		    for ( Map< String,Object > map1 : sumdayOrder ) {
+			if ( CommonUtil.toString( sumbuy.get( "buytime1" ) ).equals( CommonUtil.toString( map1.get( "time" ) ) ) ) {
+			    sumbuy.put( "discountAfterMoney", CommonUtil.toString( map1.get( "discountAfterMoney" ) ) );
+			    sumMemberOrder.add( map1 );
+			    flag = true;
+			}
+		    }
+		    if ( !flag ) {
+			sumbuy.put( "discountAfterMoney", 0 );
+			sumMemberOrder.add( sumbuy );
+		    }
+		}
+	    }
+	    map.put( "sumMemberOrder", sumMemberOrder );
+	    return map;
+	}catch ( Exception e ){
+	    LOG.error( "统计销售额异常",e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+
+
+
 
 
     public Page findChongZhiLog( Integer busId, String params ) throws BusinessException {
