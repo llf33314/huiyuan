@@ -87,7 +87,7 @@ public interface MemberCommonService {
      * @param rtype
      * @return
      */
-    public void saveCardRecordOrderCodeNew(Integer memberId, Integer recordType, Double number,
+    public MemberCardrecordNew saveCardRecordOrderCodeNew(Integer memberId, Integer recordType, Double number,
                     String itemName, Integer busId, Double balance, String orderCode,Integer rtype);
 
     /**

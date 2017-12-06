@@ -3057,8 +3057,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    Double balance = money + card.getMoney();
 		    newCard.setMoney( balance );
 		    memberCardDAO.updateById( newCard );
-		    memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 1, uc.getDiscountAfterMoney(), "会员充值", member.getBusId(), balance, uc.getOrderCode(), 0 );
+		    MemberCardrecordNew memberCardrecordNew= memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 1, uc.getDiscountAfterMoney(), "会员充值", member.getBusId(), balance, uc.getOrderCode(), 0 );
 		    uc.setBalance( balance );
+
+		    systemMsgService.sendChuzhiCard( member, memberCardrecordNew );
 
 		} else if ( ctId == 5 ) {
 		    //次卡充值
@@ -3075,15 +3077,11 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 		    memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 1, uc.getDiscountAfterMoney(), "会员充值", member.getBusId(), frequency.doubleValue(), uc.getOrderCode(),
 				    0 );
+		    systemMsgService.sendCikaCard( member, money, numberCount );
 		}
 
 	    }
 
-	    if ( ctId == 3 ) {
-		systemMsgService.sendChuzhiCard( member, money );
-	    } else if ( ctId == 4 ) {
-		systemMsgService.sendCikaCard( member, money, numberCount );
-	    }
 
 	    String orderCode = CommonUtil.getMEOrderCode();
 	    uc.setOrderCode( orderCode );

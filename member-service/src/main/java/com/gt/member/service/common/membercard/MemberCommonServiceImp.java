@@ -346,7 +346,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	}
     }
 
-    public void saveCardRecordOrderCodeNew( Integer memberId, Integer recordType, Double number, String itemName, Integer busId, Double balance, String orderCode, Integer rtype ) {
+    public MemberCardrecordNew saveCardRecordOrderCodeNew( Integer memberId, Integer recordType, Double number, String itemName, Integer busId, Double balance, String orderCode, Integer rtype ) {
 	MemberCardrecordNew cr = new MemberCardrecordNew();
 	cr.setMemberId( memberId );
 	cr.setRecordType( recordType );
@@ -363,11 +363,13 @@ public class MemberCommonServiceImp implements MemberCommonService {
 		// 积分变动通知
 		systemMsgService.jifenMsg( cr, memberEntity );
 	    }
+	    return cr;
 
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    LOG.error( "保存手机端记录异常", e );
 	}
+	return null;
     }
 
     public String findWxQcode( Integer busId, Integer busType, String scene_id ) {
