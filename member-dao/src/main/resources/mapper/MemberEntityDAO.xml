@@ -666,10 +666,12 @@
 
 
 	<select id="updateMemberJifen">
-		update t_wx_bus_member set integral=integral+#{jifen} where
+		update t_wx_bus_member set integral=integral+#{jifen}
+		<where>
 		<foreach close=")" collection="ids" item="id" open="(" separator="or">
 			id=#{id}
 		</foreach>
+		</where>
 
 	</select>
 

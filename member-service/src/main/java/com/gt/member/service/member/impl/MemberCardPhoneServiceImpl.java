@@ -562,15 +562,15 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    if ( CommonUtil.isEmpty( memberEntity.getMcId() ) ) {
 		throw new BusinessException( ResponseMemberEnums.PLEASE_GET_CARD );
 	    }
-//	    if ( CommonUtil.isEmpty( memberEntity.getPhone() ) ) {
-//		throw new BusinessException( ResponseMemberEnums.PLEASE_BINDING_PHONE );
-//	    }
+	    if ( CommonUtil.isEmpty( memberEntity.getPhone() ) ) {
+		map.put( "fanMember",1 );
+	    }
 
 	    //会员卡信息
 
 	    MemberCard cardEntity = memberCardDAO.selectById( memberEntity.getMcId() );
 	    if ( cardEntity.getIsChecked() == 0 || cardEntity.getCardStatus() == 1 ) {
-		throw new BusinessException( ResponseMemberEnums.CARD_STATUS );
+		map.put( "status",1 );
 	    }
 
 	    MemberFind memberfind = memberFindDAO.findByQianDao( memberEntity.getBusId() );

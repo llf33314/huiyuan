@@ -264,7 +264,7 @@ public interface MemberEntityDAO extends BaseMapper<MemberEntity > {
     List<MemberEntity> selectByPrimaryKeys(@Param("ids")String ids);
 
 
-    void updateMemberJifen(@Param( "ids" )List<Integer> ids,Integer jifen);
+    void updateMemberJifen(@Param( "ids" )List<Integer> ids,@Param( "jifen" )Integer jifen);
 
 
     MemberEntity findMemberByOldId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId);

@@ -1347,12 +1347,12 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    count++;
 		}
 	    }
-	    if ( giveType == 1 ) {
+	    if ( giveType == 1 && ids.size()>0) {
 		//赠送积分
 		memberMapper.updateMemberJifen( ids, number.intValue() );
 		List< Map< String,Object > > list = memberMapper.findMemberByIds( busId, ids );
 		for ( Map< String,Object > member : list ) {
-		    Double integral = CommonUtil.toInteger( member.get( "integral" ) ) + number;
+		    Double integral = CommonUtil.toDouble( member.get( "integral" ) ) ;
 		    memberCommonService.saveCardRecordOrderCodeNew( CommonUtil.toInteger( member.get( "id" ) ), 2, number, "商家赠送", busId, integral, "", 1 );
 		}
 	    } else {
@@ -1369,13 +1369,14 @@ public class MemberCardServiceImpl implements MemberCardService {
 		}
 		List< Map< String,Object > > list = memberMapper.findMemberByIds( busId, ids );
 		for ( Map< String,Object > member : list ) {
-		    Double fans_currency = CommonUtil.toInteger( member.get( "fans_currency" ) ) + number;
+		    Double fans_currency = CommonUtil.toDouble( member.get( "fans_currency" ) ) ;
 		    memberCommonService.saveCardRecordOrderCodeNew( CommonUtil.toInteger( member.get( "id" ) ), 3, number, "商家赠送", busId, fans_currency, "", 1 );
 		}
 	    }
 	} catch ( BusinessException e ) {
 	    throw e;
 	} catch ( Exception e ) {
+	    LOG.error( "赠送积分和粉币异常",e );
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
