@@ -668,6 +668,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
 	map.put( "memberFlow",memberEntity.getFlow() );
 	map.put( "busFlows",busFlows );
+	map.put( "phone",memberEntity.getPhone() );
 
 	return map;
     }
@@ -677,6 +678,9 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	try {
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    String phone = CommonUtil.toString( params.get( "phone" ) );
+	    if(CommonUtil.isEmpty( phone )){
+	        throw new BusinessException( ResponseMemberEnums.NO_DATA );
+	    }
 
 	    UserConsumeNew uc = new UserConsumeNew();
 	    uc.setBusId( busId );
