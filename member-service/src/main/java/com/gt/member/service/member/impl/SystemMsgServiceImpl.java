@@ -413,5 +413,4 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 	return false;
     }
 
-
 }
