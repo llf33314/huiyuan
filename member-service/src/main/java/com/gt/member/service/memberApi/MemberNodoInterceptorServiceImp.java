@@ -150,6 +150,8 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 	    UserConsumeNew uc1 = new UserConsumeNew();
 	    uc1.setId( uc.getId() );
 	    Integer numberCount = 0;
+
+	    MemberCardrecordNew memberCardrecordNew=null;
 	    //判断是否主卡充值 还是 副卡充值
 	    if ( uc.getCtId() == ctId ) {
 		//主卡充值 赠送数量
@@ -174,7 +176,7 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 			newCard.setExpireDate( DateTimeKit.addDate( newCard.getExpireDate(), dateCount.get( 1 ) ) );
 		    }
 		    memberCardDAO.updateById( newCard );
-		    memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, 0.0, uc.getOrderCode(), 0 );
+		    memberCardrecordNew=memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, 0.0, uc.getOrderCode(), 0 );
 
 		} else if ( ctId == 3 ) {
 		    MemberRechargegive rechargegive = memberCommonService.findRechargegive( money, card.getGrId(), busId, card.getCtId() );
@@ -189,7 +191,7 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 		    newCard.setMoney( balance );
 		    memberCardDAO.updateById( newCard );
 
-		    memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, balance, uc.getOrderCode(), 0 );
+		    memberCardrecordNew=memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, balance, uc.getOrderCode(), 0 );
 
 		    uc1.setBalance( balance );
 
@@ -210,7 +212,7 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 		    memberCardDAO.updateById( newCard );
 		    uc1.setBalanceCount( frequency );
 
-		    memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, frequency.doubleValue(), uc.getOrderCode(), 0 );
+		    memberCardrecordNew= memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, frequency.doubleValue(), uc.getOrderCode(), 0 );
 		}
 
 	    } else {
@@ -244,8 +246,9 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 		    Double balance = money + card.getMoney();
 		    newCard.setMoney( balance );
 		    memberCardDAO.updateById( newCard );
-		    memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, balance, uc.getOrderCode(), 0 );
+		    memberCardrecordNew=memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, balance, uc.getOrderCode(), 0 );
 		    uc1.setBalance( balance );
+
 
 		} else if ( ctId == 5 ) {
 		    //次卡充值
@@ -260,7 +263,7 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 		    memberCardDAO.updateById( newCard );
 		    uc1.setBalanceCount( frequency );
 
-		    memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, frequency.doubleValue(), uc.getOrderCode(), 0 );
+		    memberCardrecordNew=memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, frequency.doubleValue(), uc.getOrderCode(), 0 );
 		}
 
 	    }
@@ -285,7 +288,7 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 
 	    MemberEntity member = memberDAO.selectById( uc.getMemberId() );
 	    if ( uc.getCtId() == 3 ) {
-		systemMsgService.sendChuzhiCard( member, money );
+	        systemMsgService.sendChuzhiCard( member,memberCardrecordNew );
 	    } else if ( uc.getCtId() == 4 ) {
 		systemMsgService.sendCikaCard( member, money, numberCount );
 	    }
