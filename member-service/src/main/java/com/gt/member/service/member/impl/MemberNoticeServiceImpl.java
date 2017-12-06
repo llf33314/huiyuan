@@ -104,10 +104,6 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 			String smsContent = systemNotice.getSmsContent();
 			if ( CommonUtil.isNotEmpty( smsContent ) && smsContent.length() > 70 ) {
 			    throw new BusinessException( ResponseMemberEnums.SMS_BIG_THAN_70 );
-		    if(systemNotice.getSmsStatus()==1 ){
-		        String smsContent=systemNotice.getSmsContent();
-		        if(CommonUtil.isNotEmpty( smsContent  )  && smsContent.length()>70){
-		            throw new BusinessException( ResponseMemberEnums.SMS_BIG_THAN_70 );
 			}
 		    }
 		    systemNotice.setBusId( busId );
@@ -135,7 +131,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	    List< Map< String,Object > > listMap = memberGradetypeDAO.findGradeTyeBybusId( busId );
 	    map.put( "gradeType", listMap );
 	    Integer count = 0;
-	    if ( id>0 ) {
+	    if ( id > 0 ) {
 		MemberNotice notice = memberNoticeDAO.selectById( id );
 		String noticeUser = notice.getNoticeUser();
 		if ( "0".equals( noticeUser ) ) {
@@ -162,21 +158,21 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	}
     }
 
-    public Integer countMember(String ctIds,Integer busId){
+    public Integer countMember( String ctIds, Integer busId ) {
 	int count = 0;
-        if ("0".equals(ctIds)) {
+	if ( "0".equals( ctIds ) ) {
 	    // 查询公众号下所有会员
-	    count = memberCardDAO.countCardAll(busId);
+	    count = memberCardDAO.countCardAll( busId );
 	} else {
-	    if (ctIds != null && !"".equals(ctIds)) {
-		String[] str = ctIds.split(",");
-		List<Integer> list = new ArrayList<Integer>();
-		for (int i = 0; i < str.length; i++) {
-		    if (CommonUtil.isNotEmpty(str[i])) {
-			list.add(Integer.valueOf(str[i]));
+	    if ( ctIds != null && !"".equals( ctIds ) ) {
+		String[] str = ctIds.split( "," );
+		List< Integer > list = new ArrayList< Integer >();
+		for ( int i = 0; i < str.length; i++ ) {
+		    if ( CommonUtil.isNotEmpty( str[i] ) ) {
+			list.add( Integer.valueOf( str[i] ) );
 		    }
 		}
-		count = memberCardDAO.countCard(busId, list);
+		count = memberCardDAO.countCard( busId, list );
 	    }
 	}
 	return count;
@@ -202,17 +198,16 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	    memberNotice.setSendSms( CommonUtil.toInteger( obj.get( "sendSms" ) ) );
 	    memberNotice.setTitle( CommonUtil.toString( obj.get( "title" ) ) );
 	    memberNotice.setNoticeUser( CommonUtil.toString( obj.get( "noticeUser" ) ) );
-	    if(CommonUtil.isNotEmpty( obj.get( "smsContent" ) )){
-	        String smsContent=CommonUtil.toString( obj.get( "smsContent" ) );
-	        if(smsContent.length()>70){
-	            throw new BusinessException( ResponseMemberEnums.SMS_BIG_THAN_70 );
+	    if ( CommonUtil.isNotEmpty( obj.get( "smsContent" ) ) ) {
+		String smsContent = CommonUtil.toString( obj.get( "smsContent" ) );
+		if ( smsContent.length() > 70 ) {
+		    throw new BusinessException( ResponseMemberEnums.SMS_BIG_THAN_70 );
 		}
 		memberNotice.setSmsContent( smsContent );
 	    }
 
-	    String sendDate=CommonUtil.toString( obj.get( "sendDate" ) );
+	    String sendDate = CommonUtil.toString( obj.get( "sendDate" ) );
 	    memberNotice.setSendType( CommonUtil.toInteger( obj.get( "sendType" ) ) );
-
 
 	    if ( CommonUtil.isNotEmpty( sendDate ) ) {
 		Date date = DateTimeKit.parse( sendDate, "yyyy-MM-dd HH:mm:ss" );
@@ -223,14 +218,14 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	    if ( memberNotice.getSendType() == 0 ) {
 		memberNotice.setSendDate( new Date() );
 	    }
-	    if(memberNotice.getSendType()==2){
-	        memberNotice.setSendStuts(3);
+	    if ( memberNotice.getSendType() == 2 ) {
+		memberNotice.setSendStuts( 3 );
 	    }
 
-	    if ( memberNotice.getId()>0 ) {
+	    if ( memberNotice.getId() > 0 ) {
 		memberNoticeDAO.updateById( memberNotice );
 		//删除之前信息
-		memberNoticeuserDAO.deleteByNoticeId(  memberNotice.getId());
+		memberNoticeuserDAO.deleteByNoticeId( memberNotice.getId() );
 
 	    } else {
 		memberNoticeDAO.insert( memberNotice );
@@ -314,13 +309,13 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
     }
 
     @Transactional
-    public void deleteMemberNotice(Integer id) throws BusinessException{
-        try {
+    public void deleteMemberNotice( Integer id ) throws BusinessException {
+	try {
 	    memberNoticeuserDAO.deleteByNoticeId( id );
 	    memberNoticeDAO.deleteById( id );
-	}catch ( Exception  e){
-            LOG.error( "删除会员通知消息异常",e );
-            throw  new BusinessException( ResponseEnums.ERROR );
+	} catch ( Exception e ) {
+	    LOG.error( "删除会员通知消息异常", e );
+	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
 
@@ -329,70 +324,48 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	    MemberNotice memberNotice = memberNoticeDAO.selectById( id );
 	    List< Map< String,Object > > memberNoticeUsers = memberNoticeuserDAO.findByNoticeId( id );
 	    StringBuffer phoneSb = new StringBuffer();
-	    List<Integer> ids = new ArrayList<>();
+	    List< Integer > ids = new ArrayList<>();
 	    Integer i = 0;
 	    for ( Map< String,Object > map : memberNoticeUsers ) {
 		if ( CommonUtil.isNotEmpty( map.get( "phone" ) ) ) {
 		    phoneSb.append( map.get( "phone" ) + "," );
 		    ids.add( CommonUtil.toInteger( map.get( "id" ) ) );
-		}
-		//粉丝在100条内
-		if ( memberNoticeUsers.size() < 100 ) {
+		    i++;
+		    if ( i < 100 && i < memberNoticeUsers.size() ) {
+			continue;
+		    }
+
+		    phoneSb = new StringBuffer();
 		    RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
 		    String phone = phoneSb.toString();
-		    phone = phone.substring( 0, phone.lastIndexOf( "," ) );
+		    String phones = phone.substring( 0, phone.lastIndexOf( "," ) );
+		    phones = phones.substring( 0, phones.lastIndexOf( "," ) );
 		    OldApiSms oldApiSms = new OldApiSms();
-		    oldApiSms.setMobiles( phone );
+		    oldApiSms.setMobiles( phones );
 		    oldApiSms.setContent( memberNotice.getSmsContent() );
 		    oldApiSms.setCompany( PropertiesUtil.getSms_name() );
 		    oldApiSms.setBusId( memberNotice.getId() );
 		    oldApiSms.setModel( 3 );
+		    String notifyUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/smsNotice";
+		    oldApiSms.setNotifyUrl( notifyUrl );
 		    requestUtils.setReqdata( oldApiSms );
 		    try {
 			String result = requestService.sendSms( requestUtils );
-			JSONObject json=JSON.parseObject( result );
+			JSONObject json = JSON.parseObject( result );
 
-			if("0".equals( CommonUtil.toString( json.get( "code" ) ) )) {
-			    JSONObject jsonOb=JSON.parseObject(json.getString( "data" ));
-			    memberNoticeuserDAO.updateByIds( ids,CommonUtil.toInteger( jsonOb.get("msgid") ) );
+			if ( "0".equals( CommonUtil.toString( json.get( "code" ) ) ) ) {
+			    JSONObject jsonOb = JSON.parseObject( json.getString( "data" ) );
+			    memberNoticeuserDAO.updateByIds( ids, CommonUtil.toInteger( jsonOb.get( "msgid" ) ) );
 			}
 			ids.clear();
 		    } catch ( Exception e ) {
 			LOG.error( "短信发送失败", e );
 		    }
-		} else {
-		    if ( ( i % 100 == 0 ) || ( i + 1 == memberNoticeUsers.size() ) ) {
-			phoneSb = new StringBuffer();
-			RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
-			String phone = phoneSb.toString();
-			String phones = phone.substring( 0, phone.lastIndexOf( "," ) );
-			phones = phones.substring( 0, phones.lastIndexOf( "," ) );
-			OldApiSms oldApiSms = new OldApiSms();
-			oldApiSms.setMobiles( phones );
-			oldApiSms.setContent( memberNotice.getSmsContent() );
-			oldApiSms.setCompany( PropertiesUtil.getSms_name() );
-			oldApiSms.setBusId( memberNotice.getId() );
-			oldApiSms.setModel( 3 );
-			String notifyUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/smsNotice";
-			oldApiSms.setNotifyUrl( notifyUrl );
-			requestUtils.setReqdata( oldApiSms );
-			try {
-			    String result = requestService.sendSms( requestUtils );
-			    JSONObject json = JSON.parseObject( result );
-
-			    if ( "0".equals( CommonUtil.toString( json.get( "code" ) ) ) ) {
-				JSONObject jsonOb = JSON.parseObject( json.getString( "data" ) );
-				memberNoticeuserDAO.updateByIds( ids, CommonUtil.toInteger( jsonOb.get( "msgid" ) ) );
-			    }
-			    ids.clear();
-			} catch ( Exception e ) {
-			    LOG.error( "短信发送失败", e );
-			}
-		    }
 		}
-		i++;
+
 	    }
-	} catch( Exception e) {
+	} catch ( Exception e )
+	{
 	    LOG.error( "发送消息异常", e );
 	    throw new BusinessException( ResponseEnums.ERROR );
 
@@ -400,9 +373,8 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 
     }
 
-
     public Page findMemberNotice( Integer busId, String paramsStr ) {
-        Map<String,Object> params=JSON.toJavaObject( JSON.parseObject( paramsStr ),Map.class );
+	Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( paramsStr ), Map.class );
 	params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	int pageSize = 10;
 	Integer sendStuts = 1;
@@ -457,16 +429,15 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	}
     }
 
-
-    public Page findNoticeUser(String paramstr)throws BusinessException{
-	Map<String,Object> params=JSON.toJavaObject( JSON.parseObject( paramstr ),Map.class );
+    public Page findNoticeUser( String paramstr ) throws BusinessException {
+	Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( paramstr ), Map.class );
 	params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	int pageSize = 10;
 	Integer status = 0;
 	if ( CommonUtil.isNotEmpty( params.get( "status" ) ) ) {
 	    status = CommonUtil.toInteger( params.get( "status" ) );
 	}
-	Integer noticeId=CommonUtil.toInteger( params.get( "noticeId" ) );
+	Integer noticeId = CommonUtil.toInteger( params.get( "noticeId" ) );
 
 	int rowCount = memberNoticeuserDAO.countNoticeuser( noticeId, status );
 
@@ -478,9 +449,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	return page;
     }
 
-
-
-    public void resendNoticeUser(String params) throws BusinessException {
+    public void resendNoticeUser( String params ) throws BusinessException {
 	try {
 	    Map< String,Object > paramaMap = JSON.toJavaObject( JSON.parseObject( params ), Map.class );
 	    Integer noticeId = CommonUtil.toInteger( paramaMap.get( "noticeId" ) );
