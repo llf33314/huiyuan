@@ -52,7 +52,6 @@ public class SystemNotice extends Model<SystemNotice> {
      */
 	private String smsContent;
 
-
 	@Override
 	protected Serializable pkVal() {
 		return this.id;

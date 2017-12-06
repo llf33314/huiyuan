@@ -976,7 +976,8 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 
     public Map<String,Object> findRecommend(Integer memberId )throws  BusinessException{
-        memberRecommendDAO.countRecommendByCardId(  )
+       // memberRecommendDAO.countRecommendByCardId(  )
+	return null;
     }
 
 }

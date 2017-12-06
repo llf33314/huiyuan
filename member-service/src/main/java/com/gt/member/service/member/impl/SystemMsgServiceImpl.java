@@ -4,11 +4,9 @@ import com.gt.api.util.RequestUtils;
 import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.member.dao.MemberCardDAO;
 import com.gt.member.dao.SystemNoticeDAO;
+import com.gt.member.dao.SystemnoticecallDAO;
 import com.gt.member.dao.common.WxPublicUsersDAO;
-import com.gt.member.entity.MemberCard;
-import com.gt.member.entity.MemberCardrecordNew;
-import com.gt.member.entity.MemberEntity;
-import com.gt.member.entity.SystemNotice;
+import com.gt.member.entity.*;
 import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.CommonUtil;
@@ -22,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,30 +44,63 @@ public class SystemMsgServiceImpl implements SystemMsgService {
     @Autowired
     private MemberCardDAO memberCardDAO;
 
+    @Autowired
+    private SystemnoticecallDAO systemnoticecallDAO;
+
     @Override
     public boolean jifenMsg( MemberCardrecordNew cardRecord, MemberEntity memberEntity ) {
 	try {
         SystemNotice systemNotice = systemNoticeDAO.findBybusIdAndCallType( memberEntity.getBusId(), (byte) 2 );
-	// 公众号消息推送
-	if ( CommonUtil.isNotEmpty( systemNotice ) && systemNotice.getPublicMsg() == 1 ) {
-	    WxPublicUsersEntity wxPublicUsers = wxPublicUsersDAO.selectByUserId( memberEntity.getBusId() );
 
-	    SendWxMsgTemplate sendWxMsgTemplate = new SendWxMsgTemplate();
-	    sendWxMsgTemplate.setId( systemNotice.getPublicIdMsgId() );
-	    sendWxMsgTemplate.setMemberId( memberEntity.getId() );
-	    sendWxMsgTemplate.setUrl( PropertiesUtil.getWebHome() + "/phoneMemberController/" + memberEntity.getBusId() + "/79B4DE7C/findMember_1.do" );
+	if ( CommonUtil.isNotEmpty( systemNotice )  ) {
+	    if(systemNotice.getPublicMsg() == 1) {
+		// 公众号消息推送
+		WxPublicUsersEntity wxPublicUsers = wxPublicUsersDAO.selectByUserId( memberEntity.getBusId() );
+		SendWxMsgTemplate sendWxMsgTemplate = new SendWxMsgTemplate();
+		sendWxMsgTemplate.setId( systemNotice.getPublicIdMsgId() );
+		sendWxMsgTemplate.setMemberId( memberEntity.getId() );
+		sendWxMsgTemplate.setUrl( PropertiesUtil.getWebHome() + "/phoneMemberController/" + memberEntity.getBusId() + "/79B4DE7C/findMember_1.do" );
+		List< Object > list = new ArrayList< Object >();
+		// first,keyword1,keyword2,keyword3,keyword4,remark
+		list.add( "积分提醒" );
+		list.add( DateTimeKit.getDateTime() );
+		list.add( cardRecord.getNumber() );
+		list.add( cardRecord.getItemName() );
+		list.add( memberEntity.getIntegral() );
+		list.add( "积分详情：请到会员卡积分记录查看" );
+		sendWxMsgTemplate.setObjs( list );
+		requestService.setSendWxmsg( sendWxMsgTemplate );
+	    }
 
-	    List< Object > list = new ArrayList< Object >();
-	    // first,keyword1,keyword2,keyword3,keyword4,remark
-	    list.add( "积分提醒" );
-	    list.add( DateTimeKit.getDateTime() );
-	    list.add( cardRecord.getNumber() );
-	    list.add( cardRecord.getItemName() );
-	    list.add( memberEntity.getIntegral() );
-	    list.add( "积分详情：请到会员卡积分记录查看" );
-	    sendWxMsgTemplate.setObjs( list );
-	    requestService.setSendWxmsg( sendWxMsgTemplate );
+	    if(systemNotice.getSmsStatus()==1 && CommonUtil.isNotEmpty( memberEntity.getPhone() )){
+		RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
+		OldApiSms oldApiSms = new OldApiSms();
+		oldApiSms.setMobiles( memberEntity.getPhone() );
+		String content="尊敬的用户,您"+DateTimeKit.getDate()+"消费了"+cardRecord.getNumber()+"积分,当前剩余"+memberEntity.getIntegral()+"积分";
+		oldApiSms.setContent(content );
+		oldApiSms.setCompany( PropertiesUtil.getSms_name() );
+		oldApiSms.setBusId( memberEntity.getBusId() );
+		oldApiSms.setModel( 3 );
+		requestUtils.setReqdata( oldApiSms );
+		try {
+		    requestService.sendSms( requestUtils );
+		} catch ( Exception e ) {
+		    LOG.error( "短信发送失败", e );
+		}
+	    }
+
+
+	    if(systemNotice.getMsgStatus()==1 ){
+		//会员系统通知
+		String content="尊敬的"+ memberEntity.getNickname()+"用户,您"+DateTimeKit.getDate()+"消费了"+cardRecord.getNumber()+"积分,当前剩余"+memberEntity.getIntegral()+"积分";
+		Systemnoticecall noticeCall=new Systemnoticecall();
+		noticeCall.setMemberId( memberEntity.getId() );
+		noticeCall.setDescribes( content );
+		noticeCall.setCreateDate( new Date(  ) );
+		systemnoticecallDAO.insert( noticeCall );
+	    }
 	    return true;
+
 	}
 	}catch ( Exception e ){
 	    LOG.error( "会员卡积分提醒异常",e );
@@ -110,6 +142,10 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 		requestService.setSendWxmsg( sendWxMsgTemplate );
 		return true;
 	    }
+
+	    return true;
+
+
 	}catch ( Exception e ){
 	    LOG.error( "会员卡升级通知异常",e );
 	}
