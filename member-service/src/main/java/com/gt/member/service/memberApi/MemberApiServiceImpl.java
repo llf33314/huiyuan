@@ -175,6 +175,26 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}
     }
 
+
+    /**
+     * 查询粉丝信息
+     *
+     * @param memberId
+     *
+     * @return
+     */
+    public Map<String,Object> findMemberByMemberId( Integer memberId ) throws BusinessException {
+	try {
+	    return memberDAO.findMemberByMemberId( memberId );
+	} catch ( Exception e ) {
+	    LOG.error( "查询粉丝信息异常", e );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
+
+
+
+
     public Map< String,Object > findMemberCardByMemberId( Integer memberId ) throws BusinessException {
 	Map< String,Object > map = new HashMap< String,Object >();
 	// 查询卡号是否存在
@@ -631,7 +651,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
     @Transactional
     @Override
-    public MemberEntity bingdingPhone( Integer memberId, String phone, Integer busId ) throws BusinessException {
+    public MemberEntity bingdingPhone( HttpServletRequest request,Integer memberId, String phone, Integer busId ) throws BusinessException {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
 	    // 短信校验
@@ -656,20 +676,29 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 //	    redisCacheUtil.del( code );
 
+	    MemberEntity memberEntity=null;
 	    if ( CommonUtil.isEmpty( oldMemberEntity ) ) {
 		// 新用户
-		MemberEntity memberEntity = memberDAO.selectById( memberId );
+		memberEntity = memberDAO.selectById( memberId );
 		MemberEntity m = new MemberEntity();
 		m.setId( memberEntity.getId() );
 		m.setPhone( phone );
 		memberDAO.updateById( m );
 		memberEntity.setPhone( phone );
-		return memberEntity;
 	    } else {
-		MemberEntity m1 = memberDAO.selectById( memberId );
-		memberCommonService.newMemberMerge( m1, busId, phone );
-		return m1;
+		memberEntity = memberDAO.selectById( memberId );
+		memberCommonService.newMemberMerge( memberEntity, busId, phone );
+		memberEntity = memberDAO.findByPhone( busId, phone );
 	    }
+	    Member member = new Member();
+	    member.setId( memberEntity.getId() );
+	    member.setNickname( memberEntity.getNickname() );
+	    member.setIntegral( memberEntity.getIntegral() );
+	    member.setFansCurrency( memberEntity.getFansCurrency() );
+	    member.setPhone( memberEntity.getPhone() );
+	    member.setMcId( memberEntity.getMcId() );
+	    SessionUtils.setLoginMember( request, member );
+	    return memberEntity;
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {

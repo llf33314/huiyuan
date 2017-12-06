@@ -1,6 +1,7 @@
 package com.gt.member.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.Member;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.member.base.BaseController;
 import com.gt.member.dto.ServerResponse;
@@ -96,7 +97,30 @@ public class MemberApiController extends BaseController {
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
+
     }
+
+
+
+    @ApiOperation( value = "根据粉丝id获取粉丝信息可以转换成api中的实体类", notes = "获取粉丝信息" )
+    @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
+    @ResponseBody
+    @RequestMapping( value = "/findMemberByMemberId", method = RequestMethod.POST )
+    public ServerResponse findMemberByMemberId( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    Map<String,Object> map = memberApiService.findMemberByMemberId( memberId );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+
+
+
+
 
     @ApiOperation( value = "根据粉丝id获取粉丝和会员卡信息", notes = "根据粉丝id获取粉丝和会员卡信息" )
     @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
@@ -160,7 +184,7 @@ public class MemberApiController extends BaseController {
 	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
 	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
 	    String phone = CommonUtil.toString( requestBody.get( "phone" ) );
-	    MemberEntity memberEntity = memberApiService.bingdingPhone( memberId, phone, busId );
+	    MemberEntity memberEntity = memberApiService.bingdingPhone( request,memberId, phone, busId );
 	    return ServerResponse.createBySuccess( memberEntity );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );

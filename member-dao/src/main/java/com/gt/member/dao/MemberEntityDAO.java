@@ -22,6 +22,7 @@ public interface MemberEntityDAO extends BaseMapper<MemberEntity > {
 
     MemberEntity selectById(Integer id);
 
+
     MemberEntity selectByOpenid(@Param("openid")String openid,@Param("public_id")Integer public_id);
 
     MemberEntity selectByPublicIdAndPhone(@Param("public_id")Integer public_id,@Param("phone")String phone);
@@ -268,4 +269,11 @@ public interface MemberEntityDAO extends BaseMapper<MemberEntity > {
      * @return
      */
     List<Map<String,Object>> findMemberByPhoneAndBusId(@Param("busId")Integer busId,@Param("phone")String phone);
+
+    /**
+     * 查询粉丝信息 允许转换成member对象
+     * @param id
+     * @return
+     */
+    Map<String,Object> findMemberByMemberId(Integer id);
 }

@@ -29,6 +29,8 @@ public interface MemberApiService {
      */
     public MemberEntity findByMemberId( Integer memberId ) throws BusinessException;
 
+    public Map<String,Object> findMemberByMemberId(Integer memberId ) throws BusinessException;
+
     /**
      * 查询粉丝和会员信息
      * @param memberId
@@ -127,7 +129,7 @@ public interface MemberApiService {
      * 小程序绑定手机号码
      * @return
      */
-    public MemberEntity bingdingPhone( Integer memberId, String phone,  Integer busId ) throws BusinessException;
+    public MemberEntity bingdingPhone( HttpServletRequest request,Integer memberId, String phone,  Integer busId ) throws BusinessException;
 
     /*
      *
