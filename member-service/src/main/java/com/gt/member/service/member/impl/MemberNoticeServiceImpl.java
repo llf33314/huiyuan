@@ -217,6 +217,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	    memberNotice.setCreateDate( new Date() );
 	    if ( memberNotice.getSendType() == 0 ) {
 		memberNotice.setSendDate( new Date() );
+		memberNotice.setSendStuts( 1 );
 	    }
 	    if ( memberNotice.getSendType() == 2 ) {
 		memberNotice.setSendStuts( 3 );
@@ -279,7 +280,11 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 			    nu.setBusId( CommonUtil.toInteger( member.get( "id" ) ) );
 			    nu.setMsgType( 0 );
 			    nu.setNoticeId( memberNotice.getId() );
-			    nu.setStatus( 2 );
+			    if(memberNotice.getSendType() == 0){
+				nu.setStatus( 3 );
+			    }else {
+				nu.setStatus( 2 );
+			    }
 			    nu.setPhone( CommonUtil.toString( member.get( "phone" ) ) );
 			    nu.setSendDate( memberNotice.getSendDate() );
 			    list.add( nu );
@@ -344,7 +349,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 		    oldApiSms.setMobiles( phones );
 		    oldApiSms.setContent( memberNotice.getSmsContent() );
 		    oldApiSms.setCompany( PropertiesUtil.getSms_name() );
-		    oldApiSms.setBusId( memberNotice.getId() );
+		    oldApiSms.setBusId( memberNotice.getBusId() );
 		    oldApiSms.setModel( 3 );
 		    String notifyUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/smsNotice";
 		    oldApiSms.setNotifyUrl( notifyUrl );

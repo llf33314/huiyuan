@@ -662,9 +662,14 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	return map;
     }
 
-    public List< BusFlow > findBusUserFlow( Integer busId ) {
-	List< BusFlow > busFlows = busFlowDAO.getBusFlowsByUserId( busId );
-	return busFlows;
+    public Map<String,Object> findBusUserFlow( Integer memberId,Integer busId ) {
+	Map<String,Object> map=new HashMap<>(  );
+        List< BusFlow > busFlows = busFlowDAO.getBusFlowsByUserId( busId );
+	MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
+	map.put( "memberFlow",memberEntity.getFlow() );
+	map.put( "busFlows",busFlows );
+
+	return map;
     }
 
     @Rollback

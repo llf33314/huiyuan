@@ -61,7 +61,7 @@ public interface MemberCardPhoneService {
     public Map<String,Object> findCardrecordNew( Map< String,Object > params, Integer memberId, Integer recordType );
 
 
-    public List<BusFlow > findBusUserFlow( Integer busId );
+    public Map<String,Object> findBusUserFlow( Integer memberId,Integer busId );
 
     public void changeFlow( Map< String,Object > params, Integer memberId )throws  BusinessException;
 

@@ -363,8 +363,8 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    List< BusFlow > busFlows = memberCardPhoneService.findBusUserFlow( busId );
-	    return ServerResponse.createBySuccess( busFlows );
+	    Map<String,Object> map = memberCardPhoneService.findBusUserFlow( member.getId(),busId );
+	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
