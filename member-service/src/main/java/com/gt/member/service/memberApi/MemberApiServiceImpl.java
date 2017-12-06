@@ -1272,9 +1272,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 			double banlan = card.getMoney() - totalMoney;
 			card.setMoney( banlan );
 			memberCardDAO.updateById( card );
-			memberCommonService
+			MemberCardrecordNew memberCardrecordNew= memberCommonService
 					.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, totalMoney, "消费", memberEntity.getBusId(), banlan, paySuccessBo.getOrderCode(), 0 );
-			systemMsgService.sendChuzhiXiaofei( memberEntity, totalMoney );
+			systemMsgService.sendChuzhiCard( memberEntity, memberCardrecordNew );
 
 			uc.setBalance( banlan );
 		    } else {
@@ -2342,10 +2342,10 @@ public class MemberApiServiceImpl implements MemberApiService {
 			    memberCardDAO.updateById( updateCard );
 
 			    bool = true;
-			    memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, payTypeBo.getPayMoney(), "储值卡消费", memberEntity.getBusId(), banlan,
+			  MemberCardrecordNew memberCardrecordNew=  memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, payTypeBo.getPayMoney(), "储值卡消费", memberEntity.getBusId(), banlan,
 					    erpPaySuccess.getOrderCode(), 0 );
 
-			    systemMsgService.sendChuzhiXiaofei( memberEntity, payTypeBo.getPayMoney() );
+			    systemMsgService.sendChuzhiCard( memberEntity, memberCardrecordNew);
 			    uc.setBalance( banlan );
 			} else {
 			    throw new BusinessException( ResponseMemberEnums.MEMBER_CHUZHI_CARD );
