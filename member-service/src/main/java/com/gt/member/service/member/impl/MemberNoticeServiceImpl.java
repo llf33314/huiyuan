@@ -102,7 +102,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 		for ( SystemNotice systemNotice : systemNotices ) {
 		    if(systemNotice.getSmsStatus()==1 ){
 		        String smsContent=systemNotice.getSmsContent();
-		        if(smsContent.length()>70){
+		        if(CommonUtil.isNotEmpty( smsContent  )  && smsContent.length()>70){
 		            throw new BusinessException( ResponseMemberEnums.SMS_BIG_THAN_70 );
 			}
 		    }
@@ -270,6 +270,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 			    nu.setNoticeId( memberNotice.getId() );
 			    nu.setStatus( 0 );
 			    nu.setSendDate( memberNotice.getSendDate() );
+			    nu.setPhone( CommonUtil.toString(member.get( "phone" )) );
 			    list.add( nu );
 			}
 		    }

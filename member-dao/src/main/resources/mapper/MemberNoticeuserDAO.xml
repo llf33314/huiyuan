@@ -57,11 +57,11 @@
 
 	<insert id="saveList">
 		insert into t_member_noticeuser (busId, noticeId, msgType,
-		status, sendDate)
+		status, sendDate,phone)
 		values
 		<foreach collection="noticeUsers" index="index" item="n" separator=",">
 			(#{n.busId,jdbcType=INTEGER}, #{n.noticeId,jdbcType=INTEGER}, #{n.msgType,jdbcType=TINYINT},
-			#{n.status,jdbcType=TINYINT}, #{n.sendDate,jdbcType=TIMESTAMP})
+			#{n.status,jdbcType=TINYINT}, #{n.sendDate,jdbcType=TIMESTAMP}, #{n.phone,jdbcType=VARCHAR})
 		</foreach>
 	</insert>
 

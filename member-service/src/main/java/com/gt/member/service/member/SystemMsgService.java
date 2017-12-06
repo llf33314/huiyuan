@@ -53,7 +53,7 @@ public interface SystemMsgService {
 	 * @param memberEntity
 	 * @return
 	 */
-	public boolean sendChuzhiCard( MemberEntity memberEntity, Double money );
+	public boolean sendChuzhiCard( MemberEntity memberEntity,  MemberCardrecordNew cardRecord );
 
 
 	/**
@@ -73,21 +73,5 @@ public interface SystemMsgService {
 	 */
 	public boolean sendCikaXiaofei( MemberEntity memberEntity );
 
-
-
-	/**
-	 * 储值卡消费推送
-	 * @param memberEntity
-	 * @return
-	 */
-	public boolean sendChuzhiXiaofei( MemberEntity memberEntity, Double money );
-
-
-	/**
-	 * 储值卡退款推送
-	 * @param memberEntity
-	 * @return
-	 */
-	public boolean sendChuzhiTuikuan( MemberEntity memberEntity, Double money );
 
 }

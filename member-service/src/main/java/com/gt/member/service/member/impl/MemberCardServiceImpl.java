@@ -2108,7 +2108,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    // 表格 7销售总额和售卡总额
 	    Date date = new Date();
 	    if ( CommonUtil.isNotEmpty( startTime ) ) {
-		date = DateTimeKit.parse( startTime, "yyyy/MM/dd" );
+		date = DateTimeKit.parse( startTime+" 23:59:59", "yyyy-MM-dd hh:mm:ss" );
 	    }
 	    List< Map< String,Object > > sumdayOrder = userConsumeNewDAO.sum7DayOrder( busId, ctId, date );
 
