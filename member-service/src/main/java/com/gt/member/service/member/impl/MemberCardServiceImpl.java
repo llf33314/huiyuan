@@ -2210,8 +2210,12 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    SortedMap<String,Object> map=dictService.getDict( "A003" );
 	    SortedMap<String,Object> payStatus=dictService.getDict( "A004" );
 	    for(Map< String,Object > uc:list){
-		uc.put( "payStatus",payStatus.get( CommonUtil.toString( uc.get( "payStatus" ) )) );
-		uc.put( "dataSource",map.get( CommonUtil.toString(uc.get( "dataSource" ))) );
+		if(CommonUtil.isNotEmpty( uc.get( "payStatus" ) )) {
+		    uc.put( "payStatus", payStatus.get( CommonUtil.toString( uc.get( "payStatus" ) ) ) );
+		}
+		if(CommonUtil.isNotEmpty( uc.get( "dataSource" ) )) {
+		    uc.put( "dataSource", map.get( CommonUtil.toString( uc.get( "dataSource" ) ) ) );
+		}
 		uc.put( "createDate",CommonUtil.toString( uc.get( "createDate" ) ) );
 		newList.add( uc );
 	    }
@@ -2305,6 +2309,19 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 	    List< Map< String,Object > > list = userConsumeNewDAO.findUserConsumeDuiHuanByMemberId( busId, memberId, startDate,endDate, CommonUtil.toInteger( json.get( "firstResult" ) ),
 			    CommonUtil.toInteger( json.get( "maxResult" ) ) );
+
+	    List< Map< String,Object > > newList=new ArrayList<>(  );
+	    SortedMap<String,Object> map=dictService.getDict( "A003" );
+	    SortedMap<String,Object> payStatus=dictService.getDict( "A004" );
+	    for(Map< String,Object > uc:list){
+		if(CommonUtil.isNotEmpty( uc.get( "dataSource" ) )) {
+		    uc.put( "dataSource", map.get( CommonUtil.toString( uc.get( "dataSource" ) ) ) );
+		}
+		newList.add( uc );
+	    }
+	    page.setSubList( newList );
+
+
 	    page.setSubList( list );
 	    return page;
 	} catch ( Exception e ) {
@@ -2961,6 +2978,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    uc.setPayStatus( 1 );
 	    uc.setIschongzhi( 1 );
 	    uc.setFukaCtId( ctId );
+	    uc.setDataSource( 0 );
 
 	    Integer numberCount = 0;
 	    //判断是否主卡充值 还是 副卡充值
