@@ -2886,4 +2886,25 @@ public class MemberApiServiceImpl implements MemberApiService {
        return  gradeTypeMapper.findGradeTypeDengji( busId );
     }
 
+
+    public Map<String,Object> personCenter(Integer memberId)throws BusinessException{
+        Map<String,Object> map=new HashMap<>(  );
+        MemberEntity memberEntity=memberDAO.selectById( memberId );
+	map.put( "member",memberEntity );
+        if(CommonUtil.isNotEmpty( memberEntity.getMcId() )){
+            //会员信息
+	    List<Map<String,Object>> membercards=memberCardDAO.findCardById( memberEntity.getMcId() );
+	    map.put( "cardno",membercards.get( 0 ).get( "cardNo" ) );
+	    map.put( "ctName",membercards.get( 0 ).get( "ct_name" ) );
+	    map.put( "gtGradename",membercards.get( 0 ).get( "gt_grade_name" ) );
+	    map.put( "loginImg",PropertiesUtil.getRes_web_path()+membercards.get( 0 ).get( "gt_login_url" ) );
+	}
+	String url=PropertiesUtil.getWxmp_home()+"/phoneMemberController/"+memberEntity.getBusId()+"/79B4DE7C/findMember_1.do";
+	map.put( "memberUrl",url );
+	return map;
+
+
+
+    }
+
 }

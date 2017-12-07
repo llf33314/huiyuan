@@ -73,8 +73,10 @@ public class CardController {
     @RequestMapping( value="/findCardType", method = RequestMethod.GET )
     public ServerResponse findCardType(HttpServletRequest request, HttpServletResponse response){
 	try {
+	    LOG.error( "测试一下异常处理短信接口" );
 	    Integer busId= SessionUtils.getPidBusId( request);
 	    List< MemberCardtype > cardTypes = memberCardService.findCardType( busId);
+	   // throw new Exception(  );
 	    return ServerResponse.createBySuccess( cardTypes );
 	}catch ( Exception e ){
 	    LOG.error( "查询会员卡类型异常：", e );

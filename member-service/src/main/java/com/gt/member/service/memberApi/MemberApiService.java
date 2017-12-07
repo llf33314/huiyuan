@@ -492,4 +492,11 @@ public interface MemberApiService {
      */
     public Integer findCardDengji(Integer busId);
 
+    /**
+     * 个人中心
+     * @param memberId
+     * @return
+     */
+    public Map<String,Object> personCenter(Integer memberId)throws BusinessException;
+
 }
