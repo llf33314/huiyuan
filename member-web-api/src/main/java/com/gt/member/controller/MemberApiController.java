@@ -726,4 +726,21 @@ public class MemberApiController extends BaseController {
 	}
     }
 
+
+    @ApiOperation( value = "个人中心数据查询", notes = "个人中心数据查询" )
+    @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
+    @ResponseBody
+    @RequestMapping( value = "/personCenter", method = RequestMethod.POST )
+    public ServerResponse personCenter(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer memberId=CommonUtil.toInteger( requestBody.get("memberId") );
+	    Map<String,Object> dengji=memberApiService.personCenter(memberId);
+	    return ServerResponse.createBySuccess(dengji );
+	} catch ( Exception e ) {
+	    LOG.error( "个人中心数据查询异常",e );
+	    return ServerResponse.createByError( );
+	}
+    }
+
 }
