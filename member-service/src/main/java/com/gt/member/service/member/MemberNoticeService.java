@@ -97,4 +97,5 @@ public interface MemberNoticeService {
     public void resendNoticeUser(String params) throws BusinessException;
 
 
+
 }

@@ -22,7 +22,7 @@
 
 
 	<select id="findByNoticeId" resultType="Map">
-		select * from t_member_noticeuser where noticeid=#{noticeId} and msgType=0
+		select * from t_member_noticeuser where noticeid=#{noticeId} and msgType=0 and status=3
 	</select>
 
 	<select id="findCountNotice" resultType="java.lang.Integer">

@@ -367,6 +367,9 @@ public class MemberController {
 	}
     }
 
+
+
+
     @ApiOperation( value = "查询会员卡信息", notes = "查询会员卡信息" )
     @ApiImplicitParams({
 		    @ApiImplicitParam( name = "cardNo", value = "卡号" , paramType = "query", required = false, dataType = "int" )

@@ -222,6 +222,9 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	    if ( memberNotice.getSendType() == 2 ) {
 		memberNotice.setSendStuts( 3 );
 	    }
+	    if ( memberNotice.getSendType() == 3 ) {
+		memberNotice.setSendStuts( 4 );
+	    }
 
 	    if ( memberNotice.getId() > 0 ) {
 		memberNoticeDAO.updateById( memberNotice );
@@ -285,6 +288,9 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 			    }else {
 				nu.setStatus( 2 );
 			    }
+			    if(CommonUtil.isEmpty( member.get( "phone" ) )){
+			        continue;
+			    }
 			    nu.setPhone( CommonUtil.toString( member.get( "phone" ) ) );
 			    nu.setSendDate( memberNotice.getSendDate() );
 			    list.add( nu );
@@ -340,11 +346,9 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 			continue;
 		    }
 
-		    phoneSb = new StringBuffer();
 		    RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
 		    String phone = phoneSb.toString();
 		    String phones = phone.substring( 0, phone.lastIndexOf( "," ) );
-		    phones = phones.substring( 0, phones.lastIndexOf( "," ) );
 		    OldApiSms oldApiSms = new OldApiSms();
 		    oldApiSms.setMobiles( phones );
 		    oldApiSms.setContent( memberNotice.getSmsContent() );
@@ -400,33 +404,49 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
     public void sendNoticeToUser( Integer id, String memberIds ) throws BusinessException {
 	try {
 	    MemberNotice memberNotice = memberNoticeDAO.selectById( id );
-	    memberNotice.setSendType( 0 );
-	    memberNotice.setNoticeMember( 1 );
-	    memberNoticeDAO.updateById( memberNotice );
 	    String[] strs = memberIds.split( "," );
 	    MemberNoticeuser noticeUser = null;
-	    for ( int i = 0; i < strs.length; i++ ) {
-		if ( CommonUtil.isNotEmpty( strs[i] ) ) {
-		    noticeUser = memberNoticeuserDAO.findByNoticeIdAndMemberId( id, CommonUtil.toInteger( strs[i] ) );
-		    if ( CommonUtil.isNotEmpty( noticeUser ) ) {
-			noticeUser.setSendDate( memberNotice.getSendDate() );
-			noticeUser.setStatus( 0 );
-			memberNoticeuserDAO.updateById( noticeUser );
-			continue;
-		    }
-
-		    noticeUser = new MemberNoticeuser();
-		    noticeUser.setNoticeId( id );
-		    noticeUser.setBusId( Integer.parseInt( strs[i] ) );
-		    noticeUser.setSendDate( memberNotice.getSendDate() );
-		    if ( memberNotice.getSendMsg() == 1 ) {
-			noticeUser.setMsgType( 1 );
-		    }
-		    memberNoticeuserDAO.insert( noticeUser );
+	    String[] str=memberIds.split( "," );
+	    List<Integer> memberIdList=new ArrayList<>(  );
+	    for ( int i=0;i<str.length;i++ ){
+	        if(CommonUtil.isNotEmpty( str[i] )){
+	            memberIdList.add( CommonUtil.toInteger( str[i] ) );
 		}
 	    }
+
+	    List<MemberNoticeuser> list=new ArrayList<>(  );
+	    if(memberNotice.getSendSms()==1) {
+		List< Map< String,Object > > members = memberMapper.findByMemberIds( memberNotice.getBusId(), memberIdList );
+		for ( Map<String, Object> map: members) {
+		    noticeUser = new MemberNoticeuser();
+		    noticeUser.setNoticeId( id );
+		    noticeUser.setBusId( CommonUtil.toInteger( map.get( "id" ) ) );
+		    noticeUser.setSendDate( memberNotice.getSendDate() );
+		    noticeUser.setMsgType( 0 );
+		    noticeUser.setStatus(3);
+		    noticeUser.setPhone( CommonUtil.toString( map.get( "phone" ) ) );
+		    list.add( noticeUser );
+		}
+	    }
+
+	    if(memberNotice.getSendType()==1){
+	        for(Integer memberId:memberIdList) {
+		    noticeUser = new MemberNoticeuser();
+		    noticeUser.setNoticeId( id );
+		    noticeUser.setBusId( memberId );
+		    noticeUser.setSendDate( memberNotice.getSendDate() );
+		    noticeUser.setMsgType( 1 );
+		    noticeUser.setStatus( 0);
+		    list.add( noticeUser );
+		}
+	    }
+
+	    if ( list.size() > 0 ) {
+		memberNoticeuserDAO.saveList( list );
+	    }
+
 	    if ( memberNotice.getSendSms() == 1 ) {
-		//sendNoticebyMemberIds( memberNotice, memberIds );
+		sendNotice(id);
 	    }
 	} catch ( Exception e ) {
 	    LOG.error( "方法sendNoticeToUser:发送信息给用户异常" );
@@ -531,5 +551,6 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 
 	}
     }
+
 
 }

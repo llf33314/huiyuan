@@ -762,7 +762,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	try {
 	    Map< String,Object > map = new HashMap<>();
 	    MemberEntity memberEntity = memberMapper.selectById( member.getId() );
-	    MemberCard card = cardMapper.selectById( member.getMcId() );
+	    MemberCard card = cardMapper.selectById( memberEntity.getMcId() );
 	    if ( CommonUtil.isNotEmpty( card ) ) {
 		List< Map< String,Object > > giveRules = memberGiveruleDAO.findBybusIdAndCtId1( member.getBusid(), card.getCtId() );
 		map.put( "giveRules", giveRules );
