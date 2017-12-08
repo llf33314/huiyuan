@@ -101,7 +101,6 @@ public class MemberApiController extends BaseController {
     }
 
 
-
     @ApiOperation( value = "根据粉丝id获取粉丝信息可以转换成api中的实体类", notes = "获取粉丝信息" )
     @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
     @ResponseBody
@@ -116,10 +115,6 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
-
-
-
-
 
 
     @ApiOperation( value = "根据粉丝id获取粉丝和会员卡信息", notes = "根据粉丝id获取粉丝和会员卡信息" )
@@ -137,7 +132,6 @@ public class MemberApiController extends BaseController {
 	}
 
     }
-
 
 
     @ApiOperation( value = "判断储值卡金额是否充足", notes = "判断储值卡金额是否充足" )
@@ -741,6 +735,27 @@ public class MemberApiController extends BaseController {
 	    LOG.error( "个人中心数据查询异常",e );
 	    return ServerResponse.createByError( );
 	}
+    }
+
+    @ApiOperation( value = "获取粉丝最新的id", notes = "获取粉丝最新的id" )
+    @ApiImplicitParams({
+		@ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findNewMemberId", method = RequestMethod.POST )
+    public ServerResponse findNewMemberId(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer memberId=CommonUtil.toInteger( requestBody.get("memberId") );
+	    Integer id=memberApiService.findNewMemberId(memberId);
+	    return ServerResponse.createBySuccess(id );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(),e.getMessage() );
+	}catch ( Exception e ){
+	    LOG.error( "个人中心数据查询异常",e );
+	    return ServerResponse.createByError( );
+	}
+
     }
 
 }

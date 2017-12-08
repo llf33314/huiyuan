@@ -499,4 +499,16 @@ public interface MemberApiService {
      */
     public Map<String,Object> personCenter(Integer memberId)throws BusinessException;
 
+    /**
+     * 获取粉丝最新的id
+     * @param memberId
+     * @return
+     */
+    public Integer findNewMemberId(Integer memberId)throws BusinessException;
+
+    /**
+     * 整理之前member信息
+     */
+    public void zhengliMember();
+
 }

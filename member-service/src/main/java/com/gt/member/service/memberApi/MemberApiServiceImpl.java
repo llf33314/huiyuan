@@ -159,6 +159,9 @@ public class MemberApiServiceImpl implements MemberApiService {
     @Autowired
     private RequestService requestService;
 
+    @Autowired
+    private MemberOldIdDAO memberOldIdDAO;
+
     /**
      * 查询粉丝信息
      *
@@ -235,7 +238,14 @@ public class MemberApiServiceImpl implements MemberApiService {
 		    }
 		}
 
-
+		map.put( "memberDate", 0 );
+		MemberDate memberDate = memberCommonService.findMemeberDate( memberEntity.getBusId(), card.getCtId() );
+		if ( card.getCtId() == 2 ) {
+		    if ( CommonUtil.isNotEmpty( memberDate ) ) {
+			map.put( "memberDatediscount", memberDate.getDiscount() / 10.0 );
+			map.put( "memberDate", 1 );
+		    }
+		}
 
 	    }
 	    return map;
@@ -429,9 +439,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 		MemberGiverule giveRule = giveRuleMapper.selectById( card.getGrId() );
 		if ( CommonUtil.isNotEmpty( memberDate ) ) {
-		    return new Double( giveRule.getGrDiscount() * memberDate.getDiscount() ) / 1000;
+		    return new Double( giveRule.getGrDiscount() * memberDate.getDiscount() ) / 1000.0;
 		} else {
-		    return new Double( giveRule.getGrDiscount() ) / 100;
+		    return new Double( giveRule.getGrDiscount() ) / 100.0;
 		}
 	    }
 	    return 1.0;
@@ -668,13 +678,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 	    // 短信判断
 
-//	    if ( CommonUtil.isEmpty( redisCacheUtil.get( code ) ) ) {
-//		throw new BusinessException( ResponseMemberEnums.NO_PHONE_CODE );
-//	    }
 	    // 查询要绑定的手机号码
 	    MemberEntity oldMemberEntity = memberDAO.findByPhone( busId, phone );
 
-//	    redisCacheUtil.del( code );
 
 	    MemberEntity memberEntity=null;
 	    if ( CommonUtil.isEmpty( oldMemberEntity ) ) {
@@ -697,7 +703,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    member.setFansCurrency( memberEntity.getFansCurrency() );
 	    member.setPhone( memberEntity.getPhone() );
 	    member.setMcId( memberEntity.getMcId() );
-	    SessionUtils.setLoginMember( request, member );
 	    return memberEntity;
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
@@ -738,6 +743,8 @@ public class MemberApiServiceImpl implements MemberApiService {
     public List< Integer > findMemberIds( Integer memberId ) {
 	List< Integer > list = new ArrayList< Integer >();
 	MemberEntity memberEntity = memberDAO.selectById( memberId );
+
+
 	if ( CommonUtil.isEmpty( memberEntity.getOldId() ) ) {
 	    list.add( memberId );
 	    return list;
@@ -1529,6 +1536,10 @@ public class MemberApiServiceImpl implements MemberApiService {
 		}
 	    }
 	    List< Map< String,Object > > list = memberDAO.findByMemberIds( busId, ids );
+	    //过滤没有查询到的粉丝id
+
+
+
 
 	    List< Map< String,Object > > memberList = new ArrayList< Map< String,Object > >();
 
@@ -2902,9 +2913,37 @@ public class MemberApiServiceImpl implements MemberApiService {
 	String url=PropertiesUtil.getWxmp_home()+"/phoneMemberController/"+memberEntity.getBusId()+"/79B4DE7C/findMember_1.do";
 	map.put( "memberUrl",url );
 	return map;
+    }
 
 
+    public Integer findNewMemberId(Integer memberId)throws BusinessException{
+        MemberEntity memberEntity=memberDAO.selectById( memberId );
+        if(CommonUtil.isNotEmpty( memberEntity )){
+            return memberEntity.getId();
+	}
+	Integer newId=memberOldIdDAO.findMemberId(memberId);
+	return newId;
+    }
+
+
+    public void zhengliMember(){
+	List<MemberEntity> list=memberDAO.findMemberAll();
+	for ( MemberEntity m:list ){
+	    String str=m.getOldId();
+	    if(CommonUtil.isNotEmpty( str )){
+	        String[] strs=str.split( "," );
+	        for ( int i=0;i<strs.length;i++ ){
+	            if(CommonUtil.isNotEmpty( strs[i] ) && !"null".equals( strs[i] ) && !"0".equals( strs[i] )){
+	                MemberOldId memberOldId=new MemberOldId();
+	                memberOldId.setMemberId( m.getId() );
+	                memberOldId.setOldId( CommonUtil.toInteger( strs[i] ) );
+			memberOldIdDAO.insert( memberOldId );
+		    }
+		}
+	    }
+	}
 
     }
+
 
 }

@@ -684,4 +684,15 @@
 		 where id=#{memberId}
 	</select>
 
+
+    <select id="findNewMember" resultMap="BaseResultMap">
+        select id from t_wx_bus_member where oldId is not null and busId=#{busId} and oldId like '%#{memberId}%'
+
+    </select>
+
+    <select id="findMemberAll" resultMap="BaseResultMap">
+        select * from t_wx_bus_member where oldId is not null
+
+    </select>
+
 </mapper>

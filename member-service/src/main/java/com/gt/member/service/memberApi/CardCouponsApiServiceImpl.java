@@ -1029,7 +1029,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     }
 
     @Override
-    public Page findCardReceive( Integer busId, Integer memberId1, Integer curPage ) {
+    public Page findCardReceive( Integer busId, Integer memberId11, Integer curPage ) {
 	if ( CommonUtil.isEmpty( curPage ) ) {
 	    curPage = 0;
 	}
@@ -1065,8 +1065,9 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 	List< Map< String,Object > > duofencards = duofenCardMapper.findByCardIds( busId, cardIdList );
 
 	List< Map< String,Object > > receiveList = new ArrayList< Map< String,Object > >();
-	List< Map< String,Object > > dList = new ArrayList< Map< String,Object > >();
+	List< Map< String,Object > > dList = null;
 	for ( Map< String,Object > r : receives ) {
+	    dList = new ArrayList< Map< String,Object > >();
 	    for ( Map< String,Object > d : duofencards ) {
 		if ( CommonUtil.toString( r.get( "cardIds" ) ).contains( CommonUtil.toString( d.get( "id" ) ) ) ) {
 		    dList.add( d );
@@ -1074,6 +1075,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 	    }
 	    r.put( "duofencard", dList );
 	    receiveList.add( r );
+
 	}
 	page.setSubList( receiveList );
 	return page;
@@ -1538,7 +1540,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 		    throw new BusinessException( ResponseMemberEnums.COUPONSE_NO_GUOQI.getCode(), ResponseMemberEnums.COUPONSE_NO_GUOQI.getMsg() );
 		}
 		String location_id_list=CommonUtil.toString( map2.get( "location_id_list" ) );
-		if(!location_id_list.contains( storeId.toString() )){
+		if(CommonUtil.isNotEmpty( location_id_list ) && !location_id_list.contains( storeId.toString() )){
 		    throw new BusinessException( ResponseMemberEnums.COUPONSE_NOT_USE_SHOP);
 		}
 	    }
