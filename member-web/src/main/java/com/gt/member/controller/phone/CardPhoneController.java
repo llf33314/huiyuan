@@ -449,6 +449,16 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	}
     }
 
+    @ApiOperation( value = "修改会员资料", notes = "查询会员资料" )
+    @ResponseBody
+    @RequestMapping( value = "/updateMemberUser", method = RequestMethod.POST )
+    public ServerResponse updateMemberUser(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
+	return  null;
+    }
+
+
+
+
     @ApiOperation( value = "向商家支付扫码二维码", notes = "向商家支付扫码" )
     @ResponseBody
     @RequestMapping( value = "/findPayQrcodeCardNo", method = RequestMethod.GET )

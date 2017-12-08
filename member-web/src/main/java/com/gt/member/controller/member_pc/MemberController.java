@@ -294,7 +294,9 @@ public class MemberController {
 		}
 	    }
 	    return ServerResponse.createByError("没有读取到文件");
-	} catch (Exception e) {
+	}catch ( BusinessException e ){
+	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	}catch (Exception e) {
 	    LOG.error( "导入会员卡异常",e );
 	    e.printStackTrace();
 	    return ServerResponse.createByError("导入会员卡异常");

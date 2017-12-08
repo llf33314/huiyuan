@@ -280,4 +280,5 @@ public interface MemberEntityDAO extends BaseMapper<MemberEntity > {
      * @return
      */
     List<Map<String,Object>> findMemberBir();
+
 }

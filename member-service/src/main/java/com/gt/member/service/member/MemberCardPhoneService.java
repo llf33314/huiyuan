@@ -109,6 +109,13 @@ public interface MemberCardPhoneService {
     public Map<String,Object> findMemberUser(Map<String,Object> params,Integer memberId) throws BusinessException;
 
     /**
+     * 修改会员资料
+     * @param json
+     * @throws BusinessException
+     */
+    public void updateMemberUser(String json,Integer memberId)throws  BusinessException;
+
+    /**
      * 查询粉丝会员卡卡号 并加密
      * @param memberId
      * @return

@@ -108,6 +108,9 @@ public class MemberCommonServiceImp implements MemberCommonService {
     @Autowired
     private BasisCityDAO basisCityDAO;
 
+    @Autowired
+    private MemberOldIdDAO memberOldIdDAO;
+
     /**
      * 粉币计算
      *
@@ -455,6 +458,13 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    if ( CommonUtil.isNotEmpty( mp ) ) {
 		memberParameterDAO.deleteById( mp.getId() );
 	    }
+
+	    //数据合并建立关系表
+	    MemberOldId memberOldId=new MemberOldId();
+	    memberOldId.setOldId( memberEntity.getId() );
+	    memberOldId.setMemberId( m1.getId() );
+	    memberOldIdDAO.insert( memberOldId );
+
 	    // 修改小程序之前openId对应的memberId
 	    memberAppletOpenidDAO.updateMemberId( m1.getId(), memberEntity.getId() );
 	}

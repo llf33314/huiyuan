@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberOldIdDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberOldId">
+		<id column="id" property="id" />
+		<result column="memberId" property="memberId" />
+		<result column="oldId" property="oldId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, memberId AS memberId, oldId AS oldId
+    </sql>
+
+	<select id="findMemberId" resultType="java.lang.Integer">
+		select memberId from t_member_old_id from where oldId=#{oldId} limit 1
+
+	</select>
+
+</mapper>

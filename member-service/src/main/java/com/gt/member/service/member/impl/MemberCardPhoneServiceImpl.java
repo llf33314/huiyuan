@@ -917,6 +917,124 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	return map;
     }
 
+
+    public void updateMemberUser(String json,Integer memberId)throws  BusinessException{
+
+        Map<String ,Object> parma=JSON.parseObject( json,Map.class );
+
+	MemberEntity memberOld = memberMapper.selectById(memberId);
+
+	Member member = new Member();
+
+	if (CommonUtil.isNotEmpty(parma.get("tel"))) {
+	    member.setPhone(parma.get("tel").toString());
+	}
+
+	if (CommonUtil.isNotEmpty(parma.get("pwd"))) {
+	    member.setPwd(SHA1.encode(parma.get("pwd").toString()));
+	}
+
+	// 修改手机号
+	if ((CommonUtil.isEmpty(memberOld.getPhone()) && CommonUtil.isNotEmpty( member.getPhone() ))
+			|| (!memberOld.getPhone().equals(member.getPhone()))) {
+	    Object vcode = parma.get("vcode");
+	    if (CommonUtil.isEmpty(vcode)) {
+		throw new BusinessException( ResponseMemberEnums.PLEASE_PHONE_CODE );
+	    }
+	    String vcode1 = redisCacheUtil.get(member.getPhone() + "_" + vcode);
+	    if (CommonUtil.isEmpty(vcode1)) {
+		throw new BusinessException( ResponseMemberEnums.NO_PHONE_CODE );
+	    }
+	    // 联盟卡操作
+	    if (CommonUtil.isNotEmpty(memberOld.getPhone())) {
+//		Map<String, Object> param = new HashMap<String, Object>();
+//		param.put("oldPhone", memberOld.getPhone());
+//		// 零时数据
+//		param.put("busId", memberOld.getBusid());
+//		param.put("newPhone", member.getPhone());
+//		unionMobileService.updateMemberPhone(param);
+	    }
+
+	    memberCommonService.newMemberMerge(memberOld,memberOld.getBusId(),member.getPhone());
+	}
+
+	MemberParameter memberParameter = new MemberParameter();
+
+	if (CommonUtil.isNotEmpty(parma.get("provincecode"))) {
+	    memberParameter.setProvinceCode(parma.get("provincecode")
+			    .toString());
+	}
+	if (CommonUtil.isNotEmpty(parma.get("city"))) {
+	    memberParameter.setCityCode(parma.get("city").toString());
+	}
+	if (CommonUtil.isNotEmpty(parma.get("countyCode"))) {
+	    memberParameter.setCountyCode(parma.get("countyCode")
+			    .toString());
+	}
+
+	if (CommonUtil.isNotEmpty(parma.get("address"))) {
+	    memberParameter.setAddress(parma.get("address").toString());
+	}
+
+	if (CommonUtil.isNotEmpty(parma.get("getmoney"))) {
+	    memberParameter.setGetMoney(CommonUtil.toDouble(parma
+			    .get("getmoney")));
+	}
+
+	MemberParameter memberParameter1 = memberParameterMapper
+			.findByMemberId(Integer
+					.parseInt(parma.get("id").toString()));
+
+	if (CommonUtil.isEmpty(memberParameter1)) {
+	    memberParameter.setMemberId(memberId);
+	    memberParameterMapper.insert(memberParameter);
+	}
+
+	if (parma.get("email") != null) {
+	    member.setEmail(parma.get("email").toString());
+	} else {
+	    member.setEmail("");
+	}
+	if (parma.get("name") != null) {
+	    member.setName(parma.get("name").toString());
+	}
+
+	if (CommonUtil.isNotEmpty(parma.get("gender"))) {
+	    member.setSex(Integer.parseInt(parma.get("gender").toString()));
+	}
+
+	if (parma.get("birth") != null) {
+	    member.setBirth(DateTimeKit.parseDate(parma.get("birth")
+			    .toString()));
+	}
+	if (CommonUtil.isNotEmpty(parma.get("cardId"))) {
+	    member.setCardid(parma.get("cardId").toString());
+	} else {
+	    member.setCardid("");
+	}
+
+	if (CommonUtil.isNotEmpty(parma.get("imageurls"))) {
+	    String[] str = parma.get("imageurls").toString().split(",");
+	    for (int i = 0; i < str.length; i++) {
+		if (CommonUtil.isNotEmpty(str[i])) {
+		    if (CommonUtil.isEmpty(member.getCardimg())) {
+			member.setCardimg(str[i]);
+		    } else if (CommonUtil.isEmpty(member.getCardimgback())) {
+			member.setCardimgback(str[i]);
+			break;
+		    }
+		}
+	    }
+	}
+	member.setId(memberId);
+
+//	memberMapper.updateByPrimaryKeySelective(member);
+//	map.put("result", true);
+//
+//	// 判断是否是否是完善资料 还是修改资料
+//	giveMemberGift(memberOld, memberParameter1);
+    }
+
     public String findCardNoByMemberId( Integer memberId ) {
 	MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
 	MemberCard memberCard = memberCardDAO.selectById( memberEntity.getMcId() );

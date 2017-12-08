@@ -1448,6 +1448,11 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 	    WxShop wxshop = wxShopDAO.selectMainShopByBusId( busId );
 
+	    if(CommonUtil.isEmpty( wxshop )){
+		throw new BusinessException( ResponseMemberEnums.PLESAS_SET_SHOP );
+	    }
+
+
 	    SortedMap< String,Object > dictMap = dictService.getDict( "1093" );
 	    int level = busUser.getLevel();
 	    for ( String dict : dictMap.keySet() ) {
@@ -1710,7 +1715,9 @@ public class MemberCardServiceImpl implements MemberCardService {
 		return null;
 	    }
 	    return wbs;
-	} catch ( Exception e ) {
+	} catch ( BusinessException e ){
+	    throw e;
+	}catch ( Exception e ) {
 	    LOG.error( "导入数据,数据保存异常", e );
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
