@@ -22,7 +22,7 @@ public interface MemberNoticeuserDAO extends BaseMapper<MemberNoticeuser> {
 
     Integer findCountNotice(@Param("memberId") Integer memberId,@Param("sendDate") Date sendDate);
 
-    List<Map<String, Object>> findNotice(@Param("memberId") Integer memberId,@Param("sendDate")String sendDate);
+    List<Map<String, Object>> findNotice(@Param("memberId") Integer memberId,@Param("status") Integer  status,@Param("sendDate")String sendDate);
 
     void updateStatus(@Param("memberId") Integer memberId);
 

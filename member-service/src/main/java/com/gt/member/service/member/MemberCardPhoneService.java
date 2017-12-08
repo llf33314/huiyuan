@@ -129,19 +129,13 @@ public interface MemberCardPhoneService {
      */
     public void qiandao(Integer memberId,Integer busId)throws BusinessException;
 
-    /**
-     * 查询粉丝的系统消息
-     * @param memberId
-     * @return
-     */
-    public List<Map<String,Object>> findSystemNotice(Integer memberId);
 
     /**
      * 查询会员信息
      * @param memberId
      * @return
      */
-    public List<Map<String,Object>> findMemberNotice(Integer memberId);
+    public Map<String,Object>  findMemberNotice(Integer memberId);
 
     /**
      * 查询推荐信息

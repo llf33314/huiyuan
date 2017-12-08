@@ -19,11 +19,11 @@
 
 
 	<update id="updateByMemberId">
-		update systemnoticecall set status=1 where memberId=#{memberId}
+		update systemnoticecall set status=1 where memberId=#{memberId} and status=0
 	</update>
 
 	<select id="findByMemberId" resultType="Map">
-		select * from systemnoticecall where memberId=#{memberId} order by id desc
+		select * from systemnoticecall where memberId=#{memberId} and status=#{status} order by id desc
 	</select>
 
 	<select id="findCountByMemberId" resultType="java.lang.Integer">

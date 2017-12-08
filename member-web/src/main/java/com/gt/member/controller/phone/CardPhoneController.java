@@ -505,31 +505,31 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	}
     }
 
-    @ApiOperation( value = "查询系统消息", notes = "查询系统消息" )
-    @ResponseBody
-    @RequestMapping( value = "/findSystemNotice", method = RequestMethod.POST )
-    public ServerResponse findSystemNotice( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
-	try {
-	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
-	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
-	    Member member = SessionUtils.getLoginMember( request, busId );
-	    if ( CommonUtil.isEmpty( member ) ) {
-		String url = authorizeMember( request, response, params );
-		if ( CommonUtil.isNotEmpty( url ) ) {
-		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
-		}
-	    }
-	    List< Map< String,Object > > mapList = memberCardPhoneService.findSystemNotice( member.getId() );
-	    return ServerResponse.createBySuccess( mapList );
-	} catch ( BusinessException e ) {
-	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    LOG.error( "查询系统信息异常",e );
-	    return ServerResponse.createByError();
-	}
-    }
+//    @ApiOperation( value = "查询系统消息", notes = "查询系统消息" )
+//    @ResponseBody
+//    @RequestMapping( value = "/findSystemNotice", method = RequestMethod.POST )
+//    public ServerResponse findSystemNotice( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
+//	try {
+//	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+//	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+//	    Member member = SessionUtils.getLoginMember( request, busId );
+//	    if ( CommonUtil.isEmpty( member ) ) {
+//		String url = authorizeMember( request, response, params );
+//		if ( CommonUtil.isNotEmpty( url ) ) {
+//		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+//		}
+//	    }
+//	    List< Map< String,Object > > mapList = memberCardPhoneService.findSystemNotice( member.getId() );
+//	    return ServerResponse.createBySuccess( mapList );
+//	} catch ( BusinessException e ) {
+//	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+//	} catch ( Exception e ) {
+//	    LOG.error( "查询系统信息异常",e );
+//	    return ServerResponse.createByError();
+//	}
+//    }
 
-    @ApiOperation( value = "查询会员消息", notes = "查询会员消息" )
+    @ApiOperation( value = "查询会员和系统消息", notes = "查询会员消息" )
     @ResponseBody
     @RequestMapping( value = "/findMemberNotice", method = RequestMethod.POST )
     public ServerResponse findMemberNotice(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
@@ -543,8 +543,8 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    List< Map< String,Object > > mapList = memberCardPhoneService.findMemberNotice( member.getId() );
-	    return ServerResponse.createBySuccess( mapList );
+	    Map< String,Object >  map = memberCardPhoneService.findMemberNotice( member.getId() );
+	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {

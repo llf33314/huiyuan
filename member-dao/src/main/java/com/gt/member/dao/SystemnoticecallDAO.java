@@ -18,7 +18,7 @@ import java.util.Map;
 public interface SystemnoticecallDAO extends BaseMapper<Systemnoticecall> {
     void updateByMemberId(@Param("memberId")Integer memberId);
 
-    List<Map<String, Object>> findByMemberId(@Param("memberId")Integer memberId);
+    List<Map<String, Object>> findByMemberId(@Param("memberId")Integer memberId,@Param("status")Integer status);
 
     Integer findCountByMemberId(@Param("memberId")Integer memberId);
 
@@ -29,4 +29,5 @@ public interface SystemnoticecallDAO extends BaseMapper<Systemnoticecall> {
      * @return
      */
     int saveList(@Param("notices")List<Systemnoticecall> notices);
+
 }

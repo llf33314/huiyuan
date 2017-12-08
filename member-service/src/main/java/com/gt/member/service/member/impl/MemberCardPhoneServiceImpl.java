@@ -1088,17 +1088,23 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
     }
 
 
-
-    public List<Map<String,Object>> findSystemNotice(Integer memberId){
-	List<Map<String, Object>> systemNotices=systemnoticecallDAO.findByMemberId( memberId );
-	systemnoticecallDAO.updateByMemberId(memberId);
-	return systemNotices;
-    }
-
-    public List<Map<String,Object>> findMemberNotice(Integer memberId){
-	List<Map<String, Object>> noticeUsers = noticeUserMapper.findNotice(memberId, DateTimeKit.getDateTime());
+    public Map<String,Object> findMemberNotice(Integer memberId){
+	Map<String,Object> map=new HashMap<>(  );
+        List<Map<String, Object>> noReadnoticeUsers = noticeUserMapper.findNotice(memberId, 0,DateTimeKit.getDateTime());
 	noticeUserMapper.updateStatus(memberId);
-	return noticeUsers;
+	map.put( "noReadnoticeUsers",noReadnoticeUsers );
+	List<Map<String, Object>> readnoticeUsers = noticeUserMapper.findNotice(memberId, 0,DateTimeKit.getDateTime());
+	map.put( "readnoticeUsers",readnoticeUsers );
+
+	List<Map<String,Object>> noReadsystemNoticeS= systemnoticecallDAO.findByMemberId(  memberId,0);
+	map.put( "noReadsystemNoticeS",noReadsystemNoticeS );
+
+	systemnoticecallDAO.updateByMemberId(memberId);
+
+	List<Map<String,Object>> readsystemNoticeS= systemnoticecallDAO.findByMemberId(  memberId,1);
+	map.put( "readsystemNoticeS",readsystemNoticeS );
+	return map;
+
     }
 
 

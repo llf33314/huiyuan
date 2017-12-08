@@ -32,15 +32,13 @@
 	<select id="findNotice" resultType="Map">
 		SELECT n.* FROM t_member_noticeuser nu
 		INNER JOIN t_member_notice n ON nu.noticeId=n.id
-		WHERE nu.busId=#{memberId} AND nu.msgType=1
-		AND noticeId IN
-		(SELECT id FROM t_member_notice nd WHERE (nd.sendType=1 AND nd.sendDate <![CDATA[ <= ]]> #{sendDate}) OR (nd.sendType=0))
-		ORDER BY nu.createDate DESC
-
+		WHERE nu.busId=#{memberId} AND nu.msgType=1 and nu.status=#{status}
+		AND n.sendType=1 AND n.sendDate <![CDATA[ <= ]]> #{sendDate}
+		ORDER BY nu.sendDate DESC
 	</select>
 
 	<update id="updateStatus">
-		update t_member_noticeuser set status=1  where busId=#{memberId} and msgType=1
+		update t_member_noticeuser set status=1  where busId=#{memberId} and msgType=1 and status=0
 	</update>
 
 
