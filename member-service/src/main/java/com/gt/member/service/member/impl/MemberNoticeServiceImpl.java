@@ -193,7 +193,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	    MemberNotice memberNotice = new MemberNotice();
 	    memberNotice.setContent( CommonUtil.toString( obj.get( "content" ) ) );
 	    memberNotice.setId( CommonUtil.toInteger( obj.get( "id" ) ) );
-	    memberNotice.setNoticeMember( CommonUtil.toInteger( obj.get( "noticeMember" ) ) );
+	    memberNotice.setNoticeMember( CommonUtil.toInteger( obj.get( "noticeUser" ) ) );
 	    memberNotice.setSendMsg( CommonUtil.toInteger( obj.get( "sendMsg" ) ) );
 	    memberNotice.setSendSms( CommonUtil.toInteger( obj.get( "sendSms" ) ) );
 	    memberNotice.setTitle( CommonUtil.toString( obj.get( "title" ) ) );

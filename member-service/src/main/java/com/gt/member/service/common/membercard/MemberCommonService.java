@@ -68,12 +68,6 @@ public interface MemberCommonService {
      */
     public Double deductFenbi(SortedMap<String, Object> dict, Double fenbiMoney);
 
-    /**
-     * 归还商家粉币
-     * @param busId
-     * @param fenbi
-     */
-    public void guihuiBusUserFenbi(Integer busId,Double fenbi)throws BusinessException;
 
     /**
      *
@@ -103,41 +97,17 @@ public interface MemberCommonService {
      */
     public void newMemberMerge(MemberEntity member,Integer busId,String phone)throws BusinessException;
 
-
-
-    /*
-   * 粉币抵扣
-   * @param request
-   * @param memberEntity
-   * @param busId
-   * @param Fenbi 粉币
-   * @return
-   */
-    public void reduceFansCurrency( MemberEntity memberEntity,  Double fenbi ) throws BusinessException;
-
-
-    /*
-      * 粉币赠送
-      * @param request
-      * @param memberEntity
-      * @param busId
-      * @param Fenbi 粉币
-      * @return
-      */
-    public void giveFansCurrency( Integer memberId,  Double fenbi ) throws BusinessException;
-
     /**
-     * 扣除商家粉币,不操作粉丝数据 不足则不扣除
-     * @param busId
-     * @param fenbi
+     * 推荐赠送
+     * @param recommend
      */
-    public boolean deductionFansCurrency(Integer busId,Double fenbi);
-
     public void tuijianGive( MemberRecommend recommend );
 
-
-
-
+    /**
+     * 查询粉丝所有的id集合
+     * @param memberId
+     * @return
+     */
     public List<Integer> findMemberIds(Integer memberId);
 
     /**
@@ -187,5 +157,14 @@ public interface MemberCommonService {
      * @return
      */
     public List<Map<String,Object>> findCityByCityCode(String cityCode);
+
+    /**
+     * 泛会员 和正式会员完善资料 赠送物品
+     * @param memberOld
+     * @param memberParameter1
+     * @return
+     */
+    public boolean giveMemberGift(MemberEntity memberOld,
+                    MemberParameter memberParameter1);
 
 }

@@ -309,7 +309,7 @@ public class MemberController {
 		    @ApiImplicitParam( name = "redisStr", value = "redisStr 导入错误下载标示", paramType = "query", required = false, dataType = "int" )
     })
     @ResponseBody
-    @RequestMapping( value = "/downExecl", method = RequestMethod.POST )
+    @RequestMapping( value = "/downExecl", method = RequestMethod.GET )
     public void downExecl(HttpServletRequest request,
 		    HttpServletResponse response,  String redisStr) {
 	try {

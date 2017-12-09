@@ -130,6 +130,9 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
     @Autowired
     private MemberRecommendDAO memberRecommendDAO;
 
+    @Autowired
+    private MemberPicklogDAO memberPicklogDAO;
+
     public String wxPayWay( UserConsumeNew consumeNew, int payType ) throws Exception {
 	SubQrPayParams subQrPayParams = new SubQrPayParams();
 	subQrPayParams.setTotalFee( consumeNew.getDiscountAfterMoney() );
@@ -458,7 +461,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		String url = wxPayWay( uc, payType );
 		throw new BusinessException( ResponseMemberEnums.PLEASE_BUY_CARD.getCode(), url );
 	    }
-	} catch ( BuilderException e ) {
+	} catch ( BusinessException e ) {
 	    throw e;
 	} catch ( Exception e ) {
 	    LOG.error( "erp 领取会员卡异常", e );
@@ -924,7 +927,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 	MemberEntity memberOld = memberMapper.selectById(memberId);
 
-	Member member = new Member();
+	MemberEntity member = new MemberEntity();
 
 	if (CommonUtil.isNotEmpty(parma.get("tel"))) {
 	    member.setPhone(parma.get("tel").toString());
@@ -1008,19 +1011,19 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 			    .toString()));
 	}
 	if (CommonUtil.isNotEmpty(parma.get("cardId"))) {
-	    member.setCardid(parma.get("cardId").toString());
+	    member.setCardId(parma.get("cardId").toString());
 	} else {
-	    member.setCardid("");
+	    member.setCardId("");
 	}
 
 	if (CommonUtil.isNotEmpty(parma.get("imageurls"))) {
 	    String[] str = parma.get("imageurls").toString().split(",");
 	    for (int i = 0; i < str.length; i++) {
 		if (CommonUtil.isNotEmpty(str[i])) {
-		    if (CommonUtil.isEmpty(member.getCardimg())) {
-			member.setCardimg(str[i]);
-		    } else if (CommonUtil.isEmpty(member.getCardimgback())) {
-			member.setCardimgback(str[i]);
+		    if (CommonUtil.isEmpty(member.getCardImg())) {
+			member.setCardImg(str[i]);
+		    } else if (CommonUtil.isEmpty(member.getCardImgback())) {
+			member.setCardImgback(str[i]);
 			break;
 		    }
 		}
@@ -1028,11 +1031,10 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	}
 	member.setId(memberId);
 
-//	memberMapper.updateByPrimaryKeySelective(member);
-//	map.put("result", true);
-//
-//	// 判断是否是否是完善资料 还是修改资料
-//	giveMemberGift(memberOld, memberParameter1);
+	memberMapper.updateById(member);
+
+	// 判断是否是否是完善资料 还是修改资料
+	memberCommonService.giveMemberGift(memberOld, memberParameter1);
     }
 
     public String findCardNoByMemberId( Integer memberId ) {
@@ -1091,26 +1093,74 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
     public Map<String,Object> findMemberNotice(Integer memberId){
 	Map<String,Object> map=new HashMap<>(  );
         List<Map<String, Object>> noReadnoticeUsers = noticeUserMapper.findNotice(memberId, 0,DateTimeKit.getDateTime());
-	noticeUserMapper.updateStatus(memberId);
 	map.put( "noReadnoticeUsers",noReadnoticeUsers );
-	List<Map<String, Object>> readnoticeUsers = noticeUserMapper.findNotice(memberId, 0,DateTimeKit.getDateTime());
+
+	List<Map<String, Object>> readnoticeUsers = noticeUserMapper.findNotice(memberId, 1,DateTimeKit.getDateTime());
 	map.put( "readnoticeUsers",readnoticeUsers );
 
 	List<Map<String,Object>> noReadsystemNoticeS= systemnoticecallDAO.findByMemberId(  memberId,0);
 	map.put( "noReadsystemNoticeS",noReadsystemNoticeS );
 
-	systemnoticecallDAO.updateByMemberId(memberId);
 
 	List<Map<String,Object>> readsystemNoticeS= systemnoticecallDAO.findByMemberId(  memberId,1);
 	map.put( "readsystemNoticeS",readsystemNoticeS );
+
+	noticeUserMapper.updateStatus(memberId);
+	systemnoticecallDAO.updateByMemberId(memberId);
 	return map;
 
     }
 
 
     public Map<String,Object> findRecommend(Integer memberId )throws  BusinessException{
-       // memberRecommendDAO.countRecommendByCardId(  )
-	return null;
+    //   memberRecommendDAO.countRecommendByCardId(  )
+	MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
+	Map<String,Object> map=new HashMap<>(  );
+	List<Integer> ids=memberCommonService.findMemberIds( memberId );
+	List<Map<String, Object>> recommends = memberRecommendDAO.findByMemberId(ids);
+	map.put("recommends", recommends);
+
+	Integer getCount=0;
+	Integer useCount=0;
+	Double userMoney=0.0;
+	Integer memberCount=0;
+	for (int i = 0; i < recommends.size(); i++) {
+	    //优惠券
+	    if("1".equals(CommonUtil.toString(recommends.get(i).get("recommendType")))){
+		getCount=getCount+CommonUtil.toInteger(recommends.get(i).get("lingquNum"));
+		useCount=useCount+CommonUtil.toInteger(recommends.get(i).get("userNum"));
+		userMoney=userMoney+CommonUtil.toInteger(recommends.get(i).get("userNum"))*CommonUtil.toDouble(recommends.get(i).get("money"));
+	    }else{
+		memberCount++;
+	    }
+	}
+
+	map.put("memberCount",memberCount );
+	map.put("getCount",getCount );
+	map.put("useCount", useCount);
+	map.put("userMoney", userMoney);
+
+//	WxPublicUsers wxPublicUsers = wxPublicUsersMapper.selectByUserId(m.getBusid());
+//	if (CommonUtil.isEmpty(wxPublicUsers)) {
+//	    request.setAttribute("isClose", 0);
+//	}
+//
+//	if (!member.getId().equals(m.getId())) {
+//	    request.setAttribute("isClose", 0);
+//	}
+
+	List<MemberPicklog> pickList = memberPicklogDAO.findByMemberId(memberEntity.getBusId(),ids);
+	map.put("pickList", pickList);
+	Double pickMoney = 0.0;
+	for (MemberPicklog memberPickLog : pickList) {
+	    if (CommonUtil.isNotEmpty(memberPickLog.getPickMoney())) {
+		pickMoney = pickMoney + memberPickLog.getPickMoney();
+	    }
+	}
+	map.put("pickMoney", pickMoney);
+
+
+	return map;
     }
 
 }

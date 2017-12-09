@@ -19,6 +19,7 @@ public interface MemberRecommendDAO extends BaseMapper<MemberRecommend> {
 
     List<Map<String,Object>> findByMemberId(@Param("memberIds")List<Integer> memberIds);
 
+
     MemberRecommend findBycode(@Param("code")String code,@Param("ctId")Integer ctId);
 
     /**

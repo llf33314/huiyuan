@@ -9,6 +9,7 @@ import com.gt.api.util.RequestUtils;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
+import com.gt.member.util.CommonUtil;
 import com.gt.member.util.EncryptUtil;
 import com.gt.member.util.PropertiesUtil;
 import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
@@ -17,6 +18,8 @@ import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -28,6 +31,10 @@ import java.util.Map;
  */
 @Service
 public class RequestServiceImpl implements RequestService {
+
+    private final static Logger LOG= LoggerFactory.getLogger( "RequestServiceImpl" );
+
+
     //微信卡券核销
     private final String CODE_CONSUME = "/8A5DA52E/wxcardapi/6F6D9AD2/79B4DE7C/codeConsume.do";
 
@@ -36,7 +43,7 @@ public class RequestServiceImpl implements RequestService {
 
     private final String SEND_SMS_NEW="/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsNew.do";
 
-    private final static String SEND_WXMSG="8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/sendWxMsgTemplate.do";
+    private final static String SEND_WXMSG="/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/sendWxMsgTemplate.do";
 
     //验证主账户信息
     private final static String VERSION_BUS_PID="/8A5DA52E/childBusUserApi/VersionBusPid.do";
@@ -44,9 +51,11 @@ public class RequestServiceImpl implements RequestService {
     private final static String CHANGE_FLOW_URL="/8A5DA52E/fenbiflow/6F6D9AD2/79B4DE7C/adcServices.do";
 
     //查询门店信息
-    private final static String WXSHOP_BYBUSID= "8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/queryWxShopByBusId.do";
+    private final static String WXSHOP_BYBUSID= "/8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/queryWxShopByBusId.do";
 
     private final static String PAY_API="/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do";
+
+    private final static String POWER_API="/8A5DA52E/busPowerApi/getPowerApi.do";
 
 
     public String codeConsume(String cardId,String code,Integer busId) throws Exception{
@@ -149,6 +158,29 @@ public class RequestServiceImpl implements RequestService {
 
     public String loginImg(Integer busId){
         return null;
+    }
+
+
+    public Integer getPowerApi(Integer status,Integer busId,Double powNum,String remarks){
+        try {
+	    Map< String,Object > map = new HashMap<>();
+	    map.put( "status", status );
+	    map.put( "busId", busId );
+	    map.put( "powNum", powNum );
+	    map.put( "model", 3 );
+	    map.put( "remarks", remarks );
+	    String url = PropertiesUtil.getWxmp_home() + POWER_API;
+	    String returnMsg = SignHttpUtils.postByHttp( url, map, PropertiesUtil.getWxmpsignKey() );
+	    if( CommonUtil.isNotEmpty( returnMsg )){
+		Map<String,Object> returnParam=JSON.parseObject( returnMsg,Map.class );
+		return CommonUtil.toInteger( returnParam.get( "code" ) );
+	    }
+	}catch ( Exception e ){
+            LOG.error( "调用扣除粉币支付异常",e );
+	}
+	return 1;
+
+
     }
 
 

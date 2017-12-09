@@ -33,7 +33,7 @@
 		SELECT n.* FROM t_member_noticeuser nu
 		INNER JOIN t_member_notice n ON nu.noticeId=n.id
 		WHERE nu.busId=#{memberId} AND nu.msgType=1 and nu.status=#{status}
-		AND n.sendType=1 AND n.sendDate <![CDATA[ <= ]]> #{sendDate}
+		AND n.sendDate <![CDATA[ <= ]]> #{sendDate}
 		ORDER BY nu.sendDate DESC
 	</select>
 

@@ -78,4 +78,14 @@ public interface RequestService {
      * @return
      */
     public String loginImg(Integer busId);
+
+    /**
+     * 扣除商家粉币数量
+     * @param status  0是扣除，1是添加
+     * @param busId  主商家ID
+     * @param powNum  粉币数，不能超过十万
+     * @param remarks 描述
+     * @return
+     */
+    public Integer getPowerApi(Integer status,Integer busId,Double powNum,String remarks);
 }

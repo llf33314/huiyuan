@@ -18,7 +18,11 @@
 
 
 	<select id="findByMemberId"  resultMap="BaseResultMap">
-		select   <include refid="Base_Column_List" /> from t_member_picklog where busId=#{busId} and memberId=#{memberId} order by id desc
+		select   <include refid="Base_Column_List" /> from t_member_picklog where busId=#{busId} and
+		<foreach collection="memberIds" item="memberId"  separator="or">
+			memberId=#{memberId}
+		</foreach>
+		order by id desc
 	</select>
 
 	<select id="findBybusId" resultMap="BaseResultMap">

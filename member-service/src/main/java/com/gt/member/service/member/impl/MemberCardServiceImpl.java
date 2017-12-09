@@ -673,6 +673,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 		gt.setBuyModel( buyModel );
 		if ( buyModel == 1 ) {
 		    gt.setApplyType( 3 );
+		}else{
+		    gt.setApplyType( 0 );
 		}
 
 		if ( CommonUtil.isNotEmpty( map.get( "buyMoney" ) ) ) {
@@ -1365,7 +1367,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 		for ( Integer id : ids ) {
 		    //赠送粉币
-		    memberCommonService.giveFansCurrency( id, number );
+		    requestService.getPowerApi( 0,busId,number,"商家赠送粉币" );
+
 		}
 		List< Map< String,Object > > list = memberMapper.findMemberByIds( busId, ids );
 		for ( Map< String,Object > member : list ) {
