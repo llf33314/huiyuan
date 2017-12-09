@@ -41,4 +41,6 @@ public interface RequestService {
      */
     public void getWxPulbicMsg(Integer busId)throws BusinessException;
 
+    public Integer getPowerApi(Integer status,Integer busId,Double powNum,String remarks);
+
 }

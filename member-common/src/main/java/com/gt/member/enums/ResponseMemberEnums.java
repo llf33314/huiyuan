@@ -4,6 +4,7 @@ package com.gt.member.enums;
  * Created by Administrator on 2017/8/3 0003.
  */
 public enum ResponseMemberEnums {
+    ERROR_USER_DEFINED(4000,""),  //接口返回自定义异常
     ERROR_QR_CODE(4001, "二维码已超时"),
     NO_DATA(4002, "数据不存在"),
     NULL(4003,"数据空值"),

@@ -33,7 +33,7 @@ import java.util.*;
 @Service
 public class MemberCommonServiceImp implements MemberCommonService {
 
-    private static final Logger LOG= LoggerFactory.getLogger(MemberCommonServiceImp.class  );
+    private static final Logger LOG = LoggerFactory.getLogger( MemberCommonServiceImp.class );
 
     @Autowired
     private DictService dictService;
@@ -48,11 +48,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
     private MemberDateDAO memberDateMapper;
 
     @Autowired
-    private  BusUserDAO busUserDAO;
-
-    @Autowired
-    private MemberCardrecordDAO memberCardrecordDAO;
-
+    private BusUserDAO       busUserDAO;
     @Autowired
     private SystemMsgService systemMsgService;
 
@@ -86,7 +82,31 @@ public class MemberCommonServiceImp implements MemberCommonService {
     @Autowired
     private MemberRecommendDAO memberRecommendDAO;
 
+    @Autowired
+    private MemberRechargegiveDAO memberRechargegiveDAO;
 
+
+    @Autowired
+    private MemberGiveruleDAO memberGiveruleDAO;
+
+    @Autowired
+    private UserConsumeNewDAO userConsumeNewDAO;
+
+    @Autowired
+    private MemberGiverulegoodstypeDAO memberGiverulegoodstypeDAO;
+
+
+    @Autowired
+    private MemberOldIdDAO memberOldIdDAO;
+
+    @Autowired
+    private MemberOptionDAO memberOptionDAO;
+
+    @Autowired
+    private MemberGiftDAO memberGiftDAO;
+
+    @Autowired
+    private RequestService requestService;
 
     /**
      * 粉币计算
@@ -99,7 +119,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
     @Override
     public Double currencyCount( Double totalMoney, Double fans_currency ) {
 	try {
-	    SortedMap<String, Object> dict= dictService.getDict( "1058" );
+	    SortedMap< String,Object > dict = dictService.getDict( "1058" );
 	    Double ratio = CommonUtil.toDouble( dict.get( "1" ) );
 	    if ( fans_currency < ratio * 10 ) {
 		return 0.0;
@@ -123,7 +143,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
     @Override
     public Double deductFenbi( Double jifenMoney, int busId ) {
-	SortedMap<String, Object> dict= dictService.getDict( "1058" );
+	SortedMap< String,Object > dict = dictService.getDict( "1058" );
 	Double ratio = CommonUtil.toDouble( dict.get( "1" ) );
 	Double fenbi = jifenMoney * ratio;
 	return fenbi;
@@ -188,7 +208,6 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	}
 	return 0.0;
     }
-
 
     /**
      * 判断是否是会员日
@@ -281,11 +300,11 @@ public class MemberCommonServiceImp implements MemberCommonService {
     }
 
     @Override
-    public Double deductJifen( PublicParameterset pps ,Double jifenMoney, int busId ) {
+    public Double deductJifen( PublicParameterset pps, Double jifenMoney, int busId ) {
 	if ( CommonUtil.isEmpty( pps ) ) {
 	    return 0.0;
 	}
-	Double jifen = jifenMoney / pps.getChangeMoney() * pps.getIntegralRatio() ;
+	Double jifen = jifenMoney / pps.getChangeMoney() * pps.getIntegralRatio();
 	return jifen;
     }
 
@@ -294,69 +313,52 @@ public class MemberCommonServiceImp implements MemberCommonService {
      *
      * @return
      */
-    public Double deductFenbi(SortedMap<String, Object> dict, Double fenbiMoney) {
-	Double ratio = CommonUtil.toDouble(dict.get("1"));
+    public Double deductFenbi( SortedMap< String,Object > dict, Double fenbiMoney ) {
+	Double ratio = CommonUtil.toDouble( dict.get( "1" ) );
 	Double fenbi = fenbiMoney * ratio;
-	return formatNumber(fenbi);
+	return formatNumber( fenbi );
     }
 
     /**
      * 数字处理
      *
      * @param number
+     *
      * @return
      */
-    public Double formatNumber(Double number) {
-	DecimalFormat df = new DecimalFormat("######0.00");
-	return CommonUtil.toDouble(df.format(number));
+    public Double formatNumber( Double number ) {
+	DecimalFormat df = new DecimalFormat( "######0.00" );
+	return CommonUtil.toDouble( df.format( number ) );
     }
 
-    public void guihuiBusUserFenbi(Integer busId,Double fenbi)throws BusinessException{
-	try {
-	    BusUserEntity busUserEntity = busUserDAO.selectById( busId );
-	    // 归还到商家账户
-	    BigDecimal b1 = new BigDecimal( fenbi );
-	    BusUserEntity b = new BusUserEntity();
-	    b.setId( busUserEntity.getId() );
-	    b.setFansCurrency( busUserEntity.getFansCurrency().add( b1 ) );
-	    busUserDAO.updateById( b );
-	}catch ( Exception e ){
-	    LOG.error( "归还商家粉币异常参数商家id",e );
-	    throw new BusinessException( ResponseEnums.ERROR );
-	}
-    }
-
-
-
-
-
-    public void saveCardRecordOrderCodeNew(Integer memberId, Integer recordType, Double number,
-		    String itemName, Integer busId, Double balance, String orderCode,Integer rtype){
+    public MemberCardrecordNew saveCardRecordOrderCodeNew( Integer memberId, Integer recordType, Double number, String itemName, Integer busId, Double balance, String orderCode,
+		    Integer rtype ) {
 	MemberCardrecordNew cr = new MemberCardrecordNew();
-	cr.setMemberId(memberId);
-	cr.setRecordType(recordType);
-	cr.setNumber(number);
-	cr.setCreateDate(new Date());
-	cr.setItemName(itemName);
-	cr.setBusId(busId);
-	cr.setBalance(balance);
+	cr.setMemberId( memberId );
+	cr.setRecordType( recordType );
+	cr.setNumber( number );
+	cr.setCreateDate( new Date() );
+	cr.setItemName( itemName );
+	cr.setBusId( busId );
+	cr.setBalance( balance );
 	cr.setOrderCode( orderCode );
 	try {
-	    memberCardrecordNewDAO.insert(cr);
-	    if (recordType == 2) {
+	    memberCardrecordNewDAO.insert( cr );
+	    if ( recordType == 2 ) {
 		MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
 		// 积分变动通知
-		systemMsgService.jifenMsg(cr, memberEntity );
+		systemMsgService.jifenMsg( cr, memberEntity );
 	    }
+	    return cr;
 
-	} catch (Exception e) {
+	} catch ( Exception e ) {
 	    e.printStackTrace();
-	    LOG.error("保存手机端记录异常", e);
+	    LOG.error( "保存手机端记录异常", e );
 	}
+	return null;
     }
 
-
-    public String findWxQcode(Integer busId,Integer busType,String scene_id){
+    public String findWxQcode( Integer busId, Integer busType, String scene_id ) {
 	try {
 	    MemberQcodeWx mqw = memberQcodeWxDAO.findByBusId( busId, 0 );
 	    String imgUrl = "";
@@ -382,18 +384,18 @@ public class MemberCommonServiceImp implements MemberCommonService {
 		imgUrl = mqw.getCodeUrl();
 	    }
 	    return imgUrl;
-	}catch ( Exception e ){
-	    throw  new BusinessException( ResponseEnums.ERROR);
+	} catch ( Exception e ) {
+	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
 
-
     /**
      * 新增会员处理数据合并问题
+     *
      * @param busId
      * @param phone
      */
-    public void newMemberMerge(MemberEntity memberEntity,Integer busId,String phone)throws BusinessException{
+    public void newMemberMerge( MemberEntity memberEntity, Integer busId, String phone ) throws BusinessException {
 	if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
 	    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
 	}
@@ -426,7 +428,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    m1.setTotalIntegral( memberEntity.getTotalIntegral() + m1.getTotalIntegral() );
 	    m1.setRemark( memberEntity.getRemark() );
 	    m1.setLoginMode( 0 );
-	    MemberOld old =  JSONObject.toJavaObject( JSON.parseObject( JSONObject.toJSONString( memberEntity ) ), MemberOld.class  );
+	    MemberOld old = JSONObject.toJavaObject( JSON.parseObject( JSONObject.toJSONString( memberEntity ) ), MemberOld.class );
 
 	    // 删除数据做移出到memberold
 	    memberOldDao.insert( old );
@@ -439,84 +441,21 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    if ( CommonUtil.isNotEmpty( mp ) ) {
 		memberParameterDAO.deleteById( mp.getId() );
 	    }
+
+	    //数据合并建立关系表
+	    MemberOldId memberOldId = new MemberOldId();
+	    memberOldId.setOldId( memberEntity.getId() );
+	    memberOldId.setMemberId( m1.getId() );
+	    memberOldIdDAO.insert( memberOldId );
+
 	    // 修改小程序之前openId对应的memberId
 	    memberAppletOpenidDAO.updateMemberId( m1.getId(), memberEntity.getId() );
 	}
 
-	if (CommonUtil.isNotEmpty( m1 ) &&  CommonUtil.isNotEmpty( m1.getMcId() ) ) {
+	if ( CommonUtil.isNotEmpty( m1 ) && CommonUtil.isNotEmpty( m1.getMcId() ) ) {
 	    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
 	}
     }
-
-
-    @Override
-    public void reduceFansCurrency( MemberEntity memberEntity,  Double fenbi) throws BusinessException {
-	try {
-	    if ( memberEntity.getFansCurrency() < fenbi ) {
-		throw new BusinessException( ResponseMemberEnums.MEMBER_LESS_FENBI.getCode(), ResponseMemberEnums.MEMBER_LESS_FENBI.getMsg() );
-	    }
-	    MemberEntity m = new MemberEntity();
-	    m.setId( memberEntity.getId() );
-	    Double yueFenbi=memberEntity.getFansCurrency() - fenbi;
-	    m.setFansCurrency(yueFenbi);
-	    memberEntityDAO.updateById( m );
-
-
-	    BusUserEntity busUserEntity = busUserDAO.selectById( memberEntity.getBusId() );
-	    BusUserEntity busUserEntity1 = new BusUserEntity();
-	    busUserEntity1.setId(  memberEntity.getBusId() );
-	    Double fenbi1 = busUserEntity.getFansCurrency().doubleValue() + fenbi;
-	    busUserEntity1.setFansCurrency( BigDecimal.valueOf( fenbi1 ) );
-	    busUserDAO.updateById( busUserEntity1 );
-	} catch ( BusinessException e ) {
-	    LOG.error( "粉币抵扣异常", e );
-	    throw new BusinessException( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
-	}
-    }
-
-
-    /*
-   * 粉币赠送
-   * @param request
-   * @param memberEntity
-   * @param busId
-   * @param Fenbi 粉币
-   * @return
-   */
-    public void giveFansCurrency( Integer memberId,  Double fenbi ) throws BusinessException{
-	try {
-	    MemberEntity m = memberEntityDAO.selectById(  memberId);
-
-
-	    BusUserEntity busUserEntity = busUserDAO.selectById( m.getBusId() );
-	    if(busUserEntity.getFansCurrency().doubleValue()<fenbi){
-		LOG.error( "商家粉币不足" );
-	       throw new BusinessException( ResponseMemberEnums.LESS_THAN_FENBI );
-	    }
-
-	    BusUserEntity busUserEntity1 = new BusUserEntity();
-	    busUserEntity1.setId(  m.getBusId() );
-	    Double fenbi1 = busUserEntity.getFansCurrency().doubleValue() - fenbi;
-	    busUserEntity1.setFansCurrency( BigDecimal.valueOf( fenbi1 ) );
-	    busUserDAO.updateById( busUserEntity1 );
-
-
-	    MemberEntity updateMember = new MemberEntity();
-	    updateMember.setId( memberId );
-	    Double yueFenbi=m.getFansCurrency() + fenbi;
-	    updateMember.setFansCurrency(yueFenbi);
-	    memberEntityDAO.updateById( m );
-	} catch ( BusinessException e ) {
-	    LOG.error( "商家赠送粉币", e );
-	    throw new BusinessException( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
-	}
-    }
-
-
 
     /**
      * 多粉卡券核销 推荐调用
@@ -534,41 +473,30 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	m1.setId( recommend.getMemberId() );
 	if ( recommend.getIntegral() > 0 ) {
 	    //积分记录
-	    Integer balance=tuijianMemberEntity.getIntegral() + recommend.getIntegral();
+	    Integer balance = tuijianMemberEntity.getIntegral() + recommend.getIntegral();
 	    m1.setIntegral( balance );
-	    saveCardRecordOrderCodeNew( tuijianMemberEntity.getId(),2,recommend.getIntegral().doubleValue(), "推荐优惠券赠送",tuijianMemberEntity.getBusId(),balance.doubleValue(),"",1);
+	    saveCardRecordOrderCodeNew( tuijianMemberEntity.getId(), 2, recommend.getIntegral().doubleValue(), "推荐优惠券赠送", tuijianMemberEntity.getBusId(), balance.doubleValue(), "",
+			    1 );
 	    flag = true;
 	}
 	if ( recommend.getFenbi() > 0 ) {
-
-	    BusUserEntity busUserEntity = busUserDAO.selectById( tuijianMemberEntity.getBusId() );
-	    if ( busUserEntity.getFansCurrency().doubleValue() >= recommend.getFenbi() ) {
-
-
-
-		BusUserEntity b = new BusUserEntity();
-		b.setId( busUserEntity.getId() );
-		Double fenbi1 = busUserEntity.getFansCurrency().doubleValue() - recommend.getFenbi();
-		b.setFansCurrency( BigDecimal.valueOf( fenbi1 ) );
-		busUserDAO.updateById( b );
-
-
+	    Integer code = requestService.getPowerApi( 0, tuijianMemberEntity.getBusId(), recommend.getFenbi().doubleValue(), "推荐赠送粉币" );
+	    if ( code == 0 ) {
 		//粉币记录
-		Double balance=tuijianMemberEntity.getFansCurrency() + recommend.getFenbi();
-		m1.setFansCurrency(balance);
-
-		saveCardRecordOrderCodeNew( tuijianMemberEntity.getId(),3,recommend.getFenbi().doubleValue(), "推荐优惠券赠送",tuijianMemberEntity.getBusId(),balance.doubleValue(),"",1);
-
+		Double balance = tuijianMemberEntity.getFansCurrency() + recommend.getFenbi();
+		m1.setFansCurrency( balance );
+		saveCardRecordOrderCodeNew( tuijianMemberEntity.getId(), 3, recommend.getFenbi().doubleValue(), "推荐优惠券赠送", tuijianMemberEntity.getBusId(), balance.doubleValue(),
+				"", 1 );
 		flag = true;
 	    }
 	}
 
 	if ( recommend.getFlow() > 0 ) {
-	    Integer balance=tuijianMemberEntity.getFlow() + recommend.getFlow();
+	    Integer balance = tuijianMemberEntity.getFlow() + recommend.getFlow();
 	    m1.setFlow( balance );
 	    //流量记录
-	    saveCardRecordOrderCodeNew( tuijianMemberEntity.getId(),4,recommend.getFlow().doubleValue(), "推荐优惠券赠送",tuijianMemberEntity.getBusId(),balance.doubleValue(),"",1);
-
+	    saveCardRecordOrderCodeNew( tuijianMemberEntity.getId(), 4, recommend.getFlow().doubleValue(), "推荐优惠券赠送", tuijianMemberEntity.getBusId(), balance.doubleValue(), "",
+			    1 );
 
 	    flag = true;
 	}
@@ -576,15 +504,16 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    memberEntityDAO.updateById( m1 );
 	}
 
-	if ( recommend.getMoney() > 0  && CommonUtil.isNotEmpty( tuijianMemberEntity.getMcId() )) {
+	if ( recommend.getMoney() > 0 && CommonUtil.isNotEmpty( tuijianMemberEntity.getMcId() ) ) {
 	    MemberCard card = memberCardDAO.selectById( tuijianMemberEntity.getMcId() );
 	    MemberCard c = new MemberCard();
 	    c.setMcId( card.getMcId() );
-	    Double balance=card.getGiveMoney() + recommend.getMoney();
+	    Double balance = card.getGiveMoney() + recommend.getMoney();
 	    c.setGiveMoney( balance );
 	    memberCardDAO.updateById( c );
 	    //
-	    saveCardRecordOrderCodeNew( tuijianMemberEntity.getId(),1,recommend.getMoney().doubleValue(), "推荐优惠券赠送",tuijianMemberEntity.getBusId(),balance.doubleValue(),"",1);
+	    saveCardRecordOrderCodeNew( tuijianMemberEntity.getId(), 1, recommend.getMoney().doubleValue(), "推荐优惠券赠送", tuijianMemberEntity.getBusId(), balance.doubleValue(), "",
+			    1 );
 	}
 
 	MemberRecommend r = new MemberRecommend();
@@ -593,28 +522,193 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	memberRecommendDAO.updateById( r );
     }
 
-
-
     @Override
-    public List<Integer> findMemberIds(Integer memberId) {
-	List<Integer> list = new ArrayList<Integer>();
-	MemberEntity member = memberEntityDAO.selectById(memberId);
-	if (CommonUtil.isEmpty(member.getOldId())) {
-	    list.add(memberId);
+    public List< Integer > findMemberIds( Integer memberId ) {
+	List< Integer > list = new ArrayList< Integer >();
+	MemberEntity member = memberEntityDAO.selectById( memberId );
+	if ( CommonUtil.isEmpty( member.getOldId() ) ) {
+	    list.add( memberId );
 	    return list;
 	}
-	String[] str = member.getOldId().split(",");
-	for (int i = 0; i < str.length; i++) {
-	    if (CommonUtil.isNotEmpty(str[i]) && !str[i].contains("null")
-			    && !list.contains(CommonUtil.toInteger(str[i]))) {
-		list.add(CommonUtil.toInteger(str[i]));
+	String[] str = member.getOldId().split( "," );
+	for ( int i = 0; i < str.length; i++ ) {
+	    if ( CommonUtil.isNotEmpty( str[i] ) && !str[i].contains( "null" ) && !list.contains( CommonUtil.toInteger( str[i] ) ) ) {
+		list.add( CommonUtil.toInteger( str[i] ) );
 	    }
 	}
 
-	if (!list.contains(memberId)) {
-	    list.add(memberId);
+	if ( !list.contains( memberId ) ) {
+	    list.add( memberId );
 	}
 
 	return list;
+    }
+
+
+
+
+    /**
+     * 判断时效卡升级
+     *
+     * @return
+     */
+    public Map< String,Object > findNextGradeCtId4( Integer busId, Integer gtId, Double totalmoney ) {
+	Map< String,Object > map = new HashMap< String,Object >();
+	List< Map< String,Object > > giveRules = memberGiveruleDAO.findByBusIdAndCtId( busId, 4 );
+	if ( giveRules.size() != 0 ) {
+	    for ( Map< String,Object > giveRule : giveRules ) {
+		if ( CommonUtil.isNotEmpty( giveRule.get( "gr_rechargeMoney" ) ) ) {
+		    Double rechargeMoney = CommonUtil.toDouble( giveRule.get( "gr_rechargeMoney" ) );
+		    if ( totalmoney.equals( rechargeMoney ) ) {
+			map.put( "gtId", giveRule.get( "gt_id" ) );
+			map.put( "grId", giveRule.get( "gr_id" ) );
+			return map;
+		    }
+		}
+	    }
+	}
+	return null;
+    }
+
+    /**
+     * 非时效卡判断是否升级
+     *
+     * @return
+     */
+    public Map< String,Object > findNextGrade( Integer busId, Integer ctId, Integer gtId, Integer integral, double totalmoney ) {
+	Map< String,Object > map = new HashMap< String,Object >();
+	// <!--查询下一个等级start-->
+	List< Map< String,Object > > gradeTypes = gradeTypeMapper.findByCtId( busId, ctId );
+
+	if ( gradeTypes != null ) {
+	    for ( int i = 0; i < gradeTypes.size(); i++ ) {
+		if ( CommonUtil.isNotEmpty( gradeTypes.get( i ).get( "gtId" ) ) ) {
+		    if ( gtId.equals( gradeTypes.get( i ).get( "gtId" ) ) ) {
+			if ( i < gradeTypes.size() - 1 ) {
+			    // 下一级id
+			    if ( CommonUtil.isNotEmpty( gradeTypes.get( i + 1 ).get( "gtId" ) ) ) {
+				Integer id = Integer.parseInt( gradeTypes.get( i + 1 ).get( "gtId" ).toString() );
+				MemberGiverule nextGiveRule = memberGiveruleDAO.findBybusIdAndGtIdAndCtId( busId, id, Integer.parseInt( ctId.toString() ) );
+				if ( CommonUtil.isEmpty( nextGiveRule ) ) {
+				    break;
+				}
+				// 积分升级
+				if ( 0 == nextGiveRule.getGrUpgradeType() ) {
+				    if ( integral >= nextGiveRule.getGrUpgradeCount() ) {
+					map.put( "gtId", id );
+					map.put( "grId", nextGiveRule.getGrId() );
+					return map;
+				    }
+				}
+
+				// 金额升级
+				if ( 1 == nextGiveRule.getGrUpgradeType() ) {
+				    if ( totalmoney >= nextGiveRule.getGrUpgradeCount() ) {
+					map.put( "gtId", id );
+					map.put( "grId", nextGiveRule.getGrId() );
+					return map;
+				    }
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	    return null;
+	}
+	return null;
+    }
+    
+
+    /**
+     * 泛会员 和正式会员完善资料 赠送物品
+     *
+     * @param memberOld
+     * @param memberParameter1
+     *
+     * @return
+     */
+    public boolean giveMemberGift( MemberEntity memberOld, MemberParameter memberParameter1 ) {
+	try {
+	    MemberOption memberOption = memberOptionDAO.findByBusId( memberOld.getBusId() );
+
+	    if ( CommonUtil.isEmpty( memberOption ) ) {
+		return false;
+	    }
+
+	    boolean flag = false;
+	    if ( CommonUtil.isNotEmpty( memberOption.getNameOption() ) && memberOption.getNameOption() == 1 && CommonUtil.isEmpty( memberOld.getName() ) ) {
+		flag = true;
+	    } else if ( CommonUtil.isNotEmpty( memberOption.getSexOption() ) && memberOption.getSexOption() == 1 && CommonUtil.isEmpty( memberOld.getSex() ) ) {
+		flag = true;
+	    } else if ( CommonUtil.isNotEmpty( memberOption.getPhoneOption() ) && memberOption.getPhoneOption() == 1 && CommonUtil.isEmpty( memberOld.getPhone() ) ) {
+		flag = true;
+	    } else if ( CommonUtil.isNotEmpty( memberOption.getAddrDetailOption() ) && memberOption.getAddrDetailOption() == 1 && CommonUtil.isNotEmpty( memberParameter1 )
+			    && CommonUtil.isEmpty( memberParameter1.getAddress() ) ) {
+		flag = true;
+	    } else if ( CommonUtil.isNotEmpty( memberOption.getMailOption() ) && memberOption.getMailOption() == 1 && CommonUtil.isEmpty( memberOld.getEmail() ) ) {
+		flag = true;
+	    } else if ( CommonUtil.isNotEmpty( memberOption.getBirthOption() ) && memberOption.getBirthOption() == 1 && CommonUtil.isEmpty( memberOld.getBirth() ) ) {
+		flag = true;
+	    } else if ( CommonUtil.isNotEmpty( memberOption.getCardOption() ) && memberOption.getCardOption() == 1 && CommonUtil.isEmpty( memberOld.getCardId() ) ) {
+		flag = true;
+	    } else if ( CommonUtil.isNotEmpty( memberOption.getAddrOption() ) && memberOption.getAddrOption() == 1 && CommonUtil.isNotEmpty( memberParameter1 ) && CommonUtil
+			    .isEmpty( memberParameter1.getProvinceCode() ) ) {
+		flag = true;
+	    } else if ( CommonUtil.isNotEmpty( memberOption.getGetMoneyOption() ) && memberOption.getGetMoneyOption() == 1 && CommonUtil.isNotEmpty( memberParameter1 )
+			    && CommonUtil.isEmpty( memberParameter1.getGetMoney() ) ) {
+		flag = true;
+	    }
+	    if ( flag ) {
+		// 赠送礼品
+		MemberCard card = memberCardDAO.selectById( memberOld.getMcId() );
+		MemberGift memberGift = null;
+		Integer modelCode = null;
+		if ( card.getApplyType() == 4 ) {
+		    // 泛会员完善资料
+		    modelCode = 1;
+		} else {
+		    modelCode = 2;
+		}
+		memberGift = memberGiftDAO.findBybusIdAndmodelCode( memberOld.getBusId(), modelCode );
+		boolean bool = false; // 需要修改
+		MemberEntity member = new MemberEntity();
+		if ( CommonUtil.isNotEmpty( memberGift ) ) {
+		    member.setId( memberOld.getId() );
+		    if ( memberGift.getJifen() > 0 ) {
+			// 积分操作
+			Integer balace = memberOld.getIntegral() + memberGift.getJifen().intValue();
+			member.setIntegral( balace );
+			saveCardRecordOrderCodeNew( memberOld.getId(), 2, memberGift.getJifen().doubleValue(), "完善资料赠送积分", memberOld.getBusId(), balace.doubleValue(), "", 1 );
+			bool = true;
+		    }
+
+		    if ( memberGift.getFenbi() > 0 ) {
+			Integer code = requestService.getPowerApi( 0, memberOld.getBusId(), memberGift.getFenbi(), "完善资料赠送粉币" );
+			if ( code == 0 ) {
+			    Double balaceFenbi = memberOld.getFansCurrency() + memberGift.getFenbi();
+			    member.setFansCurrency( balaceFenbi );
+			    // 粉币操作
+			    saveCardRecordOrderCodeNew( memberOld.getId(), 2, memberGift.getFenbi(), "完善资料赠送粉币", memberOld.getBusId(), balaceFenbi, "", 1 );
+			    bool = true;
+			}
+		    }
+		}
+
+		if ( memberGift.getFlow() > 0 ) {
+		    Integer balaceFlow = memberOld.getFlow() + memberGift.getFlow();
+		    member.setFlow( balaceFlow );
+		    saveCardRecordOrderCodeNew( memberOld.getId(), 4, memberGift.getFlow().doubleValue(), "完善资料赠送流量", memberOld.getBusId(), balaceFlow.doubleValue(), "", 1 );
+		    bool = true;
+		}
+		if ( bool ) {
+		    memberEntityDAO.updateById( member );
+		}
+	    }
+	} catch ( Exception e ) {
+	    LOG.error( "会员和泛会员完善资料赠送异常", e );
+	    return false;
+	}
+	return true;
     }
 }

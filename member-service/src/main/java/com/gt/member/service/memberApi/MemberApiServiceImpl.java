@@ -188,7 +188,17 @@ public class MemberApiServiceImpl implements MemberApiService {
      */
     public Map<String,Object> findMemberByMemberId( Integer memberId ) throws BusinessException {
 	try {
-	    return memberDAO.findMemberByMemberId( memberId );
+	    Map<String,Object> map= memberDAO.findMemberByMemberId( memberId );
+	    try {
+		if ( map.containsKey( "nickname" ) ) {
+		    byte[] bytes = (byte[]) map.get( "nickname" );
+		    map.put( "nickname", new String( bytes, "UTF-8" ) );
+		}
+	    } catch ( Exception e ) {
+
+	    }
+	    return map;
+
 	} catch ( Exception e ) {
 	    LOG.error( "查询粉丝信息异常", e );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
@@ -1369,25 +1379,36 @@ public class MemberApiServiceImpl implements MemberApiService {
 		}
 	    }
 
+	    MemberEntity memberEntity1 = new MemberEntity();
+	    memberEntity1.setId( memberEntity.getId() );
+	    Boolean bool=false;
 	    //粉币使用
 	    if ( paySuccessBo.isUserFenbi() && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-		Double balance = memberEntity.getFansCurrency() - paySuccessBo.getFenbiNum();
-		memberCommonService.reduceFansCurrency( memberEntity, paySuccessBo.getFenbiNum() );
-		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, paySuccessBo.getFenbiNum().doubleValue(), "消费粉币", memberEntity.getBusId(), balance,
-				paySuccessBo.getOrderCode(), 0 );
 
+		Integer code=requestService.getPowerApi( 1,memberEntity.getBusId(),paySuccessBo.getFenbiNum(),"消费抵扣粉币" );
+		if(code==0){
+		    Double balanceFenbi = memberEntity.getFansCurrency() - paySuccessBo.getFenbiNum();
+		    memberEntity1.setFansCurrency( balanceFenbi );
+		    memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, paySuccessBo.getFenbiNum().doubleValue(), "消费抵扣粉币", memberEntity.getBusId(), balanceFenbi,
+				    paySuccessBo.getOrderCode(), 0 );
+		    bool=true;
+		}else{
+		    throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(),"调用粉币接口异常" );
+		}
 	    }
 	    //积分使用
 	    if ( paySuccessBo.isUserJifen() && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-		MemberEntity memberEntity1 = new MemberEntity();
-		memberEntity1.setId( memberEntity.getId() );
 		Integer banlan = memberEntity.getIntegral() - paySuccessBo.getJifenNum();
 		memberEntity1.setIntegral( banlan );
-		memberDAO.updateById( memberEntity1 );
-		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 2, paySuccessBo.getJifenNum().doubleValue(), "消费积分", memberEntity.getBusId(),
+		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 2, paySuccessBo.getJifenNum().doubleValue(), "消费抵扣积分", memberEntity.getBusId(),
 				banlan.doubleValue(), paySuccessBo.getOrderCode(), 0 );
-
+		bool=true;
 	    }
+
+	    if(bool){
+		memberDAO.updateById( memberEntity1 );
+	    }
+
 	    uc.setPayStatus( 1 );
 	    userConsumeNewDAO.insert( uc );
 
@@ -2293,9 +2314,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 	    if ( CommonUtil.isNotEmpty( fenbi ) && fenbi > 0 ) {
 		Double yueFenbi = memberEntity.getFansCurrency() + fenbi;
-		memberCommonService.giveFansCurrency( memberId, fenbi );
+		m1.setFansCurrency( yueFenbi );
+		requestService.getPowerApi( 0,memberEntity.getBusId(),fenbi,"评论送粉币" );
 		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, fenbi.doubleValue(), "评论赠送粉币", memberEntity.getBusId(), yueFenbi, "", 1 );
-
 		bool = true;
 	    }
 	    if ( bool ) {
@@ -2448,25 +2469,36 @@ public class MemberApiServiceImpl implements MemberApiService {
 		}
 	    }
 
+
+	    MemberEntity memberEntity1 = new MemberEntity();
+	    memberEntity1.setId( memberEntity.getId() );
+	    boolean flag=false;
 	    //粉币使用
 	    if ( erpPaySuccess.getUserFenbi() == 1 && CommonUtil.isNotEmpty( memberEntity.getMcId() ) && erpPaySuccess.getFenbiNum() > 0 ) {
 		Double fenbi = memberEntity.getFansCurrency() - erpPaySuccess.getFenbiNum();
-		memberCommonService.reduceFansCurrency( memberEntity, erpPaySuccess.getFenbiNum() );
-
-		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, erpPaySuccess.getFenbiNum().doubleValue(), "消费粉币", memberEntity.getBusId(), fenbi,
-				erpPaySuccess.getOrderCode(), 0 );
-
+		//memberCommonService.reduceFansCurrency( memberEntity, erpPaySuccess.getFenbiNum() );
+		Integer code=requestService.getPowerApi( 1,memberEntity.getBusId(),erpPaySuccess.getFenbiNum(),"消费抵扣粉丝" );
+		if(code==0){
+		    memberEntity1.setFansCurrency( fenbi );
+		    memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, erpPaySuccess.getFenbiNum().doubleValue(), "消费粉币", memberEntity.getBusId(), fenbi,
+				    erpPaySuccess.getOrderCode(), 0 );
+		    flag=true;
+		}else{
+		    throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(),"调用粉币接口异常" );
+		}
 	    }
 	    //积分使用
 	    if ( erpPaySuccess.getUserJifen() == 1 && CommonUtil.isNotEmpty( memberEntity.getMcId() ) && erpPaySuccess.getJifenNum() > 0 ) {
-		MemberEntity memberEntity1 = new MemberEntity();
-		memberEntity1.setId( memberEntity.getId() );
+
 		Integer banlan = memberEntity.getIntegral() - erpPaySuccess.getJifenNum();
 		memberEntity1.setIntegral( banlan );
-		memberDAO.updateById( memberEntity1 );
+		flag=true;
 		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 2, erpPaySuccess.getJifenNum().doubleValue(), "消费积分", memberEntity.getBusId(),
 				banlan.doubleValue(), erpPaySuccess.getOrderCode(), 0 );
 
+	    }
+	    if(flag){
+		memberDAO.updateById( memberEntity1 );
 	    }
 	    uc.setPayStatus(1);
 	    userConsumeNewDAO.insert( uc );
@@ -2546,24 +2578,25 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 		Integer jifen = member.getIntegral() + erfb.getRefundJifen();
 		upmember.setIntegral( jifen );
-
-		if ( CommonUtil.isNotEmpty( card ) ) {
-		    memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 2, erfb.getRefundJifen().doubleValue(), "退积分", member.getBusId(), jifen.doubleValue(),
-				    erfb.getOrderCode(), 1 );
-		}
+		memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 2, erfb.getRefundJifen().doubleValue(), "退积分", member.getBusId(), jifen.doubleValue(),
+				erfb.getOrderCode(), 1 );
 		bool = true;
 	    }
 
 	    if ( erfb.getRefundFenbi() > 0 ) {
 		Double refundFenbi = uc.getRefundFenbi() + erfb.getRefundFenbi();
-		updateUc.setRefundFenbi( refundFenbi );
-		memberCommonService.giveFansCurrency( member.getId(), erfb.getRefundFenbi() );
-		double fenbi = member.getFansCurrency() + erfb.getRefundFenbi();
-		if ( CommonUtil.isNotEmpty( card ) ) {
+		//退款 退粉币
+		Integer code=requestService.getPowerApi( 0,member.getBusId(),erfb.getRefundFenbi(),"退粉币" );
+		if(code==0){
+		    updateUc.setRefundFenbi( refundFenbi );
+		    Double balaceFenbi = member.getFansCurrency() + erfb.getRefundFenbi();
+		    upmember.setFansCurrency( balaceFenbi );
 		    memberCommonService
-				    .saveCardRecordOrderCodeNew( member.getId(), 3, erfb.getRefundFenbi().doubleValue(), "退粉币", member.getBusId(), fenbi, erfb.getOrderCode(), 1 );
+				    .saveCardRecordOrderCodeNew( member.getId(), 3, erfb.getRefundFenbi().doubleValue(), "退粉币", member.getBusId(), balaceFenbi, erfb.getOrderCode(), 1 );
+		    bool = true;
+		}else{
+		    LOG.error( "调用陈丹粉币接口问题" );
 		}
-
 	    }
 	    updateUc.setRefundDate( new Date() );
 	    userConsumeNewDAO.updateById( updateUc );

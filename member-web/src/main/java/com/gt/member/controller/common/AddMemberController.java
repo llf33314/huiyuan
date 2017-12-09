@@ -2,6 +2,7 @@ package com.gt.member.controller.common;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.TCommonStaff;
 import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.RequestUtils;
@@ -88,9 +89,9 @@ public class AddMemberController {
     public String erpAddMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 //	SessionUtils.setLoginStyle( request, 1 );
 //	BusUser busUser=new BusUser();
-//	busUser.setId( 42 );
+//	busUser.setId( 36 );
 //	SessionUtils.setLoginUser( request, busUser );
-//	SessionUtils.setPidBusId( request, 42 );
+//	SessionUtils.setPidBusId( request, 36 );
 
 	try {
 	    Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );

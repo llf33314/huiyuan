@@ -1,5 +1,6 @@
 package com.gt.member.service.common.membercard;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.HttpClienUtils;
@@ -13,6 +14,8 @@ import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -24,6 +27,9 @@ import java.util.Map;
 @Service
 @Slf4j
 public class RequestServiceImpl implements RequestService {
+
+    private final static Logger LOG = LoggerFactory.getLogger( RequestServiceImpl.class );
+
     //微信卡券核销
     private final String CODE_CONSUME = "/8A5DA52E/wxcardapi/6F6D9AD2/79B4DE7C/codeConsume.do";
 
@@ -35,6 +41,8 @@ public class RequestServiceImpl implements RequestService {
     private final static String SEND_WXMSG = "8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/sendWxMsgTemplate.do";
 
     private static final String GETWXPULICMSG = "/8A5DA52E/busUserApi/getWxPulbicMsg.do";
+
+    private final static String POWER_API="/8A5DA52E/busPowerApi/getPowerApi.do";
 
     public String codeConsume( String cardId, String code, Integer busId ) throws Exception {
 	try {
@@ -92,5 +100,31 @@ public class RequestServiceImpl implements RequestService {
 	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
+    }
+
+
+    public Integer getPowerApi(Integer status,Integer busId,Double powNum,String remarks){
+	try {
+	    Map< String,Object > map = new HashMap<>();
+	    map.put( "status", status );
+	    map.put( "busId", busId );
+	    map.put( "powNum", powNum );
+	    map.put( "model", 3 );
+	    map.put( "remarks", remarks );
+	    String url = PropertiesUtil.getWxmp_home() + POWER_API;
+	    String returnMsg = SignHttpUtils.postByHttp( url, map, PropertiesUtil.getWxmpsignKey() );
+	    if( CommonUtil.isNotEmpty( returnMsg )){
+		Map<String,Object> returnParam= JSON.parseObject( returnMsg,Map.class );
+		if(0!=CommonUtil.toInteger( returnParam.get( "code" ) )){
+
+		}
+		return CommonUtil.toInteger( returnParam.get( "code" ) );
+	    }
+	}catch ( Exception e ){
+	    LOG.error( "调用扣除粉币支付异常",e );
+	}
+	return 1;
+
+
     }
 }
