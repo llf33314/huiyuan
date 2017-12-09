@@ -166,7 +166,7 @@ public class MemberApiController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "小程序绑定手机号码", notes = "小程序绑定手机号码 返回member对象数据" )
+    @ApiOperation( value = "小程序绑定手机号码 返回id需要重新set到前端session中", notes = "小程序绑定手机号码 返回member对象数据" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String" ),
 		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ) } )
