@@ -559,7 +559,25 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ResponseBody
     @RequestMapping( value = "/findRecommend", method = RequestMethod.POST )
     public ServerResponse findRecommend(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
-	return null;
+
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    Map< String,Object >  map = memberCardPhoneService.findRecommend( member.getId() );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    LOG.error( "查询会员信息异常",e );
+	    return ServerResponse.createByError();
+	}
     }
 
 }
