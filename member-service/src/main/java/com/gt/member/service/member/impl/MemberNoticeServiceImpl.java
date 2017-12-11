@@ -553,4 +553,14 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
     }
 
 
+
+    public void deleteMemberNoticeModel(Integer id)throws BusinessException{
+      Integer count= memberNoticeuserDAO.countByNoticeId( id );
+      if(count>0){
+          throw new BusinessException( ResponseMemberEnums.SEND_NOTICE );
+      }
+      memberNoticeDAO.deleteById( id );
+
+    }
+
 }

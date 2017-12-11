@@ -64,6 +64,7 @@ public interface MemberNoticeService {
      */
     public void deleteMemberNotice(Integer id)throws BusinessException;
 
+
     /**
      * 分页查询
      * @param busId
@@ -91,10 +92,16 @@ public interface MemberNoticeService {
     /**
      *  重新发送短信
      * @param params
-     * @param busId
      * @throws BusinessException
      */
     public void resendNoticeUser(String params) throws BusinessException;
+
+    /**
+     * 删除消息模板
+     * @param id
+     * @throws BusinessException
+     */
+    public void deleteMemberNoticeModel(Integer id)throws BusinessException;
 
 
 

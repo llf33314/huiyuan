@@ -3,6 +3,7 @@ package com.gt.member.service.common.membercard;
 import com.gt.api.util.RequestUtils;
 import com.gt.member.exception.BusinessException;
 import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
+import com.gt.util.entity.param.pay.ApiEnterprisePayment;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
@@ -88,4 +89,11 @@ public interface RequestService {
      * @return
      */
     public Integer getPowerApi(Integer status,Integer busId,Double powNum,String remarks);
+
+    /**
+     * 商家提现
+     * @param requestUtils
+     * @return
+     */
+    public Map<String,Object> enterprisePayment(RequestUtils<ApiEnterprisePayment > requestUtils);
 }

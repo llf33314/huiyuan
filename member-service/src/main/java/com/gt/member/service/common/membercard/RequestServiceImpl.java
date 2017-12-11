@@ -13,6 +13,7 @@ import com.gt.member.util.CommonUtil;
 import com.gt.member.util.EncryptUtil;
 import com.gt.member.util.PropertiesUtil;
 import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
+import com.gt.util.entity.param.pay.ApiEnterprisePayment;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
@@ -57,6 +58,7 @@ public class RequestServiceImpl implements RequestService {
 
     private final static String POWER_API="/8A5DA52E/busPowerApi/getPowerApi.do";
 
+    private final static String ENTERPRISE_PAY_MENT="/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/enterprisePayment.do";
 
     public String codeConsume(String cardId,String code,Integer busId) throws Exception{
         try {
@@ -179,7 +181,13 @@ public class RequestServiceImpl implements RequestService {
             LOG.error( "调用扣除粉币支付异常",e );
 	}
 	return 1;
+    }
 
+    public Map<String,Object> enterprisePayment(RequestUtils<ApiEnterprisePayment > requestUtils){
+	String url=PropertiesUtil.getWxmp_home()+ENTERPRISE_PAY_MENT;
+	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
+	Map<String,Object> map= JSON.parseObject(  returnData,Map.class);
+	return map;
 
     }
 

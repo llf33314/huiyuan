@@ -47,6 +47,7 @@ public enum ResponseMemberEnums {
     NOT_SET_QIANDAO(5028,"商家未设置签到"),
     MEMBER_QIANDAO(5029,"亲,你已经签到过"),
     NOT_RECHARGE_JFIEN(5030,"积分卡不能充值"),
+    SEND_NOTICE(5031,"模板已经发送不能删除"),
 
 
 

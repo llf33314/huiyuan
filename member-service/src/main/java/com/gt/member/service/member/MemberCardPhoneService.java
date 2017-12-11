@@ -142,6 +142,22 @@ public interface MemberCardPhoneService {
      * @param memberId
      * @return
      */
-    public Map<String,Object> findRecommend(Integer memberId )throws  BusinessException;
+    public Map<String,Object> findRecommend(HttpServletRequest request,Integer memberId )throws  BusinessException;
+
+    /**
+     * 佣金提取
+     * @param memberId
+     * @param busId
+     * @param pickMoney
+     * @throws BusinessException
+     */
+    public void pickMoney(Integer memberId, Integer busId,Double pickMoney)throws  BusinessException;
+
+    /**
+     * 身份证上传
+     * @return
+     * @throws BusinessException
+     */
+    public List<Map<String,Object>> updateImage(HttpServletRequest request,Integer memberId,Integer busId)throws BusinessException;
 
 }

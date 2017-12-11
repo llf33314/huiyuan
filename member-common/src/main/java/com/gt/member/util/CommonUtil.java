@@ -1,10 +1,7 @@
 package com.gt.member.util;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -26,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
+import com.gt.api.util.ftp.ContinueFTP;
 import com.gt.member.constant.CommonConst;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.member.entity.MemberEntity;
@@ -38,8 +36,7 @@ import org.jdom.input.SAXBuilder;
 import org.springframework.context.ApplicationContext;
 
 import com.alibaba.fastjson.JSONArray;
-
-
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 获取登录用户信息
@@ -927,5 +924,88 @@ public class CommonUtil {
 	    return false;
 	}
     }
-	
+
+
+
+
+    /**
+     * 图文保存，返回信息
+     *
+     * @param multipartFile
+     * @return
+     */
+    @SuppressWarnings("rawtypes")
+    public static Map fileUploadByBusUser(MultipartFile multipartFile,
+		    Integer busId) {
+	String userName = busId.toString();
+	String originalFilename = multipartFile.getOriginalFilename();
+	// 后缀
+	String suffix = originalFilename.substring(originalFilename
+			.lastIndexOf("."));
+	String phonejsp = originalFilename.substring(originalFilename
+			.lastIndexOf(".") + 1);
+	// 文件大小
+	Integer Size = Integer
+			.parseInt(String.valueOf(multipartFile.getSize()));
+	// 判断上传图片是否是支持的格式
+
+	String path = PropertiesUtil.getRes_image_path()
+			+ "/2/"
+			+ userName
+			+ "/"
+			+ PropertiesUtil.IMAGE_FOLDER_TYPE_14
+			+ "/"
+			+ DateTimeKit.getDateTime(new Date(),
+			DateTimeKit.DEFAULT_DATE_FORMAT_YYYYMMDD) + "/jietu/";
+
+	File file = new File(path);
+	if (!file.exists() && !file.isDirectory()) {
+	    file.mkdirs();
+	}
+	Long time = System.currentTimeMillis();
+	path += MD5Util.getMD5(time
+			+ originalFilename.substring(0,
+			originalFilename.lastIndexOf(".")))
+			+ suffix;
+	byte[] bytes;
+	Map<String, Object> map=null;
+	try {
+	    bytes = multipartFile.getBytes();
+	    InputStream is = new ByteArrayInputStream(bytes);
+	    BufferedImage bufimg = ImageIO.read(is);
+	    ImageIO.write(bufimg, phonejsp, new File(path));
+	    ContinueFTP myFtp = new ContinueFTP();
+	    try {
+		map=myFtp.upload(path,PropertiesUtil.getStatic_source_ftp_ip(), PropertiesUtil.getStatic_source_ftp_port(), PropertiesUtil.getStatic_source_ftp_user(),PropertiesUtil.getStatic_source_ftp_password());
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    }
+	    is.close();
+
+	    if(CommonUtil.isEmpty( map ) && "0".equals( map.get( "code" ) )){
+		String url = "/image/2/"
+				+ userName
+				+ "/"
+				+ PropertiesUtil.IMAGE_FOLDER_TYPE_14
+				+ "/"
+				+ DateTimeKit.getDateTime(new Date(),
+				DateTimeKit.DEFAULT_DATE_FORMAT_YYYYMMDD)
+				+ "/jietu/"
+				+ MD5Util.getMD5(time
+				+ originalFilename.substring(0,
+				originalFilename.lastIndexOf(".")))
+				+ suffix;
+		map.put("url", url);// 保存路径
+	    }
+	} catch (IOException e) {
+	    map=new HashMap<>(  );
+	    e.printStackTrace();
+	    map.put("code", "1");
+	    map.put("message", "抛出异常");
+	}
+	return map;
+
+    }
+
+
 }

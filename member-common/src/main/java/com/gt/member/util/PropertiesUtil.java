@@ -14,6 +14,12 @@ import org.springframework.stereotype.Component;
 @Data
 public class PropertiesUtil {
 
+    /**
+     * 会员信息
+     */
+    public static final String IMAGE_FOLDER_TYPE_14="14";
+
+
     private static String webHome;  //本项目域名
 
     private static String wxmp_home;  //wxmp

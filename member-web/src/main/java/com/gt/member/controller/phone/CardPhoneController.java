@@ -6,7 +6,9 @@ import com.gt.api.bean.session.Member;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.RequestUtils;
 import com.gt.api.util.SessionUtils;
+import com.gt.common.entity.AlipayUser;
 import com.gt.common.entity.BusFlow;
+import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.member.controller.RemoteAuthori.AuthorizeOrLoginController;
 import com.gt.member.dao.common.BusFlowDAO;
 import com.gt.member.dao.common.WxShopDAO;
@@ -448,6 +450,12 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    return ServerResponse.createByError();
 	}
     }
+    @ApiOperation( value = "身份证上传", notes = "身份证上传" )
+    @ResponseBody
+    @RequestMapping( value = "/updateImage", method = RequestMethod.POST )
+    public ServerResponse updateImage(HttpServletRequest request, HttpServletResponse response, @RequestParam Map<String, Object> params){
+	return null;
+    }
 
     @ApiOperation( value = "修改会员资料", notes = "查询会员资料" )
     @ResponseBody
@@ -505,29 +513,6 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	}
     }
 
-//    @ApiOperation( value = "查询系统消息", notes = "查询系统消息" )
-//    @ResponseBody
-//    @RequestMapping( value = "/findSystemNotice", method = RequestMethod.POST )
-//    public ServerResponse findSystemNotice( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
-//	try {
-//	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
-//	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
-//	    Member member = SessionUtils.getLoginMember( request, busId );
-//	    if ( CommonUtil.isEmpty( member ) ) {
-//		String url = authorizeMember( request, response, params );
-//		if ( CommonUtil.isNotEmpty( url ) ) {
-//		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
-//		}
-//	    }
-//	    List< Map< String,Object > > mapList = memberCardPhoneService.findSystemNotice( member.getId() );
-//	    return ServerResponse.createBySuccess( mapList );
-//	} catch ( BusinessException e ) {
-//	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
-//	} catch ( Exception e ) {
-//	    LOG.error( "查询系统信息异常",e );
-//	    return ServerResponse.createByError();
-//	}
-//    }
 
     @ApiOperation( value = "查询会员和系统消息", notes = "查询会员消息" )
     @ResponseBody
@@ -570,14 +555,39 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    Map< String,Object >  map = memberCardPhoneService.findRecommend( member.getId() );
+	    Map< String,Object >  map = memberCardPhoneService.findRecommend( request,member.getId() );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    LOG.error( "查询会员信息异常",e );
+	    LOG.error( "查询推荐信息异常",e );
 	    return ServerResponse.createByError();
 	}
     }
+
+    @ApiOperation( value = "提取佣金", notes = "提取佣金" )
+    @ResponseBody
+    @RequestMapping( value = "/pickMoney", method = RequestMethod.POST )
+    public ServerResponse pickMoney(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    memberCardPhoneService.pickMoney(member.getId(),busId,CommonUtil.toDouble( params.get( "pickMoney" ) ) );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    LOG.error( "查询推荐信息异常",e );
+	    return ServerResponse.createByError();
+	}
+    }
+
 
 }

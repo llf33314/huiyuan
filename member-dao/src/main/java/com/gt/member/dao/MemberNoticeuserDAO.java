@@ -72,4 +72,11 @@ public interface MemberNoticeuserDAO extends BaseMapper<MemberNoticeuser> {
      * @return
      */
     List<Map<String,Object>> findReSendNoticeUser(@Param( "noticeId" )Integer noticeId);
+
+    /**
+     * 查询模板发送条数
+     * @param noticeId
+     * @return
+     */
+    Integer countByNoticeId(@Param( "noticeId" )Integer noticeId);
 }
