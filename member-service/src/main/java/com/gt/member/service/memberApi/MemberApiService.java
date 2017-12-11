@@ -1,5 +1,6 @@
 package com.gt.member.service.memberApi;
 
+import com.gt.api.bean.session.Member;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
@@ -130,6 +131,14 @@ public interface MemberApiService {
      * @return
      */
     public MemberEntity bingdingPhone( HttpServletRequest request,Integer memberId, String phone,  Integer busId ) throws BusinessException;
+
+
+    /*
+    * h5绑定手机号码
+    * @return
+    */
+    public void bingdingPhoneH5( HttpServletRequest request,Integer memberId, String phone,  Integer busId ) throws BusinessException;
+
 
     /*
      *
@@ -505,6 +514,16 @@ public interface MemberApiService {
      * @return
      */
     public Integer findNewMemberId(Integer memberId)throws BusinessException;
+
+    /**
+     * 根据手机号码查询粉丝信息
+     * @param busId
+     * @param phone
+     * @return
+     * @throws BusinessException
+     */
+    public Member findMemberByPhoneAndbusId(Integer busId,String phone) throws BusinessException;
+
 
     /**
      * 整理之前member信息

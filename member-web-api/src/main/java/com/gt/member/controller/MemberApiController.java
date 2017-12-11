@@ -185,6 +185,28 @@ public class MemberApiController extends BaseController {
 	}
     }
 
+    @ApiOperation( value = "H5绑定手机号码,将会把新的member信息set到session中", notes = "H5绑定手机号码,将会把新的member信息set到session中" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/bingdingPhoneH5", method = RequestMethod.POST )
+    public ServerResponse bingdingPhoneH5(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
+	    String phone = CommonUtil.toString( requestBody.get( "phone" ) );
+	    memberApiService.bingdingPhoneH5( request,memberId, phone, busId );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+
+
     @ApiOperation( value = "统计会员数量", notes = "根据商家id统计会员数量" )
     @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
     @ResponseBody
@@ -752,10 +774,34 @@ public class MemberApiController extends BaseController {
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(),e.getMessage() );
 	}catch ( Exception e ){
-	    LOG.error( "个人中心数据查询异常",e );
+	    LOG.error( "获取粉丝最新的id异常",e );
+	    return ServerResponse.createByError( );
+	}
+    }
+
+    @ApiOperation( value = "根据手机号获取粉丝信息（只是member信息）", notes = "根据手机号获取粉丝信息" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "int" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findMemberByPhoneAndbusId", method = RequestMethod.POST )
+    public ServerResponse findMemberByPhoneAndbusId(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer busId=CommonUtil.toInteger( requestBody.get("busId") );
+	    String phone=CommonUtil.toString( requestBody.get("phone") );
+	    Member member =memberApiService.findMemberByPhoneAndbusId(busId,phone);
+	    return ServerResponse.createBySuccess(member );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(),e.getMessage() );
+	}catch ( Exception e ){
+	    LOG.error( "获取粉丝最新的id异常",e );
 	    return ServerResponse.createByError( );
 	}
 
     }
+
+
 
 }
