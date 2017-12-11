@@ -267,7 +267,7 @@ public interface MemberEntityDAO extends BaseMapper<MemberEntity > {
      * @param id
      * @return
      */
-    Map<String,Object> findMemberByMemberId(@Param("id")Integer id);
+    Map<String,Object> findMemberByMemberId(@Param("memberId")Integer memberId);
 
 
     MemberEntity findNewMember(@Param("busId")Integer budId,@Param("memberId")Integer memberId);
