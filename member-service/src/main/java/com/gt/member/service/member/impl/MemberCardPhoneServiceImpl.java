@@ -1152,7 +1152,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	map.put( "flowYhjCount", flowYhjCount );
 
 	map.put( "jifenMemberCount", jifenMemberCount );
-	map.put( "flowMemberCount", flowMemberCount );
+	map.put( "fenbiMemberCount", fenbiMemberCount );
 	map.put( "flowMemberCount", flowMemberCount );
 	map.put( "memberMoneyCount", memberMoneyCount );
 
