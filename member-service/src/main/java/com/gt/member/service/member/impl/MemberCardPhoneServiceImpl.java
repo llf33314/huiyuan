@@ -1114,20 +1114,48 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	List< Map< String,Object > > recommends = memberRecommendDAO.findByMemberId( ids );
 	map.put( "recommends", recommends );
 
+	Integer jifenMemberCount=0;
+	Double fenbiMemberCount=0.0;
+	Integer flowMemberCount=0;
+	Double memberMoneyCount=0.0;
+	Integer memberCount = 0;
+
+
+	Integer jifenYhjCount=0;
+	Double fenbiYhjCount=0.0;
+	Integer flowYhjCount=0;
 	Integer getCount = 0;
 	Integer useCount = 0;
 	Double userMoney = 0.0;
-	Integer memberCount = 0;
+
 	for ( int i = 0; i < recommends.size(); i++ ) {
 	    //优惠券
 	    if ( "1".equals( CommonUtil.toString( recommends.get( i ).get( "recommendType" ) ) ) ) {
 		getCount = getCount + CommonUtil.toInteger( recommends.get( i ).get( "lingquNum" ) );
 		useCount = useCount + CommonUtil.toInteger( recommends.get( i ).get( "userNum" ) );
 		userMoney = userMoney + CommonUtil.toInteger( recommends.get( i ).get( "userNum" ) ) * CommonUtil.toDouble( recommends.get( i ).get( "money" ) );
-	    } else {
+		jifenYhjCount+=CommonUtil.toInteger( recommends.get( i ).get( "userNum" ) ) *CommonUtil.toInteger( recommends.get( i ).get( "integral" ) );
+		fenbiYhjCount+=CommonUtil.toInteger( recommends.get( i ).get( "userNum" ) ) *CommonUtil.toDouble( recommends.get( i ).get( "fenbi" ) );
+		flowYhjCount+=CommonUtil.toInteger( recommends.get( i ).get( "userNum" ) ) *CommonUtil.toInteger( recommends.get( i ).get( "flow" ) );
+
+
+	     } else {
 		memberCount++;
+		jifenMemberCount+=CommonUtil.toInteger( recommends.get( i ).get( "integral" ) );
+		fenbiMemberCount+=CommonUtil.toDouble( recommends.get( i ).get( "fenbi" ) );
+		flowMemberCount+=CommonUtil.toInteger( recommends.get( i ).get( "flow" ) );
+		memberMoneyCount+=CommonUtil.toInteger( recommends.get( i ).get( "money" ) );
 	    }
 	}
+	map.put( "jifenYhjCount", jifenYhjCount );
+	map.put( "fenbiYhjCount", fenbiYhjCount );
+	map.put( "flowYhjCount", flowYhjCount );
+
+	map.put( "jifenMemberCount", jifenMemberCount );
+	map.put( "flowMemberCount", flowMemberCount );
+	map.put( "flowMemberCount", flowMemberCount );
+	map.put( "memberMoneyCount", memberMoneyCount );
+
 
 	map.put( "memberCount", memberCount );
 	map.put( "getCount", getCount );
@@ -1149,6 +1177,17 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    }
 	}
 	map.put( "pickMoney", pickMoney );
+
+
+	MemberCard card = cardMapper.selectById( memberEntity.getMcId() );
+	PublicParameterset parameterset = publicParametersetDAO.findBybusId( memberEntity.getBusId() );
+	map.put( "tuijianMoney",card.getGiveMoney() );
+	if(CommonUtil.isNotEmpty( parameterset )){
+	    map.put( "lessPickMoney",parameterset.getPickMoney() );
+	}
+
+
+
 	return map;
     }
 
@@ -1160,6 +1199,9 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    MemberCard card = cardMapper.selectById( member.getMcId() );
 	    PublicParameterset parameterset = publicParametersetDAO.findBybusId( busId );
 
+	    if(CommonUtil.isEmpty( parameterset )){
+		throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(),"商家未设置提取最低值");
+	    }
 	    if ( card.getGiveMoney() < parameterset.getPickMoney() || pickMoney < parameterset.getPickMoney() ) {
 		throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(), "提取金额不足，必须要大于" + parameterset.getPickMoney() + "元才能提取" );
 	    }

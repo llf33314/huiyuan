@@ -144,7 +144,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
 		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
-    @RequestMapping( value = "/sendMsg" ,method =RequestMethod.POST )
+    @RequestMapping( value = "/sendMsg", method = RequestMethod.POST )
     public ServerResponse sendMsg( HttpServletResponse response, HttpServletRequest request, @RequestParam String json ) {
 	try {
 	    Map< String,Object > map = JSON.parseObject( json, Map.class );
@@ -365,7 +365,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    Map<String,Object> map = memberCardPhoneService.findBusUserFlow( member.getId(),busId );
+	    Map< String,Object > map = memberCardPhoneService.findBusUserFlow( member.getId(), busId );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -450,22 +450,49 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    return ServerResponse.createByError();
 	}
     }
+
     @ApiOperation( value = "身份证上传", notes = "身份证上传" )
     @ResponseBody
     @RequestMapping( value = "/updateImage", method = RequestMethod.POST )
-    public ServerResponse updateImage(HttpServletRequest request, HttpServletResponse response, @RequestParam Map<String, Object> params){
-	return null;
+    public ServerResponse updateImage( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > json ) {
+	try {
+	    Integer busId = CommonUtil.toInteger( json.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, json );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    List< Map< String,Object > > list = memberCardPhoneService.updateImage( request, member.getId(), busId );
+	    return ServerResponse.createBySuccess( list );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError();
+	}
     }
 
     @ApiOperation( value = "修改会员资料", notes = "查询会员资料" )
     @ResponseBody
     @RequestMapping( value = "/updateMemberUser", method = RequestMethod.POST )
-    public ServerResponse updateMemberUser(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
-	return  null;
+    public ServerResponse updateMemberUser( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    memberCardPhoneService.updateMemberUser( json,member.getId());
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ){
+	    return  ServerResponse.createByError( e.getCode(),e.getMessage() );
+	}catch ( Exception e ) {
+	    return ServerResponse.createByError();
+	}
     }
-
-
-
 
     @ApiOperation( value = "向商家支付扫码二维码", notes = "向商家支付扫码" )
     @ResponseBody
@@ -513,11 +540,10 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	}
     }
 
-
     @ApiOperation( value = "查询会员和系统消息", notes = "查询会员消息" )
     @ResponseBody
     @RequestMapping( value = "/findMemberNotice", method = RequestMethod.POST )
-    public ServerResponse findMemberNotice(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
+    public ServerResponse findMemberNotice( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
@@ -528,22 +554,20 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    Map< String,Object >  map = memberCardPhoneService.findMemberNotice( member.getId() );
+	    Map< String,Object > map = memberCardPhoneService.findMemberNotice( member.getId() );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    LOG.error( "查询会员信息异常",e );
+	    LOG.error( "查询会员信息异常", e );
 	    return ServerResponse.createByError();
 	}
     }
 
-
-
     @ApiOperation( value = "查询推荐信息", notes = "查询推荐信息" )
     @ResponseBody
     @RequestMapping( value = "/findRecommend", method = RequestMethod.POST )
-    public ServerResponse findRecommend(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
+    public ServerResponse findRecommend( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
@@ -555,12 +579,12 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    Map< String,Object >  map = memberCardPhoneService.findRecommend( request,member.getId() );
+	    Map< String,Object > map = memberCardPhoneService.findRecommend( request, member.getId() );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    LOG.error( "查询推荐信息异常",e );
+	    LOG.error( "查询推荐信息异常", e );
 	    return ServerResponse.createByError();
 	}
     }
@@ -568,7 +592,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "提取佣金", notes = "提取佣金" )
     @ResponseBody
     @RequestMapping( value = "/pickMoney", method = RequestMethod.POST )
-    public ServerResponse pickMoney(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
+    public ServerResponse pickMoney( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
@@ -579,15 +603,14 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    memberCardPhoneService.pickMoney(member.getId(),busId,CommonUtil.toDouble( params.get( "pickMoney" ) ) );
-	    return ServerResponse.createBySuccess(  );
+	    memberCardPhoneService.pickMoney( member.getId(), busId, CommonUtil.toDouble( params.get( "pickMoney" ) ) );
+	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    LOG.error( "查询推荐信息异常",e );
+	    LOG.error( "查询推荐信息异常", e );
 	    return ServerResponse.createByError();
 	}
     }
-
 
 }
