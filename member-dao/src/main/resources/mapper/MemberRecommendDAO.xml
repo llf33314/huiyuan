@@ -37,7 +37,7 @@
 
 
 	<select id="findByMemberId" resultType="Map">
-		select  name,integral,fenbi,flow,recommendType,cardName,lingquNum,userNum,isGive,money from t_member_recommend
+		select  name,integral,fenbi,flow,recommendType,cardName,lingquNum,userNum,isGive,money,datetime from t_member_recommend
 		<where>
 			<foreach collection="memberIds" item="memberId"  separator="or">
 				memberId=#{memberId}

@@ -1144,7 +1144,9 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		jifenMemberCount+=CommonUtil.toInteger( recommends.get( i ).get( "integral" ) );
 		fenbiMemberCount+=CommonUtil.toDouble( recommends.get( i ).get( "fenbi" ) );
 		flowMemberCount+=CommonUtil.toInteger( recommends.get( i ).get( "flow" ) );
-		memberMoneyCount+=CommonUtil.toInteger( recommends.get( i ).get( "money" ) );
+		if(CommonUtil.isNotEmpty( recommends.get( i ).get( "money" )  )) {
+		    memberMoneyCount += CommonUtil.toDouble( recommends.get( i ).get( "money" ) );
+		}
 	    }
 	}
 	map.put( "jifenYhjCount", jifenYhjCount );
