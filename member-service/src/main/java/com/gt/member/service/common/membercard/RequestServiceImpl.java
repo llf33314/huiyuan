@@ -1,6 +1,7 @@
 package com.gt.member.service.common.membercard;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.HttpClienUtils;
@@ -18,7 +19,9 @@ import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
+import com.gt.util.entity.param.wx.WxJsSdk;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
+import com.gt.util.entity.result.wx.WxJsSdkResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -59,6 +62,11 @@ public class RequestServiceImpl implements RequestService {
     private final static String POWER_API="/8A5DA52E/busPowerApi/getPowerApi.do";
 
     private final static String ENTERPRISE_PAY_MENT="/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/enterprisePayment.do";
+
+    private final static String QUERY_WXSHOP="/8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/queryWxShopByFanCha.do";
+
+    private final static String WX_SHARE="/8A5DA52E/wxphone/6F6D9AD2/79B4DE7C/wxjssdk.do";
+
 
     public String codeConsume(String cardId,String code,Integer busId) throws Exception{
         try {
@@ -191,5 +199,34 @@ public class RequestServiceImpl implements RequestService {
 
     }
 
+    public List<Map> findShopByBusId(Integer busId){
+	RequestUtils<Integer> requestUtils=new RequestUtils<Integer>(  );
+	requestUtils.setReqdata( busId );
+	String url=PropertiesUtil.getWxmp_home()+QUERY_WXSHOP;
+	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
+	JSONObject json=JSON.parseObject( returnData );
+	if("0".equals( json.getString( "code" ) )) {
+	    List< Map > mapList = JSONArray.parseArray( json.getString( "data" ), Map.class );
+	    return mapList;
+	}
+	return null;
+    }
+
+
+    public WxJsSdkResult wxShare(Integer publicId,String url){
+        String wxshare=PropertiesUtil.getWxmp_home()+WX_SHARE;
+	RequestUtils<WxJsSdk > requestUtils=new RequestUtils<>(  );
+	WxJsSdk wxJsSdk=new WxJsSdk();
+	wxJsSdk.setPublicId( publicId );
+	wxJsSdk.setUrl( url );
+	requestUtils.setReqdata( wxJsSdk );
+	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url,String.class, PropertiesUtil.getWxmpsignKey() );
+	JSONObject json=JSON.parseObject( returnData );
+	if("0".equals( json.getString( "code" ) )) {
+	    WxJsSdkResult wxJsSdkResult=JSONObject.parseObject( json.getString( "data" ),WxJsSdkResult.class);
+	    return wxJsSdkResult;
+	}
+	return null;
+    }
 
 }

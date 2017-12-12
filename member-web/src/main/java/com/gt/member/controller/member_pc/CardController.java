@@ -305,15 +305,13 @@ public class CardController {
 	}
     }
 
-
     @ApiOperation( value = "统计会员数量", notes = "统计会员数量" )
     @ResponseBody
-    @RequestMapping(value ="/countMember", method = RequestMethod.GET)
-    public ServerResponse countMember(HttpServletRequest request,
-		    HttpServletResponse response, @RequestParam String ctIds){
+    @RequestMapping( value = "/countMember", method = RequestMethod.GET )
+    public ServerResponse countMember( HttpServletRequest request, HttpServletResponse response, @RequestParam String ctIds ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    int count= memberNoticeService.countMember( ctIds,busId );
+	    int count = memberNoticeService.countMember( ctIds, busId );
 	    return ServerResponse.createBySuccess( count );
 	} catch ( Exception e ) {
 	    return ServerResponse.createByError( "错误" );
@@ -325,7 +323,7 @@ public class CardController {
     @ApiImplicitParams( @ApiImplicitParam( name = "sendDate", value = "发送时间", paramType = "query", required = false, dataType = "String" ) )
     @ResponseBody
     @RequestMapping( value = "/saveMemberNotice", method = RequestMethod.POST )
-    public ServerResponse saveMemberNotice( HttpServletRequest request, HttpServletResponse response,@RequestParam String json ) {
+    public ServerResponse saveMemberNotice( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > json ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberNoticeService.saveMemberNotice( busId, json );
@@ -353,9 +351,9 @@ public class CardController {
     @ApiImplicitParams( @ApiImplicitParam( name = "id", value = "id", paramType = "query", required = false, dataType = "int" ) )
     @ResponseBody
     @RequestMapping( value = "/deleteMemberNoticeModel", method = RequestMethod.GET )
-    public ServerResponse deleteMemberNoticeModel(HttpServletRequest request, HttpServletResponse response, Integer id){
+    public ServerResponse deleteMemberNoticeModel( HttpServletRequest request, HttpServletResponse response, Integer id ) {
 	try {
-	    memberNoticeService.deleteMemberNoticeModel(id);
+	    memberNoticeService.deleteMemberNoticeModel( id );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -365,16 +363,16 @@ public class CardController {
     @ApiOperation( value = "会员短信发送状态", notes = "会员短信发送状态" )
     @ResponseBody
     @RequestMapping( value = "/findNoticeUser", method = RequestMethod.GET )
-    public ServerResponse findNoticeUser( HttpServletRequest request, HttpServletResponse response,@RequestParam String params){
+    public ServerResponse findNoticeUser( HttpServletRequest request, HttpServletResponse response, @RequestParam String params ) {
 
 	try {
-	    Page page=memberNoticeService.findNoticeUser( params );
-	    return ServerResponse.createBySuccess(page);
+	    Page page = memberNoticeService.findNoticeUser( params );
+	    return ServerResponse.createBySuccess( page );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
-	}catch ( Exception e ){
-	    LOG.error("查询数据异常",e);
-	    return ServerResponse.createByError(  );
+	} catch ( Exception e ) {
+	    LOG.error( "查询数据异常", e );
+	    return ServerResponse.createByError();
 	}
     }
 
@@ -382,19 +380,18 @@ public class CardController {
     @ApiImplicitParams( @ApiImplicitParam( name = "noticeId", value = "会员短信消息id", paramType = "query", required = false, dataType = "String" ) )
     @ResponseBody
     @RequestMapping( value = "/resendNoticeUser", method = RequestMethod.POST )
-    public ServerResponse resendNoticeUser(HttpServletRequest request, HttpServletResponse response,@RequestParam String params){
+    public ServerResponse resendNoticeUser( HttpServletRequest request, HttpServletResponse response, @RequestParam String params ) {
 
 	try {
 	    memberNoticeService.resendNoticeUser( params );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
-	}catch ( Exception e ){
-	    LOG.error("重新发送短信异常",e);
-	    return ServerResponse.createByError(  );
+	} catch ( Exception e ) {
+	    LOG.error( "重新发送短信异常", e );
+	    return ServerResponse.createByError();
 	}
     }
-
 
     @ApiOperation( value = "查询会员卡发布信息", notes = "查询会员卡发布信息" )
     @ResponseBody
@@ -443,20 +440,22 @@ public class CardController {
     @ApiOperation( value = "浏览链接", notes = "浏览链接" )
     @ResponseBody
     @RequestMapping( value = "/browse", method = RequestMethod.GET )
-    public void browse( HttpServletRequest request, HttpServletResponse response, @RequestParam String url ) {
+    public void browse( HttpServletRequest request, HttpServletResponse response ) {
+	Integer busId = SessionUtils.getPidBusId( request );
+	String url = PropertiesUtil.getWebHome() + "/#/home/" + busId;
 	QRcodeKit.buildQRcode( url, 500, 500, response );
     }
 
     @ApiOperation( value = "下载会员二维码", notes = "下载会员二维码" )
     @ResponseBody
     @RequestMapping( value = "/downPulishCardImage", method = RequestMethod.GET )
-    public void downPulishCardImage( HttpServletRequest request, HttpServletResponse response, @RequestParam String url ) throws IOException {
+    public void downPulishCardImage( HttpServletRequest request, HttpServletResponse response ) throws IOException {
+	Integer busId = SessionUtils.getPidBusId( request );
+	String url = PropertiesUtil.getWebHome() + "/#/home/" + busId;
 	String filename = "会员卡.jpg";
 	response.addHeader( "Content-Disposition", "attachment;filename=" + new String( filename.replaceAll( " ", "" ).getBytes( "utf-8" ), "iso8859-1" ) );
 	response.setContentType( "application/octet-stream" );
 	QRcodeKit.buildQRcode( url, 450, 450, response );
     }
-
-
 
 }

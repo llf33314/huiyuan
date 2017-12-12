@@ -160,4 +160,17 @@ public interface MemberCardPhoneService {
      */
     public List<Map<String,Object>> updateImage(HttpServletRequest request,Integer memberId,Integer busId)throws BusinessException;
 
+    /**
+     * 查询门店信息
+     * @param busId
+     * @return
+     */
+    public List<Map> findWxShop(Integer busId,Double longt1, Double lat1) throws BusinessException;
+
+    /**
+     * 推荐地址
+     * @param memberId
+     * @return
+     */
+    public String tuijianQRcode(Integer memberId);
 }

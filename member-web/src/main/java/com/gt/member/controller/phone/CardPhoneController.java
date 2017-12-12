@@ -485,11 +485,11 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    memberCardPhoneService.updateMemberUser( json,member.getId());
-	    return ServerResponse.createBySuccess(  );
-	} catch ( BusinessException e ){
-	    return  ServerResponse.createByError( e.getCode(),e.getMessage() );
-	}catch ( Exception e ) {
+	    memberCardPhoneService.updateMemberUser( json, member.getId() );
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
 	    return ServerResponse.createByError();
 	}
     }
@@ -520,7 +520,6 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ResponseBody
     @RequestMapping( value = "/qiandao", method = RequestMethod.POST )
     public ServerResponse qiandao( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
-
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
@@ -611,6 +610,40 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    LOG.error( "查询推荐信息异常", e );
 	    return ServerResponse.createByError();
 	}
+    }
+
+    @ApiOperation( value = "查询门店信息", notes = "查询门店信息" )
+    @ResponseBody
+    @RequestMapping( value = "/findShop", method = RequestMethod.POST )
+    public ServerResponse findShop( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    Double longitude = CommonUtil.toDouble( params.get( "longitude" ) );
+	    Double latitude = CommonUtil.toDouble( params.get( "latitude" ) );
+	    List< Map > list = memberCardPhoneService.findWxShop( busId, longitude, latitude );
+	    return ServerResponse.createBySuccess( list );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    LOG.error( "查询门店信息异常", e );
+	    return ServerResponse.createByError();
+	}
+    }
+
+    @ApiOperation( value = "查询门店信息", notes = "查询门店信息" )
+    @ResponseBody
+    @RequestMapping( value = "/tuijianQRcode", method = RequestMethod.GET )
+    public void tuijianQRcode(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer memberId ){
+	String url = memberCardPhoneService.tuijianQRcode( memberId );
+	QRcodeKit.buildQRcode( url, 500, 500, response );
     }
 
 }

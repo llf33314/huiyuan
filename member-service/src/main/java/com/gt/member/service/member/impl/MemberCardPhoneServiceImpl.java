@@ -349,9 +349,12 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 			boolean bool = false;
 			MemberEntity member3 = new MemberEntity();
 			member3.setId( member2.getId() );
+
 			MemberRecommend recommend = new MemberRecommend();
+			recommend.setName(memberEntity.getNickname());
 			recommend.setMemberId( member2.getId() );
 			recommend.setCode( tuijianCode );
+			recommend.setPhone( phone );
 			if ( CommonUtil.isNotEmpty( gradeTypes.get( 0 ).get( "giveflow" ) ) && CommonUtil.toInteger( gradeTypes.get( 0 ).get( "giveflow" ) ) > 0 ) {
 			    Integer giveFlow = CommonUtil.toInteger( gradeTypes.get( 0 ).get( "giveflow" ) );
 			    recommend.setFlow( giveFlow );
@@ -577,7 +580,6 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    }
 
 	    //会员卡信息
-
 	    MemberCard cardEntity = memberCardDAO.selectById( memberEntity.getMcId() );
 	    if ( cardEntity.getIsChecked() == 0 || cardEntity.getCardStatus() == 1 ) {
 		map.put( "status", 1 );
@@ -934,8 +936,8 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 	MemberEntity member = new MemberEntity();
 
-	if ( CommonUtil.isNotEmpty( parma.get( "tel" ) ) ) {
-	    member.setPhone( parma.get( "tel" ).toString() );
+	if ( CommonUtil.isNotEmpty( parma.get( "phone" ) ) ) {
+	    member.setPhone( parma.get( "phone" ).toString() );
 	}
 
 	if ( CommonUtil.isNotEmpty( parma.get( "pwd" ) ) ) {
@@ -952,16 +954,6 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    if ( CommonUtil.isEmpty( vcode1 ) ) {
 		throw new BusinessException( ResponseMemberEnums.NO_PHONE_CODE );
 	    }
-	    // 联盟卡操作
-	    if ( CommonUtil.isNotEmpty( memberOld.getPhone() ) ) {
-		//		Map<String, Object> param = new HashMap<String, Object>();
-		//		param.put("oldPhone", memberOld.getPhone());
-		//		// 零时数据
-		//		param.put("busId", memberOld.getBusid());
-		//		param.put("newPhone", member.getPhone());
-		//		unionMobileService.updateMemberPhone(param);
-	    }
-
 	    memberCommonService.newMemberMerge( memberOld, memberOld.getBusId(), member.getPhone() );
 	}
 
@@ -1268,6 +1260,31 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    }
 	}
 	return list;
+    }
+
+
+
+    public List<Map> findWxShop(Integer busId,Double longt1, Double lat1)throws BusinessException{
+	List<Map> list=requestService.findShopByBusId( busId );
+	if(CommonUtil.isEmpty( longt1 ) || CommonUtil.isEmpty( lat1 )){
+	    return list;
+	}
+	List<Map> returnList=new ArrayList<>(  );
+	for(Map map:list){
+	    Long longitude=Long.parseLong( map.get( "longitude" ).toString() );
+	    Long latitude=Long.parseLong( map.get( "latitude" ).toString() );
+	    Double distance=CommonUtil.getDistance(longitude,latitude,longt1,lat1);
+	    map.put( "distance",distance );
+	    returnList.add( map );
+	}
+        return returnList;
+    }
+
+    public String tuijianQRcode(Integer memberId){
+        MemberEntity memberEntity=memberMapper.selectById( memberId );
+        MemberCard card=memberCardDAO.selectById( memberEntity.getMcId() );
+        String url=PropertiesUtil.getWebHome()+"/#/home/"+memberEntity.getBusId()+"/"+card.getSystemcode();
+        return url;
     }
 
 }

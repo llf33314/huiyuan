@@ -179,16 +179,12 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
     }
 
     @Transactional
-    public void saveMemberNotice( Integer busId, String json ) throws BusinessException {
+    public void saveMemberNotice( Integer busId, Map<String,Object> obj ) throws BusinessException {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
 	    if ( CommonUtil.isEmpty( busId ) ) {
 		throw new BusinessException( ResponseMemberEnums.INVALID_SESSION );
 	    }
-
-	    JSONObject obj = JSON.parseObject( json );
-
-	    //MemberNotice memberNotice = (MemberNotice) JSON.toJavaObject( JSON.parseObject( json ), MemberNotice.class );
 
 	    MemberNotice memberNotice = new MemberNotice();
 	    memberNotice.setContent( CommonUtil.toString( obj.get( "content" ) ) );

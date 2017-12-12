@@ -549,7 +549,7 @@ public class CommonUtil {
 		String[] arr = buf.toString().split(",");
 		StringBuffer sb = new StringBuffer();
 		Random random = new Random();
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 8; i++) {
 			Integer count = arr.length;
 			int a = random.nextInt(count);
 			sb.append(arr[a]);
@@ -1006,6 +1006,7 @@ public class CommonUtil {
 	return map;
 
     }
+
 
 
 }

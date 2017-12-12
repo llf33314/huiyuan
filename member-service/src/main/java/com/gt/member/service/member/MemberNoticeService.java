@@ -56,7 +56,7 @@ public interface MemberNoticeService {
      * @param sendDate
      * @throws BusinessException
      */
-    public void saveMemberNotice( Integer busId, String json ) throws  BusinessException;
+    public void saveMemberNotice( Integer busId, Map<String,Object> obj ) throws  BusinessException;
 
     /**
      * 删除会员消息

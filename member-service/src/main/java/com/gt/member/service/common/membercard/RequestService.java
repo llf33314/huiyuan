@@ -1,5 +1,6 @@
 package com.gt.member.service.common.membercard;
 
+import com.gt.api.dto.ResponseUtils;
 import com.gt.api.util.RequestUtils;
 import com.gt.member.exception.BusinessException;
 import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
@@ -9,6 +10,7 @@ import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
+import com.gt.util.entity.result.wx.WxJsSdkResult;
 
 import java.util.List;
 import java.util.Map;
@@ -96,4 +98,19 @@ public interface RequestService {
      * @return
      */
     public Map<String,Object> enterprisePayment(RequestUtils<ApiEnterprisePayment > requestUtils);
+
+    /**
+     *  根据商家id查询门店信息
+     * @param busId
+     * @return
+     */
+    public List<Map> findShopByBusId(Integer busId);
+
+    /**
+     * 分享
+     * @param publicId
+     * @param url
+     * @return
+     */
+    public WxJsSdkResult wxShare(Integer publicId,String url);
 }
