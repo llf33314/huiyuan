@@ -439,8 +439,23 @@ public class CardController {
 
     @ApiOperation( value = "浏览链接", notes = "浏览链接" )
     @ResponseBody
-    @RequestMapping( value = "/browse", method = RequestMethod.GET )
-    public void browse( HttpServletRequest request, HttpServletResponse response ) {
+    @RequestMapping( value = "/browseAddr", method = RequestMethod.POST )
+    public ServerResponse browseAddr(HttpServletRequest request, HttpServletResponse response){
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    String url = PropertiesUtil.getWebHome() + "/#/home/" + busId;
+	    return ServerResponse.createBySuccess(url);
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
+
+    @ApiOperation( value = "浏览链接", notes = "浏览链接" )
+    @ResponseBody
+    @RequestMapping( value = "/browseImg", method = RequestMethod.GET )
+    public void browseImg( HttpServletRequest request, HttpServletResponse response ) {
 	Integer busId = SessionUtils.getPidBusId( request );
 	String url = PropertiesUtil.getWebHome() + "/#/home/" + busId;
 	QRcodeKit.buildQRcode( url, 500, 500, response );
