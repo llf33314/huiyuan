@@ -671,6 +671,8 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	map.put( "jifen", memberEntity.getIntegral() );
 	map.put( "fenbi", memberEntity.getFansCurrency() );
 	map.put( "flow", memberEntity.getFlow() );
+	String jifenUrl = PropertiesUtil.getMallHome() + "/html/phone/index.html/#/integral/index/" + memberEntity.getBusId();
+	map.put( "jifenUrl", jifenUrl );
 	return map;
     }
 
@@ -1288,6 +1290,13 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	String url = PropertiesUtil.getWebHome() + "/#/home/" + memberEntity.getBusId() + "/" + card.getSystemcode();
 	return requestService.wxShare( wxPublicUsersEntity.getId(), url );
 
+    }
+
+
+    public String findMemberCardNo(Integer memberId){
+	MemberEntity memberEntity = memberMapper.selectById( memberId );
+	MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
+	return card.getCardNo();
     }
 
 }

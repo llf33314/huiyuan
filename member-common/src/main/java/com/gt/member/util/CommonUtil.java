@@ -982,7 +982,7 @@ public class CommonUtil {
 	    }
 	    is.close();
 
-	    if(CommonUtil.isEmpty( map ) && "0".equals( CommonUtil.toString( map.get( "code" ) ) )){
+	    if(CommonUtil.isNotEmpty( map ) && "0".equals( CommonUtil.toString( map.get( "code" ) ) )){
 		String url = "/image/2/"
 				+ userName
 				+ "/"

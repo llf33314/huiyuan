@@ -182,4 +182,11 @@ public interface MemberCardPhoneService {
      * @return
      */
     public WxJsSdkResult wxshare(Integer memberId,Integer busId);
+
+    /**
+     * 查询会员卡卡号
+     * @param memberId
+     * @return
+     */
+    public String findMemberCardNo(Integer memberId);
 }

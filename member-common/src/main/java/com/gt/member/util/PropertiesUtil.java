@@ -54,8 +54,9 @@ public class PropertiesUtil {
 
     private static String sms_tmplId;
 
-
     private static String untion_url;
+
+    private static String mallHome;
 
     public static String getWebHome() {
 	return webHome;
@@ -219,5 +220,14 @@ public class PropertiesUtil {
 
     public static void setUntion_url( String untion_url ) {
 	PropertiesUtil.untion_url = untion_url;
+    }
+
+    @Value( "${web.mallHome}" )
+    public static String getMallHome() {
+	return mallHome;
+    }
+
+    public static void setMallHome( String mallHome ) {
+	PropertiesUtil.mallHome = mallHome;
     }
 }
