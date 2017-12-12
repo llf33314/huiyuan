@@ -599,6 +599,9 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    if ( CommonUtil.isNotEmpty( publicParams.get( "parametersetId" ) ) ) {
 		ps.setId( CommonUtil.toInteger( publicParams.get( "parametersetId" ) ) );
 	    }
+	    if ( CommonUtil.isNotEmpty( publicParams.get( "month" ) ) ) {
+		ps.setMonth( CommonUtil.toInteger( publicParams.get( "month" ) ) );
+	    }
 
 	    ps.setBusId( busUserId );
 	    if ( CommonUtil.isNotEmpty( ps.getId() ) ) {

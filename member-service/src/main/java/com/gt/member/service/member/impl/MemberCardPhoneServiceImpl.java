@@ -980,11 +980,14 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    memberParameter.setGetMoney( CommonUtil.toDouble( parma.get( "getmoney" ) ) );
 	}
 
-	MemberParameter memberParameter1 = memberParameterMapper.findByMemberId( Integer.parseInt( parma.get( "id" ).toString() ) );
+	MemberParameter memberParameter1 = memberParameterMapper.findByMemberId( memberId);
 
 	if ( CommonUtil.isEmpty( memberParameter1 ) ) {
 	    memberParameter.setMemberId( memberId );
 	    memberParameterMapper.insert( memberParameter );
+	}else{
+	    memberParameter.setId( memberParameter1.getId() );
+	    memberParameterMapper.updateById( memberParameter );
 	}
 
 	if ( parma.get( "email" ) != null ) {
@@ -1014,9 +1017,9 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    for ( int i = 0; i < str.length; i++ ) {
 		if ( CommonUtil.isNotEmpty( str[i] ) ) {
 		    if ( CommonUtil.isEmpty( member.getCardImg() ) ) {
-			member.setCardImg( str[i] );
+			member.setCardImg( str[i].split( "/upload" )[1] );
 		    } else if ( CommonUtil.isEmpty( member.getCardImgback() ) ) {
-			member.setCardImgback( str[i] );
+			member.setCardImgback( str[i].split( "/upload" )[1] );
 			break;
 		    }
 		}

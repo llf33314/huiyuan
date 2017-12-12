@@ -1050,13 +1050,14 @@ public class MemberCommonServiceImp implements MemberCommonService {
 			    bool = true;
 			}
 		    }
-		}
 
-		if ( memberGift.getFlow() > 0 ) {
-		    Integer balaceFlow = memberOld.getFlow() + memberGift.getFlow();
-		    member.setFlow( balaceFlow );
-		    saveCardRecordOrderCodeNew( memberOld.getId(), 4, memberGift.getFlow().doubleValue(), "完善资料赠送流量", memberOld.getBusId(), balaceFlow.doubleValue(), "", 1 );
-		    bool = true;
+
+		    if ( memberGift.getFlow() > 0 ) {
+			Integer balaceFlow = memberOld.getFlow() + memberGift.getFlow();
+			member.setFlow( balaceFlow );
+			saveCardRecordOrderCodeNew( memberOld.getId(), 4, memberGift.getFlow().doubleValue(), "完善资料赠送流量", memberOld.getBusId(), balaceFlow.doubleValue(), "", 1 );
+			bool = true;
+		    }
 		}
 		if ( bool ) {
 		    memberEntityDAO.updateById( member );
