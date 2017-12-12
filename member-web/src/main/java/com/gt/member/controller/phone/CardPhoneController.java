@@ -26,6 +26,7 @@ import com.gt.member.service.member.MemberCardService;
 import com.gt.member.service.member.MemberNoticeService;
 import com.gt.member.util.*;
 import com.gt.util.entity.param.sms.NewApiSms;
+import com.gt.util.entity.result.wx.WxJsSdkResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -497,9 +498,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "向商家支付扫码二维码", notes = "向商家支付扫码" )
     @ResponseBody
     @RequestMapping( value = "/findPayQrcodeCardNo", method = RequestMethod.GET )
-    public void findPayQrcodeCardNo( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
-	Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
-	Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+    public void findPayQrcodeCardNo( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId ) {
 	Member member = SessionUtils.getLoginMember( request, busId );
 	String cardNO = memberCardPhoneService.findCardNoByMemberId( member.getId() );
 	QRcodeKit.buildQRcode( cardNO, 500, 500, response );
@@ -508,9 +507,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "向商家支付扫码条形码", notes = "向商家支付扫码条形码" )
     @ResponseBody
     @RequestMapping( value = "/findPayJBarcodeCardNo", method = RequestMethod.GET )
-    public void findPayJBarcodeCardNo( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
-	Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
-	Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+    public void findPayJBarcodeCardNo( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId ) {
 	Member member = SessionUtils.getLoginMember( request, busId );
 	String cardNO = memberCardPhoneService.findCardNoByMemberId( member.getId() );
 	JBarcodeUtil.getJbarCode( cardNO, response );
@@ -645,5 +642,31 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	String url = memberCardPhoneService.tuijianQRcode( memberId );
 	QRcodeKit.buildQRcode( url, 500, 500, response );
     }
+
+
+    @ApiOperation( value = "分享推荐", notes = "分享推荐" )
+    @ResponseBody
+    @RequestMapping( value = "/wxShare", method = RequestMethod.POST )
+    public ServerResponse wxShare(HttpServletRequest request, HttpServletResponse response,@RequestParam String json ){
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    WxJsSdkResult wxJsSdkResult = memberCardPhoneService.wxshare(member.getId(), busId);
+	    return ServerResponse.createBySuccess( wxJsSdkResult );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    LOG.error( "分享推荐异常", e );
+	    return ServerResponse.createByError();
+	}
+    }
+
 
 }

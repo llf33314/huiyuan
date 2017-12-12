@@ -3,6 +3,7 @@ package com.gt.member.service.member;
 import com.gt.api.bean.session.Member;
 import com.gt.common.entity.BusFlow;
 import com.gt.member.exception.BusinessException;
+import com.gt.util.entity.result.wx.WxJsSdkResult;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -173,4 +174,12 @@ public interface MemberCardPhoneService {
      * @return
      */
     public String tuijianQRcode(Integer memberId);
+
+    /**
+     * 微信分享
+     * @param memberId
+     * @param busId
+     * @return
+     */
+    public WxJsSdkResult wxshare(Integer memberId,Integer busId);
 }
