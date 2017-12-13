@@ -3,6 +3,7 @@ package com.gt.member.service.common.membercard;
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -166,5 +167,13 @@ public interface MemberCommonService {
      */
     public boolean giveMemberGift(MemberEntity memberOld,
                     MemberParameter memberParameter1);
+
+    /**
+     * 支付方式
+     * @param request
+     * @param busId
+     * @return
+     */
+    public List<Map<String,Object>>  payType(HttpServletRequest request,Integer busId);
 
 }

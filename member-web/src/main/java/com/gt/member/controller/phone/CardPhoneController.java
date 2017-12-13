@@ -407,7 +407,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    Map< String,Object > map = memberCardPhoneService.findRecharge( json, busId, member.getId() );
+	    Map< String,Object > map = memberCardPhoneService.findRecharge(request, json, busId, member.getId() );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );

@@ -152,7 +152,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	subQrPayParams.setMemberId( consumeNew.getMemberId() );//会员id
 	subQrPayParams.setDesc( "购买会员卡" );//描述
 	subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
-	String returnUrl = PropertiesUtil.getWebHome() + "/memberPhone/cardPhone/findMember.do";
+	String returnUrl = PropertiesUtil.getWebHome() + "/#/home/"+consumeNew.getBusId();
 	String sucessUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/buyCardPaySuccess.do";
 	subQrPayParams.setReturnUrl( returnUrl );
 	subQrPayParams.setNotifyUrl( sucessUrl );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
@@ -173,17 +173,8 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
     public Map< String,Object > findLingquData( HttpServletRequest request, Integer busId ) {
 	Map< String,Object > map = new HashMap<>();
 	//查询支付方式
-	Integer browser = CommonUtil.judgeBrowser( request );
-	// 登录页面 暂时使用 uc端 进入 使用支付宝
-	AlipayUser alipayUser = alipayUserMapper.selectByBusId( busId );
-	if ( browser.equals( 99 ) && CommonUtil.isNotEmpty( alipayUser ) ) {
-	    map.put( "payType", 2 );  //支付宝支付
-	}
-
-	WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper.selectByUserId( busId );
-	if ( browser.equals( 1 ) && CommonUtil.isNotEmpty( wxPublicUsers ) ) {
-	    map.put( "payType", 1 );  //微信支付
-	}
+	List<Map<String,Object>> payTypes= memberCommonService.payType( request,busId );
+	map.put( "payTypes",payTypes );
 
 	List< Map< String,Object > > gradeTypes = memberGradetypeDAO.findBybusId1( busId );
 	map.put( "gradeTypes", gradeTypes );
@@ -463,11 +454,6 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 		userConsumeNewDAO.insert( uc );
 
-		//		MemberEntity memberEntity1 = new MemberEntity();
-		//		memberEntity1.setId( memberEntity.getId() );
-		//		memberEntity1.setPhone( phone );
-		//		memberMapper.updateById( memberEntity1 );
-
 		Integer payType = CommonUtil.toInteger( params.get( "payType" ) );
 		String url = wxPayWay( uc, payType );
 		throw new BusinessException( ResponseMemberEnums.PLEASE_BUY_CARD.getCode(), url );
@@ -624,9 +610,13 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		map.put( "headimg", memberEntity.getHeadimgurl() );
 	    }
 
-	    // 联盟卡查询
-	    String unionUrl = PropertiesUtil.getUntion_url() + "/cardPhone/#/toUnionCard?busId=" + busId;
-	    map.put( "unionUrl", unionUrl );
+	   String webType=PropertiesUtil.getWebType();
+	    if("0".equals( webType )) {
+		// 联盟卡查询
+		String unionUrl = PropertiesUtil.getUntion_url() + "/cardPhone/#/toUnionCard?busId=" + busId;
+		map.put( "unionUrl", unionUrl );
+	    }
+	    map.put( "webType",webType );
 
 	    map.put( "path", PropertiesUtil.getRes_web_path() );
 	    MemberGradetype memberGradetype = memberGradetypeDAO.selectById( cardEntity.getGtId() );
@@ -790,7 +780,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	}
     }
 
-    public Map< String,Object > findRecharge( String json, Integer busId, Integer memberId ) throws BusinessException {
+    public Map< String,Object > findRecharge(HttpServletRequest request,String json, Integer busId, Integer memberId ) throws BusinessException {
 	try {
 	    JSONObject jsonObject = JSON.parseObject( json );
 	    Map< String,Object > map = new HashMap<>();
@@ -798,6 +788,10 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    MemberCard memberCard = cardMapper.selectById( memberEntity.getMcId() );
 	    MemberDate memberDate = memberCommonService.findMemeberDate( busId, memberCard.getCtId() );
 	    Integer chongzhiCtId = CommonUtil.toInteger( jsonObject.get( "chongzhiCtId" ) );
+
+	    //支付方式
+	    List<Map<String,Object>> payTypes= memberCommonService.payType( request,busId );
+	    map.put( "payTypes",payTypes );
 
 	    if ( memberCard.getCtId() != 4 && memberCard.getCtId() == chongzhiCtId ) {
 		if ( CommonUtil.isNotEmpty( memberDate ) ) {

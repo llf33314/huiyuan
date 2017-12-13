@@ -17,8 +17,7 @@ public class PropertiesUtil {
     /**
      * 会员信息
      */
-    public static final String IMAGE_FOLDER_TYPE_14="14";
-
+    public static final String IMAGE_FOLDER_TYPE_14 = "14";
 
     private static String webHome;  //本项目域名
 
@@ -57,6 +56,8 @@ public class PropertiesUtil {
     private static String untion_url;
 
     private static String mallHome;
+
+    private static String webType;
 
     public static String getWebHome() {
 	return webHome;
@@ -117,8 +118,6 @@ public class PropertiesUtil {
     public static String getStatic_source_ftp_password() {
 	return static_source_ftp_password;
     }
-
-
 
     @Value( "${web.webHome}" )
     public void setWebHome( String webHome ) {
@@ -200,7 +199,7 @@ public class PropertiesUtil {
 	return res_web_path;
     }
 
-    public  void setRes_web_path( String res_web_path ) {
+    public void setRes_web_path( String res_web_path ) {
 	PropertiesUtil.res_web_path = res_web_path;
     }
 
@@ -209,7 +208,7 @@ public class PropertiesUtil {
 	return sms_tmplId;
     }
 
-    public  void setSms_tmplId( String sms_tmplId ) {
+    public void setSms_tmplId( String sms_tmplId ) {
 	PropertiesUtil.sms_tmplId = sms_tmplId;
     }
 
@@ -229,5 +228,14 @@ public class PropertiesUtil {
 
     public static void setMallHome( String mallHome ) {
 	PropertiesUtil.mallHome = mallHome;
+    }
+
+    @Value( "${web.webType}" )
+    public static String getWebType() {
+	return webType;
+    }
+
+    public static void setWebType( String webType ) {
+	PropertiesUtil.webType = webType;
     }
 }

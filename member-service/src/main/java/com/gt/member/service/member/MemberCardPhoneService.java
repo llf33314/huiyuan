@@ -88,7 +88,7 @@ public interface MemberCardPhoneService {
      * @return
      * @throws BusinessException
      */
-    public Map<String,Object> findRecharge(String json,Integer busId,Integer memberId)throws  BusinessException;
+    public Map<String,Object> findRecharge(HttpServletRequest request,String json,Integer busId,Integer memberId)throws  BusinessException;
 
     /**
      * 会员卡充值

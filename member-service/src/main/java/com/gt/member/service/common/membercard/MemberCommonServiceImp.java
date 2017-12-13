@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.sign.SignHttpUtils;
+import com.gt.common.entity.AlipayUser;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.member.dao.*;
+import com.gt.member.dao.common.AlipayUserDAO;
 import com.gt.member.dao.common.BasisCityDAO;
 import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.common.WxPublicUsersDAO;
@@ -25,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -119,6 +122,9 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
     @Autowired
     private RequestService requestService;
+
+    @Autowired
+    private AlipayUserDAO alipayUserMapper;
 
     /**
      * 粉币计算
@@ -1068,5 +1074,28 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    return false;
 	}
 	return true;
+    }
+
+
+    //1---微信支付 2---支付宝 3---多粉钱包支付
+    public List<Map<String,Object>> payType(HttpServletRequest request,Integer busId){
+	List<Map<String,Object>> listMap=new ArrayList<>(  );
+        Integer browser=CommonUtil.judgeBrowser( request );
+	AlipayUser alipayUser = alipayUserMapper.selectByBusId( busId );
+	if ( browser.equals( 99 ) && CommonUtil.isNotEmpty( alipayUser ) ) {
+	    Map<String,Object> map=new HashMap<>(  );
+	    map.put( "payType", 2 );  //支付宝支付
+	    map.put( "name","支付宝" );
+	    listMap.add( map );
+	}
+
+	WxPublicUsersEntity wxPublicUsers = wxPublicUsersDAO.selectByUserId( busId );
+	if ( browser.equals( 1 ) && CommonUtil.isNotEmpty( wxPublicUsers ) ) {
+	    Map<String,Object> map=new HashMap<>(  );
+	    map.put( "payType", 1 );  //微信支付
+	    map.put( "name","支付宝" );
+	    listMap.add( map );
+	}
+	return listMap;
     }
 }
