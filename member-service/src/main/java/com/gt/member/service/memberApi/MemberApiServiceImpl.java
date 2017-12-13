@@ -1304,7 +1304,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    //粉币使用
 	    if ( paySuccessBo.isUserFenbi() && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
 		Double balance = memberEntity.getFansCurrency() - paySuccessBo.getFenbiNum();
-		memberCommonService.reduceFansCurrency( memberEntity, paySuccessBo.getFenbiNum() );
+	//	memberCommonService.reduceFansCurrency( memberEntity, paySuccessBo.getFenbiNum() );
 		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, paySuccessBo.getFenbiNum().doubleValue(), "消费粉币", memberEntity.getBusId(), balance,
 				paySuccessBo.getOrderCode(), 0 );
 
@@ -2205,7 +2205,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    }
 	    if ( CommonUtil.isNotEmpty( fenbi ) && fenbi > 0 ) {
 		Double yueFenbi = memberEntity.getFansCurrency() + fenbi;
-		memberCommonService.giveFansCurrency( memberId, fenbi );
+	//	memberCommonService.giveFansCurrency( memberId, fenbi );
 		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, fenbi.doubleValue(), "评论赠送粉币", memberEntity.getBusId(), yueFenbi, "", 1 );
 
 		bool = true;
@@ -2357,7 +2357,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    //粉币使用
 	    if ( erpPaySuccess.getUserFenbi() == 1 && CommonUtil.isNotEmpty( memberEntity.getMcId() )&& erpPaySuccess.getFenbiNum()>0 ) {
 		Double fenbi = memberEntity.getFansCurrency() - erpPaySuccess.getFenbiNum();
-		memberCommonService.reduceFansCurrency( memberEntity, erpPaySuccess.getFenbiNum() );
+		//memberCommonService.reduceFansCurrency( memberEntity, erpPaySuccess.getFenbiNum() );
 
 		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, erpPaySuccess.getFenbiNum().doubleValue(), "消费粉币", memberEntity.getBusId(), fenbi,
 				erpPaySuccess.getOrderCode(), 0 );
@@ -2458,7 +2458,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    if ( erfb.getRefundFenbi() > 0 ) {
 		Double refundFenbi = uc.getRefundFenbi() + erfb.getRefundFenbi();
 		updateUc.setRefundFenbi( refundFenbi );
-		memberCommonService.giveFansCurrency( member.getId(), erfb.getRefundFenbi() );
+	//	memberCommonService.giveFansCurrency( member.getId(), erfb.getRefundFenbi() );
 		double fenbi = member.getFansCurrency() + erfb.getRefundFenbi();
 		if ( CommonUtil.isNotEmpty( card ) ) {
 		    memberCommonService
