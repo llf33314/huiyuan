@@ -817,49 +817,7 @@ public class CommonUtil {
 			return null;
 		}
 	}
-	
-	
-	/**
-	 * 获取session中的登录用户
-	 * 
-	 * @param request
-	 * @return
-	 */
-	public static BusUserEntity getLoginUser(HttpServletRequest request) {
-		try {
-			return (BusUserEntity) request.getSession().getAttribute(
-					CommonConst.SESSION_BUSINESS_KEY);
-		} catch (Exception e) {
-			log.info(e.getLocalizedMessage());
-			e.printStackTrace();
-		}
-		return null;
-	};
-	
-	
-	/**
-	 * 获取session中的登录用户
-	 * 
-	 * @param request
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static void setLoginUser(HttpServletRequest request, BusUserEntity busUserEntity ) {
-		try {
-			Integer pid = busUserEntity.getPid();
-			if (pid == 0 || pid == null) {
-				request.getSession().setAttribute(
-						CommonConst.SESSION_BUSINESS_KEY, busUserEntity );
-			} else {
-				request.getSession().setAttribute(
-						CommonConst.SESSION_BUSINESS_KEY, busUserEntity );
-			}
-		} catch (Exception e) {
-			log.info(e.getLocalizedMessage());
-			e.printStackTrace();
-		}
-	};
-	
+
 	/**
 	 * 获取会员订单号
 	 * 
