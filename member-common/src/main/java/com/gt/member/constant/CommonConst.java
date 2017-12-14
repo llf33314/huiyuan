@@ -7,7 +7,10 @@ package com.gt.member.constant;
  */
 public class CommonConst {
 	/** 会员视频*/
-	public static String MEMBER_VIDEO_URL = "" ;
+	public static String MEMBER_VIDEO_URL_60 = "" ;
+
+	/** 会员通知管理视频*/
+	public static String MEMBER_VIDEO_URL_107 = "" ;
 	
 	
 

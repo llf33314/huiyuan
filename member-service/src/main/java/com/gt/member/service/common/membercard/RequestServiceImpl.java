@@ -70,7 +70,6 @@ public class RequestServiceImpl implements RequestService {
 
     private final static String GETVIDEOURL = "/8A5DA52E/videoCourceApi/getVoiceUrl.do";
 
-
     public String codeConsume( String cardId, String code, Integer busId ) throws Exception {
 	try {
 	    Map< String,Object > map = new HashMap< String,Object >();
@@ -229,7 +228,19 @@ public class RequestServiceImpl implements RequestService {
 
     public String getVideoUrl( Integer model ) {
 	try {
-	    if(CommonUtil.isEmpty( CommonConst.MEMBER_VIDEO_URL )) {
+	    String memberVideo = "";
+	    switch ( model ) {
+		case 60:
+		    memberVideo = CommonConst.MEMBER_VIDEO_URL_60;
+		    break;
+		case 107:
+		    memberVideo = CommonConst.MEMBER_VIDEO_URL_107;
+		    break;
+		default:
+		    break;
+	    }
+
+	    if ( CommonUtil.isEmpty( memberVideo ) ) {
 		Map< String,Object > map = new HashMap<>();
 		map.put( "courceModel", model );
 		String url = PropertiesUtil.getWxmp_home() + GETVIDEOURL;
@@ -238,7 +249,16 @@ public class RequestServiceImpl implements RequestService {
 		    Map< String,Object > returnParam = JSON.parseObject( returnMsg, Map.class );
 		    if ( "0".equals( CommonUtil.toString( returnParam.get( "code" ) ) ) ) {
 			JSONObject jsonObject = JSON.parseObject( CommonUtil.toString( returnParam.get( "data" ) ) );
-			CommonConst.MEMBER_VIDEO_URL=CommonUtil.toString( jsonObject.get( "voiceUrl" ) );
+			switch ( model ) {
+			    case 60:
+				CommonConst.MEMBER_VIDEO_URL_60 = CommonUtil.toString( jsonObject.get( "voiceUrl" ) );
+				break;
+			    case 107:
+				CommonConst.MEMBER_VIDEO_URL_107 = CommonUtil.toString( jsonObject.get( "voiceUrl" ) );
+				break;
+			    default:
+				break;
+			}
 			return CommonUtil.toString( jsonObject.get( "voiceUrl" ) );
 		    }
 		}
