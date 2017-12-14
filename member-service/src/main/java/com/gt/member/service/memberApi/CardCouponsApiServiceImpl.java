@@ -944,8 +944,8 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 		duofenCardGet.setCardReceiveId( dfcr.getId() );
 
 		if ( "DATE_TYPE_FIX_TIME_RANGE".equals( map.get( "type" ) ) ) {
-		    duofenCardGet.setStartTime( DateTimeKit.parseDate( map.get( "begin_timestamp" ).toString() ) );
-		    duofenCardGet.setEndTime( DateTimeKit.parseDate( map.get( "end_timestamp" ).toString() ) );
+		    duofenCardGet.setStartTime( DateTimeKit.parseDate( map.get( "begin_timestamp" ).toString(),"yyyy-MM-dd HH:mm:ss" ) );
+		    duofenCardGet.setEndTime( DateTimeKit.parseDate( map.get( "end_timestamp" ).toString(),"yyyy-MM-dd HH:mm:ss" ) );
 		} else {
 		    duofenCardGet.setStartTime( DateTimeKit.addDate( new Date(), CommonUtil.toInteger( map.get( "fixed_begin_term" ) ) ) );
 		    duofenCardGet.setEndTime( DateTimeKit.addDate( new Date(), CommonUtil.toInteger( map.get( "fixed_term" ) ) ) );
@@ -1199,8 +1199,8 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 			    duofenCardGet.setBusId( busId );
 			    duofenCardGet.setState( 0 );
 			    if ( "DATE_TYPE_FIX_TIME_RANGE".equals( map1.get( "type" ) ) ) {
-				duofenCardGet.setStartTime( DateTimeKit.parseDate( map1.get( "begin_timestamp" ).toString() ) );
-				duofenCardGet.setEndTime( DateTimeKit.parseDate( map1.get( "end_timestamp" ).toString() ) );
+				duofenCardGet.setStartTime( DateTimeKit.parseDate( map1.get( "begin_timestamp" ).toString(),"yyyy-MM-dd HH:mm:ss" ) );
+				duofenCardGet.setEndTime( DateTimeKit.parseDate( map1.get( "end_timestamp" ).toString(),"yyyy-MM-dd HH:mm:ss" ) );
 			    } else {
 				duofenCardGet.setStartTime( DateTimeKit.addDate( new Date(), CommonUtil.toInteger( map1.get( "fixed_begin_term" ) ) ) );
 				duofenCardGet.setEndTime( DateTimeKit.addDate( new Date(), CommonUtil.toInteger( map1.get( "fixed_term" ) ) ) );

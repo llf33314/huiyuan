@@ -1065,7 +1065,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 		}
 		card = memberCardDAO.selectById( c.getMcId() );
-
 		map.put( "jie", 1 );
 		map.put( "lentMoney", c.getLentMoney() );
 		map.put( "clId", c.getId() );  //用于处理借款状态

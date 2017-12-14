@@ -13,6 +13,7 @@ import com.gt.member.util.PropertiesUtil;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
+import com.gt.util.entity.param.wxcard.CodeConsume;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,13 +47,14 @@ public class RequestServiceImpl implements RequestService {
 
     public String codeConsume( String cardId, String code, Integer busId ) throws Exception {
 	try {
-	    Map< String,Object > map = new HashMap< String,Object >();
-	    String url = PropertiesUtil.getWxmp_home() + CODE_CONSUME;
+	    RequestUtils<CodeConsume > requestUtils=new RequestUtils<>(  );
+	    CodeConsume codeConsume=new CodeConsume();
 	    String getWxmpsignKey = PropertiesUtil.getWxmpsignKey();
-	    map.put( "card_id", cardId );
-	    map.put( "code", code );
-	    map.put( "busId", busId );
-	    String result = SignHttpUtils.postByHttp( url, map, getWxmpsignKey );
+	    String url=PropertiesUtil.getWxmp_home()+CODE_CONSUME;
+	    codeConsume.setCard_id(  cardId );
+	    codeConsume.setCode(  code );
+	    codeConsume.setBusId( busId );
+	    String result = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
 	    return result;
 	} catch ( Exception e ) {
 	    throw new Exception();
