@@ -150,7 +150,7 @@ public class CardController {
     @ApiImplicitParams( @ApiImplicitParam( name = "gradeType", value = "会员卡json类型", paramType = "query", required = false, dataType = "String" ) )
     @ResponseBody
     @RequestMapping( value = "/saveOrUpdateGradeType", method = RequestMethod.POST )
-    public ServerResponse saveOrUpdateGradeType( HttpServletRequest request, HttpServletResponse response, String gradeType ) {
+    public ServerResponse saveOrUpdateGradeType( HttpServletRequest request, HttpServletResponse response, @RequestParam Map<String,Object> gradeType ) {
 	Integer busId = SessionUtils.getPidBusId( request );
 	try {
 	    memberCardService.saveOrUpdateGradeType( gradeType, busId );

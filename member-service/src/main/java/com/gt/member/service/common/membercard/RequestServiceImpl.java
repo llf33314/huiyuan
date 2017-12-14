@@ -265,6 +265,7 @@ public class RequestServiceImpl implements RequestService {
 		    }
 		}
 	    }
+	    return memberVideo;
 	} catch ( Exception e ) {
 	    LOG.error( "调用会员视频异常", e );
 	}

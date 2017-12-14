@@ -548,12 +548,11 @@ public class MemberCardServiceImpl implements MemberCardService {
      * @param json
      */
     @Transactional
-    public void saveOrUpdateGradeType( String json, Integer busUserId ) throws BusinessException {
+    public void saveOrUpdateGradeType( Map<String,Object> publicParams, Integer busUserId ) throws BusinessException {
 	try {
 	    if ( CommonUtil.isEmpty( busUserId ) ) {
 		throw new BusinessException( ResponseMemberEnums.INVALID_SESSION );
 	    }
-	    Map< String,Object > publicParams = JSON.parseObject( json );
 	    //设置
 	    Integer ctId = CommonUtil.toInteger( publicParams.get( "ctId" ) );
 	    if ( CommonUtil.isNotEmpty( publicParams.get( "qiandao" ) ) ) {
