@@ -666,10 +666,10 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	QRcodeKit.buildQRcode( url, 500, 500, response );
     }
 
-    @ApiOperation( value = "分享推荐", notes = "分享推荐" )
+    @ApiOperation( value = "会员卡分享推荐", notes = "会员卡分享推荐" )
     @ResponseBody
-    @RequestMapping( value = "/wxShare", method = RequestMethod.POST )
-    public ServerResponse wxShare( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
+    @RequestMapping( value = "/wxshareCard", method = RequestMethod.POST )
+    public ServerResponse wxshareCard( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
@@ -680,7 +680,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    WxJsSdkResult wxJsSdkResult = memberCardPhoneService.wxshare( member.getId(), busId );
+	    WxJsSdkResult wxJsSdkResult = memberCardPhoneService.wxshareCard( member.getId(), busId );
 	    return ServerResponse.createBySuccess( wxJsSdkResult );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -689,5 +689,65 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    return ServerResponse.createByError();
 	}
     }
+
+    @ApiOperation( value = "储值卡转借他人", notes = "会员卡分享推荐" )
+    @ResponseBody
+    @RequestMapping( value = "/memberLent", method = RequestMethod.POST )
+    public ServerResponse memberLent(HttpServletRequest request, HttpServletResponse response, @RequestParam String json ){
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    String key= memberCardPhoneService.memberLentMoney( member.getId(), CommonUtil.toDouble( params.get( "money" ) ) );
+	    return ServerResponse.createBySuccess( key );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    LOG.error( "储值卡转借他人", e );
+	    return ServerResponse.createByError();
+	}
+    }
+
+    @ApiOperation( value = "授权判断", notes = "授权判断" )
+    @ResponseBody
+    @RequestMapping( value = "/authorizeOrLogin", method = RequestMethod.POST )
+    public ServerResponse authorizeOrLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    LOG.error( "授权判断异常", e );
+	    return ServerResponse.createByError();
+	}
+    }
+
+    @ApiOperation( value = "转借他人二维码", notes = "转借他人二维码" )
+    @ResponseBody
+    @RequestMapping( value = "/memberLentImage", method = RequestMethod.POST )
+    public void memberLentImage(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
+	Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	Member member = SessionUtils.getLoginMember( request, busId );
+	String key=CommonUtil.toString( params.get( "memberLentKey" ) );
+	String content=member.getId()+"_"+key;
+	QRcodeKit.buildQRcode( content, 500, 500, response );
+    }
+
 
 }

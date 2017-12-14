@@ -38,6 +38,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.smartcardio.Card;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -140,6 +141,9 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
     @Autowired
     private PublicParametersetDAO publicParametersetDAO;
+
+    @Autowired
+    private MemberCardLentDAO memberCardLentDAO;
 
     public String wxPayWay( UserConsumeNew consumeNew, int payType ) throws Exception {
 	SubQrPayParams subQrPayParams = new SubQrPayParams();
@@ -827,6 +831,8 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		    map.put( "cikakarechargegive", rechargegiveAssistant );
 		}
 	    }
+	    map.put( "ctId",memberCard.getCtId() );
+	    map.put( "chongzhiCtId",chongzhiCtId );
 	    return map;
 	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR );
@@ -1030,7 +1036,8 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
     public String findCardNoByMemberId( Integer memberId ) {
 	MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
 	MemberCard memberCard = memberCardDAO.selectById( memberEntity.getMcId() );
-	String cardNoEncrypt = EncryptUtil.encrypt( PropertiesUtil.getCardNoKey(), memberCard.getCardNo() );
+	String cardNo = memberCard.getCardNo() + "?time=" + new Date().getTime();
+	String cardNoEncrypt = EncryptUtil.encrypt( PropertiesUtil.getCardNoKey(), cardNo );
 	return cardNoEncrypt;
     }
 
@@ -1260,11 +1267,12 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    return list;
 	}
 	List< Map > returnList = new ArrayList<>();
+	DecimalFormat df   = new DecimalFormat("######0.00");
 	for ( Map map : list ) {
-	    Long longitude = Long.parseLong( map.get( "longitude" ).toString() );
-	    Long latitude = Long.parseLong( map.get( "latitude" ).toString() );
+	    Double longitude = CommonUtil.toDouble(  map.get( "longitude" ) );
+	    Double latitude =  CommonUtil.toDouble(map.get( "latitude" ));
 	    Double distance = CommonUtil.getDistance( longitude, latitude, longt1, lat1 );
-	    map.put( "distance", distance );
+	    map.put( "distance", df.format( distance/1000.0 ) );
 	    returnList.add( map );
 	}
 	return returnList;
@@ -1277,7 +1285,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	return url;
     }
 
-    public WxJsSdkResult wxshare( Integer memberId, Integer busId ) {
+    public WxJsSdkResult wxshareCard( Integer memberId, Integer busId ) {
 	WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersMapper.selectByUserId( busId );
 	if ( CommonUtil.isEmpty( wxPublicUsersEntity ) ) {
 	    return null;
@@ -1294,6 +1302,23 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	MemberEntity memberEntity = memberMapper.selectById( memberId );
 	MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 	return card.getCardNo();
+    }
+
+    public String memberLentMoney(Integer memberId,Double money)throws BusinessException{
+	MemberEntity memberEntity = memberMapper.selectById( memberId );
+	MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
+	if(card.getMoney()<money){
+	    throw new BusinessException( ResponseMemberEnums.MEMBER_LESS_MONEY );
+	}
+	MemberCardLent c = new MemberCardLent();
+	String key = CommonUtil.getNominateCode(32);
+	c.setMcId(card.getMcId());
+	c.setCode(key);
+	c.setUsestate(0);
+	c.setLentMoney(money);
+	c.setCreateDate(new Date());
+	memberCardLentDAO.insert(c);
+	return key;
     }
 
 }

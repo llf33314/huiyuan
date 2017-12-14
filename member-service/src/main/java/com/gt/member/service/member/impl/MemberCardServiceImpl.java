@@ -2722,6 +2722,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 	map.put( "path", PropertiesUtil.getRes_web_path() );
 	List< Map< String,Object > > mapList = memberGradetypeDAO.findBybusId( busId );
 	map.put( "gradeType", mapList );
+	String url=PropertiesUtil.getWebHome() + "/#/home/" + busId;;
+	map.put( "url", url );
 	return map;
     }
 
@@ -2741,7 +2743,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		memberGradetypeDAO.updateByBusIdAndCtId( busId, ctId );
 	    } else {
 		memberGradetypeDAO.updateByBusIdAndCtId( busId, ctId );
-		memberGradetypeDAO.updateEasyApplyBybusId( busId );  //关闭泛会员
+		//memberGradetypeDAO.updateEasyApplyBybusId( busId );  //关闭泛会员
 	    }
 	} catch ( Exception e ) {
 	    LOG.error( "发布会员卡异常", e );

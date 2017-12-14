@@ -176,12 +176,12 @@ public interface MemberCardPhoneService {
     public String tuijianQRcode(Integer memberId);
 
     /**
-     * 微信分享
+     * 微信会员卡分享
      * @param memberId
      * @param busId
      * @return
      */
-    public WxJsSdkResult wxshare(Integer memberId,Integer busId);
+    public WxJsSdkResult wxshareCard(Integer memberId,Integer busId);
 
     /**
      * 查询会员卡卡号
@@ -189,4 +189,10 @@ public interface MemberCardPhoneService {
      * @return
      */
     public String findMemberCardNo(Integer memberId);
+
+    /**
+     * 储值卡转借他人
+     * @param memberId
+     */
+    public String memberLentMoney(Integer memberId,Double money)throws BusinessException;
 }
