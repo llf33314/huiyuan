@@ -147,13 +147,13 @@ public class CardController {
     }
 
     @ApiOperation( value = "保存会员卡设置", notes = "保存会员卡设置" )
-    @ApiImplicitParams( @ApiImplicitParam( name = "gradeType", value = "会员卡json类型", paramType = "query", required = false, dataType = "String" ) )
+    @ApiImplicitParams( @ApiImplicitParam( name = "json", value = "会员卡json类型", paramType = "query", required = false, dataType = "String" ) )
     @ResponseBody
     @RequestMapping( value = "/saveOrUpdateGradeType", method = RequestMethod.POST )
-    public ServerResponse saveOrUpdateGradeType( HttpServletRequest request, HttpServletResponse response, @RequestParam Map<String,Object> gradeType ) {
+    public ServerResponse saveOrUpdateGradeType( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	Integer busId = SessionUtils.getPidBusId( request );
 	try {
-	    memberCardService.saveOrUpdateGradeType( gradeType, busId );
+	    memberCardService.saveOrUpdateGradeType( json, busId );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    LOG.error( "保存会员卡设置异常：", e );

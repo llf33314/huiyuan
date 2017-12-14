@@ -431,7 +431,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		}
 	    }
 	    String url = memberCardPhoneService.rechargeMemberCard( json, busId, member.getId() );
-	    return ServerResponse.createBySuccess( url );
+	    return ServerResponse.createBySuccess( "",url );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}catch ( Exception e ) {
@@ -518,7 +518,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		}
 	    }
 	    String cardNo = memberCardPhoneService.findMemberCardNo( member.getId() );
-	    return ServerResponse.createBySuccess( cardNo );
+	    return ServerResponse.createBySuccess("", cardNo );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {

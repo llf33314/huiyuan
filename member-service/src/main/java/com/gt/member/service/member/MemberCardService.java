@@ -108,7 +108,7 @@ public interface MemberCardService {
      *
      * @param json
      */
-    public void saveOrUpdateGradeType( Map<String,Object> publicParams, Integer busUserId ) throws BusinessException;
+    public void saveOrUpdateGradeType(String json, Integer busUserId ) throws BusinessException;
 
     /**
      * 查询通用设置
