@@ -638,7 +638,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		    //查询折扣卡折扣
 		    if ( fuka == 2 ) {
 			MemberGradetypeAssistant memberGradetypeAssistant = memberGradetypeAssistantDAO.findAssistantBygtIdAndFuctId( busId, cardEntity.getGtId(), 2 );
-			map.put( "fuKadiscount", memberGradetypeAssistant.getDiscount() / 10.0 );
+			map.put( "fuKadiscount", memberGradetypeAssistant.getDiscount());
 		    }
 		}
 	    }
