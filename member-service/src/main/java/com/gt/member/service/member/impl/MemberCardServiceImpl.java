@@ -2759,10 +2759,12 @@ public class MemberCardServiceImpl implements MemberCardService {
 		throw new BusinessException( ResponseMemberEnums.NO_DELETE_CARD );
 	    }
 	    List< MemberGradetype > gradeTypes = memberGradetypeDAO.findMemberGradeTypeByBusIdAndCtId( busId, ctId );
+
+	    List< Map< String,Object > > giveRules = memberGiveruleDAO.findByBusIdAndCtId( busId, ctId );
+
 	    // 删除卡片操作
 	    memberGradetypeDAO.deleteBybusIdAndCtId( busId, ctId );
 
-	    List< Map< String,Object > > giveRules = memberGiveruleDAO.findByBusIdAndCtId( busId, ctId );
 	    if ( giveRules.size() != 0 ) {
 		List< Integer > list = new ArrayList< Integer >();
 		for ( Map< String,Object > map : giveRules ) {
