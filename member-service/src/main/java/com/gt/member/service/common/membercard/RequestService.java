@@ -113,4 +113,11 @@ public interface RequestService {
      * @return
      */
     public WxJsSdkResult wxShare(Integer publicId,String url);
+
+    /**
+     * 查询视频教程地址
+     * @param model
+     * @return
+     */
+    public String getVideoUrl(Integer model);
 }

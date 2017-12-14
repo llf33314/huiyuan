@@ -6,11 +6,9 @@ package com.gt.member.constant;
  *
  */
 public class CommonConst {
-	/** 商家账户在session key*/
-	public static String SESSION_BUSINESS_KEY = "business_key" ;
+	/** 会员视频*/
+	public static String MEMBER_VIDEO_URL = "" ;
 	
 	
-	/** 商家微信在session key*/
-	public static String SESSION_WXPUBLICUSERS_KEY = "wxPublicUsers" ;
-	
+
 }

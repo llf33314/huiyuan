@@ -7,6 +7,7 @@ import com.gt.api.util.SessionUtils;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
+import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.service.member.MemberNoticeService;
 import com.gt.member.util.*;
@@ -47,6 +48,9 @@ public class CardController {
 
     @Autowired
     private MemberNoticeService memberNoticeService;
+
+    @Autowired
+    private RequestService requestService;
 
     @ApiOperation( value = "查询没有创建的会员卡类型", notes = "查询会员卡类型" )
     @ResponseBody
@@ -471,6 +475,23 @@ public class CardController {
 	response.addHeader( "Content-Disposition", "attachment;filename=" + new String( filename.replaceAll( " ", "" ).getBytes( "utf-8" ), "iso8859-1" ) );
 	response.setContentType( "application/octet-stream" );
 	QRcodeKit.buildQRcode( url, 450, 450, response );
+    }
+
+    @ApiOperation( value = "视频", notes = "视频" )
+    @ResponseBody
+    @RequestMapping( value = "/findMemberVideoUrl", method = RequestMethod.POST )
+    public ServerResponse findMemberVideoUrl(HttpServletRequest request, HttpServletResponse response,@RequestParam String params){
+	try {
+	    JSONObject json = JSON.parseObject( params );
+	    Integer model = CommonUtil.toInteger( json.get( "model" ) );
+	    String  videoUrl=requestService.getVideoUrl(model);
+	    return ServerResponse.createBySuccess(videoUrl);
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+
     }
 
 }
