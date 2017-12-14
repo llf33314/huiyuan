@@ -797,6 +797,9 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    MemberCard memberCard = cardMapper.selectById( memberEntity.getMcId() );
 	    MemberDate memberDate = memberCommonService.findMemeberDate( busId, memberCard.getCtId() );
 	    Integer chongzhiCtId = CommonUtil.toInteger( jsonObject.get( "chongzhiCtId" ) );
+	    map.put( "cikaCiShu",memberCard.getFrequency() );
+	    map.put( "chuZhikamoney",memberCard.getMoney() );
+	    map.put( "shixiaoKaTime",memberCard.getExpireDate() );
 
 	    //支付方式
 	    List<Map<String,Object>> payTypes= memberCommonService.payType( request,busId );
