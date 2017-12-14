@@ -8,6 +8,7 @@ import com.gt.api.util.KeysUtil;
 import com.gt.api.util.RequestUtils;
 import com.gt.api.util.SessionUtils;
 import com.gt.common.entity.*;
+import com.gt.member.constant.CommonConst;
 import com.gt.member.dao.*;
 import com.gt.member.dao.common.*;
 import com.gt.member.dto.ServerResponse;
@@ -227,6 +228,10 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 	    Integer shopId = 0;
 	    WxShop wxShop = wxShopDAO.selectMainShopByBusId( busId );
+	    if( CommonUtil.isEmpty( wxShop )){
+	        throw new BusinessException( ResponseMemberEnums.PLESAS_SET_SHOP );
+	    }
+
 	    if ( CommonUtil.isNotEmpty( wxShop ) ) {
 		shopId = wxShop.getId();
 	    }
