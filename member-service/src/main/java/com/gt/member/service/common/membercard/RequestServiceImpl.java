@@ -21,6 +21,7 @@ import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
 import com.gt.util.entity.param.wx.WxJsSdk;
+import com.gt.util.entity.param.wxcard.CodeConsume;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import com.gt.util.entity.result.wx.WxJsSdkResult;
 import org.slf4j.Logger;
@@ -72,15 +73,16 @@ public class RequestServiceImpl implements RequestService {
 
     public String codeConsume( String cardId, String code, Integer busId ) throws Exception {
 	try {
-	    Map< String,Object > map = new HashMap< String,Object >();
-	    String url = PropertiesUtil.getWxmp_home() + CODE_CONSUME;
-	    String getWxmpsignKey = PropertiesUtil.getWxmpsignKey();
-	    map.put( "card_id", cardId );
-	    map.put( "code", code );
-	    map.put( "busId", busId );
-	    String result = SignHttpUtils.postByHttp( url, map, getWxmpsignKey );
+	    RequestUtils<CodeConsume > requestUtils=new RequestUtils<>(  );
+	    CodeConsume codeConsume=new CodeConsume();
+	    String url=PropertiesUtil.getWxmp_home()+CODE_CONSUME;
+	    codeConsume.setCard_id(  cardId );
+	    codeConsume.setCode(  code );
+	    codeConsume.setBusId( busId );
+	    String result = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
 	    return result;
 	} catch ( Exception e ) {
+	    LOG.error( "卡券核销异常",e );
 	    throw new Exception();
 	}
 
@@ -178,7 +180,7 @@ public class RequestServiceImpl implements RequestService {
 	    map.put( "model", 3 );
 	    map.put( "remarks", remarks );
 	    String url = PropertiesUtil.getWxmp_home() + POWER_API;
-	    String returnMsg = SignHttpUtils.postByHttp( url, map, PropertiesUtil.getWxmpsignKey() );
+	    String returnMsg = SignHttpUtils.WxmppostByHttp(  url, map, PropertiesUtil.getWxmpsignKey() );
 	    if ( CommonUtil.isNotEmpty( returnMsg ) ) {
 		Map< String,Object > returnParam = JSON.parseObject( returnMsg, Map.class );
 		return CommonUtil.toInteger( returnParam.get( "code" ) );
@@ -244,7 +246,7 @@ public class RequestServiceImpl implements RequestService {
 		Map< String,Object > map = new HashMap<>();
 		map.put( "courceModel", model );
 		String url = PropertiesUtil.getWxmp_home() + GETVIDEOURL;
-		String returnMsg = SignHttpUtils.postByHttp( url, map, PropertiesUtil.getWxmpsignKey() );
+		String returnMsg = SignHttpUtils.WxmppostByHttp( url, map, PropertiesUtil.getWxmpsignKey() );
 		if ( CommonUtil.isNotEmpty( returnMsg ) ) {
 		    Map< String,Object > returnParam = JSON.parseObject( returnMsg, Map.class );
 		    if ( "0".equals( CommonUtil.toString( returnParam.get( "code" ) ) ) ) {
