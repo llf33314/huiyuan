@@ -313,6 +313,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    map.put( "gradeTypes", gradeTypes );
 	    map.put( "imagePaht", PropertiesUtil.getRes_web_path() );
 	}
+
+	//素材库地址
+	String materialUrl=PropertiesUtil.getMaterialUrl();
+	map.put( "materialUrl",materialUrl );
 	return map;
     }
 
@@ -961,6 +965,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    map.put( "path",PropertiesUtil.getRes_web_path() );
 	    map.put( "parameterset", parameterset );
 	    map.put( "memberGifts", memberGiftList );
+	    String materialUrl=PropertiesUtil.getMaterialUrl();
+	    map.put( "materialUrl",materialUrl );
 	    return map;
 	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR );
@@ -2768,8 +2774,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    if ( giveRules.size() != 0 ) {
 		List< Integer > list = new ArrayList< Integer >();
 		for ( Map< String,Object > map : giveRules ) {
-		    if ( CommonUtil.isNotEmpty( map.get( "gr_id" ) ) ) {
-			list.add( Integer.valueOf( map.get( "gr_id" ).toString() ) );
+		    if ( CommonUtil.isNotEmpty( map.get( "grId" ) ) ) {
+			list.add( Integer.valueOf( map.get( "grId" ).toString() ) );
 		    }
 		}
 		if ( list.size() > 0 ) {

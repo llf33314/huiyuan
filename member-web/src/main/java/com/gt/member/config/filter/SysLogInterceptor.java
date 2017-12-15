@@ -60,13 +60,13 @@ public class SysLogInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle( HttpServletRequest request,
 		    HttpServletResponse response, Object handler ) throws Exception {
-	SessionUtils.setLoginStyle( request, 1 );
-	BusUser busUser=new BusUser();
-	busUser.setId( 42 );
-	SessionUtils.setLoginUser( request, busUser );
-	SessionUtils.setPidBusId( request, 42 );
-
-	request.setCharacterEncoding("UTF-8");
+//	SessionUtils.setLoginStyle( request, 1 );
+//	BusUser busUser=new BusUser();
+//	busUser.setId( 42 );
+//	SessionUtils.setLoginUser( request, busUser );
+//	SessionUtils.setPidBusId( request, 42 );
+//
+//	request.setCharacterEncoding("UTF-8");
 
 	return super.preHandle( request, response, handler );
     }

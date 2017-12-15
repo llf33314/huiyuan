@@ -4,6 +4,8 @@ package com.gt.member.controller;
 import com.gt.api.exception.SignException;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.member.BasicTest;
+import com.gt.member.dao.MemberEntityDAO;
+import com.gt.member.entity.MemberEntity;
 import com.gt.member.util.HttpClienUtil;
 import net.sf.json.JSONObject;
 import org.junit.Test;
@@ -19,6 +21,8 @@ import java.util.Map;
  */
 public class BusUserServiceTest extends BasicTest {
 
+    @Autowired
+    private MemberEntityDAO memberEntityDAO;
 
 
     @Test

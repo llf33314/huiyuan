@@ -59,6 +59,8 @@ public class PropertiesUtil {
 
     private static String webType;
 
+    private static String materialUrl;
+
     public static String getWebHome() {
 	return webHome;
     }
@@ -237,5 +239,14 @@ public class PropertiesUtil {
 
     public static void setWebType( String webType ) {
 	PropertiesUtil.webType = webType;
+    }
+
+    @Value( "${web.materialUrl}" )
+    public static String getMaterialUrl() {
+	return materialUrl;
+    }
+
+    public static void setMaterialUrl( String materialUrl ) {
+	PropertiesUtil.materialUrl = materialUrl;
     }
 }

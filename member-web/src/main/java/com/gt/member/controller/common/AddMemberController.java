@@ -343,14 +343,14 @@ public class AddMemberController {
      */
     @RequestMapping( "/erpMember" )
     public String erpMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > param ) {
-	BusUserEntity busUserEntity = CommonUtil.getLoginUser( request );
-	Integer busId = busUserEntity.getId();
-	if ( busUserEntity.getPid() > 0 ) {
-	    busId = dictService.pidUserId( busUserEntity.getId() );
-	}
-	List< Map< String,Object > > listMap = cardERPService.findMemberIsNotCard( busId, param );
-	request.setAttribute( "memberList", listMap );
-	request.setAttribute( "shopId", param.get( "shopId" ) );
+//	BusUserEntity busUserEntity = CommonUtil.getLoginUser( request );
+//	Integer busId = busUserEntity.getId();
+//	if ( busUserEntity.getPid() > 0 ) {
+//	    busId = dictService.pidUserId( busUserEntity.getId() );
+//	}
+//	List< Map< String,Object > > listMap = cardERPService.findMemberIsNotCard( busId, param );
+//	request.setAttribute( "memberList", listMap );
+//	request.setAttribute( "shopId", param.get( "shopId" ) );
 	return "merchants/member/erp/chooseFans";
     }
 
