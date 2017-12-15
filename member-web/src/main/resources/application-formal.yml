@@ -76,8 +76,8 @@ server:
     timeout: 30
 
 web:
- webHome: http://member.duofriend.com/
- wxmp_home: http://duofriend.com/
+ webHome: https://member.duofriend.com/
+ wxmp_home: https://duofriend.com/
  wxmpsignKey: WXMP2017
  cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6
  sms_name: 多粉平台
@@ -95,12 +95,14 @@ web:
  static_source_ftp_user: gt123456
  #图片资源ftp密码
  static_source_ftp_password: gt123456
-
-  #联盟卡
- untion_url:
-
-  #多粉 11510 微站 14202
+ #多粉 11510 微站 14202
  sms_tmplId: 11510
+ #商城域名
+ mallHome: https://mall.duofriend.com/
+ #联盟卡
+ untion_url:
+ #项目类型 0多粉 1微站
+ webType: 0
 
 
 redisSession:

@@ -79,6 +79,7 @@ web:
  webHome: https://member.deeptel.com.cn/
  wxmp_home: https://deeptel.com.cn/
  wxmpsignKey: WXMP2017
+ mallHome: http://mall.deeptel.com.cn/
  cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6
  sms_name: 多粉平台
  socket_url: https://socket.deeptel.com.cn
@@ -95,11 +96,16 @@ web:
  static_source_ftp_user: gt123456
  #图片资源ftp密码
  static_source_ftp_password: gt12345612
+ res_web_path: http://maint.yifriend.net/upload/   #图片域名
+ #多粉 11510 微站 14202
+ sms_tmplId: 11510
+  #商城域名
+ mallHome: http://mall.deeptel.com.cn/
   #联盟卡
  untion_url: https://union.deeptel.com.cn
-
-  #多粉 11510 微站 14202
- sms_tmplId: 11510
+  #项目类型 0多粉 1微站
+ webType: 0
+ materialUrl: https://suc.deeptel.com.cn/common/material.do
 
 redisSession:
  domainName: .deeptel.com.cn
