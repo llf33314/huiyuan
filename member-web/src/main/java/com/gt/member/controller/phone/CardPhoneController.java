@@ -748,12 +748,9 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "转借他人二维码", notes = "转借他人二维码" )
     @ResponseBody
     @RequestMapping( value = "/memberLentImage", method = RequestMethod.POST )
-    public void memberLentImage(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
-	Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
-	Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+    public void memberLentImage(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId,@RequestParam String memberLentKey){
 	Member member = SessionUtils.getLoginMember( request, busId );
-	String key=CommonUtil.toString( params.get( "memberLentKey" ) );
-	String content=member.getId()+"_"+key;
+	String content=member.getId()+"_"+memberLentKey;
 	QRcodeKit.buildQRcode( content, 500, 500, response );
     }
 
