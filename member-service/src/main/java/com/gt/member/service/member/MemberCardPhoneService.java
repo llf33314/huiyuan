@@ -121,7 +121,7 @@ public interface MemberCardPhoneService {
      * @param memberId
      * @return
      */
-    public String findCardNoByMemberId(Integer memberId);
+    public String findCardNoByMemberId(Integer memberId)throws Exception;
 
     /**
      * 签到送积分

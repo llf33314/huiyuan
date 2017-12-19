@@ -1042,7 +1042,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	memberCommonService.giveMemberGift( memberOld, memberParameter1 );
     }
 
-    public String findCardNoByMemberId( Integer memberId ) {
+    public String findCardNoByMemberId( Integer memberId ) throws Exception{
 	MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
 	MemberCard memberCard = memberCardDAO.selectById( memberEntity.getMcId() );
 	String cardNo = memberCard.getCardNo() + "?time=" + new Date().getTime();

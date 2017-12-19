@@ -529,7 +529,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "向商家支付扫码二维码", notes = "向商家支付扫码" )
     @ResponseBody
     @RequestMapping( value = "/findPayQrcodeCardNo", method = RequestMethod.GET )
-    public void findPayQrcodeCardNo( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId ) {
+    public void findPayQrcodeCardNo( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId ) throws Exception{
 	Member member = SessionUtils.getLoginMember( request, busId );
 	String cardNO = memberCardPhoneService.findCardNoByMemberId( member.getId() );
 	QRcodeKit.buildQRcode( cardNO, 500, 500, response );
@@ -538,7 +538,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "向商家支付扫码条形码", notes = "向商家支付扫码条形码" )
     @ResponseBody
     @RequestMapping( value = "/findPayJBarcodeCardNo", method = RequestMethod.GET )
-    public void findPayJBarcodeCardNo( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId ) {
+    public void findPayJBarcodeCardNo( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId ) throws Exception{
 	Member member = SessionUtils.getLoginMember( request, busId );
 	String cardNO = memberCardPhoneService.findCardNoByMemberId( member.getId() );
 	JBarcodeUtil.getJbarCode( cardNO, response );

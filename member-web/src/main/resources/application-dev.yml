@@ -79,7 +79,7 @@ web:
  webHome: http://192.168.2.241  #本项目域名
  wxmp_home: http://yifriend.net/  #wxmp
  wxmpsignKey: WXMP2017   #wxmp 秘钥
- cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6  #会员卡秘钥
+ cardNoKey:  GLC8DeuY #会员卡秘钥
  sms_name: 多粉平台  #短信发送名称
  socket_url: https://socket.deeptel.com.cn
  redis_ip: 113.106.202.51
