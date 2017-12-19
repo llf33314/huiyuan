@@ -1307,10 +1307,13 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
     }
 
 
-    public String findMemberCardNo(Integer memberId){
+    public Map<String,Object> findMemberCardNo(Integer memberId){
+	Map<String,Object> map=new HashMap<>(  );
 	MemberEntity memberEntity = memberMapper.selectById( memberId );
 	MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
-	return card.getCardNo();
+	map.put( "cardNo",card.getCardNo() );
+	map.put( "ctId",card.getCtId() );
+	return map;
     }
 
     public String memberLentMoney(Integer memberId,Double money)throws BusinessException{

@@ -517,8 +517,8 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    String cardNo = memberCardPhoneService.findMemberCardNo( member.getId() );
-	    return ServerResponse.createBySuccess("", cardNo );
+	    Map<String,Object> map = memberCardPhoneService.findMemberCardNo( member.getId() );
+	    return ServerResponse.createBySuccess(map );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
@@ -713,7 +713,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		}
 	    }
 	    String key= memberCardPhoneService.memberLentMoney( member.getId(), CommonUtil.toDouble( params.get( "money" ) ) );
-	    return ServerResponse.createBySuccess( key );
+	    return ServerResponse.createBySuccess("", key );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {

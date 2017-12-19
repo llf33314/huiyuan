@@ -188,7 +188,7 @@ public interface MemberCardPhoneService {
      * @param memberId
      * @return
      */
-    public String findMemberCardNo(Integer memberId);
+    public Map<String,Object> findMemberCardNo(Integer memberId);
 
     /**
      * 储值卡转借他人
