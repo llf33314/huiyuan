@@ -747,7 +747,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 
     @ApiOperation( value = "转借他人二维码", notes = "转借他人二维码" )
     @ResponseBody
-    @RequestMapping( value = "/memberLentImage", method = RequestMethod.POST )
+    @RequestMapping( value = "/memberLentImage", method = RequestMethod.GET )
     public void memberLentImage(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId,@RequestParam String memberLentKey){
 	Member member = SessionUtils.getLoginMember( request, busId );
 	String content=member.getId()+"_"+memberLentKey;

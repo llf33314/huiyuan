@@ -417,7 +417,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 		    noticeUser = new MemberNoticeuser();
 		    noticeUser.setNoticeId( id );
 		    noticeUser.setBusId( CommonUtil.toInteger( map.get( "id" ) ) );
-		    noticeUser.setSendDate( memberNotice.getSendDate() );
+		    noticeUser.setSendDate( new Date(  ) );
 		    noticeUser.setMsgType( 0 );
 		    noticeUser.setStatus(3);
 		    noticeUser.setPhone( CommonUtil.toString( map.get( "phone" ) ) );
@@ -425,12 +425,12 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 		}
 	    }
 
-	    if(memberNotice.getSendType()==1){
+	    if(memberNotice.getSendMsg()==1){
 	        for(Integer memberId:memberIdList) {
 		    noticeUser = new MemberNoticeuser();
 		    noticeUser.setNoticeId( id );
 		    noticeUser.setBusId( memberId );
-		    noticeUser.setSendDate( memberNotice.getSendDate() );
+		    noticeUser.setSendDate(  new Date(  ) );
 		    noticeUser.setMsgType( 1 );
 		    noticeUser.setStatus( 0);
 		    list.add( noticeUser );

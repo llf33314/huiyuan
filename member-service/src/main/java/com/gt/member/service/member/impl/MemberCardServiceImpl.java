@@ -1368,22 +1368,20 @@ public class MemberCardServiceImpl implements MemberCardService {
 		}
 	    } else {
 		//判断商家粉币是否充值
-		BigDecimal fenBiCount = new BigDecimal( count * number );
-		BusUserEntity busUserEntity = busUserDAO.selectById( busId );
-		if ( busUserEntity.getFansCurrency().compareTo( fenBiCount ) == -1 ) {
-		    throw new BusinessException( ResponseMemberEnums.MEMBER_LESS_FENBI );
-		}
-
 		for ( Integer id : ids ) {
 		    //赠送粉币
-		    requestService.getPowerApi( 0,busId,number,"商家赠送粉币" );
+		    Integer code=requestService.getPowerApi( 0,busId,number,"商家赠送粉币" );
+		    if(code==0) {
+			MemberEntity memberEntity = memberMapper.selectByKey( id );
+			Double fans_currency = memberEntity.getFansCurrency() + number;
+			memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, number, "商家赠送", busId, fans_currency, "", 1 );
+			MemberEntity memberEntity1=new MemberEntity();
+			memberEntity1.setId( memberEntity.getId() );
+			memberEntity1.setFansCurrency( fans_currency );
+			memberMapper.updateById( memberEntity1 );
+		    }
+		}
 
-		}
-		List< Map< String,Object > > list = memberMapper.findMemberByIds( busId, ids );
-		for ( Map< String,Object > member : list ) {
-		    Double fans_currency = CommonUtil.toDouble( member.get( "fans_currency" ) ) ;
-		    memberCommonService.saveCardRecordOrderCodeNew( CommonUtil.toInteger( member.get( "id" ) ), 3, number, "商家赠送", busId, fans_currency, "", 1 );
-		}
 	    }
 	} catch ( BusinessException e ) {
 	    throw e;

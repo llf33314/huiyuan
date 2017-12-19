@@ -1030,6 +1030,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 			member.setCardImgback( str[i].split( "/upload" )[1] );
 			break;
 		    }
+		    member.setCardChecked( 1 );
 		}
 	    }
 	}

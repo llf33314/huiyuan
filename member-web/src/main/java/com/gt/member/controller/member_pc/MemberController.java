@@ -8,10 +8,10 @@ import com.gt.api.util.SessionUtils;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
-import com.gt.member.export.ExportExcel;
 import com.gt.member.service.bo.ErrorWorkbook;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.service.member.MemberNoticeService;
+import com.gt.member.service.member.export.ExportExcel;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.Page;
 import com.gt.member.util.RedisCacheUtil;
@@ -405,7 +405,9 @@ public class MemberController {
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberCardService.intergralConsume(busId,intergral,cardNo);
 	    return ServerResponse.createBySuccess(  );
-	} catch ( Exception e ) {
+	}catch ( BusinessException e ){
+	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	}catch ( Exception e ) {
 	    LOG.error( "积分兑换异常：", e );
 	    e.printStackTrace();
 	    return ServerResponse.createByError( "积分兑换失败");
