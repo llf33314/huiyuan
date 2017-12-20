@@ -2729,7 +2729,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	map.put( "path", PropertiesUtil.getRes_web_path() );
 	List< Map< String,Object > > mapList = memberGradetypeDAO.findBybusId( busId );
 	map.put( "gradeType", mapList );
-	String url=PropertiesUtil.getWebHome() + "/html/phone/index.html/#/home/" + busId;;
+	String url=PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/" + busId;;
 	map.put( "url", url );
 	return map;
     }
