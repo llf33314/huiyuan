@@ -1170,6 +1170,9 @@ public class MemberCardServiceImpl implements MemberCardService {
 		for ( Map< String,Object > member : members ) {
 		    if ( CommonUtil.isNotEmpty( map.get( "mc_id" ) ) && CommonUtil.isNotEmpty( member.get( "mc_id" ) ) && CommonUtil.toInteger( map.get( "mc_id" ) )
 				    .equals( CommonUtil.toInteger( member.get( "mc_id" ) ) ) ) {
+			if(CommonUtil.toInteger( map.get("ct_id") )!=ctId){
+			    continue;
+			}
 			map.put( "id", member.get( "id" ) );
 			map.put( "fans_currency", member.get( "fans_currency" ) );
 			map.put( "flow", member.get( "flow" ) );
