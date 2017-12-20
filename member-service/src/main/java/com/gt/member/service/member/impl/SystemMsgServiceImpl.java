@@ -81,7 +81,7 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 		    RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
 		    OldApiSms oldApiSms = new OldApiSms();
 		    oldApiSms.setMobiles( memberEntity.getPhone() );
-		    String content = "尊敬的用户,您" + DateTimeKit.getDate() + "消费了" + cardRecord.getNumber() + "积分,当前剩余" + memberEntity.getIntegral() + "积分";
+		    String content = "尊敬的用户,您" + DateTimeKit.getDate() + cardRecord.getItemName() + cardRecord.getNumber() + "积分,当前剩余" + memberEntity.getIntegral() + "积分";
 		    oldApiSms.setContent( content );
 		    oldApiSms.setCompany( PropertiesUtil.getSms_name() );
 		    oldApiSms.setBusId( memberEntity.getBusId() );
@@ -96,7 +96,7 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 
 		if ( systemNotice.getMsgStatus() == 1 ) {
 		    //会员系统通知
-		    String content = "尊敬的" + memberEntity.getNickname() + "用户,您" + DateTimeKit.getDate() + "消费了" + cardRecord.getNumber() + "积分,当前剩余" + memberEntity.getIntegral()
+		    String content = "尊敬的" + memberEntity.getNickname() + "用户,您" + DateTimeKit.getDate() + cardRecord.getItemName() + cardRecord.getNumber() + "积分,当前剩余" + memberEntity.getIntegral()
 				    + "积分";
 		    Systemnoticecall noticeCall = new Systemnoticecall();
 		    noticeCall.setMemberId( memberEntity.getId() );
