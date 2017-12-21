@@ -660,7 +660,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	Map< String,Object > map = new HashMap<>();
 	Integer page = CommonUtil.toInteger( params.get( "page" ) );
 	Integer pageSize = 10;
-	page = page * pageSize;
+	page = (page-1) * pageSize;
 
 	//
 	List< Integer > memberIds = memberCommonService.findMemberIds( memberId );
@@ -1313,6 +1313,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 	map.put( "cardNo",card.getCardNo() );
 	map.put( "ctId",card.getCtId() );
+	map.put( "money",card.getMoney() );
 	return map;
     }
 
