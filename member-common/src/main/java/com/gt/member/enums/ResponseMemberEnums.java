@@ -16,6 +16,7 @@ public enum ResponseMemberEnums {
     MANAGE_SHOP_THAN2(4009,"用户管理了多个门店,不能操作当前业务"),
     PLESAS_SET_SHOP(4010,"请设置主门店信息"),
     PLEASE_PHONE_CODE(4011,"请输入验证码"),
+    PLEASE_LOGIN(4012,"请登录"),
 
     CARD_STATUS(5001, "会员卡已停用"),
     MEMBER_LESS_JIFEN(5002,"积分不足"),

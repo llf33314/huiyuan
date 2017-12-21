@@ -61,6 +61,8 @@ public class PropertiesUtil {
 
     private static String materialUrl;
 
+    private static String webLoginUrl;
+
     public static String getWebHome() {
 	return webHome;
     }
@@ -248,5 +250,13 @@ public class PropertiesUtil {
 
     public static void setMaterialUrl( String materialUrl ) {
 	PropertiesUtil.materialUrl = materialUrl;
+    }
+    @Value( "${web.webLoginUrl}" )
+    public static String getWebLoginUrl() {
+	return webLoginUrl;
+    }
+
+    public static void setWebLoginUrl( String webLoginUrl ) {
+	PropertiesUtil.webLoginUrl = webLoginUrl;
     }
 }

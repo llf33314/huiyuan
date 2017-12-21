@@ -4,21 +4,23 @@ import com.gt.api.enums.ResponseEnums;
 import com.gt.member.enums.ResponseMemberEnums;
 
 /**
- * 系统统一异常类
+ * 统一异常类
  * <pre>
  *     所有自定义的异常，都继承此类。
  * </pre>
  *
- * @author zhangmz
+ * @author pengjiangli
  * @create 2017/6/16
  */
-public class SystemException extends RuntimeException {
+public class BaseException extends RuntimeException {
 
     private int code=1;//状态码
 
     private String message="错误";//错误消息
 
-    public SystemException() {
+    private String url;  //跳转地址
+
+    public BaseException() {
 
     }
 
@@ -26,7 +28,7 @@ public class SystemException extends RuntimeException {
      * 构造错误异常信息
      * @param message 错误消息
      */
-    public SystemException(String message) {
+    public BaseException(String message) {
         super(message);
         this.message = message;
     }
@@ -35,7 +37,20 @@ public class SystemException extends RuntimeException {
      * @param code 错误代码
      * @param message 错误消息
      */
-    public SystemException(int code, String message) {
+    public BaseException(int code, String message,String url) {
+        super(message);
+        this.message = message;
+        this.code = code;
+        this.url=url;
+    }
+
+
+    /**
+     * 构造错误异常信息
+     * @param code 错误代码
+     * @param message 错误消息
+     */
+    public BaseException(int code, String message) {
         super(message);
         this.message = message;
         this.code = code;
@@ -44,7 +59,7 @@ public class SystemException extends RuntimeException {
      * 构造错误异常信息
      * @param responseEnums 通用枚举类
      */
-    public SystemException(ResponseEnums responseEnums){
+    public BaseException(ResponseEnums responseEnums){
         super(responseEnums.getMsg());
         this.code = responseEnums.getCode();
         this.message= responseEnums.getMsg();
@@ -54,7 +69,7 @@ public class SystemException extends RuntimeException {
      * 构造错误异常信息
      * @param responseMemberEnums 会员枚举类
      */
-    public SystemException(ResponseMemberEnums responseMemberEnums){
+    public BaseException(ResponseMemberEnums responseMemberEnums){
         super(responseMemberEnums.getMsg());
         this.code = responseMemberEnums.getCode();
         this.message= responseMemberEnums.getMsg();
@@ -67,5 +82,10 @@ public class SystemException extends RuntimeException {
     @Override
     public String getMessage() {
         return message;
+    }
+
+
+    public String getUrl() {
+        return url;
     }
 }

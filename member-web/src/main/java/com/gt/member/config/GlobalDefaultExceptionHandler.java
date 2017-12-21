@@ -1,6 +1,12 @@
 package com.gt.member.config;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
+import com.gt.api.enums.ResponseEnums;
 import com.gt.member.dto.ErrorInfo;
+import com.gt.member.dto.ServerResponse;
+import com.gt.member.exception.BaseException;
+import com.gt.member.exception.BusinessException;
+import com.gt.member.exception.NeedLoginException;
 import com.gt.member.exception.ResponseEntityException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,12 +38,20 @@ public class GlobalDefaultExceptionHandler {
 	modelAndView.addObject( "url", request.getRequestURL() );
 	modelAndView.setViewName( DEFAULT_ERROR_VIEW );
 	return modelAndView;
+
+
     }
 
     // 统一异常处理 Ajax请求
     @ResponseBody
-    @ExceptionHandler( value = ResponseEntityException.class )
-    public ErrorInfo< String > defaultErrorHandler(HttpServletRequest request, ResponseEntityException e ) {
-	return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), null );
+    @ExceptionHandler( value = BaseException.class )
+    public ErrorInfo< String > defaultErrorHandler(HttpServletRequest request, BaseException e ) {
+        if (e instanceof ResponseEntityException || e instanceof BusinessException ) {
+            return ErrorInfo.createByErrorCodeMessage(e.getCode(), e.getMessage(),e.getUrl());
+        } else if (e instanceof NeedLoginException) {
+            return ErrorInfo.createByErrorCodeMessage(e.getCode(), e.getMessage(), e.getUrl());
+        } else {
+            return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), e.getMessage());
+        }
     }
 }

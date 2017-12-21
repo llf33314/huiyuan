@@ -106,6 +106,7 @@ web:
   #项目类型 0多粉 1微站
  webType: 0
  materialUrl: https://suc.deeptel.com.cn/common/material.do
+ webLoginUrl: https://deeptel.com.cn/user/tologin.do
 
 redisSession:
  domainName: .deeptel.com.cn

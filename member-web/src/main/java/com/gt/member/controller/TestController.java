@@ -7,6 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,18 +35,6 @@ public class TestController extends BaseController {
 
 
     public static  void main(String[] arg){
-	Map<String, Object> map = new HashMap<>();
-	map.put("memberId", 197);
-	map.put("busId", 42);
-	map.put("page", 1);
-
-try {
-    String aa = SignHttpUtils.WxmppostByHttp( "http://192.168.2.241:8080/memberPc/editCard/findSystemNotice", "", "MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM" );
-    System.out.println(aa);
-}
-catch ( Exception e ){
-
-}
     }
 
 }

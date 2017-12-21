@@ -12,7 +12,7 @@ import com.gt.member.enums.ResponseMemberEnums;
  * @author zhangmz
  * @create 2017/6/21
  */
-public class ResponseEntityException extends SystemException {
+public class ResponseEntityException extends BaseException {
 
     public ResponseEntityException( String message ) {
 	super( message );

@@ -105,6 +105,7 @@ web:
  #项目类型 0多粉 1微站
  webType: 0
  materialUrl:
+ webLoginUrl: https://nb.deeptel.com.cn/user/tologin.do
 
 
 redisSession:

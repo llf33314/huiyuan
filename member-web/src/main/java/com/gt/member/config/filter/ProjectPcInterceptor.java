@@ -1,10 +1,12 @@
 package com.gt.member.config.filter;
 
-import com.alibaba.fastjson.JSON;
-import com.gt.api.bean.sign.SignBean;
-import com.gt.api.bean.sign.SignEnum;
-import com.gt.api.util.sign.SignUtils;
-import com.gt.member.exception.ResponseEntityException;
+import com.gt.api.bean.session.BusUser;
+import com.gt.api.util.SessionUtils;
+import com.gt.member.enums.ResponseMemberEnums;
+import com.gt.member.exception.BusinessException;
+import com.gt.member.exception.NeedLoginException;
+import com.gt.member.util.CommonUtil;
+import com.gt.member.util.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -21,6 +23,7 @@ public class ProjectPcInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger( ProjectPcInterceptor.class );
 
+
     /**
      * 在请求处理之前进行调用（Controller方法调用之前）
      */
@@ -30,7 +33,10 @@ public class ProjectPcInterceptor implements HandlerInterceptor {
 	logger.info( "进入拦截器" );
 	boolean isSuccess = true;
 
-
+	BusUser busUser= SessionUtils.getLoginUser(servletRequest );
+	if( CommonUtil.isEmpty( busUser )){
+	    throw new NeedLoginException( ResponseMemberEnums.PLEASE_LOGIN.getCode(),ResponseMemberEnums.PLEASE_LOGIN.getMsg(), PropertiesUtil.getWebLoginUrl());
+	}
 
 	return isSuccess;// 只有返回true才会继续向下执行，返回false取消当前请求
     }

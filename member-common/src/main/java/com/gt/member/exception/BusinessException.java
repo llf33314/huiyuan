@@ -10,7 +10,7 @@ import com.gt.member.enums.ResponseMemberEnums;
  * @date 2017-07-15
  * @since 1.0.0
  */
-public class BusinessException extends SystemException {
+public class BusinessException extends BaseException {
 
     public BusinessException(){
 
@@ -24,6 +24,10 @@ public class BusinessException extends SystemException {
 	super( code, message );
     }
 
+    public BusinessException( int code, String message,String url ) {
+        super( code, message,url );
+    }
+
     public BusinessException(ResponseEnums responseEnums) {
         super(responseEnums);
     }
@@ -31,5 +35,8 @@ public class BusinessException extends SystemException {
     public BusinessException(ResponseMemberEnums responseMemberEnums) {
         super(responseMemberEnums);
     }
+
+
+
 
 }

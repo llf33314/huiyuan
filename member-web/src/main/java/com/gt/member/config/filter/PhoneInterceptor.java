@@ -44,6 +44,15 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
 	logger.info( "进入拦截器" );
 	try {
 	    boolean isSuccess = true;
+	    Map< String,Object > params = getParameterMap(servletRequest);
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( servletRequest, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( servletRequest, servletResponse, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    throw new BusinessException( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url  );
+		}
+	    }
 	    return isSuccess;// 只有返回true才会继续向下执行，返回false取消当前请求
 	}catch ( BusinessException e ){
 	    throw  e;

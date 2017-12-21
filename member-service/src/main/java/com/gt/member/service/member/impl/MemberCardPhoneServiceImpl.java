@@ -303,7 +303,6 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 		//非购买会员卡  直接分配会员卡
 		MemberCard card = new MemberCard();
-		card.setIsChecked( 1 );
 		card.setCardNo( CommonUtil.getCode() );
 		card.setCtId( ctId );
 		if ( card.getCtId() == 4 ) {
@@ -322,6 +321,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		    throw new BusinessException( ResponseMemberEnums.NULL );
 		}
 
+		card.setIsChecked( CommonUtil.toInteger( gradeTypes.get( 0 ).get( "isCheck" )  ));
 		card.setBusId( busId );
 		card.setReceiveDate( new Date() );
 		card.setIsbinding( 1 );
