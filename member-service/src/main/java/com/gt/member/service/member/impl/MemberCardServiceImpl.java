@@ -284,6 +284,14 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    List< MemberCardtype > cardTypes = memberCardtypeDAO.findByBusId( busId );
 	    map.put( "cardTypes", cardTypes );
 	}
+
+	//
+	Integer count=memberGradetypeDAO.countIseasy(busId);
+	if(count>0){
+	    map.put( "fanHuiyuan", 1 );
+	}else{
+	    map.put( "fanHuiyuan", 0 );
+	}
 	List< Map< String,Object > > fukaList = findCtId( ctId );
 	map.put( "fukaList", fukaList );
 	MemberFind memberFind = memberFindDAO.findByQianDao( busId );
