@@ -447,7 +447,7 @@ public class CardController {
     public ServerResponse browseAddr(HttpServletRequest request, HttpServletResponse response){
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    String url = PropertiesUtil.getWebHome()+"/html/phone/index.html/#/home/" + busId;
+	    String url = PropertiesUtil.getWebHome()+"/html/phone/index.html#/home/" + busId;
 	    return ServerResponse.createBySuccess(url);
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
