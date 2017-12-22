@@ -204,13 +204,12 @@ pageEncoding="UTF-8" %>
                 }
             },
             mounted(){
-                var gradeTypes='${gradeTypes}';
-                var mapList='${mapList}';
+                var gradeTypes=${gradeTypes};
+                var mapList=${mapList};
                 if(mapList!=""){
                     this.options=mapList;
                     this.cardType=mapList[0].ctId;
                 }
-
                 if(gradeTypes!=""){
                     if(gradeTypes[0].applyType==3) {
                         this.cardPriceVisible =true;
@@ -219,9 +218,6 @@ pageEncoding="UTF-8" %>
                     this.cardRank=gradeTypes[0].gt_name;
                     this.carID=gradeTypes[0].gt_id;
                 }
-
-
-
             },
             methods: {
                 handleIconClick: function (ev) {
