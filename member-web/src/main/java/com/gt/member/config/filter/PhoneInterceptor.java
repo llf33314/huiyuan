@@ -1,6 +1,7 @@
 package com.gt.member.config.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
 import com.gt.api.bean.sign.SignBean;
 import com.gt.api.bean.sign.SignEnum;
@@ -83,10 +84,13 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
 
     public  Map getParameterMap(HttpServletRequest request) {
 	// 参数Map
+
 	Map properties = request.getParameterMap();
+	String json=CommonUtil.toString( properties.get( "json" ) );
+	Map<String,Object> map= JSONObject.parseObject( json,Map.class );
 	// 返回值Map
 	Map returnMap = new HashMap();
-	Iterator entries = properties.entrySet().iterator();
+	Iterator entries = map.entrySet().iterator();
 	Map.Entry entry;
 	String name = "";
 	String value = "";
