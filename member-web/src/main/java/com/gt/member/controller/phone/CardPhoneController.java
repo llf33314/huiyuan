@@ -407,7 +407,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    Map< String,Object > map = memberCardPhoneService.findRecharge(request, json, busId, member.getId() );
+	    Map< String,Object > map = memberCardPhoneService.findRecharge( request, json, busId, member.getId() );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -431,10 +431,10 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		}
 	    }
 	    String url = memberCardPhoneService.rechargeMemberCard( json, busId, member.getId() );
-	    return ServerResponse.createBySuccess( "",url );
+	    return ServerResponse.createBySuccess( "", url );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
-	}catch ( Exception e ) {
+	} catch ( Exception e ) {
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
@@ -517,8 +517,8 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    Map<String,Object> map = memberCardPhoneService.findMemberCardNo( member.getId() );
-	    return ServerResponse.createBySuccess(map );
+	    Map< String,Object > map = memberCardPhoneService.findMemberCardNo( member.getId() );
+	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
@@ -529,7 +529,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "向商家支付扫码二维码", notes = "向商家支付扫码" )
     @ResponseBody
     @RequestMapping( value = "/findPayQrcodeCardNo", method = RequestMethod.GET )
-    public void findPayQrcodeCardNo( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId ) throws Exception{
+    public void findPayQrcodeCardNo( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId ) throws Exception {
 	Member member = SessionUtils.getLoginMember( request, busId );
 	String cardNO = memberCardPhoneService.findCardNoByMemberId( member.getId() );
 	QRcodeKit.buildQRcode( cardNO, 500, 500, response );
@@ -538,7 +538,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "向商家支付扫码条形码", notes = "向商家支付扫码条形码" )
     @ResponseBody
     @RequestMapping( value = "/findPayJBarcodeCardNo", method = RequestMethod.GET )
-    public void findPayJBarcodeCardNo( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId ) throws Exception{
+    public void findPayJBarcodeCardNo( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId ) throws Exception {
 	Member member = SessionUtils.getLoginMember( request, busId );
 	String cardNO = memberCardPhoneService.findCardNoByMemberId( member.getId() );
 	JBarcodeUtil.getJbarCode( cardNO, response );
@@ -666,11 +666,12 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	}
     }
 
-    @ApiOperation( value = "查询门店信息", notes = "查询门店信息" )
+    @ApiOperation( value = "推荐信息", notes = "推荐信息" )
     @ResponseBody
     @RequestMapping( value = "/tuijianQRcode", method = RequestMethod.GET )
-    public void tuijianQRcode( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer memberId ) {
-	String url = memberCardPhoneService.tuijianQRcode( memberId );
+    public void tuijianQRcode( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId ) {
+	Member member = SessionUtils.getLoginMember( request, busId );
+	String url = memberCardPhoneService.tuijianQRcode( member.getId() );
 	QRcodeKit.buildQRcode( url, 500, 500, response );
     }
 
@@ -701,7 +702,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "储值卡转借他人", notes = "会员卡分享推荐" )
     @ResponseBody
     @RequestMapping( value = "/memberLent", method = RequestMethod.POST )
-    public ServerResponse memberLent(HttpServletRequest request, HttpServletResponse response, @RequestParam String json ){
+    public ServerResponse memberLent( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
@@ -712,8 +713,8 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    String key= memberCardPhoneService.memberLentMoney( member.getId(), CommonUtil.toDouble( params.get( "money" ) ) );
-	    return ServerResponse.createBySuccess("", key );
+	    String key = memberCardPhoneService.memberLentMoney( member.getId(), CommonUtil.toDouble( params.get( "money" ) ) );
+	    return ServerResponse.createBySuccess( "", key );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
@@ -725,7 +726,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "授权判断", notes = "授权判断" )
     @ResponseBody
     @RequestMapping( value = "/authorizeOrLogin", method = RequestMethod.POST )
-    public ServerResponse authorizeOrLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
+    public ServerResponse authorizeOrLogin( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
@@ -736,7 +737,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    return ServerResponse.createBySuccess(  );
+	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
@@ -748,11 +749,10 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "转借他人二维码", notes = "转借他人二维码" )
     @ResponseBody
     @RequestMapping( value = "/memberLentImage", method = RequestMethod.GET )
-    public void memberLentImage(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId,@RequestParam String memberLentKey){
+    public void memberLentImage( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId, @RequestParam String memberLentKey ) {
 	Member member = SessionUtils.getLoginMember( request, busId );
-	String content=member.getId()+"_"+memberLentKey;
+	String content = member.getId() + "_" + memberLentKey;
 	QRcodeKit.buildQRcode( content, 500, 500, response );
     }
-
 
 }
