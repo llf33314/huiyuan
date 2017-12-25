@@ -2287,7 +2287,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    SortedMap< String,Object > sortemap = dictService.getDict( "1198" );
 	    String payType = "";
 	    for ( UserConsumePay userConsumePay : userConsumePays ) {
-		payType = CommonUtil.toString( sortemap.get( userConsumePay.getPaymentType() ) ) + "   ";
+		payType = CommonUtil.toString( sortemap.get( CommonUtil.toString( userConsumePay.getPaymentType() ) ) ) + "   ";
 	    }
 	    map.put( "payType", payType );
 	    return map;
@@ -2389,7 +2389,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    SortedMap< String,Object > sortemap = dictService.getDict( "1198" );
 	    String payType = "";
 	    for ( UserConsumePay userConsumePay : userConsumePays ) {
-		payType = CommonUtil.toString( sortemap.get( userConsumePay.getPaymentType() ) ) + "   ";
+		payType = CommonUtil.toString( sortemap.get( CommonUtil.toString( userConsumePay.getPaymentType() ) ) ) + "   ";
 	    }
 	    map.put( "payType", payType );
 	    return map;
