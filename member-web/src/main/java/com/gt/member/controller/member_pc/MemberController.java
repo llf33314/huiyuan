@@ -695,5 +695,17 @@ public class MemberController {
     }
 
 
+    @ApiOperation( value = "会员卡消费信息查询", notes = "会员卡充值" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "phone", value = "手机号或卡号" , paramType = "query", required = false, dataType = "String" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/consumefindMemberCard", method = RequestMethod.GET )
+    public ServerResponse consumefindMemberCard(HttpServletRequest request,
+		    HttpServletResponse response,  String params){
+	return null;
+    }
+
+
 
 }

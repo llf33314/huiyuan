@@ -164,6 +164,9 @@ public class MemberCardServiceImpl implements MemberCardService {
     @Autowired
     private SystemMsgService systemMsgService;
 
+    @Autowired
+    private DuofenCardGetDAO duofenCardGetDAO;
+
     /**
      * 查询会员卡类型
      *
@@ -1174,34 +1177,35 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    }
 
 	    List< Map< String,Object > > memberList = new ArrayList< Map< String,Object > >();
-	    for ( Map< String,Object > map : list ) {
-		for ( Map< String,Object > member : members ) {
-		    if ( CommonUtil.isNotEmpty( map.get( "mc_id" ) ) && CommonUtil.isNotEmpty( member.get( "mc_id" ) ) && CommonUtil.toInteger( map.get( "mc_id" ) )
-				    .equals( CommonUtil.toInteger( member.get( "mc_id" ) ) ) ) {
-			if(CommonUtil.toInteger( map.get("ct_id") )!=ctId){
-			    continue;
-			}
-			map.put( "id", member.get( "id" ) );
-			map.put( "fans_currency", member.get( "fans_currency" ) );
-			map.put( "flow", member.get( "flow" ) );
-			map.put( "integral", member.get( "integral" ) );
-			map.put( "phone", member.get( "phone" ) );
-			map.put( "nickname", member.get( "nickname" ) );
-			map.put( "sex", member.get( "sex" ) );
-			map.put( "totalMoney", member.get( "totalMoney" ) );
-			map.put( "cardChecked", member.get( "cardChecked" ) );
-			map.put( "remark", member.get( "remark" ) );
-			map.put( "mc_id", member.get( "mc_id" ) );
-			if ( member.containsKey( "nickname" ) ) {
-			    try {
-				byte[] bytes = (byte[]) map.get( "nickname" );
-				map.put( "nickname", new String( bytes, "UTF-8" ) );
-			    } catch ( Exception e ) {
-				map.put( "nickname", null );
+	    if(CommonUtil.isNotEmpty( list )) {
+		for ( Map< String,Object > map : list ) {
+		    for ( Map< String,Object > member : members ) {
+			if ( CommonUtil.isNotEmpty( map.get( "mc_id" ) ) && CommonUtil.isNotEmpty( member.get( "mc_id" ) ) && CommonUtil.toInteger( map.get( "mc_id" ) ).equals( CommonUtil.toInteger( member.get( "mc_id" ) ) ) ) {
+			    if ( CommonUtil.toInteger( map.get( "ct_id" ) ) != ctId ) {
+				continue;
 			    }
-			    memberList.add( map );
-			} else {
-			    memberList.add( map );
+			    map.put( "id", member.get( "id" ) );
+			    map.put( "fans_currency", member.get( "fans_currency" ) );
+			    map.put( "flow", member.get( "flow" ) );
+			    map.put( "integral", member.get( "integral" ) );
+			    map.put( "phone", member.get( "phone" ) );
+			    map.put( "nickname", member.get( "nickname" ) );
+			    map.put( "sex", member.get( "sex" ) );
+			    map.put( "totalMoney", member.get( "totalMoney" ) );
+			    map.put( "cardChecked", member.get( "cardChecked" ) );
+			    map.put( "remark", member.get( "remark" ) );
+			    map.put( "mc_id", member.get( "mc_id" ) );
+			    if ( member.containsKey( "nickname" ) ) {
+				try {
+				    byte[] bytes = (byte[]) map.get( "nickname" );
+				    map.put( "nickname", new String( bytes, "UTF-8" ) );
+				} catch ( Exception e ) {
+				    map.put( "nickname", null );
+				}
+				memberList.add( map );
+			    } else {
+				memberList.add( map );
+			    }
 			}
 		    }
 		}
@@ -3164,6 +3168,185 @@ public class MemberCardServiceImpl implements MemberCardService {
 
     public List<Map<String,Object>> findGradeTypeByCtId(Integer busId,Integer ctId){
 	return memberGradetypeDAO.findGradeTypeByCtId( busId,ctId );
+    }
+
+
+    public Map<String,Object>  consumefindMemberCard(Integer busId,String cardNo,Integer dangqianBusId){
+	Map< String,Object > map = new HashMap<>();
+	String cardNodecrypt = "";
+	try {
+	    try {
+	        String cardNoKey=PropertiesUtil.getCardNoKey();
+		// 如果手动输入 会出现异常
+		cardNodecrypt = EncryptUtil.decrypt( cardNoKey, cardNo );
+	    } catch ( Exception e ) {
+		// 如果不是扫码 判断商家是否允许不扫码
+		SortedMap<String, Object> maps = dictService.getDict("A001");
+		Object obj = maps.get(busId);
+		if (CommonUtil.isEmpty(obj)) {
+		   throw new BusinessException( ResponseMemberEnums.PLEASE_SCAN_CODE );
+		}
+	    }
+
+
+	    // 获取当前登录人所属门店
+	    List< WsWxShopInfoExtend > shops = requestService.findShopsByBusId( dangqianBusId );
+	    Integer shopId = 0;
+	    if ( shops.size() > 1 ) {
+		throw new BusinessException( ResponseMemberEnums.MANAGE_SHOP_THAN2 );
+	    }
+	    if ( shops.size() == 0 ) {
+		WxShop wxShop = wxShopDAO.selectMainShopByBusId( busId );
+		shopId = wxShop.getId();
+	    } else {
+		shopId = shops.get( 0 ).getId();
+	    }
+
+
+	    if ( cardNodecrypt.contains( "?time" ) ) {
+		// 查询卡号是否存在
+		Long time = Long.parseLong( cardNodecrypt.substring( cardNodecrypt.indexOf( "?time=" ) + 6 ) );
+		cardNo = cardNodecrypt.substring( 0, cardNodecrypt.indexOf( "?time" ) );
+		MemberCard card1 = memberCardDAO.findCardByCardNo( busId, cardNo );
+		if ( card1.getCtId() == 3 ) {
+		    // 2分钟后为超时
+		    if ( DateTimeKit.secondBetween( new Date( time ), new Date() ) > 120 ) {
+			// 二维码已超时
+			throw new BusinessException( ResponseMemberEnums.ERROR_QR_CODE.getCode(), ResponseMemberEnums.ERROR_QR_CODE.getMsg() );
+		    }
+		}
+	    }
+
+	    MemberCard card = null;
+
+	    // 判断是否借给他人
+	    MemberCardLent c = memberCardLentDAO.findByCode( cardNo );
+	    if ( CommonUtil.isNotEmpty( c ) ) {
+		// 判断时间是否在有效时间内
+		// 5分钟后为超时
+		if ( DateTimeKit.secondBetween( c.getCreateDate(), new Date() ) > 300 ) {
+		    // 二维码已超时
+		    throw new BusinessException( ResponseMemberEnums.ERROR_QR_CODE.getCode(), ResponseMemberEnums.ERROR_QR_CODE.getMsg() );
+		}
+		card = memberCardDAO.selectById( c.getMcId() );
+
+		map.put( "jie", 1 );
+		map.put( "lentMoney", c.getLentMoney() );
+		map.put( "clId", c.getId() );  //用于处理借款状态
+	    }
+
+	    MemberEntity memberEntity = null;
+	    // 查询卡号是否存在
+	    if ( CommonUtil.isEmpty( card ) ) {
+		card = memberCardDAO.findCardByCardNo( busId, cardNo );
+		if ( CommonUtil.isNotEmpty( card ) ) {
+		    memberEntity = memberMapper.findByMcIdAndbusId( busId, card.getMcId() );
+		}
+	    }
+
+	    if ( CommonUtil.isEmpty( card ) ) {
+		memberEntity = memberMapper.findByPhone( busId, cardNo );
+		if ( CommonUtil.isNotEmpty( memberEntity ) ) {
+		    card = memberCardDAO.selectById( memberEntity.getMcId() );
+		}
+	    }
+
+	    if ( CommonUtil.isEmpty( card ) ) {
+		map.put( "isMemberCard",0 );
+		//throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR.getCode(), ResponseMemberEnums.NOT_MEMBER_CAR.getMsg() );
+	    } else if ( card.getCardStatus() == 1 ) {
+		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
+	    } else {
+		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
+		MemberGiverule giveRule = memberGiveruleDAO.selectById( card.getGrId() );
+		map.put( "isMemberCard",1 );
+		map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
+		map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
+		map.put( "cardNo", card.getCardNo() );
+		map.put( "ctId", card.getCtId() );
+		map.put( "discount", giveRule.getGrDiscount() / 10.0 );
+		map.put( "money", card.getMoney() );
+		map.put( "frequency", card.getFrequency() );
+		map.put( "fans_currency", memberEntity.getFansCurrency() );
+		map.put( "integral", memberEntity.getIntegral() );
+		map.put( "memberId", memberEntity.getId() );
+		map.put( "cardId", card.getMcId() );
+
+		Double fenbiMoeny = memberCommonService.currencyCount( null, memberEntity.getFansCurrency() );
+		map.put( "fenbiMoeny", fenbiMoeny );
+		map.put( "getFenbiMoeny", 10 );
+
+		Double jifenMoeny = memberCommonService.integralCount( null, new Double( memberEntity.getIntegral() ), busId );
+		map.put( "jifenMoeny", jifenMoeny );
+		PublicParameterset ps = publicParameterSetMapper.findBybusId( busId );
+		if ( CommonUtil.isNotEmpty( ps ) ) {
+		    map.put( "getJifenMoeny", ps.getStartMoney() );
+		    map.put( "jifenRatio", ps.getIntegralRatio() );
+		    map.put( "jifenStartMoney", ps.getStartMoney() );
+		}
+
+		SortedMap< String,Object > dict = dictService.getDict( "1058" );
+		Double ratio = CommonUtil.toDouble( dict.get( "1" ) );
+		map.put( "fenbiRatio", ratio );
+		map.put( "fenbiStartMoney", 10 );
+
+		MemberDate memberDate = memberCommonService.findMemeberDate( busId, card.getCtId() );
+		if ( card.getCtId() == 2 ) {
+		    if ( CommonUtil.isNotEmpty( memberDate ) ) {
+			map.put( "memberDiscount", memberDate.getDiscount() * giveRule.getGrDiscount() / 100.0 );
+			map.put( "memberDate", 1 );
+		    }
+		}
+	    }
+	   if(CommonUtil.isNotEmpty( memberEntity )) {
+	       map.put( "nickName", memberEntity.getNickname() );
+	       map.put( "phone", memberEntity.getPhone() );
+	       // 查询能使用的多粉优惠券
+	       List< Map< String,Object > > duofenCards = findDuofenCardByMemberId( memberEntity.getId(), shopId );
+	       map.put( "duofenCards", duofenCards );
+	   }
+
+
+	    return map;
+	} catch ( BusinessException e ) {
+	    throw new BusinessException( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    LOG.error( "ERP查询会员信息异常", e );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
+
+
+    /**
+     * 查询用户拥有的优惠券
+     */
+    public List< Map< String,Object > > findDuofenCardByMemberId( Integer memberId, Integer wxshopId ) {
+	List< Map< String,Object > > duofencardgets = duofenCardGetDAO.findCardByMemberId( memberId );
+	if ( CommonUtil.isEmpty( duofencardgets ) || duofencardgets.size() == 0 ) {
+	    return null;
+	}
+
+	List< Map< String,Object > > duofencards = new ArrayList< Map< String,Object > >();
+	for ( Map< String,Object > map : duofencardgets ) {
+	    if ( "2".equals( map.get( "card_type" ).toString() ) || "3".equals( map.get( "card_type" ).toString() ) || "4".equals( map.get( "card_type" ).toString() ) ) {
+		continue;
+	    }
+
+	    String day = DateTimeKit.getDayToEnglish();
+	    if ( !map.get( "time_limit" ).toString().contains( day ) ) {
+		continue;
+	    }
+
+	    if ( CommonUtil.isNotEmpty( map.get( "location_id_list" ) ) ) {
+		String location_id_list = CommonUtil.toString( map.get( "location_id_list" ) );
+		if ( location_id_list.contains( wxshopId.toString() ) ) {
+		    duofencards.add( map );
+		}
+	    } else {
+		duofencards.add( map );
+	    }
+	}
+	return duofencards;
     }
 
 

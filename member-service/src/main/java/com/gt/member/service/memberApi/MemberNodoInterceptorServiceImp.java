@@ -289,7 +289,7 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 	    MemberEntity member = memberDAO.selectById( uc.getMemberId() );
 	    if ( uc.getCtId() == 3 ) {
 	        systemMsgService.sendChuzhiCard( member,memberCardrecordNew );
-	    } else if ( uc.getCtId() == 4 ) {
+	    } else if ( uc.getCtId() == 5 ) {
 		systemMsgService.sendCikaCard( member, money, numberCount );
 	    }
 

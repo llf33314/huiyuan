@@ -161,7 +161,7 @@ public class RequestServiceImpl implements RequestService {
      */
     public String payApi( SubQrPayParams subQrPayParams ) throws Exception {
 	String obj = KeysUtil.getEncString( JSON.toJSONString( subQrPayParams ) );
-	String url = PropertiesUtil.getWxmp_home() + PAY_API;
+	String url = PropertiesUtil.getWxmp_home() + PAY_API+"?obj="+obj;
 	return url;
     }
 

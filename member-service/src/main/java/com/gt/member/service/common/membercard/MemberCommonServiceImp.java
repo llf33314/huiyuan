@@ -1098,4 +1098,16 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	}
 	return listMap;
     }
+
+
+    public Integer dataSource(HttpServletRequest request){
+	Integer browser=CommonUtil.judgeBrowser( request );
+	if ( browser.equals( 99 )  ) {
+	    return 2;
+	}
+	if ( browser.equals( 1 ) ) {
+	   return 1;
+	}
+	return 0;
+    }
 }

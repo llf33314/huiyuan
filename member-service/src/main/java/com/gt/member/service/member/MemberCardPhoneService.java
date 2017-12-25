@@ -98,7 +98,7 @@ public interface MemberCardPhoneService {
      * @return
      * @throws BusinessException
      */
-    public String rechargeMemberCard(String json,Integer busId,Integer memberId)throws  BusinessException;
+    public String rechargeMemberCard(HttpServletRequest request,String json,Integer busId,Integer memberId)throws  BusinessException;
 
     /**
      * 查询会员卡资料

@@ -848,7 +848,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
     }
 
-    public String rechargeMemberCard( String json, Integer busId, Integer memberId ) throws BusinessException {
+    public String rechargeMemberCard( HttpServletRequest request,String json, Integer busId, Integer memberId ) throws BusinessException {
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 
@@ -884,6 +884,8 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    uc.setPayStatus( 0 );
 	    uc.setIschongzhi( 1 );
 	    uc.setFukaCtId( ctId );
+	    Integer dataSource=memberCommonService.dataSource(request);
+	    uc.setDataSource( dataSource );
 
 	    String orderCode = CommonUtil.getMEOrderCode();
 	    uc.setOrderCode( orderCode );
@@ -900,7 +902,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    sub.setDesc( "会员卡充值" );
 	    sub.setIsreturn( 1 );
 	    sub.setReturnUrl( returnUrl );
-	    String notifyUrl = PropertiesUtil.getWebHome() + "memberNodoInterceptor/memberNotDo/paySuccess";
+	    String notifyUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/paySuccess";
 	    sub.setNotifyUrl( notifyUrl );
 	    sub.setIsSendMessage( 0 );
 	    sub.setPayWay( payWay );

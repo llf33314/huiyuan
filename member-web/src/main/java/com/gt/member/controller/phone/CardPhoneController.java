@@ -430,7 +430,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    String url = memberCardPhoneService.rechargeMemberCard( json, busId, member.getId() );
+	    String url = memberCardPhoneService.rechargeMemberCard(request, json, busId, member.getId() );
 	    return ServerResponse.createBySuccess( "", url );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );

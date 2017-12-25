@@ -407,4 +407,12 @@ public interface MemberCardService {
      * @return
      */
     public List<Map<String,Object>> findGradeTypeByCtId(Integer busId,Integer ctId);
+
+    /**
+     * 会员卡消费查询信息
+     * @param busId
+     * @param cardNo
+     * @return
+     */
+    public Map<String,Object>  consumefindMemberCard(Integer busId,String cardNo,Integer dangqianBusId);
 }

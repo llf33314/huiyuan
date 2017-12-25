@@ -52,6 +52,7 @@ public enum ResponseMemberEnums {
 
 
 
+
     COUPONSE_VERIFICATION(6001, "卡券核销失败"),
     COUPONSE_NO_NUM(6002, "券包您已领取完"),
     COUPONSE_NO_NUM_TODAY(6003,"券包您今天已领取完"),

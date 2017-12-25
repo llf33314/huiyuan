@@ -176,4 +176,11 @@ public interface MemberCommonService {
      */
     public List<Map<String,Object>>  payType(HttpServletRequest request,Integer busId);
 
+    /**
+     * 判断数据来源
+     * @param request
+     * @return
+     */
+    public Integer dataSource(HttpServletRequest request);
+
 }
