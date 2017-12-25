@@ -602,11 +602,11 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    throw new BusinessException( ResponseMemberEnums.NOT_TIME_CARD );
 	}
 	for ( Map< String,Object > map : giveRules ) {
-	    if ( CommonUtil.isNotEmpty( map.get( "gr_rechargeMoney" ) ) ) {
-		Double rechargeMoney = CommonUtil.toDouble( map.get( "gr_rechargeMoney" ) );
+	    if ( CommonUtil.isNotEmpty( map.get( "grRechargemoney" ) ) ) {
+		Double rechargeMoney = CommonUtil.toDouble( map.get( "grRechargemoney" ) );
 
 		if ( money.equals( rechargeMoney ) ) {
-		    times.add( CommonUtil.toInteger( map.get( "gr_validDate" ) ) );
+		    times.add( CommonUtil.toInteger( map.get( "grValidDate" ) ) );
 		    if ( CommonUtil.isNotEmpty( memberDate ) ) {
 			times.add( CommonUtil.toInteger( map.get( "delayDay" ) ) );
 		    }
@@ -1093,7 +1093,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	if ( browser.equals( 1 ) && CommonUtil.isNotEmpty( wxPublicUsers ) ) {
 	    Map<String,Object> map=new HashMap<>(  );
 	    map.put( "payType", 1 );  //微信支付
-	    map.put( "name","支付宝" );
+	    map.put( "name","微信" );
 	    listMap.add( map );
 	}
 	return listMap;
