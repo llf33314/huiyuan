@@ -189,6 +189,29 @@ public class RequestServiceImpl implements RequestService {
 	return 1;
     }
 
+
+    public Map<String,Object> getPowerApiMsg( Integer status, Integer busId, Double powNum, String remarks ) {
+	try {
+	    Map< String,Object > map = new HashMap<>();
+	    map.put( "status", status );
+	    map.put( "busId", busId );
+	    map.put( "powNum", powNum );
+	    map.put( "model", 3 );
+	    map.put( "remarks", remarks );
+	    String url = PropertiesUtil.getWxmp_home() + POWER_API;
+	    String returnMsg = SignHttpUtils.WxmppostByHttp(  url, map, PropertiesUtil.getWxmpsignKey() );
+	    if ( CommonUtil.isNotEmpty( returnMsg ) ) {
+		Map< String,Object > returnParam = JSON.parseObject( returnMsg, Map.class );
+		return returnParam;
+	    }
+	} catch ( Exception e ) {
+	    LOG.error( "调用扣除粉币支付异常", e );
+	}
+	return null;
+    }
+
+
+
     public Map< String,Object > enterprisePayment( RequestUtils< ApiEnterprisePayment > requestUtils ) {
 	String url = PropertiesUtil.getWxmp_home() + ENTERPRISE_PAY_MENT;
 	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
