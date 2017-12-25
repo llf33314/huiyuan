@@ -675,6 +675,26 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	QRcodeKit.buildQRcode( url, 500, 500, response );
     }
 
+
+    @ApiOperation( value = "会员卡分享推荐", notes = "会员卡分享推荐" )
+    @ResponseBody
+    @RequestMapping( value = "/wxshareUrl", method = RequestMethod.POST )
+    public ServerResponse wxshareUrl( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    String url = memberCardPhoneService.tuijianQRcode( member.getId() );
+	    return ServerResponse.createBySuccess( "",url );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    LOG.error( "分享推荐异常", e );
+	    return ServerResponse.createByError();
+	}
+    }
+
+
     @ApiOperation( value = "会员卡分享推荐", notes = "会员卡分享推荐" )
     @ResponseBody
     @RequestMapping( value = "/wxshareCard", method = RequestMethod.POST )
