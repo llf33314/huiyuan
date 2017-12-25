@@ -1381,22 +1381,27 @@ public class MemberCardServiceImpl implements MemberCardService {
 		if ( CommonUtil.isNotEmpty( returnMap ) ) {
 		    Integer code=CommonUtil.toInteger( returnMap.get( "code" ) );
 		    if(code==0) {
-			for ( Integer id : ids ) {
-			    //赠送粉币
-			    MemberEntity memberEntity = memberMapper.selectById( id );
-			    Double fans_currency = memberEntity.getFansCurrency() + number;
-			    memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, number, "商家赠送", busId, fans_currency, "", 1 );
-			    MemberEntity memberEntity1 = new MemberEntity();
-			    memberEntity1.setId( memberEntity.getId() );
-			    memberEntity1.setFansCurrency( fans_currency );
-			    memberMapper.updateById( memberEntity1 );
+			JSONObject jsonObject=JSONObject.parseObject( CommonUtil.toString( returnMap.get( "data" ) ) );
+			Integer error=CommonUtil.toInteger( jsonObject.get( "error") );
+			if(error==0) {
+			    for ( Integer id : ids ) {
+				//赠送粉币
+				MemberEntity memberEntity = memberMapper.selectById( id );
+				Double fans_currency = memberEntity.getFansCurrency() + number;
+				memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, number, "商家赠送", busId, fans_currency, "", 1 );
+				MemberEntity memberEntity1 = new MemberEntity();
+				memberEntity1.setId( memberEntity.getId() );
+				memberEntity1.setFansCurrency( fans_currency );
+				memberMapper.updateById( memberEntity1 );
+			    }
+			}else{
+			    throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(),  CommonUtil.toString( jsonObject.get( "name" ) ));
 			}
 		    }else{
-		        JSONObject jsonObject=JSONObject.parseObject( CommonUtil.toString( returnMap.get( "data" ) ) );
-			throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(),  CommonUtil.toString( jsonObject.get( "name" ) ));
+			throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(),  "请求接口出错");
 		    }
 		} else {
-		    throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(), "扣除粉币出错" );
+		    throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(),  "请求接口出错" );
 		}
 	    }
 	} catch ( BusinessException e ){
