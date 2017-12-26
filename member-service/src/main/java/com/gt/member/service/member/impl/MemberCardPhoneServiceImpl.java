@@ -1014,7 +1014,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	}
 
 	if ( parma.get( "birth" ) != null ) {
-	    member.setBirth( DateTimeKit.parseDate( parma.get( "birth" ).toString() ) );
+	    member.setBirth( DateTimeKit.parseDate( parma.get( "birth" ).toString(),"yyyy-MM-dd" ) );
 	}
 	if ( CommonUtil.isNotEmpty( parma.get( "cardId" ) ) ) {
 	    member.setCardId( parma.get( "cardId" ).toString() );

@@ -594,8 +594,9 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	return null;
     }
 
-    public List< Integer > findTimeCard( Double money, Integer busId ) throws BusinessException {
-	List< Map< String,Object > > giveRules = memberGiveruleDAO.findByBusIdAndCtId( busId, 4 );
+    public Map<String,Object> findTimeCard( Double money, Integer busId ) throws BusinessException {
+	Map<String,Object> returnMap=new HashMap<>(  );
+        List< Map< String,Object > > giveRules = memberGiveruleDAO.findByBusIdAndCtId( busId, 4 );
 	MemberDate memberDate = findMemeberDate( busId, 4 );
 	List< Integer > times = new ArrayList< Integer >();
 	if ( giveRules.size() == 0 ) {
@@ -606,11 +607,14 @@ public class MemberCommonServiceImp implements MemberCommonService {
 		Double rechargeMoney = CommonUtil.toDouble( map.get( "grRechargemoney" ) );
 
 		if ( money.equals( rechargeMoney ) ) {
+		    returnMap.put("grValidDate",map.get( "grValidDate" )   );
 		    times.add( CommonUtil.toInteger( map.get( "grValidDate" ) ) );
 		    if ( CommonUtil.isNotEmpty( memberDate ) ) {
-			times.add( CommonUtil.toInteger( map.get( "delayDay" ) ) );
+			returnMap.put( "delayDay",CommonUtil.toInteger( map.get( "delayDay" ) ) );
 		    }
-		    return times;
+		    returnMap.put( "grId", map.get( "grId" ));
+		    returnMap.put( "gtId",map.get( "gtId" ) );
+		   return returnMap;
 		}
 	    }
 	}
@@ -695,7 +699,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 			continue;
 		    }
 		    // 扣除商家粉币数量
-		    if ( "3".equals( grgt.getGtId() ) ) {
+		    if ( 3== grgt.getGtId()  ) {
 			// 会员日赠送翻倍
 			if ( flag ) {
 			    count = count * memberDate.getFansCurrency();
@@ -709,7 +713,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 			giveConsume.setSendType( 0 );
 			giveConsume.setSendDate( new Date() );
 			memberGiveconsumeNewDAO.insert( giveConsume );
-		    } else if ( "2".equals( grgt.getGtId() ) ) {
+		    } else if (2== grgt.getGtId()  ) {
 			Integer flowCount = grgt.getNumber();
 			if ( flag ) {
 			    flowCount = flowCount * memberDate.getFlow();
@@ -748,8 +752,6 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    Integer gtId = ucs.getGtId();
 	    Integer ctId = ucs.getCtId();
 	    double price = ucs.getDiscountAfterMoney();
-	    BusUserEntity busUser = busUserDAO.selectById( busId );
-	    BigDecimal fenbi = busUser.getFansCurrency();
 
 	    Double fans_currency = 0.0;// 粉笔
 	    Integer integral = 0; // 积分
@@ -766,8 +768,8 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
 	    for ( MemberGiverulegoodstype grgt : grgts ) {
 		giveConsume = new MemberGiveconsumeNew();
-		if ( "1".equals( grgt.getGtId() ) ) {
-		    if ( "1".equals( grgt.getGiveType() ) ) {
+		if ( 1==grgt.getGtId()   ) {
+		    if ( 1==grgt.getGiveType() ) {
 			// 积分
 			Double money = grgt.getMoney();
 			int count = (int) Math.floor( price / money );
@@ -797,13 +799,10 @@ public class MemberCommonServiceImp implements MemberCommonService {
 		    Double money = grgt.getMoney();
 		    if ( price < money ) continue;
 		    // 扣除商家粉币数量
-		    if ( "3".equals( grgt.getGtId() ) ) {
+		    if ( 3== grgt.getGtId()  ) {
 			// 会员日 粉币赠送
 			if ( flag ) {
 			    count = count * memberday.getFansCurrency();
-			}
-			if ( !CommonUtil.compareTo( fenbi, count ) ) {
-			    continue;
 			}
 
 			// 扣除商家粉笔数量
@@ -819,7 +818,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 			    giveConsume.setSendDate( new Date() );
 			    memberGiveconsumeNewDAO.insert( giveConsume );
 			}
-		    } else if ( "2".equals( grgt.getGtId() ) ) {
+		    } else if ( 2== grgt.getGtId()  ) {
 			Integer flowCount = grgt.getNumber();
 			// 会员日赠送流量
 			if ( flag ) {

@@ -1395,7 +1395,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 				memberMapper.updateById( memberEntity1 );
 			    }
 			}else{
-			    throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(),  CommonUtil.toString( jsonObject.get( "name" ) ));
+			    throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(),  CommonUtil.toString( jsonObject.get( "msg" ) ));
 			}
 		    }else{
 			throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(),  "请求接口出错");
@@ -2278,7 +2278,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	     * 订单
 	     */
 	    map.put( "orderCode", ucNew.getOrderCode() );
-	    map.put( "dateTime", DateTimeKit.getDateTime( ucNew.getIsendDate() ) );
+	    map.put( "dateTime", ucNew.getCreateDate() );
 	    map.put( "money", ucNew.getDiscountAfterMoney() );
 	    SortedMap< String,Object > payStatus = dictService.getDict( "A004" );
 	    map.put( "payStatus", payStatus.get( CommonUtil.toString( ucNew.getPayStatus() ) ) );
@@ -2381,7 +2381,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	     * 订单
 	     */
 	    map.put( "orderCode", ucNew.getOrderCode() );
-	    map.put( "dateTime", DateTimeKit.getDateTime( ucNew.getIsendDate() ) );
+	    map.put( "dateTime", ucNew.getCreateDate() );
 	    map.put( "integral", ucNew.getIntegral() );
 
 	    List< UserConsumePay > userConsumePays = userConsumePayDAO.findByUcId( ucId );
@@ -2484,7 +2484,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	     * 订单
 	     */
 	    map.put( "orderCode", ucNew.getOrderCode() );
-	    map.put( "dateTime", DateTimeKit.getDateTime( ucNew.getIsendDate() ) );
+	    map.put( "dateTime", ucNew.getCreateDate() );
 	    map.put( "uccount", ucNew.getUccount() );
 
 	    return map;
@@ -2591,7 +2591,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	     */
 	    map.put( "orderCode", ucNew.getOrderCode() );
 	    map.put( "isend", ucNew.getIsend() );
-	    map.put( "dateTime", DateTimeKit.getDateTime( ucNew.getIsendDate() ) );
+	    map.put( "dateTime", ucNew.getCreateDate() );
 	    map.put( "totalMoney", ucNew.getTotalMoney() );
 	    map.put( "discountMoney", ucNew.getDiscountMoney() );
 	    map.put( "discountAfterMoney", ucNew.getDiscountAfterMoney() );
@@ -3022,21 +3022,28 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    newCard.setMcId( card.getMcId() );
 
 		    //时效卡
-		    List< Integer > dateCount = memberCommonService.findTimeCard( money, busId );
+		    Map<String,Object> returnMap = memberCommonService.findTimeCard( money, busId );
 		    Date expireDate = card.getExpireDate();
+		    Integer grValidDate=CommonUtil.toInteger( returnMap.get( "grValidDate" ));
 		    if ( expireDate == null ) {
-			newCard.setExpireDate( DateTimeKit.addMonths( dateCount.get( 0 ) ) );
+			newCard.setExpireDate( DateTimeKit.addMonths( grValidDate )  );
 		    } else {
 			if ( DateTimeKit.laterThanNow( card.getExpireDate() ) ) {
-			    newCard.setExpireDate( DateTimeKit.addMonths( expireDate, dateCount.get( 0 ) ) );
+			    newCard.setExpireDate( DateTimeKit.addMonths( expireDate, grValidDate ) );
 			} else {
-			    newCard.setExpireDate( DateTimeKit.addMonths( new Date(), dateCount.get( 0 ) ) );
+			    newCard.setExpireDate( DateTimeKit.addMonths( new Date(), grValidDate ) );
 			}
 		    }
+
 		    // 会员日延期多少天
-		    if ( dateCount.size() > 1 ) {
-			newCard.setExpireDate( DateTimeKit.addDate( newCard.getExpireDate(), dateCount.get( 1 ) ) );
+		    if ( CommonUtil.isNotEmpty( returnMap.get( "delayDay" ) )) {
+			Integer delayDay=CommonUtil.toInteger( returnMap.get( "delayDay" ) );
+			newCard.setExpireDate( DateTimeKit.addDate( newCard.getExpireDate(), delayDay) );
 		    }
+		    Integer grId=CommonUtil.toInteger( returnMap.get( "grId" ) );
+		    Integer gtId=CommonUtil.toInteger( returnMap.get( "gtId" ) );
+		    newCard.setGrId( grId );
+		    newCard.setGtId( gtId );
 		    memberCardDAO.updateById( newCard );
 		    memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 1, uc.getDiscountAfterMoney(), "会员充值", member.getBusId(), 0.0, uc.getOrderCode(), 0 );
 

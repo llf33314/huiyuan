@@ -126,7 +126,7 @@ public interface MemberCommonService {
      * 查询时效卡的充值
      * @return
      */
-    public List<Integer> findTimeCard(Double money, Integer busId)throws BusinessException;
+    public Map<String,Object> findTimeCard(Double money, Integer busId)throws BusinessException;
 
     /**
      * 副卡充值

@@ -195,7 +195,6 @@ public class MemberController {
     public ServerResponse sendNoticeToUser(HttpServletRequest request,
 		    HttpServletResponse response,Integer id,String memberIds){
 	try {
-	    Integer busId = SessionUtils.getPidBusId( request );
 	    memberNoticeService.sendNoticeToUser(id, memberIds);
 	    return ServerResponse.createBySuccess(  );
 	} catch ( BusinessException e ) {

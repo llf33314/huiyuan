@@ -24,7 +24,7 @@ import java.util.Map;
  * Created by Administrator on 2017/11/24.
  */
 @Service
-public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorService{
+public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorService {
 
     private static final Logger LOG = LoggerFactory.getLogger( MemberNodoInterceptorServiceImp.class );
 
@@ -51,7 +51,6 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 
     @Autowired
     private MemberGiveruleDAO memberGiveruleDAO;
-
 
     @Transactional
     public void changeFlow( Map< String,Object > params ) throws BusinessException {
@@ -86,24 +85,25 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 		m1.setId( memberEntity.getId() );
 		m1.setFlow( flow );
 		memberDAO.updateById( m1 );
-		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 4, uc.getChangeFlow().doubleValue(), "流量兑换失败已退回", uc.getBusId(), flow.doubleValue(), uc.getOrderCode(), 0 );
+		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 4, uc.getChangeFlow().doubleValue(), "流量兑换失败已退回", uc.getBusId(), flow.doubleValue(),
+				uc.getOrderCode(), 0 );
 	    }
-	}catch ( BusinessException e ){
+	} catch ( BusinessException e ) {
 	    throw e;
-	}catch ( Exception e ){
+	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
 
     }
 
-
-
     /**
      * 短信通知回调
+     *
      * @param params
+     *
      * @throws BusinessException
      */
-    public void smsNotice(Map<String,Object> params) throws  BusinessException{
+    public void smsNotice( Map< String,Object > params ) throws BusinessException {
 	//msgId,phone,status
 	try {
 	    Integer msgId = CommonUtil.toInteger( params.get( "msgId" ) );
@@ -116,14 +116,14 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 	    } else {
 		memberNoticeuserDAO.updateByMsgIdAndPhone( msgId, phone, 5 );
 	    }
-	}catch ( Exception e ){
-	    LOG.error( "短信通知回调异常,请求参数:"+ JSON.toJSONString( params ),e );
+	} catch ( Exception e ) {
+	    LOG.error( "短信通知回调异常,请求参数:" + JSON.toJSONString( params ), e );
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
 
     }
 
-    public void paySuccess(Map<String,Object> params)throws BusinessException {
+    public void paySuccess( Map< String,Object > params ) throws BusinessException {
 	try {
 	    String orderCode = CommonUtil.toString( params.get( "out_trade_no" ) );
 	    UserConsumeNew uc = userConsumeNewDAO.findOneByCode( orderCode );
@@ -140,7 +140,7 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 	    uc1.setId( uc.getId() );
 	    Integer numberCount = 0;
 
-	    MemberCardrecordNew memberCardrecordNew=null;
+	    MemberCardrecordNew memberCardrecordNew = null;
 	    //判断是否主卡充值 还是 副卡充值
 	    if ( uc.getCtId() == ctId ) {
 		//主卡充值 赠送数量
@@ -149,23 +149,31 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 		    newCard.setMcId( card.getMcId() );
 
 		    //时效卡
-		    List< Integer > dateCount = memberCommonService.findTimeCard( money, busId );
+		    Map< String,Object > returnMap = memberCommonService.findTimeCard( money, busId );
 		    Date expireDate = card.getExpireDate();
+		    Integer grValidDate = CommonUtil.toInteger( returnMap.get( "grValidDate" ));
 		    if ( expireDate == null ) {
-			newCard.setExpireDate( DateTimeKit.addMonths( dateCount.get( 0 ) ) );
+			newCard.setExpireDate( DateTimeKit.addMonths( grValidDate ) );
 		    } else {
 			if ( DateTimeKit.laterThanNow( card.getExpireDate() ) ) {
-			    newCard.setExpireDate( DateTimeKit.addMonths( expireDate, dateCount.get( 0 ) ) );
+			    newCard.setExpireDate( DateTimeKit.addMonths( expireDate, grValidDate ) );
 			} else {
-			    newCard.setExpireDate( DateTimeKit.addMonths( new Date(), dateCount.get( 0 ) ) );
+			    newCard.setExpireDate( DateTimeKit.addMonths( new Date(), grValidDate ) );
 			}
 		    }
+
 		    // 会员日延期多少天
-		    if ( dateCount.size() > 1 ) {
-			newCard.setExpireDate( DateTimeKit.addDate( newCard.getExpireDate(), dateCount.get( 1 ) ) );
+		    if ( CommonUtil.isNotEmpty( returnMap.get( "delayDay" ) ) ) {
+			Integer delayDay = CommonUtil.toInteger( returnMap.get( "delayDay" ) );
+			newCard.setExpireDate( DateTimeKit.addDate( newCard.getExpireDate(), delayDay ) );
 		    }
+		    Integer grId = CommonUtil.toInteger( returnMap.get( "grId" ) );
+		    Integer gtId = CommonUtil.toInteger( returnMap.get( "gtId" ) );
+		    newCard.setGrId( grId );
+		    newCard.setGtId( gtId );
+
 		    memberCardDAO.updateById( newCard );
-		    memberCardrecordNew=memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, 0.0, uc.getOrderCode(), 0 );
+		    memberCardrecordNew = memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, 0.0, uc.getOrderCode(), 0 );
 
 		} else if ( ctId == 3 ) {
 		    MemberRechargegive rechargegive = memberCommonService.findRechargegive( money, card.getGrId(), busId, card.getCtId() );
@@ -180,7 +188,7 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 		    newCard.setMoney( balance );
 		    memberCardDAO.updateById( newCard );
 
-		    memberCardrecordNew=memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, balance, uc.getOrderCode(), 0 );
+		    memberCardrecordNew = memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, balance, uc.getOrderCode(), 0 );
 
 		    uc1.setBalance( balance );
 
@@ -201,7 +209,8 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 		    memberCardDAO.updateById( newCard );
 		    uc1.setBalanceCount( frequency );
 
-		    memberCardrecordNew= memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, frequency.doubleValue(), uc.getOrderCode(), 0 );
+		    memberCardrecordNew = memberCommonService
+				    .saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, frequency.doubleValue(), uc.getOrderCode(), 0 );
 		}
 
 	    } else {
@@ -235,9 +244,8 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 		    Double balance = money + card.getMoney();
 		    newCard.setMoney( balance );
 		    memberCardDAO.updateById( newCard );
-		    memberCardrecordNew=memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, balance, uc.getOrderCode(), 0 );
+		    memberCardrecordNew = memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, balance, uc.getOrderCode(), 0 );
 		    uc1.setBalance( balance );
-
 
 		} else if ( ctId == 5 ) {
 		    //次卡充值
@@ -252,7 +260,8 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 		    memberCardDAO.updateById( newCard );
 		    uc1.setBalanceCount( frequency );
 
-		    memberCardrecordNew=memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, frequency.doubleValue(), uc.getOrderCode(), 0 );
+		    memberCardrecordNew = memberCommonService
+				    .saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, frequency.doubleValue(), uc.getOrderCode(), 0 );
 		}
 
 	    }
@@ -277,24 +286,23 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 
 	    MemberEntity member = memberDAO.selectById( uc.getMemberId() );
 	    if ( uc.getCtId() == 3 ) {
-	        systemMsgService.sendChuzhiCard( member,memberCardrecordNew );
+		systemMsgService.sendChuzhiCard( member, memberCardrecordNew );
 	    } else if ( uc.getCtId() == 5 ) {
 		systemMsgService.sendCikaCard( member, money, numberCount );
 	    }
 
 	    //立即送
 	    memberCommonService.findGiveRule( orderCode );
-	}catch ( BusinessException e ){
+	} catch ( BusinessException e ) {
 	    throw e;
-	}catch ( Exception e ){
+	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
 
-
     @Transactional
-    public void buyCardPaySuccess(Map<String,Object> params)throws  BusinessException{
-        try {
+    public void buyCardPaySuccess( Map< String,Object > params ) throws BusinessException {
+	try {
 	    String orderCode = CommonUtil.toString( params.get( "out_trade_no" ) );
 	    LOG.error( "支付包支付回调订单单号 ：" + orderCode );
 	    UserConsumeNew uc = userConsumeNewDAO.findOneByCode( orderCode );
@@ -353,9 +361,9 @@ public class MemberNodoInterceptorServiceImp implements  MemberNodoInterceptorSe
 	    // 新增会员短信通知
 	    member = memberDAO.selectById( uc.getMemberId() );
 	    systemMsgService.sendNewMemberMsg( member );
-	}catch ( BusinessException e ){
-            throw  e;
-	}catch ( Exception e ){
+	} catch ( BusinessException e ) {
+	    throw e;
+	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }
