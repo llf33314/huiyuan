@@ -699,14 +699,12 @@ public class MemberController {
 		    @ApiImplicitParam( name = "cardNo", value = "手机号或卡号" , paramType = "query", required = false, dataType = "String" )
     })
     @ResponseBody
-    @RequestMapping( value = "/consumefindMemberCard", method = RequestMethod.POST )
+    @RequestMapping( value = "/consumefindMemberCard", method = RequestMethod.GET )
     public ServerResponse consumefindMemberCard(HttpServletRequest request,
-		    HttpServletResponse response,  String params){
+		    HttpServletResponse response,  String cardNo){
 	try {
-	    Map<String,Object> paramMap=JSON.parseObject( params,Map.class );
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    Integer dangqianbusId = SessionUtils.getLoginUser( request ).getId();
-	    String cardNo=CommonUtil.toString( paramMap.get( "cardNo" ) );
 	   Map<String,Object> map= memberCardService.consumefindMemberCard(busId,cardNo,dangqianbusId);
 	    return ServerResponse.createBySuccess( map  );
 	} catch ( BusinessException e ) {
@@ -722,7 +720,14 @@ public class MemberController {
     @RequestMapping( value = "/consumeMemberCard", method = RequestMethod.POST )
     public ServerResponse consumeMemberCard(HttpServletRequest request,
 		    HttpServletResponse response,  String params){
-        return null;
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    Integer dangqianbusId = SessionUtils.getLoginUser( request ).getId();
+	    memberCardService.consumeMemberCard(busId,params,dangqianbusId);
+	    return ServerResponse.createBySuccess(   );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
     }
 
 

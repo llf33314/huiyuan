@@ -1152,21 +1152,34 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
 	    if(ce.getUsehuiyuanquanyi()==1) {
 		// 查询会员折扣
-		if ( CommonUtil.isNotEmpty( card ) && card.getCtId() == 2 ) {
+
+		//副卡
+		MemberGradetypeAssistant memberGradetypeAssistant=memberGradetypeAssistantDAO.findAssistantBygtIdAndFuctId( memberEntity.getBusId(),card.getGtId(),2);
+		Double fukaDiscount=10.0;
+		if(CommonUtil.isNotEmpty( memberGradetypeAssistant )){
+		    //返回副卡折扣
+		    fukaDiscount= memberGradetypeAssistant.getDiscount();
+		}
+		if ( CommonUtil.isNotEmpty( card ) ) {
 		    if ( !isUseDisCount ) {
 			// 折扣卡
-			//判断是否是会员日 会员日存在折上折
-			MemberGiverule gr = memberGiveruleDAO.selectById( card.getGrId() );
-			MemberDate memberDate = findMemeberDate( card.getBusId(), card.getCtId() );
-			Double discount = 1.0;
-			if ( CommonUtil.isNotEmpty( memberDate ) ) {
-			    discount = memberDate.getDiscount().doubleValue();
+			if(card.getCtId() == 2 ) {
+			    //判断是否是会员日 会员日存在折上折
+			    MemberGiverule gr = memberGiveruleDAO.selectById( card.getGrId() );
+			    MemberDate memberDate = findMemeberDate( card.getBusId(), card.getCtId() );
+			    Double discount = 1.0;
+			    if ( CommonUtil.isNotEmpty( memberDate ) ) {
+				discount = memberDate.getDiscount().doubleValue();
+			    }
+			    discount = discount * gr.getGrDiscount() / 100.0;
+			    Double discountMemberMoney = formatNumber( pay * discount );
+			    pay = pay - discountMemberMoney; // 折扣后的金额
+			    ce.setDiscountMemberMoney( discountMemberMoney ); // 会员优惠金额
+			}else if(card.getCtId()==3){
+			    Double discountMemberMoney = formatNumber( pay * fukaDiscount/10.0 );
+			    pay = pay - discountMemberMoney; // 折扣后的金额
+			    ce.setDiscountMemberMoney( discountMemberMoney ); // 会员优惠金额
 			}
-			discount = discount * gr.getGrDiscount() / 100.0;
-			Double discountMemberMoney = formatNumber( pay * discount );
-			pay = pay - discountMemberMoney; // 折扣后的金额
-			ce.setDiscountMemberMoney( discountMemberMoney ); // 会员优惠金额
-
 		    }
 		}
 	    }
@@ -1251,5 +1264,55 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	}
     }
 
+
+
+    @Override
+    public void verificationCard_2( Map< String,Object > params ) throws BusinessException {
+	Map< String,Object > map = new HashMap< String,Object >();
+	try {
+	    if ( CommonUtil.isEmpty( params.get( "codes" ) ) ) {
+		throw new BusinessException( ResponseMemberEnums.NULL.getCode(), ResponseMemberEnums.NULL.getMsg() );
+	    }
+
+	    // 多粉优惠券处理
+	    String codes = params.get( "codes" ).toString();
+	    String[] str = codes.split( "," );
+	    List< String > codeList = new ArrayList< String >();
+	    for ( String s : str ) {
+		if ( CommonUtil.isNotEmpty( s ) ) {
+		    codeList.add( CommonUtil.toString( s ) );
+		}
+	    }
+
+	    List< Map< String,Object > > stateMap = duofenCardGetMapper.findByCodes( codeList );
+	    if ( CommonUtil.isEmpty( stateMap ) || stateMap.size() == 0 ) {
+		throw new BusinessException( ResponseMemberEnums.COUPONSE_NO_EXIST.getCode(), ResponseMemberEnums.COUPONSE_NO_EXIST.getMsg() );
+	    }
+	    for ( Map< String,Object > map2 : stateMap ) {
+		if ( "1".equals( map2.get( "state" ) ) || "2".equals( map2.get( "state" ) ) ) {
+		    throw new BusinessException( ResponseMemberEnums.COUPONSE_NO_GUOQI.getCode(), ResponseMemberEnums.COUPONSE_NO_GUOQI.getMsg() );
+		}
+	    }
+
+	    if ( CommonUtil.isEmpty( params.get( "storeId" ) ) ) {
+		duofenCardGetMapper.updateByCodes( codeList ); // 卡券核销
+	    } else {
+		Integer storeId = CommonUtil.toInteger( params.get( "storeId" ) );
+		duofenCardGetMapper.updateStoreIdByCodes( codeList, storeId ); // 卡券核销
+	    }
+
+	    //推荐优惠券赠送
+	    for ( Map< String,Object > map2 : stateMap ) {
+		if ( CommonUtil.toInteger( map2.get( "recommendId" ) ) > 0 ) {
+		    MemberRecommend recommend = memberRecommendDAO.selectById( CommonUtil.toInteger( map2.get( "recommendId" ) ) );
+		    tuijianGive( recommend );
+		}
+	    }
+	} catch ( BusinessException e ) {
+	    throw new BusinessException( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
 
 }

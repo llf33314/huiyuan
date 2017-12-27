@@ -134,7 +134,6 @@ public interface MemberCommonService {
      * @param price
      * @param gtId
      * @param busId
-     * @param ctId
      * @return
      */
     public MemberRechargegiveAssistant findAssistantrechargegive(double price, Integer gtId, Integer busId,
@@ -192,5 +191,14 @@ public interface MemberCommonService {
      * @throws Exception
      */
     public MemberShopEntity publicMemberCountMoney( MemberShopEntity ce ) throws Exception;
+
+
+    /**
+     * 卡券核销(新方法)
+     *
+     * @param params 包含codes 多粉卡券code ,storeId 门店id
+     * @return
+     */
+    public void verificationCard_2( Map< String,Object > params )throws BusinessException;
 
 }

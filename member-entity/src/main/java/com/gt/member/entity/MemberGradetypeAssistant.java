@@ -43,7 +43,7 @@ public class MemberGradetypeAssistant extends Model<MemberGradetypeAssistant> {
      */
 	@TableField("busId")
 	private Integer busId;
-	private Integer discount;
+	private Double discount;
     /**
      * 副卡会员卡类型
      */
