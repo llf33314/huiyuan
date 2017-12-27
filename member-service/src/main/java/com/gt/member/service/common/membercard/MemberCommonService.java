@@ -1,5 +1,6 @@
 package com.gt.member.service.common.membercard;
 
+import com.gt.entityBo.MemberShopEntity;
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
 
@@ -182,5 +183,14 @@ public interface MemberCommonService {
      * @return
      */
     public Integer dataSource(HttpServletRequest request);
+
+
+    /**
+     * 统一门店计算 不包括商品详情
+     * @param ce
+     * @return
+     * @throws Exception
+     */
+    public MemberShopEntity publicMemberCountMoney( MemberShopEntity ce ) throws Exception;
 
 }

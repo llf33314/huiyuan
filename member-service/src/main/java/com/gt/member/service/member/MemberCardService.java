@@ -415,4 +415,12 @@ public interface MemberCardService {
      * @return
      */
     public Map<String,Object>  consumefindMemberCard(Integer busId,String cardNo,Integer dangqianBusId);
+
+    /**
+     * 会员卡消费
+     * @param busId
+     * @param params
+     * @param dangqianBusId
+     */
+    public void consumeMemberCard(Integer busId,String params,Integer dangqianBusId)throws BusinessException;
 }

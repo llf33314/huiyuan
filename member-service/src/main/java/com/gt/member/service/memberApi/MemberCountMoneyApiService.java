@@ -10,14 +10,6 @@ import com.gt.entityBo.MemberShopEntity;
  */
 public interface MemberCountMoneyApiService {
 
-    /**
-     * 统一门店计算 不包括商品详情
-     * @param ce
-     * @return
-     * @throws Exception
-     */
-    public MemberShopEntity publicMemberCountMoney( MemberShopEntity ce ) throws Exception;
-
 
     /**
      * 跨门店购买

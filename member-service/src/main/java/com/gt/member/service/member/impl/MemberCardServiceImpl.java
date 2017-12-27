@@ -20,6 +20,7 @@ import com.gt.api.util.SessionUtils;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.common.entity.WxShop;
+import com.gt.entityBo.MemberShopEntity;
 import com.gt.member.dao.*;
 import com.gt.member.dao.common.BusUserBranchRelationDAO;
 import com.gt.member.dao.common.BusUserDAO;
@@ -3171,6 +3172,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 
     public Map< String,Object > consumefindMemberCard( Integer busId, String cardNo, Integer dangqianBusId ) {
 	Map< String,Object > map = new HashMap<>();
+	map.put( "usehuiyuanquanyi",1 );
 	String cardNodecrypt = "";
 	try {
 	    try {
@@ -3182,7 +3184,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 		SortedMap< String,Object > maps = dictService.getDict( "A001" );
 		Object obj = maps.get( busId );
 		if ( CommonUtil.isEmpty( obj ) ) {
-		    throw new BusinessException( ResponseMemberEnums.PLEASE_SCAN_CODE );
+		    map.put( "tishiMsg", "请扫码支付,可享受更多的会员权益。");
+		    map.put( "usehuiyuanquanyi",0 );
 		}
 	    }
 
@@ -3198,6 +3201,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    } else {
 		shopId = shops.get( 0 ).getId();
 	    }
+	    map.put( "shopId", shopId);
+
 
 	    if ( cardNodecrypt.contains( "?time" ) ) {
 		// 查询卡号是否存在
@@ -3246,16 +3251,16 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    card = memberCardDAO.selectById( memberEntity.getMcId() );
 		}
 	    }
-
-	    if ( CommonUtil.isEmpty( card ) ) {
-		map.put( "isMemberCard", 0 );
+	    if(CommonUtil.isEmpty( memberEntity )){
+	        map.put( "youke", 1);
+	    }else  if ( CommonUtil.isEmpty( card ) ) {
+		map.put( "usehuiyuanquanyi",0 );
 		//throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR.getCode(), ResponseMemberEnums.NOT_MEMBER_CAR.getMsg() );
 	    } else if ( card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
 		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
 		MemberGiverule giveRule = memberGiveruleDAO.selectById( card.getGrId() );
-		map.put( "isMemberCard", 1 );
 		map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
 		map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
 		map.put( "cardNo", card.getCardNo() );
@@ -3306,7 +3311,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    LOG.error( "ERP查询会员信息异常", e );
+	    LOG.error( "pc结算查询会员信息异常", e );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
@@ -3341,6 +3346,62 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    }
 	}
 	return duofencards;
+    }
+
+
+
+    /**
+     * 会员卡消费
+     * @param busId
+     * @param params
+     * @param dangqianBusId
+     */
+    @Transactional
+    public void consumeMemberCard(Integer busId,String params,Integer dangqianBusId)throws BusinessException{
+	//1:查询会员卡信息和是否享受会员权益
+	//2:是否是借款  借款核销借款数据
+	//3:是否使用了优惠券
+	//4:是否使用了粉币
+	//5：是否使用了积分
+	try {
+	    Map< String,Object > map = JSON.parseObject( params, Map.class );
+	    Integer memberId = CommonUtil.toInteger( map.get( "memberId" ) );
+	    Integer usehuiyuanquanyi = CommonUtil.toInteger( map.get( "usehuiyuanquanyi" ) );  //0代表不能 1能用
+	    Double xiaofeiMoney = CommonUtil.toDouble( map.get( "xiaofeiMoney" ) );
+
+	    Integer useCoupon = CommonUtil.toInteger( map.get( "useCoupon" ) );
+	    MemberShopEntity ce = new MemberShopEntity();
+	    ce.setTotalMoney( xiaofeiMoney );
+	    ce.setUsehuiyuanquanyi( usehuiyuanquanyi );
+	    ce.setMemberId( memberId );
+	    ce.setUseCoupon( useCoupon );
+	    if ( useCoupon == 1 ) {
+		Integer gId = CommonUtil.toInteger( map.get( "gId" ) );
+		ce.setCoupondId( gId );
+	    }
+	    Integer useFenbi = CommonUtil.toInteger( map.get( "useFenbi" ) );
+	    ce.setUseFenbi( useFenbi );
+	    Integer userJifen = CommonUtil.toInteger( map.get( "userJifen" ) );
+	    ce = memberCommonService.publicMemberCountMoney( ce );
+	    Double jisuanMoney = CommonUtil.toDouble( map.get( "jisuanMoney" ) );//前端计算的支付金额
+	    if(ce.getBalanceMoney()==jisuanMoney){
+	        throw new BusinessException( ResponseMemberEnums.ERROR_QR_CODE );
+	    }
+
+
+	    Integer jie = CommonUtil.toInteger( map.get( "jie" ) );
+
+	}catch ( BusinessException e ){
+	    throw  e;
+	}catch (Exception e ){
+	    LOG.error( "支付失败",e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+
+
+
+
+
     }
 
 }
