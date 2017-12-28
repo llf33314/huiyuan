@@ -3277,7 +3277,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    if ( "1".equals( CommonUtil.toString( cards.get( 0 ).get( "isrecommend" ) ) ) ) {
 
 		        List<Integer> fuCtIds=memberGradetypeAssistantDAO.findAssistantBygtId( busId, card.getGtId() );
-			//卡通副卡
+			map.put( "fuCtIds",fuCtIds );
+		        //卡通副卡
 			MemberGradetypeAssistant memberGradetypeAssistant = memberGradetypeAssistantDAO.findAssistantBygtIdAndFuctId( busId, card.getGtId(), 2 );
 			if ( CommonUtil.isNotEmpty( memberGradetypeAssistant ) ) {
 			    //返回副卡折扣

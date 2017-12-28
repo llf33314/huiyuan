@@ -29,7 +29,7 @@ public class DictServiceImpl implements DictService {
     private BusUserNumDAO busUserNumDAO;
 
     @Override
-    public SortedMap<String, Object> getDict( String type ) throws BusinessException {
+    public SortedMap<String, Object> getDict( String type) throws BusinessException {
 	try {
 	    SortedMap<String, Object> map = new TreeMap<String, Object>();
 	    List<Map<String, Object>> list =  dictItemsDAO.getDictReturnKeyAndValue( type );

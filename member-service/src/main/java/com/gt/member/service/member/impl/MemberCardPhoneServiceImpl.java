@@ -157,7 +157,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	subQrPayParams.setMemberId( consumeNew.getMemberId() );//会员id
 	subQrPayParams.setDesc( "购买会员卡" );//描述
 	subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
-	String returnUrl = PropertiesUtil.getWebHome() + "/#/home/"+consumeNew.getBusId();
+	String returnUrl =PropertiesUtil.getWebHome()+"/html/phone/index.html#/home/"+consumeNew.getBusId();
 	String sucessUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/buyCardPaySuccess.do";
 	subQrPayParams.setReturnUrl( returnUrl );
 	subQrPayParams.setNotifyUrl( sucessUrl );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
@@ -901,6 +901,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    sub.setMemberId( uc.getMemberId() );
 	    sub.setDesc( "会员卡充值" );
 	    sub.setIsreturn( 1 );
+	    returnUrl=PropertiesUtil.getWebHome()+"/html/phone/index.html#/home/"+busId;
 	    sub.setReturnUrl( returnUrl );
 	    String notifyUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/paySuccess";
 	    sub.setNotifyUrl( notifyUrl );
