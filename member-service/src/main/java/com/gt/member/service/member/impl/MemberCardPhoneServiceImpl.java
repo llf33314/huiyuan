@@ -165,9 +165,8 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	//  subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "mallOrder/toIndex.do" );//推送路径(尽量不要带参数)
 
 	subQrPayParams.setPayWay( payType );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
-	KeysUtil keyUtil = new KeysUtil();
-	String params = keyUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );
-	return PropertiesUtil.getWxmp_home() + "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj=" + params;
+	String url = requestService.payApi(subQrPayParams);
+	return url;
     }
 
     /**
