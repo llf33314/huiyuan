@@ -3273,12 +3273,11 @@ public class MemberCardServiceImpl implements MemberCardService {
 		map.put( "memberId", memberEntity.getId() );
 		map.put( "cardId", card.getMcId() );
 
-		if ( card.getCtId() == 3 ) {
-		    if ( "1".equals( CommonUtil.toString( cards.get( 0 ).get( "isrecommend" ) ) ) ) {
-
-		        List<Integer> fuCtIds=memberGradetypeAssistantDAO.findAssistantBygtId( busId, card.getGtId() );
-			map.put( "fuCtIds",fuCtIds );
-		        //卡通副卡
+		if ( "1".equals( CommonUtil.toString( cards.get( 0 ).get( "isrecommend" ) ) ) ) {
+		    List< Integer > fuCtIds = memberGradetypeAssistantDAO.findAssistantBygtId( busId, card.getGtId() );
+		    map.put( "fuCtIds", fuCtIds );
+		    //卡通副卡
+		    if ( card.getCtId() == 3 ) {
 			MemberGradetypeAssistant memberGradetypeAssistant = memberGradetypeAssistantDAO.findAssistantBygtIdAndFuctId( busId, card.getGtId(), 2 );
 			if ( CommonUtil.isNotEmpty( memberGradetypeAssistant ) ) {
 			    //返回副卡折扣

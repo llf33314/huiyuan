@@ -43,7 +43,7 @@
 
 	<select id="findByBusIdAndGtId" resultMap="BaseResultMap">
 		select <include refid="Base_Column_List" />  from t_member_rechargegive_assistant
-		where busId=#{busId} and gtId=#{gtId} ORDER BY money ASC
+		where busId=#{busId} and gtId=#{gtId} and fuctId=#{fuctId} ORDER BY money ASC
 
 	</select>
 

@@ -629,7 +629,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
     }
 
     public MemberRechargegiveAssistant findAssistantrechargegive( double price, Integer gtId, Integer busId, Integer fuctId ) throws BusinessException {
-	List< MemberRechargegiveAssistant > rechargeGives = memberRechargegiveAssistantDAO.findByBusIdAndGtId( busId, gtId );
+	List< MemberRechargegiveAssistant > rechargeGives = memberRechargegiveAssistantDAO.findByBusIdAndGtId( busId, gtId,fuctId );
 	if ( rechargeGives == null || rechargeGives.size() == 0 ) {
 	    return null;
 	}

@@ -37,5 +37,5 @@ public interface MemberRechargegiveAssistantDAO extends BaseMapper<MemberRecharg
      * @param gtId
      * @return
      */
-    List<MemberRechargegiveAssistant> findByBusIdAndGtId(@Param("busId")Integer busId,@Param("gtId")Integer gtId);
+    List<MemberRechargegiveAssistant> findByBusIdAndGtId(@Param("busId")Integer busId,@Param("gtId")Integer gtId,@Param("fuctId")Integer fuctId);
 }

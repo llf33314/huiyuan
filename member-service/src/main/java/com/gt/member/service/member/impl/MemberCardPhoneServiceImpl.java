@@ -854,7 +854,6 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 	    Integer ctId = CommonUtil.toInteger( params.get( "ctId" ) );  //充值选择的卡片
 	    Double money = CommonUtil.toDouble( params.get( "money" ) );
-	    String returnUrl = CommonUtil.toString( params.get( "returnUrl" ) );
 	    Integer payWay = CommonUtil.toInteger( params.get( "payWay" ) );
 	    MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
 	    MemberCard card = cardMapper.selectById( memberEntity.getMcId() );
@@ -901,7 +900,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    sub.setMemberId( uc.getMemberId() );
 	    sub.setDesc( "会员卡充值" );
 	    sub.setIsreturn( 1 );
-	    returnUrl=PropertiesUtil.getWebHome()+"/html/phone/index.html#/home/"+busId;
+	    String returnUrl=PropertiesUtil.getWebHome()+"/html/phone/index.html#/home/"+busId;
 	    sub.setReturnUrl( returnUrl );
 	    String notifyUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/paySuccess";
 	    sub.setNotifyUrl( notifyUrl );
