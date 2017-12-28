@@ -634,6 +634,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    return null;
 	}
 	for ( int i = 0; i < rechargeGives.size(); i++ ) {
+	    if(rechargeGives.get( i ).getFuctId()!=fuctId)continue;
 	    if ( i + 1 == rechargeGives.size() ) {
 		double money = rechargeGives.get( i ).getMoney();
 		if ( money <= price ) {
