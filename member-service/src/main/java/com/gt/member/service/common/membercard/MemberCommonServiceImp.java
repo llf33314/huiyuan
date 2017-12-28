@@ -367,6 +367,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	cr.setBusId( busId );
 	cr.setBalance( balance );
 	cr.setOrderCode( orderCode );
+	cr.setRtype( rtype );
 	try {
 	    memberCardrecordNewDAO.insert( cr );
 	    if ( recordType == 2 ) {
@@ -634,7 +635,6 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    return null;
 	}
 	for ( int i = 0; i < rechargeGives.size(); i++ ) {
-	    if(rechargeGives.get( i ).getFuctId()!=fuctId)continue;
 	    if ( i + 1 == rechargeGives.size() ) {
 		double money = rechargeGives.get( i ).getMoney();
 		if ( money <= price ) {

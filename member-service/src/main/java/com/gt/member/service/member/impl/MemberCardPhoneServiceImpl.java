@@ -161,7 +161,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	String sucessUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/buyCardPaySuccess.do";
 	subQrPayParams.setReturnUrl( returnUrl );
 	subQrPayParams.setNotifyUrl( sucessUrl );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
-	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
+	subQrPayParams.setIsSendMessage( 0 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
 	//  subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "mallOrder/toIndex.do" );//推送路径(尽量不要带参数)
 
 	subQrPayParams.setPayWay( payType );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
@@ -208,8 +208,9 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
      * @throws Exception
      */
     @Transactional
-    public void linquMemberCard( Map< String,Object > params, Integer memberId ) throws BusinessException {
+    public Map<String,Object> linquMemberCard( Map< String,Object > params, Integer memberId ) throws BusinessException {
 	try {
+	    Map<String,Object> map=new HashMap<>(  );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    String phone = CommonUtil.toString( params.get( "phone" ) );
 
@@ -436,6 +437,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 			}
 		    }
 		}
+		map.put( "pleasyBuyCard" ,0);
 	    } else {
 		Integer gtId = CommonUtil.toInteger( params.get( "gtId" ) );
 		//购买会员卡
@@ -464,8 +466,10 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 		Integer payType = CommonUtil.toInteger( params.get( "payType" ) );
 		String url = wxPayWay( uc, payType );
-		throw new BusinessException( ResponseMemberEnums.PLEASE_BUY_CARD.getCode(), url );
+		map.put( "pleasyBuyCard" ,1);
+		map.put( "url" ,url);
 	    }
+	    return map;
 	} catch ( BusinessException e ) {
 	    throw e;
 	} catch ( Exception e ) {

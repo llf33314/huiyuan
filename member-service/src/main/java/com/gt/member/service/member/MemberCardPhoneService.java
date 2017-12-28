@@ -34,7 +34,7 @@ public interface MemberCardPhoneService {
      * @return
      * @throws BusinessException
      */
-    public void linquMemberCard( Map< String,Object > params,Integer memberId  ) throws BusinessException;
+    public Map<String,Object> linquMemberCard( Map< String,Object > params,Integer memberId  ) throws BusinessException;
 
     /**
      * 购买会员卡成功回调
