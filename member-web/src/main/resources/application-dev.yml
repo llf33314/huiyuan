@@ -15,10 +15,24 @@ spring:
    cache: false
   #redis配置
  redis:
-  host: 113.106.202.51
-  port: 6379
   password: gt@123456
+  timeout: 1000
   database: 3
+  pool:
+    max-active: 50
+    max-wait: -1
+    max-idle: 20
+    min-idle: 0
+    #redis集群配置
+  cluster:
+    nodes: 113.106.202.51:6379,113.106.202.50:9379,113.106.202.54:9379
+    max-attempts: 6
+    max-redirects: 6
+    #redis哨兵模式配置
+  sentinel:
+    nodes: 113.106.202.51:26379,113.106.202.50:29379,113.106.202.54:29379
+    master: mymaster
+
 
  session:
   store-type: redis
@@ -26,7 +40,7 @@ spring:
 
 datasource:
  druid:
-   url: jdbc:mysql://113.106.202.51:3306/gt_member?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
+   url: jdbc:mysql://113.106.202.51:3306/gt_member_h?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
    username: root
    password: gt123456
    driver-class-name: com.mysql.jdbc.Driver
@@ -76,7 +90,7 @@ server:
     timeout: 30
 
 web:
- webHome: http://192.168.2.241  #本项目域名
+ webHome: http://member.yifriend.net  #本项目域名
  wxmp_home: http://yifriend.net/  #wxmp
  wxmpsignKey: WXMP2017   #wxmp 秘钥
  cardNoKey:  GLC8DeuY #会员卡秘钥
