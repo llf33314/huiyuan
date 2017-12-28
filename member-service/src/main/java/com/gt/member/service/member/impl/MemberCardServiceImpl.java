@@ -627,7 +627,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 	    //会员日操作
 	    Integer ismemberDate = CommonUtil.toInteger( publicParams.get( "ismemberDate" ) );
-	    if ( ismemberDate == 1 ) {
+	    if ( ismemberDate == 0 ) {
 		MemberDate memberdate = new MemberDate();
 		memberdate.setBusId( busUserId );
 		memberdate.setCtId( ctId );
