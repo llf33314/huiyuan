@@ -236,6 +236,9 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 			}
 		    }
 		    memberCardDAO.updateById( newCard );
+		    memberCardrecordNew = memberCommonService
+				    .saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId,0.0 , uc.getOrderCode(), 0 );
+
 		} else if ( ctId == 3 ) {
 		    //储值卡充值
 		    MemberCard newCard = new MemberCard();
