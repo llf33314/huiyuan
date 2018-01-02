@@ -179,6 +179,8 @@ public class MemberEntity extends Model< MemberEntity > {
      */
     private String  openid2;
 
+    private Double rechargeMoney;
+
     @Override
     protected Serializable pkVal() {
 	return this.id;

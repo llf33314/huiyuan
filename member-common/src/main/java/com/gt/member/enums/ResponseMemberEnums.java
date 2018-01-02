@@ -49,6 +49,7 @@ public enum ResponseMemberEnums {
     MEMBER_QIANDAO(5029,"亲,你已经签到过"),
     NOT_RECHARGE_JFIEN(5030,"积分卡不能充值"),
     SEND_NOTICE(5031,"模板已经发送不能删除"),
+    PLEASE_RECHARGE(5032,"卡内剩余次数不足,请充值"),
 
 
 

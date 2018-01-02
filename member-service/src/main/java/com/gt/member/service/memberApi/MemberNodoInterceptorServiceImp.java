@@ -180,12 +180,18 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 		    //储值卡充值
 		    MemberCard newCard = new MemberCard();
 		    newCard.setMcId( card.getMcId() );
+		    Map<String,Object> gradeMap= memberCommonService.rechargeCtId3( busId,ctId,card.getGtId(),memberId,money );
 
 		    if ( CommonUtil.isNotEmpty( rechargegive ) ) {
 			money = money + rechargegive.getGiveCount(); //充值+赠送金额
 		    }
 		    Double balance = money + card.getMoney();
 		    newCard.setMoney( balance );
+		    if(CommonUtil.isNotEmpty( gradeMap )){
+			newCard.setGtId( CommonUtil.toInteger( gradeMap.get( "gtId" ) ) );
+			newCard.setGrId( CommonUtil.toInteger( gradeMap.get( "grId" ) ) );
+		    }
+
 		    memberCardDAO.updateById( newCard );
 
 		    memberCardrecordNew = memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, balance, uc.getOrderCode(), 0 );

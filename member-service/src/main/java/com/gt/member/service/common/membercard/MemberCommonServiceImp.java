@@ -859,17 +859,13 @@ public class MemberCommonServiceImp implements MemberCommonService {
 		member.setFansCurrency( member1.getFansCurrency() + fans_currency );
 		member.setFlow( member1.getFlow() + flow );
 		member.setIntegral( member1.getIntegral() + integral );
-		member.setTotalIntegral( member1.getTotalIntegral() + integral );
+		member.setTotalIntegral( member1.getTotalIntegral() + integral ); //积分升级
+		member.setTotalMoney( member1.getTotalMoney() + price ); //消费升级
 		if ( CommonUtil.isNotEmpty( ucs.getDiscountAfterMoney() ) ) {
 		    price = ucs.getDiscountAfterMoney();
 		}
 		if ( ctId == 5 ) {
 		    price = ucs.getUccount();
-		}
-		if ( card.getCtId() == 3 && ucs.getRecordType() == 1 ) {
-		    member.setTotalMoney( member1.getTotalMoney() + price );  //储值卡 金额升级只在充值的时候升级
-		} else if ( card.getCtId() != 3 ) {
-		    member.setTotalMoney( member1.getTotalMoney() + price );  //其他卡 在消费的时候升级
 		}
 
 		memberEntityDAO.updateById( member );
@@ -883,7 +879,6 @@ public class MemberCommonServiceImp implements MemberCommonService {
 		if ( flow > 0 ) {
 		    saveCardRecordOrderCodeNew( member.getId(), 4, flow.doubleValue(), "赠送流量", member1.getBusId(), member.getFlow().doubleValue(), ucs.getOrderCode(), 1 );
 		}
-
 	    }
 	    Map< String,Object > map = null;
 	    // 判断时效卡升级
@@ -968,7 +963,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 				    }
 				}
 
-				// 金额升级
+				// 消费金额升级
 				if ( 1 == nextGiveRule.getGrUpgradeType() ) {
 				    if ( totalmoney >= nextGiveRule.getGrUpgradeCount() ) {
 					map.put( "gtId", id );
@@ -1314,6 +1309,49 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
+    }
+
+
+    public Map<String,Object>  rechargeCtId3(Integer busId,Integer ctId,Integer gtId,Integer memberId,Double rechargeMoney){
+
+        Map< String,Object > map = new HashMap< String,Object >();
+	// <!--查询下一个等级start-->
+	List< Map< String,Object > > gradeTypes = gradeTypeMapper.findByCtId( busId, ctId );
+	MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
+	rechargeMoney=rechargeMoney+memberEntity.getRechargeMoney();
+	MemberEntity updateMember=new MemberEntity();
+	updateMember.setId( memberId );
+	updateMember.setRechargeMoney( rechargeMoney );
+	memberEntityDAO.updateById( updateMember );
+	if ( gradeTypes != null ) {
+	    for ( int i = 0; i < gradeTypes.size(); i++ ) {
+		if ( CommonUtil.isNotEmpty( gradeTypes.get( i ).get( "gtId" ) ) ) {
+		    if ( gtId.equals( gradeTypes.get( i ).get( "gtId" ) ) ) {
+			if ( i < gradeTypes.size() - 1 ) {
+			    // 下一级id
+			    if ( CommonUtil.isNotEmpty( gradeTypes.get( i + 1 ).get( "gtId" ) ) ) {
+				Integer id = Integer.parseInt( gradeTypes.get( i + 1 ).get( "gtId" ).toString() );
+				MemberGiverule nextGiveRule = memberGiveruleDAO.findBybusIdAndGtIdAndCtId( busId, id, ctId );
+				if ( CommonUtil.isEmpty( nextGiveRule ) ) {
+				    break;
+				}
+
+				// 充值金额升级
+				if ( 2 == nextGiveRule.getGrUpgradeType() ) {
+				    if ( rechargeMoney >= nextGiveRule.getGrUpgradeCount() ) {
+					map.put( "gtId", id );
+					map.put( "grId", nextGiveRule.getGrId() );
+					return map;
+				    }
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	    return null;
+	}
+	return null;
     }
 
 }

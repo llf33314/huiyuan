@@ -201,4 +201,9 @@ public interface MemberCommonService {
      */
     public void verificationCard_2( Map< String,Object > params )throws BusinessException;
 
+    /**
+     * 储值卡充值升级
+     */
+    public Map<String,Object> rechargeCtId3(Integer busId,Integer ctId,Integer gtId,Integer memberId,Double rechargeMoney);
+
 }

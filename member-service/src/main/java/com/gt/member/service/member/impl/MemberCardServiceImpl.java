@@ -272,7 +272,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		map.put( "fanhuiyuan", gradeTypes.get( 0 ).get( "easyApply" ) );
 		map.put( "shenhe", gradeTypes.get( 0 ).get( "isCheck" ) );
 		map.put( "ismemberDate", gradeTypes.get( 0 ).get( "ismemberDate" ) );
-		if ( "1".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "ismemberDate" ) ) ) ) {
+		if ( "0".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "ismemberDate" ) ) ) ) {
 		    MemberDate memberdate = memberDateDAO.findByBusIdAndCtId( busId, ctId );
 		    map.put( "memberdate", memberdate );
 		}
@@ -3055,6 +3055,12 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    MemberCard newCard = new MemberCard();
 		    newCard.setMcId( card.getMcId() );
 
+		    Map<String,Object> gradeMap= memberCommonService.rechargeCtId3( busId,ctId,card.getGtId(),member.getId(),money );
+		    if(CommonUtil.isNotEmpty( gradeMap )){
+			newCard.setGtId( CommonUtil.toInteger( gradeMap.get( "gtId" ) ) );
+			newCard.setGrId( CommonUtil.toInteger( gradeMap.get( "grId" ) ) );
+		    }
+
 		    if ( CommonUtil.isNotEmpty( rechargegive ) ) {
 			money = money + rechargegive.getGiveCount(); //充值+赠送金额
 		    }
@@ -3065,6 +3071,11 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 1, uc.getDiscountAfterMoney(), "会员充值", member.getBusId(), balance, uc.getOrderCode(), 0 );
 
 		    uc.setBalance( balance );
+
+		    //判断储值卡是否是充值升级
+
+
+
 
 		} else if ( ctId == 5 ) {
 		    MemberRechargegive rechargegive = memberCommonService.findRechargegive( money, card.getGrId(), member.getBusId(), card.getCtId() );
@@ -3153,8 +3164,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    userConsumePay.setUcId( uc.getId() );
 	    userConsumePay.setPaymentType( 10 );
 	    userConsumePayDAO.insert( userConsumePay );
-	    //立即送
-	    memberCommonService.findGiveRule( orderCode );
+	    //充值时效卡和次卡才赠送 其他赠送
+	    if(card.getCtId()==4 || card.getCtId()==5) {
+		memberCommonService.findGiveRule( orderCode );
+	    }
 	} catch ( BusinessException e ) {
 	    throw e;
 	} catch ( Exception e ) {
@@ -3374,161 +3387,205 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    Map< String,Object > map = JSON.parseObject( params, Map.class );
 	    Integer memberId = CommonUtil.toInteger( map.get( "memberId" ) );
 	    Integer usehuiyuanquanyi = CommonUtil.toInteger( map.get( "usehuiyuanquanyi" ) );  //0代表不能 1能用
-	    Double xiaofeiMoney = CommonUtil.toDouble( map.get( "xiaofeiMoney" ) );
-
-	    Integer useCoupon = CommonUtil.toInteger( map.get( "useCoupon" ) );
-	    MemberShopEntity ce = new MemberShopEntity();
-	    ce.setTotalMoney( xiaofeiMoney );
-	    ce.setUsehuiyuanquanyi( usehuiyuanquanyi );
-	    ce.setMemberId( memberId );
-	    ce.setUseCoupon( useCoupon );
-	    if ( useCoupon == 1 ) {
-		Integer gId = CommonUtil.toInteger( map.get( "gId" ) );
-		ce.setCoupondId( gId );
-	    }
-	    Integer useFenbi = CommonUtil.toInteger( map.get( "useFenbi" ) );
-	    ce.setUseFenbi( useFenbi );
-	    Integer userJifen = CommonUtil.toInteger( map.get( "userJifen" ) );
-	    ce = memberCommonService.publicMemberCountMoney( ce );
-	    Double jisuanMoney = CommonUtil.toDouble( map.get( "jisuanMoney" ) );//前端计算的支付金额
-	    if ( ce.getBalanceMoney() == jisuanMoney ) {
-		throw new BusinessException( ResponseMemberEnums.ERROR_QR_CODE );
-	    }
 	    Integer shopId = CommonUtil.toInteger( map.get( "shopId" ) );
+	    Integer xiaofeiType = CommonUtil.toInteger( map.get( "xiaofeiType" ) );  //消费类型 0金额 1次数
+	    if ( xiaofeiType == 0 ) {
+	        //消费金额
+		Double xiaofeiMoney = CommonUtil.toDouble( map.get( "xiaofeiMoney" ) );
+		Integer useCoupon = CommonUtil.toInteger( map.get( "useCoupon" ) );
+		MemberShopEntity ce = new MemberShopEntity();
+		ce.setTotalMoney( xiaofeiMoney );
+		ce.setUsehuiyuanquanyi( usehuiyuanquanyi );
+		ce.setMemberId( memberId );
+		ce.setUseCoupon( useCoupon );
+		if ( useCoupon == 1 ) {
+		    Integer gId = CommonUtil.toInteger( map.get( "gId" ) );
+		    ce.setCoupondId( gId );
+		}
+		Integer useFenbi = CommonUtil.toInteger( map.get( "useFenbi" ) );
+		ce.setUseFenbi( useFenbi );
+		Integer userJifen = CommonUtil.toInteger( map.get( "userJifen" ) );
+		ce = memberCommonService.publicMemberCountMoney( ce );
 
-	    MemberEntity memberEntity = memberMapper.selectById( memberId );
-	    //会员消费记录添加
-	    UserConsumeNew uc = new UserConsumeNew();
-	    uc.setBusId( memberEntity.getBusId() );
-	    uc.setMemberId( memberEntity.getId() );
-	    uc.setRecordType( 2 );
-	    uc.setUcType( 9 );
-	    uc.setTotalMoney( ce.getTotalMoney() );
-	    Double discountMoney = ce.getTotalMoney() - ce.getBalanceMoney();
-	    uc.setDiscountMoney( discountMoney ); //优惠金额
-	    uc.setDiscountAfterMoney( ce.getBalanceMoney() );  //优惠后金额
-	    String orderCode = CommonUtil.getMEOrderCode();
-	    uc.setOrderCode( orderCode );
-	    uc.setShopId( shopId );
-	    uc.setDataSource( 0 );
-	    uc.setIsend( 0 );
-	    uc.setIsendDate( new Date() );
+		Double jisuanMoney = CommonUtil.toDouble( map.get( "jisuanMoney" ) );//前端计算的支付金额
+		if ( ce.getBalanceMoney() == jisuanMoney ) {
+		    throw new BusinessException( ResponseMemberEnums.ERROR_QR_CODE );
+		}
 
-	    uc.setIntegral( ce.getJifenNum() );
-	    uc.setFenbi( ce.getFenbiNum().doubleValue() );
-	    if ( ce.getUseCoupon() == 1 ) {
-		//多粉优惠券
-		Map< String,Object > duofenMap = new HashMap<>();
-		duofenMap.put( "codes", ce.getCodes() );
-		duofenMap.put( "storeId", shopId );
-		memberCommonService.verificationCard_2( duofenMap );
-		uc.setDisCountdepict( ce.getCodes() );
-		uc.setDvId( ce.getCoupondId() );
-		uc.setCardType( 1 );
-	    }
 
-	    Integer payType = CommonUtil.toInteger( CommonUtil.toInteger( map.get( "payType" ) ) );
-	    boolean bool = false;
-	    MemberCard card = null;
-	    if ( usehuiyuanquanyi == 1 ) {
-		if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-		    card = memberCardDAO.selectById( memberEntity.getMcId() );
-		    if ( CommonUtil.isEmpty( card ) ) {
-			throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
-		    }
-		    uc.setCtId( card.getCtId() );
-		    uc.setGtId( card.getGtId() );
-		    uc.setMcId( card.getMcId() );
+		MemberEntity memberEntity = memberMapper.selectById( memberId );
+		//会员消费记录添加
+		UserConsumeNew uc = new UserConsumeNew();
+		uc.setBusId( memberEntity.getBusId() );
+		uc.setMemberId( memberEntity.getId() );
+		uc.setRecordType( 2 );
+		uc.setUcType( 9 );
+		uc.setTotalMoney( ce.getTotalMoney() );
+		Double discountMoney = ce.getTotalMoney() - ce.getBalanceMoney();
+		uc.setDiscountMoney( discountMoney ); //优惠金额
+		uc.setDiscountAfterMoney( ce.getBalanceMoney() );  //优惠后金额
+		String orderCode = CommonUtil.getMEOrderCode();
+		uc.setOrderCode( orderCode );
+		uc.setShopId( shopId );
+		uc.setDataSource( 0 );
+		uc.setIsend( 0 );
+		uc.setIsendDate( new Date() );
+		uc.setCreateDate( new Date(  ) );
 
-		    if ( card.getCtId() == 3 ) {
-			Integer jie = CommonUtil.toInteger( map.get( "jie" ) );
-			if ( jie == 1 ) {
-			    //借款消费
-			    Integer clId = CommonUtil.toInteger( map.get( "clId" ) );
-			    MemberCardLent memberCardLent = memberCardLentDAO.selectById( clId );
-			    if ( memberCardLent.getLentMoney() > 0 && memberCardLent.getLentMoney() < ce.getBalanceMoney() ) {
-				throw new BusinessException( ResponseMemberEnums.LESS_THAN_CARD );
+		uc.setIntegral( ce.getJifenNum() );
+		uc.setFenbi( ce.getFenbiNum().doubleValue() );
+		if ( ce.getUseCoupon() == 1 ) {
+		    //多粉优惠券
+		    Map< String,Object > duofenMap = new HashMap<>();
+		    duofenMap.put( "codes", ce.getCodes() );
+		    duofenMap.put( "storeId", shopId );
+		    memberCommonService.verificationCard_2( duofenMap );
+		    uc.setDisCountdepict( ce.getCodes() );
+		    uc.setDvId( ce.getCoupondId() );
+		    uc.setCardType( 1 );
+		}
+
+		Integer payType = CommonUtil.toInteger( CommonUtil.toInteger( map.get( "payType" ) ) );
+		boolean bool = false;
+		MemberCard card = null;
+		if ( usehuiyuanquanyi == 1 ) {
+		    if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
+			card = memberCardDAO.selectById( memberEntity.getMcId() );
+			if ( CommonUtil.isEmpty( card ) ) {
+			    throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
+			}
+			uc.setCtId( card.getCtId() );
+			uc.setGtId( card.getGtId() );
+			uc.setMcId( card.getMcId() );
+
+			if ( card.getCtId() == 3 ) {
+			    Integer jie = CommonUtil.toInteger( map.get( "jie" ) );
+			    if ( jie == 1 ) {
+				//借款消费
+				Integer clId = CommonUtil.toInteger( map.get( "clId" ) );
+				MemberCardLent memberCardLent = memberCardLentDAO.selectById( clId );
+				if ( memberCardLent.getLentMoney() > 0 && memberCardLent.getLentMoney() < ce.getBalanceMoney() ) {
+				    throw new BusinessException( ResponseMemberEnums.LESS_THAN_CARD );
+				}
+
+				MemberCardLent memberCardLent1 = new MemberCardLent();
+				memberCardLent1.setId( clId );
+				memberCardLent1.setUsestate( 1 );
+				memberCardLentDAO.updateById( memberCardLent1 );
 			    }
 
-			    MemberCardLent memberCardLent1 = new MemberCardLent();
-			    memberCardLent1.setId( clId );
-			    memberCardLent1.setUsestate( 1 );
-			    memberCardLentDAO.updateById( memberCardLent1 );
+			    if ( card.getMoney() < ce.getBalanceMoney() ) {
+				throw new BusinessException( ResponseMemberEnums.MEMBER_LESS_MONEY );
+			    }
+
+			    if ( payType == 5 ) {
+				double banlan = card.getMoney() - ce.getBalanceMoney();
+				MemberCard updateCard = new MemberCard();
+				updateCard.setMcId( card.getMcId() );
+				updateCard.setMoney( banlan );
+				memberCardDAO.updateById( updateCard );
+
+				bool = true;
+				MemberCardrecordNew memberCardrecordNew = memberCommonService
+						.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, ce.getBalanceMoney(), "储值卡消费", memberEntity.getBusId(), banlan,
+								uc.getOrderCode(), 0 );
+
+				systemMsgService.sendChuzhiCard( memberEntity, memberCardrecordNew );
+				uc.setBalance( banlan );
+			    }
+			} else {
+			    throw new BusinessException( ResponseMemberEnums.MEMBER_CHUZHI_CARD );
 			}
-
-			if ( card.getMoney() < ce.getBalanceMoney() ) {
-			    throw new BusinessException( ResponseMemberEnums.MEMBER_LESS_MONEY );
-			}
-
-			if ( payType == 5 ) {
-			    double banlan = card.getMoney() - ce.getBalanceMoney();
-			    MemberCard updateCard = new MemberCard();
-			    updateCard.setMcId( card.getMcId() );
-			    updateCard.setMoney( banlan );
-			    memberCardDAO.updateById( updateCard );
-
-			    bool = true;
-			    MemberCardrecordNew memberCardrecordNew = memberCommonService
-					    .saveCardRecordOrderCodeNew( memberEntity.getId(), 1, ce.getBalanceMoney(), "储值卡消费", memberEntity.getBusId(), banlan, uc.getOrderCode(),
-							    0 );
-
-			    systemMsgService.sendChuzhiCard( memberEntity, memberCardrecordNew );
-			    uc.setBalance( banlan );
-			}
-		    } else {
-			throw new BusinessException( ResponseMemberEnums.MEMBER_CHUZHI_CARD );
 		    }
-		}
 
-		boolean flag = false;
-		MemberEntity memberEntity1 = new MemberEntity();
-		memberEntity1.setId( memberEntity.getId() );
-		//粉币使用
-		if ( ce.getUseFenbi() == 1 && ce.getFenbiNum() > 0 ) {
-		    Double fenbi = memberEntity.getFansCurrency() - ce.getFenbiNum();
-		    //memberCommonService.reduceFansCurrency( memberEntity, erpPaySuccess.getFenbiNum() );
-		    Integer code = requestService.getPowerApi( 1, memberEntity.getBusId(), ce.getFenbiNum().doubleValue(), "消费抵扣粉丝" );
-		    if ( code == 0 ) {
-			memberEntity1.setFansCurrency( fenbi );
-			memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, ce.getFenbiNum().doubleValue(), "消费粉币", memberEntity.getBusId(), fenbi,
-					uc.getOrderCode(), 0 );
+		    boolean flag = false;
+		    MemberEntity memberEntity1 = new MemberEntity();
+		    memberEntity1.setId( memberEntity.getId() );
+		    //粉币使用
+		    if ( ce.getUseFenbi() == 1 && ce.getFenbiNum() > 0 ) {
+			Double fenbi = memberEntity.getFansCurrency() - ce.getFenbiNum();
+			//memberCommonService.reduceFansCurrency( memberEntity, erpPaySuccess.getFenbiNum() );
+			Integer code = requestService.getPowerApi( 1, memberEntity.getBusId(), ce.getFenbiNum().doubleValue(), "消费抵扣粉丝" );
+			if ( code == 0 ) {
+			    memberEntity1.setFansCurrency( fenbi );
+			    memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, ce.getFenbiNum().doubleValue(), "消费粉币", memberEntity.getBusId(), fenbi,
+					    uc.getOrderCode(), 0 );
+			    flag = true;
+			} else {
+			    throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(), "调用粉币接口异常" );
+			}
+
+		    }
+		    //积分使用
+		    if ( ce.getUserJifen() == 1 && ce.getJifenNum() > 0 ) {
+			Integer banlan = memberEntity.getIntegral() - ce.getJifenNum();
+			memberEntity1.setIntegral( banlan );
+			memberCommonService
+					.saveCardRecordOrderCodeNew( memberEntity.getId(), 2, ce.getJifenNum().doubleValue(), "消费积分", memberEntity.getBusId(), banlan.doubleValue(),
+							uc.getOrderCode(), 0 );
 			flag = true;
-		    } else {
-			throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(), "调用粉币接口异常" );
+		    }
+		    userConsumeNewDAO.insert( uc );
+
+		    if ( flag == true ) {
+			memberMapper.updateById( memberEntity1 );
 		    }
 
 		}
-		//积分使用
-		if ( ce.getUserJifen() == 1 && ce.getJifenNum() > 0 ) {
-		    Integer banlan = memberEntity.getIntegral() - ce.getJifenNum();
-		    memberEntity1.setIntegral( banlan );
-		    memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 2, ce.getJifenNum().doubleValue(), "消费积分", memberEntity.getBusId(), banlan.doubleValue(),
-				    uc.getOrderCode(), 0 );
-		    flag = true;
+
+		//保存支付记录
+
+		UserConsumePay userConsumePay = new UserConsumePay();
+		userConsumePay.setPaymentType( payType );
+		userConsumePay.setPayMoney( uc.getDiscountAfterMoney() );
+		userConsumePay.setUcId( uc.getId() );
+		userConsumePayDAO.insert( userConsumePay );
+
+		if ( usehuiyuanquanyi == 1 && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
+		    //立即送 TODO
+		    memberCommonService.findGiveRule( uc.getOrderCode() );
 		}
+
+		if ( !bool ) {
+		    memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, uc.getDiscountAfterMoney(), "消费", memberEntity.getBusId(), 0.0, uc.getOrderCode(), 0 );
+		}
+	    }else {
+		//消费次数
+		//会员消费记录添加
+		Integer cikaCount=CommonUtil.toInteger( map.get( "cikaCount" ) );
+		MemberEntity memberEntity = memberMapper.selectById( memberId );
+		MemberCard memberCard=memberCardDAO.selectById( memberEntity.getMcId() );
+		if(CommonUtil.isEmpty( memberCard )){
+		    throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
+		}
+		Integer frequency=memberCard.getFrequency();
+		if(frequency<cikaCount){
+		    throw new BusinessException( ResponseMemberEnums.PLEASE_RECHARGE );
+		}
+
+		UserConsumeNew uc = new UserConsumeNew();
+		uc.setBusId( memberEntity.getBusId() );
+		uc.setMemberId( memberEntity.getId() );
+		uc.setRecordType( 2 );
+		uc.setUcType( 133 );
+		String orderCode = CommonUtil.getMEOrderCode();
+		uc.setOrderCode( orderCode );
+		uc.setShopId( shopId );
+		uc.setDataSource( 0 );
+		uc.setIsend( 0 );
+		uc.setIsendDate( new Date() );
+		uc.setUccount(cikaCount);
+		uc.setIntegral( 0 );
+		uc.setFenbi( 0.0);
+		uc.setPayStatus(1);
+		uc.setMcId( memberCard.getMcId() );
+		uc.setCtId(memberCard.getCtId());
+		uc.setGtId(memberCard.getGtId());
+		uc.setCreateDate( new Date(  ) );
+		Integer frequencyBalace=frequency-cikaCount;
+		uc.setBalanceCount(  frequencyBalace);
 		userConsumeNewDAO.insert( uc );
-
-		if ( flag == true ) {
-		    memberMapper.updateById( memberEntity1 );
-		}
-
-	    }
-
-	    //保存支付记录
-
-	    UserConsumePay userConsumePay = new UserConsumePay();
-	    userConsumePay.setPaymentType( payType );
-	    userConsumePay.setPayMoney( uc.getDiscountAfterMoney() );
-	    userConsumePay.setUcId( uc.getId() );
-	    userConsumePayDAO.insert( userConsumePay );
-
-	    if ( usehuiyuanquanyi == 1 && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-		//立即送 TODO
-		memberCommonService.findGiveRule( uc.getOrderCode() );
-	    }
-
-	    if ( !bool ) {
-		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, uc.getDiscountAfterMoney(), "消费", memberEntity.getBusId(), 0.0, uc.getOrderCode(), 0 );
+		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, cikaCount.doubleValue(), "消费次数", memberEntity.getBusId(), frequencyBalace.doubleValue(), uc.getOrderCode(), 0 );
 	    }
 	} catch ( BusinessException e ) {
 	    throw e;

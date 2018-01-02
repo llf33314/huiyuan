@@ -389,7 +389,6 @@ public interface MemberCardService {
     /**
      * 会员卡充值
      * @param busId
-     * @param params
      */
     public void rechargeMemberCard( Integer busId, Integer dangqianBusId, String jsonObj )throws BusinessException;
 
