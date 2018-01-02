@@ -687,7 +687,8 @@
 	</select>
 
 	<select id="findMemberBir" resultType="Map">
-		SELECT  id,nickname,birth,busId,phone FROM t_wx_bus_member  WHERE DATE_FORMAT(birth,'%m%d') = DATE_FORMAT(NOW(),'%m%d')
+		SELECT  id,nickname,birth,busId,phone FROM t_wx_bus_member
+	  WHERE DATE_FORMAT(birth,'%m%d') = DATE_FORMAT(NOW(),'%m%d')
 	</select>
 
 

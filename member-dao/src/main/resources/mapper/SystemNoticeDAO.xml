@@ -46,12 +46,12 @@
 	</select>
 
 	<select id="findMsgBybusIdEq10" resultType="Map">
-		select msgStatus,smsStatus,busId from system_notice where callType=10  and msgStatus=1
+		select msgContent,msgStatus,busId from system_notice where callType=10  and msgStatus=1 and msgContent!=''
 
 	</select>
 
 	<select id="findSmsBybusIdEq10" resultType="Map">
-		select msgStatus,smsStatus,busId from system_notice where callType=10  and smsStatus=1
+		select smsContent,smsStatus,busId from system_notice where callType=10  and smsStatus=1 and smsContent!=''
 
 	</select>
 

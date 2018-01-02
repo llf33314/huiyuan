@@ -457,7 +457,7 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
     /**
      * 每天凌晨 生日推送
      */
-    @Scheduled( cron = "0 0 3 * * ?" )
+  //  @Scheduled( cron = "0 0 3 * * ?" )
     @Override
     public void birthdayMsg() {
 
@@ -490,7 +490,7 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
     /**
      * 每天凌晨3点触发  过滤数据
      */
-    @Scheduled( cron = "0 0 3 * * ?" )
+   // @Scheduled( cron = "0 0 3 * * ?" )
     @Override
     public void birthdaySms() {
 
@@ -513,7 +513,7 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
     /**
      * 每天凌晨9点触发 短信提醒
      */
-    @Scheduled( cron = "0 0 9 * * ?" )
+  //  @Scheduled( cron = "0 0 9 * * ?" )
     public void sendBir() {
 
 	List< Map< String,Object > > memberBirList = memberBirMapper.findAll();
@@ -521,9 +521,6 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
 
 	Integer busId=0;
 	for ( Map< String,Object > sn : sysNoticeList ) {
-	    if ( CommonUtil.isEmpty( sn.get( "smsContent" ) ) || CommonUtil.toInteger( sn.get( "smsStatus" ) ) == 0 ) {
-		continue;
-	    }
 	    String phone="";
 	    for ( Map< String,Object > map : memberBirList ) {
 		if ( CommonUtil.toString( sn.get( "busId" ) ).equals( CommonUtil.toString( map.get( "busId" ) ) ) && CommonUtil.isNotEmpty( map.get( "phone" ) ) ) {
@@ -539,19 +536,19 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
 	    String content = CommonUtil.toString( sn.get( "smsContent" ) );
 
 
-		RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
-		OldApiSms oldApiSms = new OldApiSms();
-		oldApiSms.setMobiles( content );
-		oldApiSms.setContent( content );
-		oldApiSms.setCompany( PropertiesUtil.getSms_name() );
-		oldApiSms.setBusId( CommonUtil.toInteger( sn.get( "busId" ) ) );
-		oldApiSms.setModel( 3 );
-		requestUtils.setReqdata( oldApiSms );
-		try {
-		    String smsStr = requestService.sendSms( requestUtils );
-		} catch ( Exception e ) {
-		    LOG.error( "短信发送失败", e );
-		}
+	    RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
+	    OldApiSms oldApiSms = new OldApiSms();
+	    oldApiSms.setMobiles( content );
+	    oldApiSms.setContent( content );
+	    oldApiSms.setCompany( PropertiesUtil.getSms_name() );
+	    oldApiSms.setBusId( CommonUtil.toInteger( sn.get( "busId" ) ) );
+	    oldApiSms.setModel( 3 );
+	    requestUtils.setReqdata( oldApiSms );
+	    try {
+		String smsStr = requestService.sendSms( requestUtils );
+	    } catch ( Exception e ) {
+		LOG.error( "短信发送失败", e );
+	    }
 	}
 	memberBirMapper.deleteAll();
     }
