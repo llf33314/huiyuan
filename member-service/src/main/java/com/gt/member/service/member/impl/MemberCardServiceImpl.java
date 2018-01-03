@@ -3404,7 +3404,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		}
 		Integer useFenbi = CommonUtil.toInteger( map.get( "useFenbi" ) );
 		ce.setUseFenbi( useFenbi );
-		Integer userJifen = CommonUtil.toInteger( map.get( "userJifen" ) );
+		Integer userJifen = CommonUtil.toInteger( map.get( "useJifen" ) );
 		ce = memberCommonService.publicMemberCountMoney( ce );
 
 		Double jisuanMoney = CommonUtil.toDouble( map.get( "jisuanMoney" ) );//前端计算的支付金额

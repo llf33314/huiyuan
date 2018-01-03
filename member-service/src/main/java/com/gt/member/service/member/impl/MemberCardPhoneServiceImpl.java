@@ -973,34 +973,42 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    memberCommonService.newMemberMerge( memberOld, memberOld.getBusId(), member.getPhone() );
 	}
 
+	boolean bool=false;
 	MemberParameter memberParameter = new MemberParameter();
 
 	if ( CommonUtil.isNotEmpty( parma.get( "provincecode" ) ) ) {
 	    memberParameter.setProvinceCode( parma.get( "provincecode" ).toString() );
+	    bool=true;
 	}
 	if ( CommonUtil.isNotEmpty( parma.get( "city" ) ) ) {
 	    memberParameter.setCityCode( parma.get( "city" ).toString() );
+	    bool=true;
 	}
 	if ( CommonUtil.isNotEmpty( parma.get( "countyCode" ) ) ) {
 	    memberParameter.setCountyCode( parma.get( "countyCode" ).toString() );
+	    bool=true;
 	}
 
 	if ( CommonUtil.isNotEmpty( parma.get( "address" ) ) ) {
 	    memberParameter.setAddress( parma.get( "address" ).toString() );
+	    bool=true;
 	}
 
 	if ( CommonUtil.isNotEmpty( parma.get( "getmoney" ) ) ) {
 	    memberParameter.setGetMoney( CommonUtil.toDouble( parma.get( "getmoney" ) ) );
+	    bool=true;
 	}
 
 	MemberParameter memberParameter1 = memberParameterMapper.findByMemberId( memberId);
 
-	if ( CommonUtil.isEmpty( memberParameter1 ) ) {
-	    memberParameter.setMemberId( memberId );
-	    memberParameterMapper.insert( memberParameter );
-	}else{
-	    memberParameter.setId( memberParameter1.getId() );
-	    memberParameterMapper.updateById( memberParameter );
+	if(bool) {
+	    if ( CommonUtil.isEmpty( memberParameter1 ) ) {
+		memberParameter.setMemberId( memberId );
+		memberParameterMapper.insert( memberParameter );
+	    } else {
+		memberParameter.setId( memberParameter1.getId() );
+		memberParameterMapper.updateById( memberParameter );
+	    }
 	}
 
 	if ( parma.get( "email" ) != null ) {

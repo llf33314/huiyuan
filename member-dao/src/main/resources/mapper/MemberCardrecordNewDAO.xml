@@ -36,7 +36,7 @@
 
 
 	<select id="findCardrecordByMemberIdAndRecordType" resultType="Map">
-		SELECT itemName,number,date_format(createDate, '%Y-%c-%d %h:%i:%s') as createDate FROM t_member_cardrecord_new
+		SELECT itemName,number,date_format(createDate, '%Y-%c-%d %h:%i:%s') as createDate,balance FROM t_member_cardrecord_new
 		WHERE recordType = #{recordType}
 		AND
 		<foreach close=")" collection="memberIds" item="memberId" open="("

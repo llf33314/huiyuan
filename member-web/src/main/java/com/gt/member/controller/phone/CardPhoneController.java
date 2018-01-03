@@ -273,7 +273,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    Map< String,Object > map = memberCardPhoneService.findCardrecordNew( params, member.getId(), 4 );
+	    Map< String,Object > map = memberCardPhoneService.findCardrecordNew( params, member.getId(), 1 );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
