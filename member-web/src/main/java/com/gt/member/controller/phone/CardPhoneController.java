@@ -630,7 +630,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    memberCardPhoneService.pickMoney( member.getId(), busId, CommonUtil.toDouble( params.get( "pickMoney" ) ) );
+	    memberCardPhoneService.pickMoney( member.getId(), busId, CommonUtil.toDouble( params.get( "money" ) ) );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
