@@ -165,7 +165,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    String smsStr = requestService.sendSmsNew( requestUtils );
 	    JSONObject returnJson = JSONObject.parseObject( smsStr );
 	    if ( "0".equals( CommonUtil.toString( returnJson.get( "code" ) ) ) ) {
-		return ServerResponse.createBySuccess();
+		return ServerResponse.createBySuccess("",no);
 	    } else {
 		return ServerResponse.createByError( "发送失败:" + returnJson.get( "msg" ) );
 	    }
