@@ -1314,7 +1314,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	}
 	MemberEntity memberEntity = memberMapper.selectById( memberId );
 	MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
-	String url = PropertiesUtil.getWebHome() + "/#/home/" + memberEntity.getBusId() + "/" + card.getSystemcode();
+	String url = PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/" + memberEntity.getBusId() + "/" + card.getSystemcode();
 	return requestService.wxShare( wxPublicUsersEntity.getId(), url );
 
     }
