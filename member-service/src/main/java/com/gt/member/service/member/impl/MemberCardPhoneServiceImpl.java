@@ -1303,7 +1303,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
     public String tuijianQRcode( Integer memberId ) {
 	MemberEntity memberEntity = memberMapper.selectById( memberId );
 	MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
-	String url = PropertiesUtil.getWebHome() + "/#/home/" + memberEntity.getBusId() + "/" + card.getSystemcode();
+	String url = PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/" + memberEntity.getBusId() + "/" + card.getSystemcode();
 	return url;
     }
 
