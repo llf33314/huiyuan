@@ -3304,11 +3304,11 @@ public class MemberCardServiceImpl implements MemberCardService {
 		}
 
 		Double fenbiMoeny = memberCommonService.currencyCount( null, memberEntity.getFansCurrency() );
-		map.put( "fenbiMoeny", fenbiMoeny );
+		map.put( "fenbiMoney", fenbiMoeny );
 		map.put( "getFenbiMoeny", 10 );
 
 		Double jifenMoeny = memberCommonService.integralCount( null, new Double( memberEntity.getIntegral() ), busId );
-		map.put( "jifenMoeny", jifenMoeny );
+		map.put( "jifenMoney", jifenMoeny );
 		PublicParameterset ps = publicParameterSetMapper.findBybusId( busId );
 		if ( CommonUtil.isNotEmpty( ps ) ) {
 		    map.put( "getJifenMoeny", ps.getStartMoney() );
