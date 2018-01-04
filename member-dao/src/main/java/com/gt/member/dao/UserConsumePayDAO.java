@@ -2,6 +2,9 @@ package com.gt.member.dao;
 
 import com.gt.member.entity.UserConsumePay;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,6 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
  */
 public interface UserConsumePayDAO extends BaseMapper<UserConsumePay> {
 
+
+    List<UserConsumePay> findByUcId(@Param( "ucId" )Integer ucId);
 }

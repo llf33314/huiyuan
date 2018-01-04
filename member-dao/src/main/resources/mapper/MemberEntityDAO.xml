@@ -695,4 +695,9 @@
 
     </select>
 
+
+    <select id="findMemberByOldId" resultMap="BaseResultMap">
+        select * from t_wx_bus_member where busId=#{busId} and oldId like CONCAT('%',#{memberId},'%')
+    </select>
+
 </mapper>

@@ -588,7 +588,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 		for ( int i = 0; i < num; i++ ) { // 购买数量
 		    for ( DuofenCard duofenCard : duofencards ) {
 			for ( Map< String,Object > card : cardMlist ) {
-			    if ( duofenCard.getId() == CommonUtil.toInteger( card.get( "cardId" ) ) ) {
+			    if ( duofenCard.getId().equals( CommonUtil.toInteger( card.get( "cardId" ) )  ) ) {
 				int number = CommonUtil.toInteger( card.get( "num" ) );
 				for ( int j = 0; j < number; j++ ) {
 				    DuofenCardGet dfg = new DuofenCardGet();
@@ -615,8 +615,11 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 			    }
 			}
 		    }
+		    if(list.size()>0) {
+			duofenCardGetMapper.insertList( list );
+		    }
 		}
-		duofenCardGetMapper.insertList( list );
+
 
 		// 短信通知
 		if ( receives.getIsCallSms() == 1 ) {
@@ -1300,8 +1303,11 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 			    }
 			}
 		    }
+		    if(list.size()>0) {
+			duofenCardGetMapper.insertList( list );
+		    }
 		}
-		duofenCardGetMapper.insertList( list );
+
 
 		// 短信通知
 		if ( receives.getIsCallSms() == 1 ) {

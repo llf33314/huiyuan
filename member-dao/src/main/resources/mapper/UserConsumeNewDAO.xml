@@ -143,17 +143,44 @@
 		select * from t_wx_user_consume_new where orderCode=#{orderCode}
 	</select>
 
+	<select id="findUserConsumeChongZhiByMohe" resultType="Map">
+		select * from t_wx_user_consume_new where busId=#{busId} and recordType=1 and payStatus=1
+		<if test="memberId!=null">
+			and memberId=#{memberId}
+		</if>
+		<if test="shopId>0">
+			and shopId=#{shopId}
+		</if>
+
+		<if test="startDate!=null">
+			and createDate <![CDATA[>=]]> #{startDate}
+		</if>
+
+		<if test="endDate!=null">
+			and createDate <![CDATA[<=]]> #{endDate}
+		</if>
+		ORDER BY id DESC limit #{first},#{pageSize}
+
+
+	</select>
+
 
 	<select id="findUserConsumeChongZhiByMemberId" resultType="Map">
-		select * from t_wx_user_consume_new where busId=#{busId} and recordType=2
-		 <if test="memberId!=null">
-			 and memberId=#{memberId}
-		 </if>
-		<if test="date!=null">
-			and isendDate <![CDATA[>=]]> #{date}
+		select * from t_wx_user_consume_new where busId=#{busId} and recordType=1
+		<if test="memberId!=null">
+			and memberId=#{memberId}
+		</if>
+		<if test="startDate!=null">
+			and createDate <![CDATA[>=]]> #{startDate}
+		</if>
+
+		<if test="endDate!=null">
+			and createDate <![CDATA[<=]]> #{endDate}
 		</if>
 		ORDER BY id DESC limit #{first},#{pageSize}
 	</select>
+
+
 
 
 	<select id="countUserConsumeChongZhiByMemberId" resultType="java.lang.Integer">

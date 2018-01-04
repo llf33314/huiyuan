@@ -47,9 +47,9 @@ public class RequestServiceImpl implements RequestService {
 
     public String codeConsume( String cardId, String code, Integer busId ) throws Exception {
 	try {
+	    LOG.error( "codeConsume请求李逢喜参数:"+cardId+","+code+","+busId);
 	    RequestUtils<CodeConsume > requestUtils=new RequestUtils<>(  );
 	    CodeConsume codeConsume=new CodeConsume();
-	    String getWxmpsignKey = PropertiesUtil.getWxmpsignKey();
 	    String url=PropertiesUtil.getWxmp_home()+CODE_CONSUME;
 	    codeConsume.setCard_id(  cardId );
 	    codeConsume.setCode(  code );
@@ -57,24 +57,27 @@ public class RequestServiceImpl implements RequestService {
 	    String result = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
 	    return result;
 	} catch ( Exception e ) {
+	    LOG.error( "卡券核销异常",e );
 	    throw new Exception();
 	}
 
     }
 
     public void sendSms( RequestUtils< OldApiSms > requestUtils ) {
+	LOG.error( "sendSms请求李逢喜参数:"+JSONObject.toJSONString( requestUtils ));
 	String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
 	String smsStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
     }
 
     public String sendSmsNew( RequestUtils< NewApiSms > requestUtils ) {
-	log.error( "短信参数:"+JSONObject.toJSONString( requestUtils ) );
+	log.error( "sendSmsNew短信参数:"+JSONObject.toJSONString( requestUtils ) );
 	String url = PropertiesUtil.getWxmp_home() + SEND_SMS_NEW;
 	String smsStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
 	return smsStr;
     }
 
     public void setSendWxmsg( SendWxMsgTemplate sendWxMsgTemplate ) {
+	LOG.error( "setSendWxmsg请求李逢喜参数:"+JSONObject.toJSONString( sendWxMsgTemplate ));
 	RequestUtils< SendWxMsgTemplate > requestUtils = new RequestUtils<>();
 	String url = PropertiesUtil.getWxmp_home() + SEND_WXMSG;
 	String smsStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
@@ -107,6 +110,7 @@ public class RequestServiceImpl implements RequestService {
 
     public Integer getPowerApi(Integer status,Integer busId,Double powNum,String remarks){
 	try {
+	    LOG.error( "请求陈丹参数:消费状态:"+status+"  ，商家"+busId+"  ，粉币值"+powNum );
 	    Map< String,Object > map = new HashMap<>();
 	    map.put( "status", status );
 	    map.put( "busId", busId );
@@ -114,11 +118,11 @@ public class RequestServiceImpl implements RequestService {
 	    map.put( "model", 3 );
 	    map.put( "remarks", remarks );
 	    String url = PropertiesUtil.getWxmp_home() + POWER_API;
-	    String returnMsg = SignHttpUtils.postByHttp( url, map, PropertiesUtil.getWxmpsignKey() );
+	    String returnMsg = SignHttpUtils.WxmppostByHttp( url, map, PropertiesUtil.getWxmpsignKey() );
 	    if( CommonUtil.isNotEmpty( returnMsg )){
 		Map<String,Object> returnParam= JSON.parseObject( returnMsg,Map.class );
 		if(0!=CommonUtil.toInteger( returnParam.get( "code" ) )){
-
+		    LOG.error( "调用陈丹粉币接口："+JSON.toJSONString( returnParam ) );
 		}
 		return CommonUtil.toInteger( returnParam.get( "code" ) );
 	    }

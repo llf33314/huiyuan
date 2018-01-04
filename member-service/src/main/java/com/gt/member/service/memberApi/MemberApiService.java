@@ -524,6 +524,20 @@ public interface MemberApiService {
      */
     public Member findMemberByPhoneAndbusId(Integer busId,String phone) throws BusinessException;
 
+    /**
+     * 墨盒充值记录查询
+     * @param params
+     * @return
+     */
+    public Map<String,Object> rechargeLog(String params);
+
+    /**
+     * 墨盒充值记录详情
+     * @param ucId
+     * @return
+     * @throws BusinessException
+     */
+    public Map< String,Object > findChongZhiLogDetails( Integer ucId ) throws BusinessException ;
 
     /**
      * 整理之前member信息

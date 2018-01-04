@@ -273,4 +273,7 @@ public interface MemberEntityDAO extends BaseMapper<MemberEntity > {
     MemberEntity findNewMember(@Param("busId")Integer budId,@Param("memberId")Integer memberId);
 
     List<MemberEntity> findMemberAll();
+
+
+    MemberEntity findMemberByOldId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId);
 }

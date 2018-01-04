@@ -53,7 +53,7 @@
 		select
 		<include refid="Base_Column_List" />
 		from t_wx_shop
-		where bus_id = #{busId,jdbcType=INTEGER} and main_shop=1
+		where bus_id = #{busId,jdbcType=INTEGER} and main_shop=1 limit 1
 	</select>
 
 </mapper>
