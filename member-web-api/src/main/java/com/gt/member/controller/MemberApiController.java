@@ -366,7 +366,7 @@ public class MemberApiController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "（商城）评论修改会员积分或粉币", notes = "（商城）评论修改会员积分或粉币" )
+    @ApiOperation( value = "修改会员积分或粉币", notes = "修改会员积分或粉币" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝Id", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "jifen", value = "积分", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "fenbi", value = "粉币", paramType = "query", required = true, dataType = "int" ) } )
@@ -799,8 +799,43 @@ public class MemberApiController extends BaseController {
 	    LOG.error( "获取粉丝最新的id异常",e );
 	    return ServerResponse.createByError( );
 	}
-
     }
+
+
+    @ApiOperation( value = "魔盒充值记录查询", notes = "魔盒充值记录查询" )
+    @RequestMapping( value = "/rechargeLog", method = RequestMethod.POST )
+    public ServerResponse rechargeLog(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    Map<String,Object> map =memberApiService.rechargeLog(param);
+	    return ServerResponse.createBySuccess(map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(),e.getMessage() );
+	}catch ( Exception e ){
+	    LOG.error( "魔盒充值记录查询异常",e );
+	    return ServerResponse.createByError( );
+	}
+    }
+
+
+    @ApiOperation( value = "魔盒充值记录详情", notes = "魔盒充值记录查询" )
+    @ResponseBody
+    @RequestMapping( value = "/rechargeLogDetails", method = RequestMethod.POST )
+    public ServerResponse rechargeLogDetails(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer ucId=CommonUtil.toInteger( requestBody.get("ucId") );
+	    Map<String,Object> map =memberApiService.findChongZhiLogDetails(ucId);
+	    return ServerResponse.createBySuccess(map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(),e.getMessage() );
+	}catch ( Exception e ){
+	    LOG.error( "魔盒充值记录查询异常",e );
+	    return ServerResponse.createByError( );
+	}
+    }
+
+
+
 
 
 

@@ -161,7 +161,7 @@
         <dependency>
             <groupId>com.gt.api</groupId>
             <artifactId>gt_api</artifactId>
-            <version>1.3.16-SNAPSHOT</version>
+            <version>1.3.27-SNAPSHOT</version>
         </dependency>
 
 
@@ -172,6 +172,7 @@
             <artifactId>lfx_wxmp_entity</artifactId>
             <version>1.0.12</version>
         </dependency>
+
 
 
         <!--会员实体包-->
@@ -304,6 +305,19 @@
             <artifactId>jdom</artifactId>
             <version>1.1</version>
         </dependency>
+
+       <!-- &lt;!&ndash; 发送邮件需要的2个jar &ndash;&gt;
+        <dependency>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+            <version>2.7.8</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.7</version>
+        </dependency>-->
+
 
     </dependencies>
 

@@ -3007,6 +3007,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
     public Map< String,Object > rechargeLog( String params ) {
 	try {
+	    Map<String,Object> returnMap=new HashMap<>(  );
 	    JSONObject json = JSON.parseObject( params );
 	    Integer busId = CommonUtil.toInteger( json.get( "busId" ) );
 	    Integer curPage= CommonUtil.isEmpty( json.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( json.get( "curPage" ) ) ;
@@ -3071,9 +3072,10 @@ public class MemberApiServiceImpl implements MemberApiService {
 		newList.add( uc );
 		rechargeCount++;
 	    }
-	    map.put( "rechargeTotalMoney", rechargeTotalMoney );
-	    map.put( "rechargeCount", rechargeCount );
-	    return map;
+	    returnMap.put( "rechargeS", newList);
+	    returnMap.put( "rechargeTotalMoney", rechargeTotalMoney );
+	    returnMap.put( "rechargeCount", rechargeCount );
+	    return returnMap;
 	} catch ( Exception e ) {
 	    LOG.error( "魔盒分页查询订单数据异常", e );
 	}
