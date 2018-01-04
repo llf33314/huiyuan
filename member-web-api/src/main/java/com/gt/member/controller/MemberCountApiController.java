@@ -71,7 +71,7 @@ public class MemberCountApiController {
                     HttpServletResponse response,@RequestBody String  memberShopEntity){
         try {
             MemberShopEntity  memberShopEntity1=JSONObject.toJavaObject( JSONObject.parseObject( memberShopEntity ),MemberShopEntity.class ) ;
-            memberShopEntity1 = memberCountMoneyApiService.publicMemberCountMoney(memberShopEntity1);
+      //      memberShopEntity1 = memberCountMoneyApiService.publicMemberCountMoney(memberShopEntity1);
             return ServerResponse.createBySuccess(JSONObject.toJSON(memberShopEntity1));
         }catch (Exception e){
             return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),"计算失败");

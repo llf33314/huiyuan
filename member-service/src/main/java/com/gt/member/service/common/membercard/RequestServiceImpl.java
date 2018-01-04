@@ -69,6 +69,8 @@ public class RequestServiceImpl implements RequestService {
 
     private final static String GETVIDEOURL = "/8A5DA52E/videoCourceApi/getVoiceUrl.do";
 
+    private final static String AREAPHONE="/8A5DA52E/areaPhoneApi/selectList.do";
+
     public String codeConsume( String cardId, String code, Integer busId ) throws Exception {
 	try {
 	    RequestUtils<CodeConsume > requestUtils=new RequestUtils<>(  );
@@ -289,6 +291,23 @@ public class RequestServiceImpl implements RequestService {
 	    return memberVideo;
 	} catch ( Exception e ) {
 	    LOG.error( "调用会员视频异常", e );
+	}
+	return null;
+    }
+
+    public List<Map> findAreaPhone(){
+	try {
+	    String url = PropertiesUtil.getWxmp_home() + AREAPHONE;
+	    String returnMsg = SignHttpUtils.WxmppostByHttp( url, null, PropertiesUtil.getWxmpsignKey() );
+	    if ( CommonUtil.isNotEmpty( returnMsg ) ) {
+		Map< String,Object > json = JSON.parseObject( returnMsg, Map.class );
+		if("0".equals( CommonUtil.toString( json.get( "code" ) ) )){
+		    return JSONArray.parseArray( CommonUtil.toString( json.get( "data" ) ) ,Map.class );
+		}
+
+	    }
+	}catch ( Exception e ){
+	    LOG.error( "调用陈丹区号异常",e );
 	}
 	return null;
     }

@@ -2271,6 +2271,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    }
 	    map.put( "nickName", memberEntity.getNickname() );
 	    map.put( "headImg", memberEntity.getHeadimgurl() );
+	    map.put( "phone", memberEntity.getPhone() );
 	    List< Map< String,Object > > cards = memberCardDAO.findCardById( memberEntity.getMcId() );
 	    map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
 	    map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
@@ -2374,6 +2375,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    }
 	    map.put( "nickName", memberEntity.getNickname() );
 	    map.put( "headImg", memberEntity.getHeadimgurl() );
+	    map.put( "phone", memberEntity.getPhone() );
 	    List< Map< String,Object > > cards = memberCardDAO.findCardById( memberEntity.getMcId() );
 	    map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
 	    map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
@@ -2477,6 +2479,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    }
 	    map.put( "nickName", memberEntity.getNickname() );
 	    map.put( "headImg", memberEntity.getHeadimgurl() );
+	    map.put( "phone", memberEntity.getPhone() );
 	    List< Map< String,Object > > cards = memberCardDAO.findCardById( memberEntity.getMcId() );
 	    map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
 	    map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
@@ -2582,6 +2585,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		memberEntity = memberMapper.findMemberByOldId( ucNew.getBusId(), ucNew.getMemberId() );
 	    }
 	    map.put( "nickName", memberEntity.getNickname() );
+	    map.put( "phone", memberEntity.getPhone() );
 	    map.put( "headImg", memberEntity.getHeadimgurl() );
 	    List< Map< String,Object > > cards = memberCardDAO.findCardById( memberEntity.getMcId() );
 	    map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
@@ -2615,7 +2619,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    SortedMap< String,Object > sortemap = dictService.getDict( "1198" );
 	    String payType = "";
 	    for ( UserConsumePay userConsumePay : userConsumePays ) {
-		payType = CommonUtil.toString( sortemap.get( userConsumePay.getPaymentType() ) ) + "   ";
+		payType = CommonUtil.toString( sortemap.get( CommonUtil.toString( userConsumePay.getPaymentType() ) ) ) + "   ";
 	    }
 	    map.put( "payType", payType );
 	    return map;

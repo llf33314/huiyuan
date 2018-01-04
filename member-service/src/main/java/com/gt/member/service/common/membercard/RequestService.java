@@ -135,4 +135,10 @@ public interface RequestService {
      * @return
      */
     public String getVideoUrl(Integer model);
+
+    /**
+     * 查询世界手机区号
+     * @return
+     */
+    public List<Map> findAreaPhone();
 }

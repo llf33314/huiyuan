@@ -141,6 +141,22 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	}
     }
 
+    @ApiOperation( value = "查询世界手机区号", notes = "查询世界手机区号" )
+    @ResponseBody
+    @RequestMapping( value = "/findAreaPhone", method = RequestMethod.POST )
+    public ServerResponse findAreaPhone(HttpServletResponse response, HttpServletRequest request){
+	try {
+	    List< Map > listMap = requestService.findAreaPhone(  );
+	    return ServerResponse.createBySuccess( listMap );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    LOG.error( "查询世界手机区号异常：", e );
+	    e.printStackTrace();
+	    return ServerResponse.createByError();
+	}
+    }
+
     @ApiOperation( value = "发送短信", notes = "发送短信" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
 		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = false, dataType = "int" ) } )
