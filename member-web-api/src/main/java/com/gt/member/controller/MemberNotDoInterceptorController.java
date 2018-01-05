@@ -103,6 +103,5 @@ public class MemberNotDoInterceptorController {
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
-
     }
 }
