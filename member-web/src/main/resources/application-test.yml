@@ -15,10 +15,24 @@ spring:
    cache: false
   #redis配置
  redis:
-  host: 113.106.202.51
-  port: 6379
   password: gt@123456
+  timeout: 1000
   database: 3
+  pool:
+    max-active: 50
+    max-wait: -1
+    max-idle: 20
+    min-idle: 0
+    #redis集群配置
+  cluster:
+    nodes: 113.106.202.51:6379,113.106.202.50:9379,113.106.202.54:9379
+    max-attempts: 6
+    max-redirects: 6
+    #redis哨兵模式配置
+  sentinel:
+    nodes: 113.106.202.51:26379,113.106.202.50:29379,113.106.202.54:29379
+    master: mymaster
+
 
  session:
   store-type: redis

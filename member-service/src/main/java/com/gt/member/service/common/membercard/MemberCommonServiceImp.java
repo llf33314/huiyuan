@@ -422,10 +422,6 @@ public class MemberCommonServiceImp implements MemberCommonService {
      * @param phone
      */
     public void newMemberMerge( MemberEntity memberEntity, Integer busId, String phone ) throws BusinessException {
-	if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
-	    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
-	}
-
 	MemberEntity m1 = memberEntityDAO.findByPhone( busId, phone );
 	if ( CommonUtil.isNotEmpty( m1 ) && !memberEntity.getId().equals( m1.getId() ) ) {
 	    // 合并member数据

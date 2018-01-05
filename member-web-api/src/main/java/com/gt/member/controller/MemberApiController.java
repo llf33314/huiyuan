@@ -670,4 +670,19 @@ public class MemberApiController extends BaseController {
 	}
     }
 
+    @ApiOperation( value = "applyCard", notes = "微信授权领取泛会员卡" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
+    } )
+    @ResponseBody
+    @RequestMapping( value = "/applyCard", method = RequestMethod.POST )
+    public ServerResponse applyCard( HttpServletRequest request, HttpServletResponse response,@RequestBody String param){
+	try {
+	    memberApiService.applyCard( param );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( Exception e ) {
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+
+    }
+
 }
