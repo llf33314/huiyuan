@@ -2724,4 +2724,69 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 	return map;
     }
+
+
+    public void  applyCard(String params){
+	Map< String,Object > requestBody = JSONObject.parseObject( params );
+	Integer memberId=CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	MemberEntity member=memberDAO.selectById( memberId );
+	if(CommonUtil.isEmpty( member ) || CommonUtil.isNotEmpty( member.getMcId() )){
+	    return;
+	}
+	MemberGradetype gradeType = gradeTypeMapper.findByIsesasy(member.getBusId());
+	if (CommonUtil.isEmpty(gradeType) || gradeType.getEasyApply() == 0) {
+	    return;
+	}
+	// 判断会员领卡数量
+	int count = memberCardDAO.countCardisBinding(member.getBusId());
+
+	BusUserEntity busUser = busUserMapper.selectById(member.getBusId());
+
+	SortedMap< String,Object > dictMap = dictService.getDict( "1093" );
+	int level = busUser.getLevel();
+	for ( String dict : dictMap.keySet() ) {
+	    if ( level == CommonUtil.toInteger( dict ) ) {
+		if ( count  >= CommonUtil.toInteger( dictMap.get( dict ) ) ) {
+		  return;
+		}
+	    }
+	}
+
+	try {
+	    if (CommonUtil.isEmpty(member.getMcId())) {
+		MemberCard card = new MemberCard();
+		card.setIsChecked(1);
+		card.setCardNo(CommonUtil.getCode());
+		card.setCtId(gradeType.getCtId());
+
+		if (card.getCtId() == 4) {
+		    card.setExpireDate(new Date());
+		}
+		card.setSystemcode(CommonUtil.getNominateCode());
+		card.setApplyType(4);
+		card.setMemberId(member.getId());
+
+		card.setGtId(gradeType.getGtId());
+
+		MemberGiverule giveRule = giveRuleMapper.findBybusIdAndGtIdAndCtId(
+				member.getBusId(), gradeType.getGtId(),
+				gradeType.getCtId());
+		card.setGrId(giveRule.getGrId());
+
+		card.setBusId(member.getBusId());
+		card.setReceiveDate(new Date());
+		card.setIsbinding(1);
+		memberCardDAO.insert(card);
+
+		MemberEntity member1 = new MemberEntity();
+		member1.setMcId(card.getMcId());
+		member1.setId(member.getId());
+		memberDAO.updateById(member1);
+
+		member.setMcId(card.getMcId());
+	    }
+	} catch (Exception e) {
+	    LOG.error("分配简易会员卡异常", e);
+	}
+    }
 }

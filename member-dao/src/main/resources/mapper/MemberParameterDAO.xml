@@ -13,11 +13,13 @@
 		<result column="address" property="address" />
 		<result column="getMoney" property="getMoney" />
 		<result column="headImg" property="headImg" />
+		<result column="arerId" property="arerId" />
+		<result column="arerCode" property="arerCode" />
 	</resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, memberId, signDate, provinceCode, cityCode, countyCode, address, getMoney, headImg
+        id, memberId, signDate, provinceCode, cityCode, countyCode, address, getMoney, headImg,arerId,arerCode
     </sql>
 
 	<select id="findByMemberId" resultMap="BaseResultMap">

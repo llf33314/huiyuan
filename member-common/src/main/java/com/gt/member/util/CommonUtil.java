@@ -527,13 +527,22 @@ public class CommonUtil {
 	}
 
 	/**
-	 * 获取卡号 截取一位 是生成条形码13位
+	 * 获取卡号 截取一位 是生成条形码17位
 	 * 
 	 * @return
 	 */
 	public static String getCode() {
+	    StringBuffer buf = new StringBuffer("1,2,3,4,5,6,7,8,9,0");
+	    String[] arr = buf.toString().split(",");
+	    StringBuffer sb = new StringBuffer();
+	    Random random = new Random();
+	    for (int i = 0; i < 4; i++) {
+		Integer count = arr.length;
+		int a = random.nextInt(count);
+		sb.append(arr[a]);
+	    }
 	    Long date = new Date().getTime();
-	    String cardNo = date.toString().substring(1);
+	    String cardNo = date.toString().substring(4)+sb.toString();
 	    return cardNo;
 	}
 

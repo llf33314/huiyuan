@@ -3409,6 +3409,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		Integer useFenbi = CommonUtil.toInteger( map.get( "useFenbi" ) );
 		ce.setUseFenbi( useFenbi );
 		Integer userJifen = CommonUtil.toInteger( map.get( "useJifen" ) );
+		ce.setUserJifen(  userJifen);
 		ce = memberCommonService.publicMemberCountMoney( ce );
 
 		Double jisuanMoney = CommonUtil.toDouble( map.get( "jisuanMoney" ) );//前端计算的支付金额
@@ -3497,8 +3498,6 @@ public class MemberCardServiceImpl implements MemberCardService {
 				systemMsgService.sendChuzhiCard( memberEntity, memberCardrecordNew );
 				uc.setBalance( banlan );
 			    }
-			} else {
-			    throw new BusinessException( ResponseMemberEnums.MEMBER_CHUZHI_CARD );
 			}
 		    }
 

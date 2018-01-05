@@ -470,6 +470,12 @@ public interface MemberApiService {
      */
     public Map<String,Object> coutMemberCard( Integer busId, Integer shopId );
 
+    /**
+     * 分配泛会员卡
+     * @param params
+     */
+    public void  applyCard(String params);
+
 
 
 }

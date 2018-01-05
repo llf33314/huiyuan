@@ -51,6 +51,8 @@ public class MemberParameter extends Model<MemberParameter> {
      */
 	private Double getMoney;
 	private String headImg;
+	private Integer arerId;
+	private String arerCode;
 
 
 	@Override

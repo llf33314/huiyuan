@@ -18,6 +18,5 @@
 
 	<select id="findByUcId" resultMap="BaseResultMap">
 		select * from t_wx_user_consume_pay where ucId=#{ucId}
-
 	</select>
 </mapper>

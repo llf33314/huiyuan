@@ -271,6 +271,16 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		    mp = new MemberParameter();
 		}
 		boolean flag = false;
+
+		if ( CommonUtil.isNotEmpty( params.get( "areacode" ) ) ) {
+		    mp.setArerCode( params.get( "areacode" ).toString() );
+		    flag = true;
+		}
+		if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
+		    mp.setArerId( CommonUtil.toInteger( params.get( "id" ) ));
+		    flag = true;
+		}
+
 		if ( CommonUtil.isNotEmpty( params.get( "provice" ) ) ) {
 		    mp.setProvinceCode( params.get( "provice" ).toString() );
 		    flag = true;
@@ -976,6 +986,15 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	boolean bool=false;
 	MemberParameter memberParameter = new MemberParameter();
 
+	if ( CommonUtil.isNotEmpty( parma.get( "areacode" ) ) ) {
+	    memberParameter.setArerCode( parma.get( "areacode" ).toString() );
+	    bool = true;
+	}
+	if ( CommonUtil.isNotEmpty( parma.get( "id" ) ) ) {
+	    memberParameter.setArerId( CommonUtil.toInteger( parma.get( "id" ) ));
+	    bool = true;
+	}
+
 	if ( CommonUtil.isNotEmpty( parma.get( "provincecode" ) ) ) {
 	    memberParameter.setProvinceCode( parma.get( "provincecode" ).toString() );
 	    bool=true;
@@ -1204,6 +1223,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	if ( CommonUtil.isNotEmpty( parameterset ) ) {
 	    map.put( "lessPickMoney", parameterset.getPickMoney() );
 	}
+	map.put( "code",card.getSystemcode() );
 
 	return map;
     }
