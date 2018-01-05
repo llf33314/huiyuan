@@ -542,7 +542,7 @@ public class CommonUtil {
 		sb.append(arr[a]);
 	    }
 	    Long date = new Date().getTime();
-	    String cardNo = date.toString().substring(4)+sb.toString();
+	    String cardNo = date.toString().substring(2)+sb.toString();
 	    return cardNo;
 	}
 

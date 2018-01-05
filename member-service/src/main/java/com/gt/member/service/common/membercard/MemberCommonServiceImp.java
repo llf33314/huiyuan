@@ -133,6 +133,9 @@ public class MemberCommonServiceImp implements MemberCommonService {
     @Autowired
     private DuofenCardDAO duofenCardMapper;
 
+    @Autowired
+    private MemberCardOldDAO memberCardOldDAO;
+
     /**
      * 粉币计算
      *
@@ -442,6 +445,15 @@ public class MemberCommonServiceImp implements MemberCommonService {
 		m1.setOpenid( memberEntity.getOpenid() );
 	    }
 
+	    //如果之前就存在会员卡 已当前会员卡为主
+	    if(CommonUtil.isNotEmpty( m1.getMcId() )){
+	        MemberCard memberCardDelete=memberCardDAO.selectById( m1.getMcId() );
+		MemberCardOld memberCardOld = JSONObject.toJavaObject( JSON.parseObject( JSONObject.toJSONString( memberCardDelete ) ), MemberCardOld.class );
+		// 删除数据做移出到memberold
+		memberCardOldDAO.insert( memberCardOld );
+		memberCardDAO.deleteById(   m1.getMcId() );
+	    }
+
 	    m1.setPhone( phone );
 	    m1.setMcId( memberEntity.getMcId() );
 	    m1.setNickname( memberEntity.getNickname() );
@@ -472,7 +484,28 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
 	    // 修改小程序之前openId对应的memberId
 	    memberAppletOpenidDAO.updateMemberId( m1.getId(), memberEntity.getId() );
+	}else{
+	    //如果是当前粉丝没有绑定过手机号码，判断粉丝是否存在泛会员卡，如果存在，升级到正式会员卡
+	    if(CommonUtil.isNotEmpty( memberEntity.getMcId() )){
+	     	MemberCard memberCard=memberCardDAO.selectById( memberEntity.getMcId() );
+	     	if(memberCard.getApplyType()==4){
+	     	    //给简易会员卡升级
+		    List<Map<String, Object>> gradeTypes = gradeTypeMapper
+				    .findAllBybusId(memberEntity.getBusId(),
+						    memberCard.getCtId());
+		    MemberCard card1 = new MemberCard();
+		    card1.setMcId(memberCard.getMcId());
+		    card1.setGtId(CommonUtil.toInteger(gradeTypes.get(0).get("gt_id")));
+		    card1.setGrId(CommonUtil.toInteger(gradeTypes.get(0).get("gr_id")));
+		    card1.setApplyType(0);
+		    memberCardDAO.updateById(card1);
+		}
+	    }
+
+
 	}
+
+
 
 	if ( CommonUtil.isNotEmpty( m1 ) && CommonUtil.isNotEmpty( m1.getMcId() ) ) {
 	    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
