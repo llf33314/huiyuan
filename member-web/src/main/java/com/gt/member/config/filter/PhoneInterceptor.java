@@ -27,6 +27,7 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * api拦截器
@@ -46,12 +47,14 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
 	try {
 	    boolean isSuccess = true;
 	    Map< String,Object > params = getParameterMap(servletRequest);
-	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
-	    Member member = SessionUtils.getLoginMember( servletRequest, busId );
-	    if ( CommonUtil.isEmpty( member ) ) {
-		String url = authorizeMember( servletRequest, servletResponse, params );
-		if ( CommonUtil.isNotEmpty( url ) ) {
-		    throw new BusinessException( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url  );
+	    if(CommonUtil.isNotEmpty( params )) {
+		Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+		Member member = SessionUtils.getLoginMember( servletRequest, busId );
+		if ( CommonUtil.isEmpty( member ) ) {
+		    String url = authorizeMember( servletRequest, servletResponse, params );
+		    if ( CommonUtil.isNotEmpty( url ) ) {
+			throw new BusinessException( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		    }
 		}
 	    }
 	    return isSuccess;// 只有返回true才会继续向下执行，返回false取消当前请求
@@ -85,33 +88,21 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
     public  Map getParameterMap(HttpServletRequest request) {
 	// 参数Map
 
-	Map properties = request.getParameterMap();
-	String json=CommonUtil.toString( properties.get( "json" ) );
-	Map<String,Object> map= JSONObject.parseObject( json,Map.class );
-	// 返回值Map
-	Map returnMap = new HashMap();
-	Iterator entries = map.entrySet().iterator();
-	Map.Entry entry;
-	String name = "";
-	String value = "";
-	while (entries.hasNext()) {
-	    entry = (Map.Entry) entries.next();
-	    name = (String) entry.getKey();
-	    Object valueObj = entry.getValue();
-	    if(null == valueObj){
-		value = "";
-	    }else if(valueObj instanceof String[]){
-		String[] values = (String[])valueObj;
-		for(int i=0;i<values.length;i++){
-		    value = values[i] + ",";
+	Map map = request.getParameterMap();
+	if (map != null && !map.isEmpty()) {
+	    Set<String> keySet = map.keySet();
+	    for (String key : keySet) {
+		String[] values = (String[]) map.get(key);
+		for (String value : values) {
+		    if("json".equals( key )) {
+			Map< String,Object > returnMap = JSONObject.parseObject( value, Map.class );
+			return returnMap;
+		    }
 		}
-		value = value.substring(0, value.length()-1);
-	    }else{
-		value = valueObj.toString();
 	    }
-	    returnMap.put(name, value);
 	}
-	return returnMap;
+	return null;
+
     }
 
 }
