@@ -3589,7 +3589,12 @@ public class MemberCardServiceImpl implements MemberCardService {
 		uc.setBalanceCount(  frequencyBalace);
 		userConsumeNewDAO.insert( uc );
 		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, cikaCount.doubleValue(), "消费次数", memberEntity.getBusId(), frequencyBalace.doubleValue(), uc.getOrderCode(), 0 );
-	    }
+	   	MemberCard m=new MemberCard();
+	   	m.setMcId( memberCard.getMcId() );
+	   	m.setFrequency(frequencyBalace  );
+	   	memberCardDAO.updateById( m );
+
+	      }
 	} catch ( BusinessException e ) {
 	    throw e;
 	} catch ( Exception e ) {
