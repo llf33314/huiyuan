@@ -632,13 +632,11 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		map.put( "headimg", memberEntity.getHeadimgurl() );
 	    }
 
-	   String webType=PropertiesUtil.getWebType();
-	    if("0".equals( webType )) {
-		// 联盟卡查询
-		String unionUrl = PropertiesUtil.getUntion_url() + "/cardPhone/#/toUnionCard?busId=" + busId;
-		map.put( "unionUrl", unionUrl );
-	    }
-	    map.put( "webType",webType );
+	    // 联盟卡查询
+	    String unionUrl = PropertiesUtil.getUntion_url() + "/cardPhone/#/toUnionCard?busId=" + busId;
+	    map.put( "unionUrl", unionUrl );
+
+	    map.put( "webType",0 );
 
 	    map.put( "path", PropertiesUtil.getRes_web_path() );
 	    MemberGradetype memberGradetype = memberGradetypeDAO.selectById( cardEntity.getGtId() );

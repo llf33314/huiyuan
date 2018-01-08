@@ -177,7 +177,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    newApiSms.setParamsStr( "会员短信校验码:" + no );
 	    newApiSms.setBusId( busId );
 	    newApiSms.setModel( 9 );
-	    newApiSms.setTmplId( Long.parseLong( PropertiesUtil.getSms_tmplId() ) );
+	    newApiSms.setTmplId( 11510L );
 	    String smsStr = requestService.sendSmsNew( requestUtils );
 	    JSONObject returnJson = JSONObject.parseObject( smsStr );
 	    if ( "0".equals( CommonUtil.toString( returnJson.get( "code" ) ) ) ) {

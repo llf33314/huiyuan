@@ -447,10 +447,10 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
 	    //如果之前就存在会员卡 已当前会员卡为主
 	    if(CommonUtil.isNotEmpty( m1.getMcId() )){
-	        MemberCard memberCardDelete=memberCardDAO.selectById( m1.getMcId() );
-		MemberCardOld memberCardOld = JSONObject.toJavaObject( JSON.parseObject( JSONObject.toJSONString( memberCardDelete ) ), MemberCardOld.class );
-		// 删除数据做移出到memberold
-		memberCardOldDAO.insert( memberCardOld );
+	        //用触发器取代
+	        //MemberCard memberCardDelete=memberCardDAO.selectById( m1.getMcId() );
+		// MemberCardOld memberCardOld = JSONObject.toJavaObject( JSON.parseObject( JSONObject.toJSONString( memberCardDelete ) ), MemberCardOld.class );
+		//memberCardOldDAO.insert( memberCardOld );
 		memberCardDAO.deleteById(   m1.getMcId() );
 	    }
 
@@ -462,10 +462,10 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    m1.setTotalIntegral( memberEntity.getTotalIntegral() + m1.getTotalIntegral() );
 	    m1.setRemark( memberEntity.getRemark() );
 	    m1.setLoginMode( 0 );
-	    MemberOld old = JSONObject.toJavaObject( JSON.parseObject( JSONObject.toJSONString( memberEntity ) ), MemberOld.class );
+	//    MemberOld old = JSONObject.toJavaObject( JSON.parseObject( JSONObject.toJSONString( memberEntity ) ), MemberOld.class );
 
 	    // 删除数据做移出到memberold
-	    memberOldDao.insert( old );
+	  //  memberOldDao.insert( old );
 
 	    memberEntityDAO.deleteById( memberEntity.getId() );
 

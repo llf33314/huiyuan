@@ -51,13 +51,9 @@ public class PropertiesUtil {
 
     private static String res_web_path;
 
-    private static String sms_tmplId;
-
     private static String untion_url;
 
     private static String mallHome;
-
-    private static String webType;
 
     private static String materialUrl;
 
@@ -207,15 +203,6 @@ public class PropertiesUtil {
 	PropertiesUtil.res_web_path = res_web_path;
     }
 
-    @Value( "${web.sms_tmplId}" )
-    public static String getSms_tmplId() {
-	return sms_tmplId;
-    }
-
-    public void setSms_tmplId( String sms_tmplId ) {
-	PropertiesUtil.sms_tmplId = sms_tmplId;
-    }
-
     @Value( "${web.untion_url}" )
     public static String getUntion_url() {
 	return untion_url;
@@ -234,14 +221,6 @@ public class PropertiesUtil {
 	PropertiesUtil.mallHome = mallHome;
     }
 
-    @Value( "${web.webType}" )
-    public static String getWebType() {
-	return webType;
-    }
-
-    public static void setWebType( String webType ) {
-	PropertiesUtil.webType = webType;
-    }
 
     @Value( "${web.materialUrl}" )
     public static String getMaterialUrl() {

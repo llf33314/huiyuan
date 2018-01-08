@@ -168,6 +168,9 @@ public class MemberCardServiceImpl implements MemberCardService {
     @Autowired
     private DuofenCardGetDAO duofenCardGetDAO;
 
+    @Autowired
+    private MemberGradetypeOldDAO memberGradetypeOldDAO;
+
     /**
      * 查询会员卡类型
      *
@@ -2730,16 +2733,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    throw new BusinessException( ResponseMemberEnums.VERIFICATION_BUSUSER );
 	}
 	MemberEntity memberEntity = memberMapper.selectById( memberId );
-	MemberOld old = JSONObject.toJavaObject( JSON.parseObject( JSONObject.toJSONString( memberEntity ) ), MemberOld.class );
 
-	// 删除数据做移出到memberold
-	memberOldDAO.insert( old );
 	memberMapper.updateMcIdBymemberId( memberId );
 
-	MemberCard memberCard = memberCardDAO.selectById( memberEntity.getMcId() );
-	MemberCardOld memberCardOld = JSONObject.toJavaObject( JSON.parseObject( JSONObject.toJSONString( memberCard ) ), MemberCardOld.class );
-	memberCardOldDAO.insert( memberCardOld );
-	memberCard.deleteById( memberEntity.getMcId() );
+	memberCardDAO.deleteById( memberEntity.getMcId() );
     }
 
     public Map< String,Object > findCard( Integer busId ) {
@@ -2785,9 +2782,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		throw new BusinessException( ResponseMemberEnums.NO_DELETE_CARD );
 	    }
 	    List< MemberGradetype > gradeTypes = memberGradetypeDAO.findMemberGradeTypeByBusIdAndCtId( busId, ctId );
-
 	    List< Map< String,Object > > giveRules = memberGiveruleDAO.findByBusIdAndCtId( busId, ctId );
-
 	    // 删除卡片操作
 	    memberGradetypeDAO.deleteBybusIdAndCtId( busId, ctId );
 
@@ -2799,10 +2794,11 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    }
 		}
 		if ( list.size() > 0 ) {
+
+
 		    // 删除赠送规则
 		    memberGiveruleDAO.deleteBygrIds( list );
 		}
-
 		Integer assistantCard = 0;
 		if ( "1".equals( CommonUtil.toString( gradeTypes.get( 0 ).getIseasy() ) ) ) {
 		    if ( gradeTypes.size() > 1 ) {
@@ -2811,13 +2807,11 @@ public class MemberCardServiceImpl implements MemberCardService {
 		} else {
 		    assistantCard = CommonUtil.toInteger( gradeTypes.get( 0 ).getAssistantCard() );
 		}
-
 		if ( assistantCard == 1 ) {
 		    //开通了副卡
 		    memberGradetypeAssistantDAO.deleteByGtId( busId, ctId );
 		    memberRechargegiveAssistantDAO.deleteBybusIdAndGtid( busId, ctId );
 		}
-
 		//删除赠送物品
 		memberGiverulegoodstypeDAO.deleteByBusIdAndCtId( busId, ctId );
 	    }

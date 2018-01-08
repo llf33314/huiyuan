@@ -50,21 +50,15 @@
 
 
 	<select id="sumByBusId" resultType="Map">
-		SELECT SUM(number) as number,memberId,busId FROM t_member_cardrecord_new WHERE recordType=2 and rtype=1 and busId IN
-		<foreach close=")" collection="busIds" item="b" open="(" separator=",">
-			#{b}
-		</foreach>
-		and createDate<![CDATA[>=]]> #{startDate}  and createDate<![CDATA[<=]]> #{endDate}
+		SELECT SUM(number) as number,memberId,busId FROM t_member_cardrecord_new WHERE recordType=2 and rtype=1 and busId =#{busId}
+			and createDate<![CDATA[>=]]> #{startDate}  and createDate<![CDATA[<=]]> #{endDate}
 		GROUP BY memberId
 	</select>
 
 
 	<select id="sumCurrentByBusId" resultType="Map">
 		SELECT SUM(number) as number,memberId FROM t_member_cardrecord WHERE recordType=2 and rtype=0 and
-		busId IN
-		<foreach close=")" collection="busIds" item="b" open="(" separator=",">
-			#{b}
-		</foreach>
+		busId =#{busId}
 		and createDate<![CDATA[>=]]> #{startDate}  and createDate<![CDATA[<=]]> #{endDate}
 		GROUP BY memberId
 	</select>

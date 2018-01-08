@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberGradetypeOldDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberGradetypeOld">
+		<id column="gt_id" property="gtId" />
+		<result column="gt_grade_name" property="gtGradeName" />
+		<result column="gt_name" property="gtName" />
+		<result column="gt_name_color" property="gtNameColor" />
+		<result column="gt_login_url" property="gtLoginUrl" />
+		<result column="cm_id" property="cmId" />
+		<result column="gt_text_color" property="gtTextColor" />
+		<result column="ct_id" property="ctId" />
+		<result column="public_id" property="publicId" />
+		<result column="is_publish" property="isPublish" />
+		<result column="isCheck" property="isCheck" />
+		<result column="applyType" property="applyType" />
+		<result column="buyMoney" property="buyMoney" />
+		<result column="buyModel" property="buyModel" />
+		<result column="costMoney" property="costMoney" />
+		<result column="balance" property="balance" />
+		<result column="giveflow" property="giveflow" />
+		<result column="givefenbi" property="givefenbi" />
+		<result column="giveIntegral" property="giveIntegral" />
+		<result column="url" property="url" />
+		<result column="isView" property="isView" />
+		<result column="ismemberDate" property="ismemberDate" />
+		<result column="isUploadImg" property="isUploadImg" />
+		<result column="imgExplain" property="imgExplain" />
+		<result column="isleft" property="isleft" />
+		<result column="iseasy" property="iseasy" />
+		<result column="easyApply" property="easyApply" />
+		<result column="busId" property="busId" />
+		<result column="giveMoney" property="giveMoney" />
+		<result column="pickMoney" property="pickMoney" />
+		<result column="assistantCard" property="assistantCard" />
+		<result column="isrecommend" property="isrecommend" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        gt_id, gt_grade_name, gt_name, gt_name_color, gt_login_url, cm_id, gt_text_color, ct_id, public_id, is_publish, isCheck AS isCheck, applyType AS applyType, buyMoney AS buyMoney, buyModel AS buyModel, costMoney AS costMoney, balance, giveflow, givefenbi, giveIntegral AS giveIntegral, url, isView AS isView, ismemberDate AS ismemberDate, isUploadImg AS isUploadImg, imgExplain AS imgExplain, isleft, iseasy, easyApply AS easyApply, busId AS busId, giveMoney AS giveMoney, pickMoney AS pickMoney, assistantCard AS assistantCard, isrecommend
+    </sql>
+
+</mapper>

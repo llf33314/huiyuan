@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberGradetypeAssistantOldDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberGradetypeAssistantOld">
+		<id column="id" property="id" />
+		<result column="gtId" property="gtId" />
+		<result column="ctId" property="ctId" />
+		<result column="discount" property="discount" />
+		<result column="busId" property="busId" />
+		<result column="fuctId" property="fuctId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, gtId AS gtId, ctId AS ctId, discount, busId AS busId, fuctId AS fuctId
+    </sql>
+
+</mapper>

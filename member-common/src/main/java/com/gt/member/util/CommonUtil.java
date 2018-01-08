@@ -546,6 +546,11 @@ public class CommonUtil {
 	    return cardNo;
 	}
 
+    public static void main( String[] args ) {
+	String aa=getCode();
+	System.out.println(aa);
+    }
+
 	/**
 	 * 获取推荐码 6位
 	 * 
@@ -694,16 +699,7 @@ public class CommonUtil {
 		return result;
 	}
 
-	public static void main(String[] args) {
-		try {
-			System.out
-					.println(URLEncoder
-							.encode("fu/qLsJj/XWMPHCFImiasg1Xk+UohpaBsUh/v3nizre/aVG4BBFqDbPbptbhxeZO",
-									"gb2312"));
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-	}
+
 
 	/**
 	 * 保留2位小数（四舍五入）

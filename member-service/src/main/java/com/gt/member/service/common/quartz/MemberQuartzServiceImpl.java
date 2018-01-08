@@ -216,44 +216,47 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
 	try {
 	    Date date = DateTimeKit.addMonths( new Date(), -12 );
 	    Date startdate = DateTimeKit.addMonths( new Date(), -24 );
-	    List< Map< String,Object > > upperYear = memberCardrecordNewDAO.sumByBusId( busIds, startdate, date ); // 前一年数据统计
-	    List< Map< String,Object > > currentYear = memberCardrecordNewDAO.sumCurrentByBusId( busIds, date, new Date() );
-	    for ( Map< String,Object > map : upperYear ) {
-		Double number = CommonUtil.toDouble( map.get( "number" ) );
-		Integer busId = CommonUtil.toInteger( map.get( "busId" ) );
-		Integer memberId = CommonUtil.toInteger( map.get( "memberId" ) );
-		MemberEntity member = memberMapper.selectById( memberId );
+	    for ( int i = 0; i < busIds.size(); i++ ) {
+		Integer busId = busIds.get( i );
+		if ( CommonUtil.isEmpty( busId ) ) continue;
+		List< Map< String,Object > > upperYear = memberCardrecordNewDAO.sumByBusId( busId, startdate, date ); // 前一年数据统计
+		List< Map< String,Object > > currentYear = memberCardrecordNewDAO.sumCurrentByBusId( busId, date, new Date() );
+		for ( Map< String,Object > map : upperYear ) {
+		    Double number = CommonUtil.toDouble( map.get( "number" ) );
+		    Integer memberId = CommonUtil.toInteger( map.get( "memberId" ) );
+		    MemberEntity member = memberMapper.selectById( memberId );
 
-		if ( CommonUtil.isNotEmpty( number ) && number > 0 ) {
-		    if ( currentYear.size() == 0 ) {
-			Double balace = member.getIntegral() - number;
-			// 执行清楚计划
-			memberCommonService.saveCardRecordOrderCodeNew( memberId, 2, number, "积分清除", busId, balace, "0", 2 );
-			// 修改粉丝的积分
-			MemberEntity m1 = new MemberEntity();
-			m1.setId( member.getId() );
-			m1.setIntegral( balace.intValue() );
-			memberMapper.updateById( m1 );
-		    }
+		    if ( CommonUtil.isNotEmpty( number ) && number > 0 ) {
+			if ( currentYear.size() == 0 ) {
+			    Double balace = member.getIntegral() - number;
+			    // 执行清楚计划
+			    memberCommonService.saveCardRecordOrderCodeNew( memberId, 2, number, "积分清除", busId, balace, "0", 2 );
+			    // 修改粉丝的积分
+			    MemberEntity m1 = new MemberEntity();
+			    m1.setId( member.getId() );
+			    m1.setIntegral( balace.intValue() );
+			    memberMapper.updateById( m1 );
+			}
 
-		    for ( Map< String,Object > map2 : currentYear ) {
-			Integer memberId1 = CommonUtil.toInteger( map2.get( "memberId" ) );
-			Double number1 = CommonUtil.toDouble( map2.get( "number" ) );
-			if ( memberId.equals( memberId1 ) ) {
+			for ( Map< String,Object > map2 : currentYear ) {
+			    Integer memberId1 = CommonUtil.toInteger( map2.get( "memberId" ) );
+			    Double number1 = CommonUtil.toDouble( map2.get( "number" ) );
+			    if ( memberId.equals( memberId1 ) ) {
 
-			    if ( number > number1 ) {
-				Double numberBalace = number - number1;
-				// 执行清楚计划
-				Double balace = member.getIntegral() - numberBalace;
-				// 执行清楚计划
-				memberCommonService.saveCardRecordOrderCodeNew( memberId, 2, numberBalace, "积分清除", busId, balace, "0", 2 );
-				// 修改粉丝的积分
-				MemberEntity m1 = new MemberEntity();
-				m1.setId( member.getId() );
-				m1.setIntegral( balace.intValue() );
-				memberMapper.updateById( m1 );
-				break;
+				if ( number > number1 ) {
+				    Double numberBalace = number - number1;
+				    // 执行清楚计划
+				    Double balace = member.getIntegral() - numberBalace;
+				    // 执行清楚计划
+				    memberCommonService.saveCardRecordOrderCodeNew( memberId, 2, numberBalace, "积分清除", busId, balace, "0", 2 );
+				    // 修改粉丝的积分
+				    MemberEntity m1 = new MemberEntity();
+				    m1.setId( member.getId() );
+				    m1.setIntegral( balace.intValue() );
+				    memberMapper.updateById( m1 );
+				    break;
 
+				}
 			    }
 			}
 		    }
@@ -309,54 +312,57 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
 	    Date date = DateTimeKit.addMonths( d, -12 );
 	    Date startdate = DateTimeKit.addMonths( d, -24 );
 
-	    List< Map< String,Object > > upperYear = memberCardrecordNewDAO.sumByBusId( busIds, startdate, date ); // 前一年数据统计
+	    for ( int i = 0; i < busIds.size(); i++ ) {
+		Integer busId = busIds.get( i );
+		if ( CommonUtil.isEmpty( busId ) ) continue;
+		List< Map< String,Object > > upperYear = memberCardrecordNewDAO.sumByBusId( busId, startdate, date ); // 前一年数据统计
 
-	    List< Map< String,Object > > currentYear = memberCardrecordNewDAO.sumCurrentByBusId( busIds, date, new Date() );
+		List< Map< String,Object > > currentYear = memberCardrecordNewDAO.sumCurrentByBusId( busId, date, new Date() );
 
-	    List< Systemnoticecall > sncList = new ArrayList< Systemnoticecall >();
-	    Systemnoticecall s = null;
-	    for ( Map< String,Object > cmap : upperYear ) {
-		boolean flag = false;
-		Double number = CommonUtil.toDouble( cmap.get( "number" ) );
-		Integer busId = CommonUtil.toInteger( cmap.get( "busId" ) );
-		Integer memberId = CommonUtil.toInteger( cmap.get( "memberId" ) );
+		List< Systemnoticecall > sncList = new ArrayList< Systemnoticecall >();
+		Systemnoticecall s = null;
+		for ( Map< String,Object > cmap : upperYear ) {
+		    boolean flag = false;
+		    Double number = CommonUtil.toDouble( cmap.get( "number" ) );
+		    Integer memberId = CommonUtil.toInteger( cmap.get( "memberId" ) );
 
-		if ( CommonUtil.isNotEmpty( number ) && number > 0 ) {
-		    if ( currentYear.size() == 0 ) {
-			s = new Systemnoticecall();
-			s.setDescribes( "尊敬的用户：你去年还有" + number + "积分未使用,请你在本月内使用完。不然，我们将会下个月1号将清除去年未使用的积分。" );
-			s.setMemberId( memberId );
-			s.setCreateDate( new Date() );
-			sncList.add( s );
-		    }
+		    if ( CommonUtil.isNotEmpty( number ) && number > 0 ) {
+			if ( currentYear.size() == 0 ) {
+			    s = new Systemnoticecall();
+			    s.setDescribes( "尊敬的用户：你去年还有" + number + "积分未使用,请你在本月内使用完。不然，我们将会下个月1号将清除去年未使用的积分。" );
+			    s.setMemberId( memberId );
+			    s.setCreateDate( new Date() );
+			    sncList.add( s );
+			}
 
-		    for ( Map< String,Object > map2 : currentYear ) {
-			Integer memberId1 = CommonUtil.toInteger( map2.get( "memberId" ) );
-			Double number1 = CommonUtil.toDouble( map2.get( "number1" ) );
-			if ( memberId.equals( memberId1 ) ) {
-			    if ( number > number1 ) {
-				Double amount = number - number1;
-				s = new Systemnoticecall();
-				s.setDescribes( "尊敬的用户：你去年还有" + amount + "积分未使用,请你在本月内使用完。不然，我们将会下个月1号将清除去年未使用的积分。" );
-				s.setMemberId( memberId );
-				s.setCreateDate( new Date() );
-				sncList.add( s );
+			for ( Map< String,Object > map2 : currentYear ) {
+			    Integer memberId1 = CommonUtil.toInteger( map2.get( "memberId" ) );
+			    Double number1 = CommonUtil.toDouble( map2.get( "number1" ) );
+			    if ( memberId.equals( memberId1 ) ) {
+				if ( number > number1 ) {
+				    Double amount = number - number1;
+				    s = new Systemnoticecall();
+				    s.setDescribes( "尊敬的用户：你去年还有" + amount + "积分未使用,请你在本月内使用完。不然，我们将会下个月1号将清除去年未使用的积分。" );
+				    s.setMemberId( memberId );
+				    s.setCreateDate( new Date() );
+				    sncList.add( s );
+				}
 			    }
 			}
-		    }
 
-		}
-		if ( sncList.size() > 0 ) {
-		    try {
-			// 保存数据
-			systemNoticeCallMapper.saveList( sncList );
-		    } catch ( Exception e ) {
-			e.printStackTrace();
+		    }
+		    if ( sncList.size() > 0 ) {
+			try {
+			    // 保存数据
+			    systemNoticeCallMapper.saveList( sncList );
+			} catch ( Exception e ) {
+			    e.printStackTrace();
+			}
 		    }
 		}
 	    }
 	} catch ( Exception e ) {
-	    LOG.error( "保存系统通知异常", e );
+	    LOG.error( "clearJifenSendMessage保存系统通知异常", e );
 	}
     }
 
@@ -365,72 +371,52 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
      */
     @Override
     public void clearJifenSendSmsMessage() {
-	List< PublicParameterset > publicParameterSets = publicParameterSetMapper.findMonth();
-	if ( CommonUtil.isEmpty( publicParameterSets ) || publicParameterSets.size() == 0 ) {
-	    return;
-	}
-	Integer month = DateTimeKit.getMonth( new Date() );
-
-	month = month + 1;
-
-	List< Integer > busIds = new ArrayList< Integer >();
-	for ( PublicParameterset p : publicParameterSets ) {
-	    if ( p.getMonth() != month ) {
-		continue;
+        try {
+	    List< PublicParameterset > publicParameterSets = publicParameterSetMapper.findMonth();
+	    if ( CommonUtil.isEmpty( publicParameterSets ) || publicParameterSets.size() == 0 ) {
+		return;
 	    }
-	    // 执行积分清零
-	    busIds.add( p.getBusId() );
-	}
+	    Integer month = DateTimeKit.getMonth( new Date() );
 
-	if ( busIds.size() <= 0 ) {
-	    return;
-	}
+	    month = month + 1;
 
-	// 短信通知积分
-	List< Map< String,Object > > systemNotices = systemNoticeMapper.findMsgBybusIdEq13( busIds );
+	    List< Integer > busIds = new ArrayList< Integer >();
+	    for ( PublicParameterset p : publicParameterSets ) {
+		if ( p.getMonth() != month ) {
+		    continue;
+		}
+		// 执行积分清零
+		busIds.add( p.getBusId() );
+	    }
 
-	String dateStr = DateTimeKit.getCurrentYear() + "-" + month + "-01";
-	Date d = DateTimeKit.parse( dateStr, "yyyy-MM-dd" );
+	    if ( busIds.size() <= 0 ) {
+		return;
+	    }
 
-	Date date = DateTimeKit.addMonths( d, -12 );
-	Date startdate = DateTimeKit.addMonths( d, -24 );
+	    // 短信通知积分
+	    List< Map< String,Object > > systemNotices = systemNoticeMapper.findMsgBybusIdEq13( busIds );
 
-	List< Map< String,Object > > upperYear = memberCardrecordNewDAO.sumByBusId( busIds, startdate, date ); // 前一年数据统计
-	List< Map< String,Object > > currentYear = memberCardrecordNewDAO.sumCurrentByBusId( busIds, date, new Date() );
-	try {
-	    for ( Map< String,Object > cmap : upperYear ) {
-		Double number = CommonUtil.toDouble( cmap.get( "number" ) );
-		Integer busId = CommonUtil.toInteger( cmap.get( "busId" ) );
-		Integer memberId = CommonUtil.toInteger( cmap.get( "memberId" ) );
-		MemberEntity m = memberMapper.selectById( memberId );
-		boolean flag = false;
-		if ( CommonUtil.isNotEmpty( number ) && number > 0 ) {
+	    String dateStr = DateTimeKit.getCurrentYear() + "-" + month + "-01";
+	    Date d = DateTimeKit.parse( dateStr, "yyyy-MM-dd" );
 
-		    if ( currentYear.size() == 0 ) {
-			String content = "尊敬的用户：你去年还有" + number + "积分未使用,请你在本月内使用完。不然，我们将会下个月1号将清除去年未使用的积分。";
-			RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
-			OldApiSms oldApiSms = new OldApiSms();
-			oldApiSms.setMobiles( m.getPhone() );
-			oldApiSms.setContent( content );
-			oldApiSms.setCompany( PropertiesUtil.getSms_name() );
-			oldApiSms.setBusId( busId );
-			oldApiSms.setModel( 3 );
-			requestUtils.setReqdata( oldApiSms );
-			try {
-			    String smsStr = requestService.sendSms( requestUtils );
-			} catch ( Exception e ) {
-			    LOG.error( "短信发送失败", e );
-			}
-		    }
+	    Date date = DateTimeKit.addMonths( d, -12 );
+	    Date startdate = DateTimeKit.addMonths( d, -24 );
 
-		    for ( Map< String,Object > map2 : currentYear ) {
-			Integer member1 = CommonUtil.toInteger( map2.get( "member" ) );
-			Double number1 = CommonUtil.toDouble( cmap.get( "number" ) );
-			if ( memberId.equals( member1 ) ) {
-			    if ( number > number1 ) {
-				Double amount = number - number1;
-				String content = "尊敬的用户：你去年还有" + amount + "积分未使用,请你在本月内使用完。不然，我们将会下个月1号将清除去年未使用的积分。";
+	    for ( int i = 0; i < busIds.size(); i++ ) {
+		Integer busId = busIds.get( i );
+		if ( CommonUtil.isEmpty( busId ) ) continue;
+		List< Map< String,Object > > upperYear = memberCardrecordNewDAO.sumByBusId( busId, startdate, date ); // 前一年数据统计
+		List< Map< String,Object > > currentYear = memberCardrecordNewDAO.sumCurrentByBusId( busId, date, new Date() );
+		try {
+		    for ( Map< String,Object > cmap : upperYear ) {
+			Double number = CommonUtil.toDouble( cmap.get( "number" ) );
+			Integer memberId = CommonUtil.toInteger( cmap.get( "memberId" ) );
+			MemberEntity m = memberMapper.selectById( memberId );
+			boolean flag = false;
+			if ( CommonUtil.isNotEmpty( number ) && number > 0 ) {
 
+			    if ( currentYear.size() == 0 ) {
+				String content = "尊敬的用户：你去年还有" + number + "积分未使用,请你在本月内使用完。不然，我们将会下个月1号将清除去年未使用的积分。";
 				RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
 				OldApiSms oldApiSms = new OldApiSms();
 				oldApiSms.setMobiles( m.getPhone() );
@@ -445,25 +431,52 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
 				    LOG.error( "短信发送失败", e );
 				}
 			    }
+
+			    for ( Map< String,Object > map2 : currentYear ) {
+				Integer member1 = CommonUtil.toInteger( map2.get( "member" ) );
+				Double number1 = CommonUtil.toDouble( cmap.get( "number" ) );
+				if ( memberId.equals( member1 ) ) {
+				    if ( number > number1 ) {
+					Double amount = number - number1;
+					String content = "尊敬的用户：你去年还有" + amount + "积分未使用,请你在本月内使用完。不然，我们将会下个月1号将清除去年未使用的积分。";
+
+					RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
+					OldApiSms oldApiSms = new OldApiSms();
+					oldApiSms.setMobiles( m.getPhone() );
+					oldApiSms.setContent( content );
+					oldApiSms.setCompany( PropertiesUtil.getSms_name() );
+					oldApiSms.setBusId( busId );
+					oldApiSms.setModel( 3 );
+					requestUtils.setReqdata( oldApiSms );
+					try {
+					    String smsStr = requestService.sendSms( requestUtils );
+					} catch ( Exception e ) {
+					    LOG.error( "短信发送失败", e );
+					}
+				    }
+				}
+			    }
 			}
 		    }
+		} catch ( Exception e ) {
+		    LOG.error( "积分清零发送短信异常", e );
 		}
 	    }
-	} catch ( Exception e ) {
-	    LOG.error( "积分清零发送短信异常", e );
+	}catch ( Exception e ){
+	    LOG.error("clearJifenSendSmsMessage积分清零",e);
 	}
     }
 
     /**
      * 每天凌晨 生日推送
      */
-  //  @Scheduled( cron = "0 0 3 * * ?" )
+    //  @Scheduled( cron = "0 0 3 * * ?" )
     @Override
     public void birthdayMsg() {
 
 	List< Map< String,Object > > memberList = memberMapper.findMemberBir();
 	//
-	List< Map< String,Object > > sysNoticeList=systemNoticeMapper.findMsgBybusIdEq10();
+	List< Map< String,Object > > sysNoticeList = systemNoticeMapper.findMsgBybusIdEq10();
 
 	List< Systemnoticecall > sncs = new ArrayList< Systemnoticecall >();
 	Systemnoticecall s = null;
@@ -490,7 +503,7 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
     /**
      * 每天凌晨3点触发  过滤数据
      */
-   // @Scheduled( cron = "0 0 3 * * ?" )
+    // @Scheduled( cron = "0 0 3 * * ?" )
     @Override
     public void birthdaySms() {
 
@@ -513,15 +526,15 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
     /**
      * 每天凌晨9点触发 短信提醒
      */
-  //  @Scheduled( cron = "0 0 9 * * ?" )
+    //  @Scheduled( cron = "0 0 9 * * ?" )
     public void sendBir() {
 
 	List< Map< String,Object > > memberBirList = memberBirMapper.findAll();
 	List< Map< String,Object > > sysNoticeList = systemNoticeMapper.findSmsBybusIdEq10();
 
-	Integer busId=0;
+	Integer busId = 0;
 	for ( Map< String,Object > sn : sysNoticeList ) {
-	    String phone="";
+	    String phone = "";
 	    for ( Map< String,Object > map : memberBirList ) {
 		if ( CommonUtil.toString( sn.get( "busId" ) ).equals( CommonUtil.toString( map.get( "busId" ) ) ) && CommonUtil.isNotEmpty( map.get( "phone" ) ) ) {
 		    phone += map.get( "phone" ) + ",";
@@ -534,7 +547,6 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
 
 	    //发送短信
 	    String content = CommonUtil.toString( sn.get( "smsContent" ) );
-
 
 	    RequestUtils< OldApiSms > requestUtils = new RequestUtils< OldApiSms >();
 	    OldApiSms oldApiSms = new OldApiSms();

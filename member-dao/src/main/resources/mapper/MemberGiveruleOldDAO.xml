@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberGiveruleOldDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberGiveruleOld">
+		<id column="gr_id" property="grId" />
+		<result column="public_id" property="publicId" />
+		<result column="gt_id" property="gtId" />
+		<result column="ct_id" property="ctId" />
+		<result column="gr_rechargeMoney" property="grRechargeMoney" />
+		<result column="gr_number" property="grNumber" />
+		<result column="gr_discount" property="grDiscount" />
+		<result column="gr_giveCount" property="grGiveCount" />
+		<result column="gr_giveType" property="grGiveType" />
+		<result column="gr_startDate" property="grStartDate" />
+		<result column="gr_validDate" property="grValidDate" />
+		<result column="gr_upgradeType" property="grUpgradeType" />
+		<result column="gr_upgradeCount" property="grUpgradeCount" />
+		<result column="gr_equities" property="grEquities" />
+		<result column="create_userId" property="createUserId" />
+		<result column="creatDate" property="creatDate" />
+		<result column="delayDay" property="delayDay" />
+		<result column="busId" property="busId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        gr_id, public_id, gt_id, ct_id, gr_rechargeMoney AS grRechargeMoney, gr_number, gr_discount, gr_giveCount AS grGiveCount, gr_giveType AS grGiveType, gr_startDate AS grStartDate, gr_validDate AS grValidDate, gr_upgradeType AS grUpgradeType, gr_upgradeCount AS grUpgradeCount, gr_equities, create_userId AS createUserId, creatDate AS creatDate, delayDay AS delayDay, busId AS busId
+    </sql>
+
+</mapper>

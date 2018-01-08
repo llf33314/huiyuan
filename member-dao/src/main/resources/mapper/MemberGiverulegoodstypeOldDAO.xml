@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.member.dao.MemberGiverulegoodstypeOldDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberGiverulegoodstypeOld">
+		<id column="id" property="id" />
+		<result column="gr_id" property="grId" />
+		<result column="gt_id" property="gtId" />
+		<result column="give_type" property="giveType" />
+		<result column="money" property="money" />
+		<result column="number" property="number" />
+		<result column="upperLmit" property="upperLmit" />
+		<result column="busId" property="busId" />
+		<result column="ctId" property="ctId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        gr_id, gt_id, give_type, money, number, upperLmit AS upperLmit, id, busId AS busId, ctId AS ctId
+    </sql>
+
+</mapper>

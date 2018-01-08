@@ -60,6 +60,20 @@ public class MemberController {
     private ExportExcel exportExcel;
 
 
+
+    @ApiOperation( value = "判断当前登录人是否是主账户", notes = "判断当前登录人是否是主账户" )
+    @ResponseBody
+    @RequestMapping( value = "/findIsPid", method = RequestMethod.POST )
+    public ServerResponse findIsPid(HttpServletRequest request, HttpServletResponse response){
+        Integer pId=SessionUtils.getPidBusId( request );
+        Integer busId=SessionUtils.getLoginUser( request ).getId();
+        if(pId.equals( busId )){
+	    return ServerResponse.createBySuccess( "",1 );
+	}
+	return ServerResponse.createBySuccess( "",0 );
+
+    }
+
     @ApiOperation( value = "查询商家发布的会员类型", notes = "查询商家发布的会员类型" )
     @ResponseBody
     @RequestMapping( value = "/findCardType", method = RequestMethod.GET )
@@ -203,6 +217,8 @@ public class MemberController {
 	    return ServerResponse.createByError( e.getCode(),e.getMessage());
 	}
     }
+
+
 
     @ApiOperation( value = "拉黑或恢复会员", notes = "拉黑或恢复会员" )
     @ApiImplicitParams({

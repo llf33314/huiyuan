@@ -26,18 +26,18 @@ public interface MemberCardrecordNewDAO extends BaseMapper<MemberCardrecordNew> 
 
     /**
      * 查询前年赠送积分情况
-     * @param busIds
+     * @param busId
      * @return
      */
-    List<Map<String, Object>> sumByBusId(@Param("busIds")List<Integer> busIds,@Param("startDate")Date startDate,@Param("endDate")Date endDate);
+    List<Map<String, Object>> sumByBusId(@Param("busId")Integer busId,@Param("startDate")Date startDate,@Param("endDate")Date endDate);
 
     /**
      * 查询去年消费积分
-     * @param busIds
+     * @param busId
      * @param startDate
      * @param endDate
      * @return
      */
-    List<Map<String, Object>> sumCurrentByBusId(@Param("busIds")List<Integer> busIds,@Param("startDate")Date startDate,@Param("endDate")Date endDate);
+    List<Map<String, Object>> sumCurrentByBusId(@Param("busId")Integer busId,@Param("startDate")Date startDate,@Param("endDate")Date endDate);
 
 }
