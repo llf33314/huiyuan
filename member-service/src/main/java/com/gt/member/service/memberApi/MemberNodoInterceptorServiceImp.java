@@ -390,8 +390,6 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 		}
 	    }
 
-	    card.setFrequency( 0 );
-	    card.setMoney( 0.0 );
 	    memberCardDAO.insert( card );
 
 	    MemberEntity member = new MemberEntity();
