@@ -2286,6 +2286,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    map.put( "orderCode", ucNew.getOrderCode() );
 	    map.put( "dateTime", ucNew.getCreateDate() );
 	    map.put( "money", ucNew.getDiscountAfterMoney() );
+	    map.put( "balace",ucNew.getBalance() );
+	    map.put( "balanceCount",ucNew.getBalanceCount() );
 	    SortedMap< String,Object > payStatus = dictService.getDict( "A004" );
 	    map.put( "payStatus", payStatus.get( CommonUtil.toString( ucNew.getPayStatus() ) ) );
 
