@@ -632,6 +632,8 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		map.put( "headimg", memberEntity.getHeadimgurl() );
 	    }
 
+	    String duofenCardUrl=PropertiesUtil.getWxmp_home()+"/phone_2MemberController/79B4DE7C/memberCardList_1.do?busId=42";
+	    map.put( "duofenCardUrl", duofenCardUrl );
 	    // 联盟卡查询
 	    String unionUrl = PropertiesUtil.getUntion_url() + "/cardPhone/#/toUnionCard?busId=" + busId;
 	    map.put( "unionUrl", unionUrl );
