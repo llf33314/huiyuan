@@ -246,7 +246,7 @@ public interface MemberCardService {
      */
     public Map< String,Object > memberTongJi( Integer busId, Integer ctId) throws BusinessException;
 
-    public Map<String,Object> sum7DayOrder(Integer busId, Integer ctId, String startTime)throws BusinessException;
+    public Map<String,Object> sum7DayOrder(Integer busId, Integer ctId, String startTime,String enddate)throws BusinessException;
 
     /**
      * 分页查询充值记录

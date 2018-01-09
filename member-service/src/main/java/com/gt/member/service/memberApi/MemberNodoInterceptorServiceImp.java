@@ -376,16 +376,19 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 		}
 	    }else if(card.getCtId()==4){
 		//时效卡
-		Map< String,Object > returnMap = memberCommonService.findTimeCard( uc.getDiscountAfterMoney(), uc.getBusId() );
 		Date expireDate = card.getExpireDate();
-		Integer grValidDate = CommonUtil.toInteger( returnMap.get( "grValidDate" ));
-		if ( expireDate == null ) {
-		    card.setExpireDate( DateTimeKit.addMonths( grValidDate ) );
-		} else {
-		    if ( DateTimeKit.laterThanNow( card.getExpireDate() ) ) {
-			card.setExpireDate( DateTimeKit.addMonths( expireDate, grValidDate ) );
+		if (CommonUtil.isNotEmpty(gradeType.getBalance())) {
+		    if ( expireDate == null ) {
+			card.setExpireDate( DateTimeKit.addMonths( new Double(gradeType.getBalance())
+					.intValue() ) );
 		    } else {
-			card.setExpireDate( DateTimeKit.addMonths( new Date(), grValidDate ) );
+			if ( DateTimeKit.laterThanNow( card.getExpireDate() ) ) {
+			    card.setExpireDate( DateTimeKit.addMonths( expireDate, new Double(gradeType.getBalance())
+					    .intValue() ) );
+			} else {
+			    card.setExpireDate( DateTimeKit.addMonths( new Date(), new Double(gradeType.getBalance())
+					    .intValue() ) );
+			}
 		    }
 		}
 	    }

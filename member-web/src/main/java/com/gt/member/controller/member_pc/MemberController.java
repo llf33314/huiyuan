@@ -456,10 +456,10 @@ public class MemberController {
     @ResponseBody
     @RequestMapping( value = "/sum7DayOrder", method = RequestMethod.GET )
     public ServerResponse sum7DayOrder(HttpServletRequest request,
-		    HttpServletResponse response,Integer ctId,String startdate){
+		    HttpServletResponse response,Integer ctId,String startdate,String enddate){
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    Map<String,Object> map= memberCardService.sum7DayOrder(busId,ctId,startdate);
+	    Map<String,Object> map= memberCardService.sum7DayOrder(busId,ctId,startdate,enddate);
 	    return ServerResponse.createBySuccess(map  );
 	} catch ( BusinessException e ) {
 	    LOG.error( "积分兑换异常：", e );

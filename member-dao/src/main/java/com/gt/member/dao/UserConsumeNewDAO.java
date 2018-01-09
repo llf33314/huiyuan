@@ -53,13 +53,15 @@ public interface UserConsumeNewDAO extends BaseMapper<UserConsumeNew> {
     /**
      * 查询7天的交易总额
      */
-    List<Map<String, Object>> sum7DayOrder(@Param("busId")Integer busId,@Param("ctId")Integer ctId,@Param("date")Date date);
+    List<Map<String, Object>> sum7DayOrder(@Param("busId")Integer busId,@Param("ctId")Integer ctId,
+                    @Param("startDate")Date startDate,@Param("endDate")Date endDate);
 
 
     /**
      * 查询7天的售卡交易金额
      */
-    List<Map<String, Object>> sum7DayBuyCard(@Param("busId")Integer busId,@Param("ctId")Integer ctId,@Param("date")Date date);
+    List<Map<String, Object>> sum7DayBuyCard(@Param("busId")Integer busId,@Param("ctId")Integer ctId,
+                    @Param("startDate")Date startDate,@Param("endDate")Date endDate);
 
 
     /**

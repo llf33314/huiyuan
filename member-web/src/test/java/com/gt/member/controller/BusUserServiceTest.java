@@ -6,6 +6,7 @@ import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.member.BasicTest;
 import com.gt.member.dao.MemberEntityDAO;
 import com.gt.member.entity.MemberEntity;
+import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.util.HttpClienUtil;
 import net.sf.json.JSONObject;
 import org.junit.Test;
@@ -23,6 +24,9 @@ public class BusUserServiceTest extends BasicTest {
 
     @Autowired
     private MemberEntityDAO memberEntityDAO;
+
+    @Autowired
+    private RequestService requestService;
 
 
     @Test
@@ -58,12 +62,9 @@ public class BusUserServiceTest extends BasicTest {
 //	socketMap.put( "pushName","member_count_"+23 );
 //	String ss=SignHttpUtils.WxmppostByHttp( socketUrl, socketMap, wxmpsignKey );  //推送
 //	System.out.println(ss);
-	Map<String, Object> map = new HashMap<>();
-	map.put("memberId", "1071");
-	map.put("receiceId", "434");
-	String aa=SignHttpUtils.postByHttp("http://192.168.2.240:8888/memberAPI/cardCouponseApi/findMeiRongDuofenCardGetByReceiveId",map,"MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM");
-	System.out.println(aa);
+//	System.out.println(aa);
 
+	requestService.getPowerApi( 0,42,1.0,"消费" );
     }
 
 }

@@ -708,7 +708,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 			gt.setCostMoney( costMoney );
 		    }
 		    if ( CommonUtil.isNotEmpty( map.get( "balance" ) ) ) {
-			String balance = CommonUtil.toString( gt.getBuyMoney()-gt.getCostMoney() );
+			String balance = CommonUtil.toString( map.get( "balance" ) );
 			gt.setBalance( balance );
 		    }
 		}
@@ -2148,17 +2148,23 @@ public class MemberCardServiceImpl implements MemberCardService {
 	}
     }
 
-    public Map< String,Object > sum7DayOrder( Integer busId, Integer ctId, String startTime ) throws BusinessException {
+    public Map< String,Object > sum7DayOrder( Integer busId, Integer ctId, String startTime,String enddate ) throws BusinessException {
 	try {
 	    Map< String,Object > map = new HashMap<>();
 	    // 表格 7销售总额和售卡总额
-	    Date date = new Date();
+	    Date beginDate = null;
 	    if ( CommonUtil.isNotEmpty( startTime ) ) {
-		date = DateTimeKit.parse( startTime + " 23:59:59", "yyyy-MM-dd hh:mm:ss" );
+		beginDate = DateTimeKit.parse( startTime + " 00:00:00", "yyyy-MM-dd hh:mm:ss" );
 	    }
-	    List< Map< String,Object > > sumdayOrder = userConsumeNewDAO.sum7DayOrder( busId, ctId, date );
 
-	    List< Map< String,Object > > sumbuyCard = userConsumeNewDAO.sum7DayBuyCard( busId, ctId, date );
+	    Date endDate = null;
+	    if ( CommonUtil.isNotEmpty( enddate ) ) {
+		endDate = DateTimeKit.parse( startTime + " 23:59:59", "yyyy-MM-dd hh:mm:ss" );
+	    }
+	    List< Map< String,Object > > sumdayOrder = userConsumeNewDAO.sum7DayOrder( busId, ctId, beginDate,endDate );
+
+	    List< Map< String,Object > > sumbuyCard = userConsumeNewDAO.sum7DayBuyCard( busId, ctId, beginDate,endDate );
+
 	    List< Map< String,Object > > sumMemberOrder = new ArrayList< Map< String,Object > >();
 
 	    if ( sumdayOrder.size() > sumbuyCard.size() ) {
@@ -2281,6 +2287,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
 	    map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
 	    map.put( "cardNo", cards.get( 0 ).get( "cardNo" ) );
+	    map.put( "ctId",ucNew.getCtId() );
 
 	    /**
 	     * 订单

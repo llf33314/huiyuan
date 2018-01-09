@@ -77,8 +77,14 @@
 		<if test="ctId>0">
 			and ctId=#{ctId}
 		</if>
-		 and busId=#{busId}
-		 and payStatus=1 and createDate <![CDATA[<=]]>#{date}
+		and busId=#{busId}
+		and payStatus=1
+		<if test="startDate!=null">
+			and createDate <![CDATA[>=]]>#{startDate}
+		</if>
+		<if test="endDate!=null">
+			and createDate <![CDATA[<=]]>#{endDate}
+		</if>
 		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
 		ORDER BY time DESC  LIMIT 7
 	</select>
@@ -87,10 +93,17 @@
 	<select id="sum7DayBuyCard" resultType="Map">
 		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS buytime1, SUM(discountAfterMoney) AS buyDiscountAfterMoney FROM t_wx_user_consume_new
 		where
-		ucType=13 and ctId=#{ctId} and busId=#{busId} and payStatus=1 and createDate <![CDATA[<=]]>#{date}
+		ucType=13 and ctId=#{ctId} and busId=#{busId} and payStatus=1 and
+		<if test="startDate!=null">
+			and createDate <![CDATA[>=]]>#{startDate}
+		</if>
+		<if test="endDate!=null">
+			and createDate <![CDATA[<=]]>#{endDate}
+		</if>
 		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
 		ORDER BY buytime1 DESC  LIMIT 7
 	</select>
+
 
 
 	<select id="countJifenDuiHan" resultType="Map">
