@@ -52,6 +52,9 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
     @Autowired
     private MemberGiveruleDAO memberGiveruleDAO;
 
+    @Autowired
+    private MemberGradetypeDAO memberGradetypeDAO;
+
     @Transactional
     public void changeFlow( Map< String,Object > params ) throws BusinessException {
 	try {
@@ -355,6 +358,38 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 	    card.setGrId( giveRule.getGrId() );
 	    card.setReceiveDate( new Date() );
 	    card.setIsbinding( 1 );
+
+	    MemberGradetype gradeType = memberGradetypeDAO.selectById(card
+			    .getGtId());
+	    if (card.getCtId() == 5) {
+		if (CommonUtil.isNotEmpty(gradeType.getBalance())) {
+		    card.setFrequency(new Double(gradeType.getBalance())
+				    .intValue());
+		} else {
+		    card.setFrequency(0);
+		}
+	    } else if(card.getCtId()==3){
+		if (CommonUtil.isNotEmpty(gradeType.getBalance())) {
+		    card.setMoney(new Double(gradeType.getBalance()));
+		} else {
+		    card.setMoney(0.0);
+		}
+	    }else if(card.getCtId()==4){
+		//时效卡
+		Map< String,Object > returnMap = memberCommonService.findTimeCard( uc.getDiscountAfterMoney(), uc.getBusId() );
+		Date expireDate = card.getExpireDate();
+		Integer grValidDate = CommonUtil.toInteger( returnMap.get( "grValidDate" ));
+		if ( expireDate == null ) {
+		    card.setExpireDate( DateTimeKit.addMonths( grValidDate ) );
+		} else {
+		    if ( DateTimeKit.laterThanNow( card.getExpireDate() ) ) {
+			card.setExpireDate( DateTimeKit.addMonths( expireDate, grValidDate ) );
+		    } else {
+			card.setExpireDate( DateTimeKit.addMonths( new Date(), grValidDate ) );
+		    }
+		}
+	    }
+
 	    card.setFrequency( 0 );
 	    card.setMoney( 0.0 );
 	    memberCardDAO.insert( card );
