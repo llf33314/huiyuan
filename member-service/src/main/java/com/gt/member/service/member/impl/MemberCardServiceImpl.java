@@ -698,17 +698,19 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    gt.setApplyType( 0 );
 		}
 
-		if ( CommonUtil.isNotEmpty( map.get( "buyMoney" ) ) ) {
-		    Double buyMoney = CommonUtil.toDouble( map.get( "buyMoney" ) );
-		    gt.setBuyMoney( buyMoney );
-		}
-		if ( CommonUtil.isNotEmpty( map.get( "costMoney" ) ) ) {
-		    Double costMoney = CommonUtil.toDouble( map.get( "costMoney" ) );
-		    gt.setCostMoney( costMoney );
-		}
-		if ( CommonUtil.isNotEmpty( map.get( "balance" ) ) ) {
-		    String balance = CommonUtil.toString( map.get( "balance" ) );
-		    gt.setBalance( balance );
+		if(buyModel==1) {
+		    if ( CommonUtil.isNotEmpty( map.get( "buyMoney" ) ) ) {
+			Double buyMoney = CommonUtil.toDouble( map.get( "buyMoney" ) );
+			gt.setBuyMoney( buyMoney );
+		    }
+		    if ( CommonUtil.isNotEmpty( map.get( "costMoney" ) ) ) {
+			Double costMoney = CommonUtil.toDouble( map.get( "costMoney" ) );
+			gt.setCostMoney( costMoney );
+		    }
+		    if ( CommonUtil.isNotEmpty( map.get( "balance" ) ) ) {
+			String balance = CommonUtil.toString( gt.getBuyMoney()-gt.getCostMoney() );
+			gt.setBalance( balance );
+		    }
 		}
 
 		gt.setIsmemberDate( ismemberDate );
