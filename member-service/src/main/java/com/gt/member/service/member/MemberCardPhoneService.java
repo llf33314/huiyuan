@@ -173,7 +173,16 @@ public interface MemberCardPhoneService {
      * @param memberId
      * @return
      */
-    public String tuijianQRcode(Integer memberId);
+    public String tuijianQRcode(Integer busId,String systemCode);
+
+
+    /**
+     * 推荐地址
+     * @param memberId
+     * @return
+     */
+    public Map<String,Object> judgeTuijian(Integer memberId,String systemCode);
+
 
     /**
      * 微信会员卡分享
@@ -181,7 +190,7 @@ public interface MemberCardPhoneService {
      * @param busId
      * @return
      */
-    public WxJsSdkResult wxshareCard(Integer memberId,Integer busId);
+    public WxJsSdkResult wxshareCard(Integer memberId,Integer busId,String url);
 
     /**
      * 查询会员卡卡号

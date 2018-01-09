@@ -167,6 +167,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    Map< String,Object > map = JSON.parseObject( json, Map.class );
 	    String phone = CommonUtil.toString( map.get( "phone" ) );
 	    Integer busId = CommonUtil.toInteger( map.get( "busId" ) );
+	    String country=CommonUtil.toString( map.get( "country" ) );
 	    RequestUtils< NewApiSms > requestUtils = new RequestUtils< NewApiSms >();
 	    String no = CommonUtil.getPhoneCode();
 	    redisCacheUtil.set( phone + "_" + no, no, 5 * 60 );
@@ -174,10 +175,11 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 
 	    NewApiSms newApiSms = new NewApiSms();
 	    newApiSms.setMobile( phone );
-	    newApiSms.setParamsStr( "会员短信校验码:" + no );
+	    newApiSms.setParamsStr(no );
 	    newApiSms.setBusId( busId );
 	    newApiSms.setModel( 9 );
 	    newApiSms.setTmplId( 11510L );
+	    newApiSms.setCountry( country );
 	    String smsStr = requestService.sendSmsNew( requestUtils );
 	    JSONObject returnJson = JSONObject.parseObject( smsStr );
 	    if ( "0".equals( CommonUtil.toString( returnJson.get( "code" ) ) ) ) {
@@ -685,23 +687,23 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "推荐信息", notes = "推荐信息" )
     @ResponseBody
     @RequestMapping( value = "/tuijianQRcode", method = RequestMethod.GET )
-    public void tuijianQRcode( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId ) {
-	Member member = SessionUtils.getLoginMember( request, busId );
-	String url = memberCardPhoneService.tuijianQRcode( member.getId() );
+    public void tuijianQRcode( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId, @RequestParam String systemCode) {
+	String url = memberCardPhoneService.tuijianQRcode( busId,systemCode );
 	QRcodeKit.buildQRcode( url, 500, 500, response );
     }
 
 
-    @ApiOperation( value = "会员卡分享推荐", notes = "会员卡分享推荐" )
+    @ApiOperation( value = "", notes = "会员卡分享推荐" )
     @ResponseBody
-    @RequestMapping( value = "/wxshareUrl", method = RequestMethod.POST )
-    public ServerResponse wxshareUrl( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
+    @RequestMapping( value = "/judgeTuijian", method = RequestMethod.POST )
+    public ServerResponse judgeTuijian( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    Member member = SessionUtils.getLoginMember( request, busId );
-	    String url = memberCardPhoneService.tuijianQRcode( member.getId() );
-	    return ServerResponse.createBySuccess( "",url );
+	    String systemCode=CommonUtil.toString( params.get( "systemCode" ) );
+	    Map<String,Object> map = memberCardPhoneService.judgeTuijian( member.getId(),systemCode);
+	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
@@ -725,7 +727,8 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    WxJsSdkResult wxJsSdkResult = memberCardPhoneService.wxshareCard( member.getId(), busId );
+	    String wxshareUrl=CommonUtil.toString( params.get( "wxshareUrl" ) );
+	    WxJsSdkResult wxJsSdkResult = memberCardPhoneService.wxshareCard( member.getId(), busId ,wxshareUrl);
 	    return ServerResponse.createBySuccess( wxJsSdkResult );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );

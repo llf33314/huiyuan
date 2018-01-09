@@ -1318,21 +1318,29 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	return returnList;
     }
 
-    public String tuijianQRcode( Integer memberId ) {
-	MemberEntity memberEntity = memberMapper.selectById( memberId );
-	MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
-	String url = PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/" + memberEntity.getBusId() + "/" + card.getSystemcode();
+    public String tuijianQRcode( Integer busId,String systemCode) {
+	String url = PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/" + busId + "/" + systemCode;
 	return url;
     }
 
-    public WxJsSdkResult wxshareCard( Integer memberId, Integer busId ) {
+    public Map<String,Object> judgeTuijian(Integer memberId,String systemCode){
+        Map<String,Object> map=new HashMap<>(  );
+	map.put( "tuijianCode",1 );
+        MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
+        if(CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() )){
+            MemberCard memberCard=memberCardDAO.selectById(memberEntity.getMcId() );
+            if("systemCode".equals( memberCard.getSystemcode() )){
+		map.put( "tuijianCode",0 );
+	    }
+	}
+	return map;
+    }
+
+    public WxJsSdkResult wxshareCard( Integer memberId, Integer busId,String url ) {
 	WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersMapper.selectByUserId( busId );
 	if ( CommonUtil.isEmpty( wxPublicUsersEntity ) ) {
 	    return null;
 	}
-	MemberEntity memberEntity = memberMapper.selectById( memberId );
-	MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
-	String url = PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/" + memberEntity.getBusId() + "/" + card.getSystemcode();
 	return requestService.wxShare( wxPublicUsersEntity.getId(), url );
 
     }
