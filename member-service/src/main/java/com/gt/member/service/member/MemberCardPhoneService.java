@@ -204,4 +204,12 @@ public interface MemberCardPhoneService {
      * @param memberId
      */
     public String memberLentMoney(Integer memberId,Double money)throws BusinessException;
+
+    /**
+     * 判断是否是同一个人
+     * @param memberId
+     * @param memberLentKey
+     * @return
+     */
+    public Map<String,Object> judgememberLent(Integer memberId,String memberLentKey);
 }

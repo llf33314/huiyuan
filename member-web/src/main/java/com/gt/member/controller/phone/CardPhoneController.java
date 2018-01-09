@@ -762,10 +762,10 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	}
     }
 
-    @ApiOperation( value = "授权判断", notes = "授权判断" )
+    @ApiOperation( value = "判断是否是同一个人", notes = "判断是否是同一个人" )
     @ResponseBody
-    @RequestMapping( value = "/authorizeOrLogin", method = RequestMethod.POST )
-    public ServerResponse authorizeOrLogin( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
+    @RequestMapping( value = "/judgememberLent", method = RequestMethod.POST )
+    public ServerResponse judgememberLent( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
@@ -776,22 +776,23 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    return ServerResponse.createBySuccess();
+	    String memberLentKey= CommonUtil.toString( params.get( "memberLentKey" ) );
+	    Map<String,Object> map=memberCardPhoneService.judgememberLent(member.getId(),memberLentKey);
+	    return ServerResponse.createBySuccess(map);
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    LOG.error( "授权判断异常", e );
+	    LOG.error( "判断是否是同一个人", e );
 	    return ServerResponse.createByError();
 	}
     }
 
+
     @ApiOperation( value = "转借他人二维码", notes = "转借他人二维码" )
     @ResponseBody
     @RequestMapping( value = "/memberLentImage", method = RequestMethod.GET )
-    public void memberLentImage( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer busId, @RequestParam String memberLentKey ) {
-	Member member = SessionUtils.getLoginMember( request, busId );
-	String content = member.getId() + "_" + memberLentKey;
-	QRcodeKit.buildQRcode( content, 500, 500, response );
+    public void memberLentImage( HttpServletRequest request, HttpServletResponse response, @RequestParam String memberLentKey ) {
+	QRcodeKit.buildQRcode( memberLentKey, 500, 500, response );
     }
 
 }

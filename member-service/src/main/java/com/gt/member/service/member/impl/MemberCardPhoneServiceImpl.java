@@ -1329,7 +1329,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
         MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
         if(CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() )){
             MemberCard memberCard=memberCardDAO.selectById(memberEntity.getMcId() );
-            if("systemCode".equals( memberCard.getSystemcode() )){
+            if(systemCode.equals( memberCard.getSystemcode() )){
 		map.put( "tuijianCode",0 );
 	    }
 	}
@@ -1371,6 +1371,17 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	c.setCreateDate(new Date());
 	memberCardLentDAO.insert(c);
 	return key;
+    }
+
+    public Map<String,Object> judgememberLent(Integer memberId,String memberLentKey){
+	Map<String,Object> map=new HashMap<>(  );
+	map.put( "lentCode",1 );
+	MemberCardLent c=memberCardLentDAO.findByCode( memberLentKey );
+	MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
+	if(CommonUtil.isNotEmpty( memberEntity.getMcId() ) && CommonUtil.toInteger( memberEntity.getMcId() ).equals( c.getMcId() )){
+	    map.put( "lentCode",0 );
+	}
+	return map;
     }
 
 }
