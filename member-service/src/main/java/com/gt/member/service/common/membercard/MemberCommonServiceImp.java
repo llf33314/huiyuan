@@ -1286,7 +1286,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 		    ce.setCanUseJifen( 1 );
 		}
 	    }
-	    ce.setBalanceMoney( pay );
+	    ce.setBalanceMoney( formatNumber(pay) );
 	    return ce;
 	} catch ( Exception e ) {
 	    LOG.error( "门店计算异常", e );

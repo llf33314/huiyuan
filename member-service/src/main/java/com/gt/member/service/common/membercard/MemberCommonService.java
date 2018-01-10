@@ -148,6 +148,7 @@ public interface MemberCommonService {
     public List<Map<String,Object>> findCityByCityCode(String cityCode);
 
 
+
     /**
      * 支付方式
      * @param request
