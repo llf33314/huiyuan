@@ -43,5 +43,4 @@ public interface DuofenCardDAO extends BaseMapper<DuofenCard> {
      * @return
      */
     List<DuofenCard> findByBusId(Integer busId);
-
 }

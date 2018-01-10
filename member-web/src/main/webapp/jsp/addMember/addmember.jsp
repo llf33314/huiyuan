@@ -442,6 +442,8 @@ pageEncoding="UTF-8" %>
                                         $(".cur-list").remove();
                                         setTime();
                                         clearMember();
+                                        saveOk(data.memberId);
+
                                     }else if(data.code==2){
 
                                         //跳转支付页面
@@ -493,6 +495,16 @@ pageEncoding="UTF-8" %>
             }
         })
 
+        document.onkeydown=function(event){
+            e = event ? event :(window.event ? window.event : null);
+            if(e.keyCode==13){
+                //执行的方法
+                vm.handleIconClick();
+            }
+        }
+
+
+
 
         function setTime() {
             setTimeout(function () {
@@ -506,6 +518,14 @@ pageEncoding="UTF-8" %>
             vm.ruleForm.verification="";
             vm.show = true;
         }
+
+
+      function saveOk(memberId){
+            parent.window.postMessage("tuison("+memberId+")","*");
+      }
+
+
+
 
         //推送
         var userId = '${memberUser}';
@@ -555,6 +575,8 @@ pageEncoding="UTF-8" %>
                 $(".cur-list").remove();
                 setTime();
                 clearMember();
+                saveOk(data);
+
             }
         }
 

@@ -1,6 +1,7 @@
 package com.gt.member.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.Member;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.member.base.BaseController;
 import com.gt.member.dto.ServerResponse;
@@ -18,7 +19,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +37,7 @@ import java.util.Map;
  */
 @Api( value = "粉丝和会员接口", description = "粉丝和会员接口" )
 @Controller
-@RequestMapping( "/memberAPI/member" )
+@RequestMapping( "/memberAPI/member/" )
 public class MemberApiController extends BaseController {
 
     private static final Logger LOG = Logger.getLogger( MemberApiController.class );
@@ -97,7 +97,25 @@ public class MemberApiController extends BaseController {
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
+
     }
+
+
+    @ApiOperation( value = "根据粉丝id获取粉丝信息可以转换成api中的实体类", notes = "获取粉丝信息" )
+    @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
+    @ResponseBody
+    @RequestMapping( value = "/findMemberByMemberId", method = RequestMethod.POST )
+    public ServerResponse findMemberByMemberId( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    Map<String,Object> map = memberApiService.findMemberByMemberId( memberId );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
 
     @ApiOperation( value = "根据粉丝id获取粉丝和会员卡信息", notes = "根据粉丝id获取粉丝和会员卡信息" )
     @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
@@ -114,7 +132,6 @@ public class MemberApiController extends BaseController {
 	}
 
     }
-
 
 
     @ApiOperation( value = "判断储值卡金额是否充足", notes = "判断储值卡金额是否充足" )
@@ -149,9 +166,8 @@ public class MemberApiController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "小程序绑定手机号码", notes = "小程序绑定手机号码 返回member对象数据" )
+    @ApiOperation( value = "小程序绑定手机号码 返回id需要重新set到前端session中", notes = "小程序绑定手机号码 返回member对象数据" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "code", value = "短信校验码", paramType = "query", required = true, dataType = "String" ),
 		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String" ),
 		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
@@ -162,13 +178,34 @@ public class MemberApiController extends BaseController {
 	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
 	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
 	    String phone = CommonUtil.toString( requestBody.get( "phone" ) );
-	    String code = CommonUtil.toString( requestBody.get( "code" ) );
-	    MemberEntity memberEntity = memberApiService.bingdingPhone( memberId, phone, code, busId );
+	    MemberEntity memberEntity = memberApiService.bingdingPhone( request,memberId, phone, busId );
 	    return ServerResponse.createBySuccess( memberEntity );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
+
+    @ApiOperation( value = "H5绑定手机号码,将会把新的member信息set到session中", notes = "H5绑定手机号码,将会把新的member信息set到session中" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/bingdingPhoneH5", method = RequestMethod.POST )
+    public ServerResponse bingdingPhoneH5(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
+	    String phone = CommonUtil.toString( requestBody.get( "phone" ) );
+	    memberApiService.bingdingPhoneH5( request,memberId, phone, busId );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+
 
     @ApiOperation( value = "统计会员数量", notes = "根据商家id统计会员数量" )
     @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
@@ -204,7 +241,7 @@ public class MemberApiController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "根据id查询粉丝信息id集合", notes = "根据id查询粉丝信息id集合" )
+    @ApiOperation( value = "根据memberId查询粉丝信息id集合", notes = "根据id查询粉丝信息id集合" )
     @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
     @ResponseBody
     @RequestMapping( value = "/findMemberIdsByid", method = RequestMethod.POST )
@@ -329,7 +366,7 @@ public class MemberApiController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "（商城）评论修改会员积分或粉币", notes = "（商城）评论修改会员积分或粉币" )
+    @ApiOperation( value = "修改会员积分或粉币", notes = "修改会员积分或粉币" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝Id", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "jifen", value = "积分", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "fenbi", value = "粉币", paramType = "query", required = true, dataType = "int" ) } )
@@ -670,19 +707,136 @@ public class MemberApiController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "applyCard", notes = "微信授权领取泛会员卡" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
+    @ApiOperation( value = "loginMemberByPhone", notes = "手机号+验证码登录,验证码不足校验处理" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
     } )
     @ResponseBody
-    @RequestMapping( value = "/applyCard", method = RequestMethod.POST )
-    public ServerResponse applyCard( HttpServletRequest request, HttpServletResponse response,@RequestBody String param){
+    @RequestMapping( value = "/loginMemberByPhone", method = RequestMethod.POST )
+    public ServerResponse loginMemberByPhone(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
 	try {
-	    memberApiService.applyCard( param );
-	    return ServerResponse.createBySuccess(  );
-	} catch ( Exception e ) {
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer busId=CommonUtil.toInteger( requestBody.get("busId") );
+	    String phone=CommonUtil.toString( requestBody.get( "phone" ) );
+	    memberApiService.loginMemberByPhone(request,busId, phone );
+	    return ServerResponse.createBySuccess( );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
-
     }
+
+    @ApiOperation( value = "查询会员卡最高等级", notes = "查询会员卡最高等级" )
+    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
+    @ResponseBody
+    @RequestMapping( value = "/findCardDengji", method = RequestMethod.POST )
+    public ServerResponse findCardDengji(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer busId=CommonUtil.toInteger( requestBody.get("busId") );
+	    Integer dengji=memberApiService.findCardDengji(busId);
+	    return ServerResponse.createBySuccess(dengji );
+	} catch ( Exception e ) {
+	    LOG.error( "查询会员卡最高等级异常",e );
+	    return ServerResponse.createByError( );
+	}
+    }
+
+
+    @ApiOperation( value = "个人中心数据查询", notes = "个人中心数据查询" )
+    @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
+    @ResponseBody
+    @RequestMapping( value = "/personCenter", method = RequestMethod.POST )
+    public ServerResponse personCenter(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer memberId=CommonUtil.toInteger( requestBody.get("memberId") );
+	    Map<String,Object> dengji=memberApiService.personCenter(memberId);
+	    return ServerResponse.createBySuccess(dengji );
+	} catch ( Exception e ) {
+	    LOG.error( "个人中心数据查询异常",e );
+	    return ServerResponse.createByError( );
+	}
+    }
+
+    @ApiOperation( value = "获取粉丝最新的id", notes = "获取粉丝最新的id" )
+    @ApiImplicitParams({
+		@ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findNewMemberId", method = RequestMethod.POST )
+    public ServerResponse findNewMemberId(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer memberId=CommonUtil.toInteger( requestBody.get("memberId") );
+	    Integer id=memberApiService.findNewMemberId(memberId);
+	    return ServerResponse.createBySuccess(id );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(),e.getMessage() );
+	}catch ( Exception e ){
+	    LOG.error( "获取粉丝最新的id异常",e );
+	    return ServerResponse.createByError( );
+	}
+    }
+
+    @ApiOperation( value = "根据手机号获取粉丝信息（只是member信息）", notes = "根据手机号获取粉丝信息" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "int" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findMemberByPhoneAndbusId", method = RequestMethod.POST )
+    public ServerResponse findMemberByPhoneAndbusId(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer busId=CommonUtil.toInteger( requestBody.get("busId") );
+	    String phone=CommonUtil.toString( requestBody.get("phone") );
+	    Member member =memberApiService.findMemberByPhoneAndbusId(busId,phone);
+	    return ServerResponse.createBySuccess(member );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(),e.getMessage() );
+	}catch ( Exception e ){
+	    LOG.error( "获取粉丝最新的id异常",e );
+	    return ServerResponse.createByError( );
+	}
+    }
+
+
+    @ApiOperation( value = "魔盒充值记录查询", notes = "魔盒充值记录查询" )
+    @RequestMapping( value = "/rechargeLog", method = RequestMethod.POST )
+    public ServerResponse rechargeLog(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    Map<String,Object> map =memberApiService.rechargeLog(param);
+	    return ServerResponse.createBySuccess(map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(),e.getMessage() );
+	}catch ( Exception e ){
+	    LOG.error( "魔盒充值记录查询异常",e );
+	    return ServerResponse.createByError( );
+	}
+    }
+
+
+    @ApiOperation( value = "魔盒充值记录详情", notes = "魔盒充值记录查询" )
+    @ResponseBody
+    @RequestMapping( value = "/rechargeLogDetails", method = RequestMethod.POST )
+    public ServerResponse rechargeLogDetails(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer ucId=CommonUtil.toInteger( requestBody.get("ucId") );
+	    Map<String,Object> map =memberApiService.findChongZhiLogDetails(ucId);
+	    return ServerResponse.createBySuccess(map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(),e.getMessage() );
+	}catch ( Exception e ){
+	    LOG.error( "魔盒充值记录查询异常",e );
+	    return ServerResponse.createByError( );
+	}
+    }
+
+
+
+
+
 
 }

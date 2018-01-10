@@ -8,22 +8,17 @@ import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.RequestUtils;
 import com.gt.api.util.SessionUtils;
 import com.gt.common.entity.BusUserEntity;
-import com.gt.common.entity.TCommonStaffEntity;
 import com.gt.common.entity.WxPublicUsersEntity;
-import com.gt.member.dao.MemberEntityDAO;
 import com.gt.member.dao.MemberGradetypeDAO;
 import com.gt.member.dao.MemberQcodeWxDAO;
-import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.common.WxPublicUsersDAO;
 import com.gt.member.dao.common.WxShopDAO;
-import com.gt.member.entity.MemberEntity;
 import com.gt.member.entity.MemberQcodeWx;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.CardERPService;
 import com.gt.member.util.*;
 import com.gt.util.entity.param.sms.NewApiSms;
-import com.gt.util.entity.param.sms.OldApiSms;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -110,7 +105,8 @@ public class AddMemberController {
 	    }
 	    LOG.error( "userId:"+userId );
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    if ( CommonUtil.isEmpty( shopId ) ) {
+
+	    if ( CommonUtil.isEmpty( shopId ) ) {  //门店为空的时候查询主店铺
 		shopId = wxShopDAO.selectMainShopByBusId( busId ).getId();
 	    }
 	    WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersMapper.selectByUserId( busId );
@@ -124,8 +120,10 @@ public class AddMemberController {
 	    request.setAttribute( "shopId", shopId );
 	    List< Map< String,Object > > mapList = gradeTypeMapper.findBybusId1( busId );//查询该商户下的卡片类型
 	    request.setAttribute( "mapList", JSON.toJSON( mapList ) );
+	    List< Map< String,Object > > gradeTypes=new ArrayList<>(  );
+	    request.setAttribute( "gradeTypes", JSON.toJSON( gradeTypes ) );
 	    if ( mapList.size() > 0 ) {
-		List< Map< String,Object > > gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, CommonUtil.toInteger( mapList.get( 0 ).get( "ctId" ) ) );
+		gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, CommonUtil.toInteger( mapList.get( 0 ).get( "ctId" ) ) );
 		if ( gradeTypes.size() > 0 ) {
 		    if ( "3".equals( CommonUtil.toString( gradeTypes.get( 0 ).get( "applyType" ) ) ) ) {
 			request.setAttribute( "gradeTypes", JSON.toJSON( gradeTypes ) );
@@ -207,10 +205,12 @@ public class AddMemberController {
 //	    oldApiSms.setModel(9);
 	    NewApiSms newApiSms=new NewApiSms();
 	    newApiSms.setMobile( telNo );
-	    newApiSms.setParamsStr( "会员短信校验码:"+no );
+	    newApiSms.setParamsStr(no );
 	    newApiSms.setBusId(busId);
 	    newApiSms.setModel(9);
-	    newApiSms.setTmplId( Long.parseLong(PropertiesUtil.getSms_tmplId())  );
+
+	    newApiSms.setTmplId( Long.parseLong(PropertiesUtil.getSmstmplId())  );
+	    requestUtils.setReqdata( newApiSms );
 	    try {
 		String smsStr = requestService.sendSmsNew( requestUtils );
 		JSONObject json=JSONObject.parseObject( smsStr );
@@ -227,13 +227,13 @@ public class AddMemberController {
 		map.put( "result", false );
 		map.put( "msg", "获取短信验证码失败" );
 	    }
-	    CommonUtil.write( response, map );
 	}catch ( Exception e ){
 	    e.printStackTrace();
 	    LOG.error( "短信发送失败", e );
 	    map.put( "result", false );
 	    map.put( "msg", "获取短信验证码失败" );
 	}
+	CommonUtil.write( response, map );
     }
 
     /**

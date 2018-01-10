@@ -193,6 +193,7 @@ public class CardERPServiceImpl implements CardERPService {
 		systemMsgService.sendNewMemberMsg( memberEntity );
 		returnMap.put( "code", 1 );
 		returnMap.put( "message", "领取成功" );
+		returnMap.put( "memberId", memberEntity.getId() );
 	    } else {
 		//购买会员卡
 		MemberGradetype gradeType = gradeTypeMapper.selectById( gtId );
@@ -299,11 +300,17 @@ public class CardERPServiceImpl implements CardERPService {
 		} else {
 		    card.setFrequency( 0 );
 		}
-	    } else {
+	    } else if(card.getCtId()==3) {
 		if ( CommonUtil.isNotEmpty( gradeType.getBalance() ) ) {
 		    card.setMoney( new Double( gradeType.getBalance() ) );
 		} else {
 		    card.setMoney( 0.0 );
+		}
+	    }else if(card.getCtId()==4){
+		if ( CommonUtil.isNotEmpty( gradeType.getBalance() ) ) {
+		    card.setExpireDate( DateTimeKit.addMonths( CommonUtil.toDouble( gradeType.getBalance() ).intValue()  )  );
+		} else {
+		    card.setExpireDate( new Date(  ));
 		}
 	    }
 
@@ -330,7 +337,7 @@ public class CardERPServiceImpl implements CardERPService {
 
 	    LOG.error( "调用推送地址："+pushName );
 	    socketMap.put( "pushName",pushName );
-	    socketMap.put( "pushMsg",11 );
+	    socketMap.put( "pushMsg",memberEntity.getId() );
 	    socketMap.put( "pushStyle","1" );
 	    String returnMsg= SignHttpUtils.WxmppostByHttp( socketUrl, socketMap, wxmpsignKey );  //推送
 

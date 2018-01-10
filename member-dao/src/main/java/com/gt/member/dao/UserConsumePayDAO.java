@@ -16,5 +16,5 @@ import java.util.List;
  */
 public interface UserConsumePayDAO extends BaseMapper<UserConsumePay> {
 
-    List<UserConsumePay> findByUcId(@Param( "ucId" )Integer ucId);
+    List< UserConsumePay > findByUcId( @Param( "ucId" ) Integer ucId );
 }

@@ -1,13 +1,15 @@
 package com.gt.member.service.common.membercard;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.KeysUtil;
 import com.gt.api.util.RequestUtils;
 import com.gt.api.util.sign.SignHttpUtils;
+import com.gt.member.enums.ResponseMemberEnums;
+import com.gt.member.exception.BusinessException;
+import com.gt.member.util.CommonUtil;
 import com.gt.member.constant.CommonConst;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
@@ -20,6 +22,10 @@ import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
+import com.gt.util.entity.param.wxcard.CodeConsume;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.gt.util.entity.param.wx.WxJsSdk;
 import com.gt.util.entity.param.wxcard.CodeConsume;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
@@ -37,7 +43,11 @@ import java.util.Map;
  * Created by Administrator on 2017/10/24.
  */
 @Service
+@Slf4j
 public class RequestServiceImpl implements RequestService {
+
+    private final static Logger LOG = LoggerFactory.getLogger( RequestServiceImpl.class );
+
 
     private final static Logger LOG = LoggerFactory.getLogger( "RequestServiceImpl" );
 
@@ -49,8 +59,12 @@ public class RequestServiceImpl implements RequestService {
 
     private final String SEND_SMS_NEW = "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsNew.do";
 
+    private final static String SEND_WXMSG = "8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/sendWxMsgTemplate.do";
     private final static String SEND_WXMSG = "/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/sendWxMsgTemplate.do";
 
+    private static final String GETWXPULICMSG = "/8A5DA52E/busUserApi/getWxPulbicMsg.do";
+
+    private final static String POWER_API="/8A5DA52E/busPowerApi/getPowerApi.do";
     //验证主账户信息
     private final static String VERSION_BUS_PID = "/8A5DA52E/childBusUserApi/VersionBusPid.do";
 
@@ -73,6 +87,16 @@ public class RequestServiceImpl implements RequestService {
 
     public String codeConsume( String cardId, String code, Integer busId ) throws Exception {
 	try {
+	    LOG.error( "codeConsume请求李逢喜参数:"+cardId+","+code+","+busId);
+	    RequestUtils<CodeConsume > requestUtils=new RequestUtils<>(  );
+	    CodeConsume codeConsume=new CodeConsume();
+	    String url=PropertiesUtil.getWxmp_home()+CODE_CONSUME;
+	    codeConsume.setCard_id(  cardId );
+	    codeConsume.setCode(  code );
+	    codeConsume.setBusId( busId );
+	    String result = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+    public String codeConsume( String cardId, String code, Integer busId ) throws Exception {
+	try {
 	    RequestUtils<CodeConsume > requestUtils=new RequestUtils<>(  );
 	    CodeConsume codeConsume=new CodeConsume();
 	    String url=PropertiesUtil.getWxmp_home()+CODE_CONSUME;
@@ -88,11 +112,21 @@ public class RequestServiceImpl implements RequestService {
 
     }
 
+    public void sendSms( RequestUtils< OldApiSms > requestUtils ) {
+	LOG.error( "sendSms请求李逢喜参数:"+JSONObject.toJSONString( requestUtils ));
+	String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
+	String smsStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
     public String sendSms( RequestUtils< OldApiSms > requestUtils ) {
 	String url = PropertiesUtil.getWxmp_home() + SEND_SMS;
 	String smsStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
 	return smsStr;
     }
+
+    public String sendSmsNew( RequestUtils< NewApiSms > requestUtils ) {
+	log.error( "sendSmsNew短信参数:"+JSONObject.toJSONString( requestUtils ) );
+	String url = PropertiesUtil.getWxmp_home() + SEND_SMS_NEW;
+	String smsStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+	return smsStr;
 
     public String sendSmsNew( RequestUtils< NewApiSms > requestUtils ) {
 	String url = PropertiesUtil.getWxmp_home() + SEND_SMS_NEW;
@@ -101,9 +135,64 @@ public class RequestServiceImpl implements RequestService {
     }
 
     public void setSendWxmsg( SendWxMsgTemplate sendWxMsgTemplate ) {
+	LOG.error( "setSendWxmsg请求李逢喜参数:"+JSONObject.toJSONString( sendWxMsgTemplate ));
 	RequestUtils< SendWxMsgTemplate > requestUtils = new RequestUtils<>();
 	String url = PropertiesUtil.getWxmp_home() + SEND_WXMSG;
 	String smsStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+    public void setSendWxmsg( SendWxMsgTemplate sendWxMsgTemplate ) {
+	RequestUtils< SendWxMsgTemplate > requestUtils = new RequestUtils<>();
+	String url = PropertiesUtil.getWxmp_home() + SEND_WXMSG;
+	String smsStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+
+    }
+
+    public void getWxPulbicMsg( Integer busId ) throws BusinessException {
+	try {
+	    Map< String,Object > getWxPublicMap = new HashMap<>();
+	    getWxPublicMap.put( "busId", busId );
+	    String wxpublic = SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmp_home() + GETWXPULICMSG, getWxPublicMap, PropertiesUtil.getWxmpsignKey() );
+	    JSONObject json = JSONObject.parseObject( wxpublic );
+	    Integer code = CommonUtil.toInteger( json.get( "code" ) );
+	    if ( code == 0 ) {
+		Object guoqi = json.get( "guoqi" );
+		if ( CommonUtil.isNotEmpty( guoqi ) ) {
+		    //商家已过期
+		    throw new BusinessException( ResponseMemberEnums.OVERDUE_BUSUSER );
+		}
+	    } else {
+		throw new BusinessException( code, CommonUtil.toString( json.get( "msg" ) ) );
+	    }
+	} catch ( BusinessException e ) {
+	    throw e;
+	} catch ( Exception e ) {
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+
+    public Integer getPowerApi(Integer status,Integer busId,Double powNum,String remarks){
+	try {
+	    LOG.error( "请求陈丹参数:消费状态:"+status+"  ，商家"+busId+"  ，粉币值"+powNum );
+	    Map< String,Object > map = new HashMap<>();
+	    map.put( "status", status );
+	    map.put( "busId", busId );
+	    map.put( "powNum", powNum );
+	    map.put( "model", 3 );
+	    map.put( "remarks", remarks );
+	    String url = PropertiesUtil.getWxmp_home() + POWER_API;
+	    String returnMsg = SignHttpUtils.WxmppostByHttp( url, map, PropertiesUtil.getWxmpsignKey() );
+	    if( CommonUtil.isNotEmpty( returnMsg )){
+		Map<String,Object> returnParam= JSON.parseObject( returnMsg,Map.class );
+		if(0!=CommonUtil.toInteger( returnParam.get( "code" ) )){
+		    LOG.error( "调用陈丹粉币接口："+JSON.toJSONString( returnParam ) );
+		}
+		return CommonUtil.toInteger( returnParam.get( "code" ) );
+	    }
+	}catch ( Exception e ){
+	    LOG.error( "调用扣除粉币支付异常",e );
+	}
+	return 1;
+
 
     }
 

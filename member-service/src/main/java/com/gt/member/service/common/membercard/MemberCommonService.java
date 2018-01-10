@@ -182,6 +182,11 @@ public interface MemberCommonService {
      * @return
      */
     public Integer dataSource(HttpServletRequest request);
+    /**
+     * 推荐赠送
+     * @param recommend
+     */
+    public void tuijianGive( MemberRecommend recommend );
 
 
     /**
@@ -205,5 +210,22 @@ public interface MemberCommonService {
      * 储值卡充值升级
      */
     public Map<String,Object> rechargeCtId3(Integer busId,Integer ctId,Integer gtId,Integer memberId,Double rechargeMoney);
+
+    /**
+     * 查询粉丝所有的id集合
+     * @param memberId
+     * @return
+     */
+    public List<Integer> findMemberIds(Integer memberId);
+
+
+    /**
+     * 泛会员 和正式会员完善资料 赠送物品
+     * @param memberOld
+     * @param memberParameter1
+     * @return
+     */
+    public boolean giveMemberGift(MemberEntity memberOld,
+                    MemberParameter memberParameter1);
 
 }

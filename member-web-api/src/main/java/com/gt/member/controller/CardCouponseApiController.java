@@ -609,7 +609,69 @@ public class CardCouponseApiController {
 
     }
 
+    @ApiOperation(value = "（墨盒）投放包", notes = "（墨盒）投放包")
+    @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int")
+    @ResponseBody
+    @RequestMapping (value = "/findDuofenByMianfei",method = RequestMethod.POST)
+    public ServerResponse findDuofenByMianfei(HttpServletRequest request,
+                    HttpServletResponse response,@RequestBody String param){
+        try {
+            Map<String,Object> requestBody= JSONObject.parseObject(param);
+            Integer busId= CommonUtil.toInteger( requestBody.get( "busId" ) );
+            List<Map<String,Object>> list=cardCouponsApiService.findDuofenByMianfei(busId);
+            return ServerResponse.createBySuccess(list);
+        }catch ( Exception e ){
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
+        }
+    }
 
+    @ApiOperation(value = "（墨盒）领取优惠券", notes = "（墨盒）领取优惠券")
+    @ApiImplicitParams( {
+                    @ApiImplicitParam(name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int"),
+                    @ApiImplicitParam(name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int"),
+                    @ApiImplicitParam(name = "code", value = "卡包code值", paramType = "query", required = true, dataType = "string")
+    } )
+
+    @ResponseBody
+    @RequestMapping (value = "/lingquDuofenCardReceive",method = RequestMethod.POST)
+    public ServerResponse lingquDuofenCardReceive(HttpServletRequest request,
+                    HttpServletResponse response,@RequestBody String param){
+        try {
+            cardCouponsApiService.lingquDuofenCardReceive(param);
+            return ServerResponse.createBySuccess();
+        }catch ( Exception e ){
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
+        }
+    }
+
+
+    @ApiOperation(value = "查询单张多粉优惠券信息", notes = "查询单张多粉优惠券信息")
+    @ApiImplicitParam(name = "cardId", value = "粉丝领取的卡券id（cId）", paramType = "query", required = true, dataType = "int")
+    @ResponseBody
+    @RequestMapping (value = "/findDuofenCardGetOne",method = RequestMethod.POST)
+    public ServerResponse findDuofenCardGetOne(HttpServletRequest request,
+                    HttpServletResponse response,@RequestBody String param){
+        try {
+             DuofenCard duofenCard= cardCouponsApiService.findDuofenCardGetOne(param);
+            return ServerResponse.createBySuccess(duofenCard);
+        }catch ( Exception e ){
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
+        }
+    }
+
+    @ApiOperation(value = "查询多张多粉优惠券信息", notes = "查询单张多粉优惠券信息")
+    @ApiImplicitParam(name = "cardIds", value = "粉丝领取的卡券id（cId）集合字符串  逗号隔开", paramType = "query", required = true, dataType = "int")
+    @ResponseBody
+    @RequestMapping (value = "/findDuofenCardGets",method = RequestMethod.POST)
+    public ServerResponse findDuofenCardGets(HttpServletRequest request,
+                    HttpServletResponse response,@RequestBody String param){
+        try {
+            List<DuofenCard> duofenCards= cardCouponsApiService.findDuofenCardGets(param);
+            return ServerResponse.createBySuccess(duofenCards);
+        }catch ( Exception e ){
+            return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
+        }
+    }
 
 
 

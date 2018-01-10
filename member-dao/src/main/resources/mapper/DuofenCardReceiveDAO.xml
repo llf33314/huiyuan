@@ -164,17 +164,18 @@
 		select id,cardsName from t_duofen_card_receive where busId=#{busId} and deliveryType=5 and numlimit=0 and state=1  and (receiveDate <![CDATA[>=]]> #{receiveDate} or receiveDate is null) order by id desc
 	</select>
 
-	<select id="findMeiRongCardReceviceByMemberId" resultType="Map">
-		select * from t_duofen_card_receive where id in (
-		SELECT
-		cardReceiveId
-		FROM t_duofen_card_get g
-		WHERE g.getType=4 AND g.state=0 and g.memberId in
-		<foreach close=")" collection="memberIds" item="m" open="(" separator=",">
-			#{m}
+	<select id="findMeiRongCardReceviceByReceiveIds" resultType="Map">
+		select * from t_duofen_card_receive
+		<where>
+		<foreach close=")" collection="receiveIds" item="id" open="(" separator="or">
+			id=#{id}
 		</foreach>
-		GROUP BY cardReceiveId
-		)
+		</where>
+
+	</select>
+
+	<select id="findMoHeCardReceviceBybusId" resultType="Map">
+		select id,cardsName,backColor,receiveDate,code from t_duofen_card_receive where  busId=#{busId}  and deliveryAddr=0 and deliveryType=1 and state=1  and (receiveDate <![CDATA[>=]]> #{receiveDate} or receiveDate is null) order by id desc
 
 	</select>
 

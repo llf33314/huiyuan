@@ -17,6 +17,7 @@ public enum ResponseMemberEnums {
     PLESAS_SET_SHOP(4010,"请设置主门店信息"),
     PLEASE_PHONE_CODE(4011,"请输入验证码"),
     PLEASE_LOGIN(4012,"请登录"),
+    OVERDUE_BUSUSER(4013,"商家已过期"),
 
     CARD_STATUS(5001, "会员卡已停用"),
     MEMBER_LESS_JIFEN(5002,"积分不足"),
@@ -60,6 +61,7 @@ public enum ResponseMemberEnums {
     COUPONSE_NO_NUM_TODAY(6003,"券包您今天已领取完"),
     COUPONSE_NO_EXIST(6004,"卡券不存在"),
     COUPONSE_NO_GUOQI(6005,"卡券过期或已核销,不能执行卡券核销操作"),
+    COUPONSE_NOT_USE_SHOP(6006,"卡券不能在当前门店使用"),
 
 
 

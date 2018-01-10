@@ -99,7 +99,7 @@
 		c.reduce_cost, c.discount,  c.color,  c.time_limit,
 		c.type,
 		c.least_cost, c.addUser,
-		c.card_status, c.image,c.location_id_list,
+		c.card_status, c.image,c.location_id_list,g.startTime, g.endTime,
 		c.timeType,g.id as gId, g.code,c.title
 		from t_duofen_card_get g inner join t_duofen_card c on c.id=g.cardId
 		where   g.state=0 and (g.memberId=#{memberId} or g.friendMemberId like '%${memberId}%') GROUP BY c.id
@@ -268,8 +268,9 @@
 
 
 	<select id="findByCodes" resultType="Map">
-		select state,cardId,recommendId from t_duofen_card_get where  code in
-
+		select state,cardId,recommendId,location_id_list from t_duofen_card_get g
+		INNER JOIN t_duofen_card  c ON g.`cardId`=c.id
+		where  g.code in
 		<foreach close=")" collection="codes" item="code" open="(" separator=",">
 			#{code}
 		</foreach>
@@ -321,13 +322,22 @@
 		select
 		count(id)
 		from t_duofen_card_get g
-		where g.state=0 and g.memberId
-		in
-		<foreach close=")" collection="memberIds" item="m" open="(" separator=",">
-			#{m}
+		where g.state=0 and
+		<foreach close=")" collection="memberIds" item="or" open="(" separator=",">
+			g.memberId=#{m}
 		</foreach>
+	</select>
 
 
+	<select id="findReceiveByMemberId" resultType="java.lang.Integer">
+		SELECT
+		cardReceiveId
+		FROM t_duofen_card_get g
+		WHERE g.getType=4 AND g.state=0 and
+		<foreach close=")" collection="memberIds" item="m" open="(" separator="or">
+			g.memberId =#{m}
+		</foreach>
+		GROUP BY cardReceiveId
 
 	</select>
 

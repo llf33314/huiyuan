@@ -1,5 +1,6 @@
 package com.gt.member.service.memberApi;
 
+import com.gt.api.bean.session.Member;
 import com.gt.common.entity.BusUserEntity;
 import com.gt.entityBo.PaySuccessBo;
 import com.gt.member.entity.MemberCard;
@@ -31,6 +32,8 @@ public interface MemberApiService {
      * @return
      */
     public MemberEntity findByMemberId( Integer memberId ) throws BusinessException;
+
+    public Map<String,Object> findMemberByMemberId(Integer memberId ) throws BusinessException;
 
     /**
      * 查询粉丝和会员信息
@@ -130,7 +133,15 @@ public interface MemberApiService {
      * 小程序绑定手机号码
      * @return
      */
-    public MemberEntity bingdingPhone( Integer memberId, String phone, String code, Integer busId ) throws BusinessException;
+    public MemberEntity bingdingPhone( HttpServletRequest request,Integer memberId, String phone,  Integer busId ) throws BusinessException;
+
+
+    /*
+    * h5绑定手机号码
+    * @return
+    */
+    public void bingdingPhoneH5( HttpServletRequest request,Integer memberId, String phone,  Integer busId ) throws BusinessException;
+
 
     /*
      *
@@ -477,5 +488,70 @@ public interface MemberApiService {
     public void  applyCard(String params);
 
 
+    /**
+     * 流量兑换通知
+     */
+    public void changeFlow(Map<String,Object> params) throws BusinessException;
+
+
+    /**
+     * 手机号码登录
+     *
+     * @param busId
+     * @param phone
+     *
+     * @throws BusinessException
+     */
+    public void loginMemberByPhone( HttpServletRequest request,Integer busId, String phone ) throws BusinessException;
+
+    /**
+     * 查询会员卡等级
+     * @param busId
+     * @return
+     */
+    public Integer findCardDengji(Integer busId);
+
+    /**
+     * 个人中心
+     * @param memberId
+     * @return
+     */
+    public Map<String,Object> personCenter(Integer memberId)throws BusinessException;
+
+    /**
+     * 获取粉丝最新的id
+     * @param memberId
+     * @return
+     */
+    public Integer findNewMemberId(Integer memberId)throws BusinessException;
+
+    /**
+     * 根据手机号码查询粉丝信息
+     * @param busId
+     * @param phone
+     * @return
+     * @throws BusinessException
+     */
+    public Member findMemberByPhoneAndbusId(Integer busId,String phone) throws BusinessException;
+
+    /**
+     * 墨盒充值记录查询
+     * @param params
+     * @return
+     */
+    public Map<String,Object> rechargeLog(String params);
+
+    /**
+     * 墨盒充值记录详情
+     * @param ucId
+     * @return
+     * @throws BusinessException
+     */
+    public Map< String,Object > findChongZhiLogDetails( Integer ucId ) throws BusinessException ;
+
+    /**
+     * 整理之前member信息
+     */
+    public void zhengliMember();
 
 }
