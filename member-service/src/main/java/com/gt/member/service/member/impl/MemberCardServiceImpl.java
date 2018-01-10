@@ -3296,12 +3296,14 @@ public class MemberCardServiceImpl implements MemberCardService {
 		}
 	    } else if ( CommonUtil.isEmpty( card ) ) {
 		map.put( "usehuiyuanquanyi", 0 );
+		map.put( "youke",0 );
 		//throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR.getCode(), ResponseMemberEnums.NOT_MEMBER_CAR.getMsg() );
 	    } else if ( card.getCardStatus() == 1 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
 		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
 		MemberGiverule giveRule = memberGiveruleDAO.selectById( card.getGrId() );
+		map.put( "youke",0 );
 		map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
 		map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
 		map.put( "cardNo", card.getCardNo() );
@@ -3354,7 +3356,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		}
 	    }
 	    //游客不能使用优惠券 或 借款也不能使用优惠券
-	    if ( CommonUtil.isNotEmpty( memberEntity ) && !map.containsKey( "youke" )) {
+	    if ( CommonUtil.isNotEmpty( memberEntity ) &&  "0".equals( CommonUtil.toString( map.get( "youke" )))) {
 		map.put( "nickName", memberEntity.getNickname() );
 		map.put( "phone", memberEntity.getPhone() );
 		// 查询能使用的多粉优惠券
@@ -3493,7 +3495,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 			if ( card.getCtId() == 3 ) {
 			    Integer jie = CommonUtil.toInteger( map.get( "jie" ) );
-			    if ( jie == 1 ) {
+			    if ( CommonUtil.isNotEmpty( jie ) && jie == 1 ) {
 				//借款消费
 				Integer clId = CommonUtil.toInteger( map.get( "clId" ) );
 				MemberCardLent memberCardLent = memberCardLentDAO.selectById( clId );
