@@ -189,10 +189,7 @@ public class UserConsumeNew extends Model<UserConsumeNew > {
      */
 	@TableField("refundDate")
 	private Date refundDate;
-    /**
-     * 流量剩余
-     */
-	private Integer flowbalance;
+
     /**
      * 副卡id
      */

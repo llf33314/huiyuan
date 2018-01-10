@@ -165,9 +165,6 @@
         </dependency>
 
 
-
-
-        <!-- 微信相关实体类 -->
         <dependency>
             <groupId>com.gt.wxmp</groupId>
             <artifactId>lfx_wxmp_entity</artifactId>

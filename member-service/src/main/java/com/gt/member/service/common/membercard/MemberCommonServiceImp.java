@@ -97,32 +97,14 @@ public class MemberCommonServiceImp implements MemberCommonService {
     @Autowired
     private MemberRechargegiveAssistantDAO memberRechargegiveAssistantDAO;
 
-    @Autowired
-    private MemberGiveruleDAO memberGiveruleDAO;
 
-    @Autowired
-    private UserConsumeNewDAO userConsumeNewDAO;
 
-    @Autowired
-    private MemberGiverulegoodstypeDAO memberGiverulegoodstypeDAO;
 
     @Autowired
     private MemberGiveconsumeNewDAO memberGiveconsumeNewDAO;
 
     @Autowired
     private BasisCityDAO basisCityDAO;
-
-    @Autowired
-    private MemberOldIdDAO memberOldIdDAO;
-
-    @Autowired
-    private MemberOptionDAO memberOptionDAO;
-
-    @Autowired
-    private MemberGiftDAO memberGiftDAO;
-
-    @Autowired
-    private RequestService requestService;
 
     @Autowired
     private AlipayUserDAO alipayUserMapper;
@@ -1130,6 +1112,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
     }
 
 
+
     //1---微信支付 2---支付宝 3---多粉钱包支付
     public List<Map<String,Object>> payType(HttpServletRequest request,Integer busId){
 	List<Map<String,Object>> listMap=new ArrayList<>(  );
@@ -1403,174 +1386,5 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    return null;
 	}
 	return null;
-    }
-
-
-
-
-
-    /**
-     * 判断时效卡升级
-     *
-     * @return
-     */
-    public Map< String,Object > findNextGradeCtId4( Integer busId, Integer gtId, Double totalmoney ) {
-	Map< String,Object > map = new HashMap< String,Object >();
-	List< Map< String,Object > > giveRules = memberGiveruleDAO.findByBusIdAndCtId( busId, 4 );
-	if ( giveRules.size() != 0 ) {
-	    for ( Map< String,Object > giveRule : giveRules ) {
-		if ( CommonUtil.isNotEmpty( giveRule.get( "gr_rechargeMoney" ) ) ) {
-		    Double rechargeMoney = CommonUtil.toDouble( giveRule.get( "gr_rechargeMoney" ) );
-		    if ( totalmoney.equals( rechargeMoney ) ) {
-			map.put( "gtId", giveRule.get( "gt_id" ) );
-			map.put( "grId", giveRule.get( "gr_id" ) );
-			return map;
-		    }
-		}
-	    }
-	}
-	return null;
-    }
-
-    /**
-     * 非时效卡判断是否升级
-     *
-     * @return
-     */
-    public Map< String,Object > findNextGrade( Integer busId, Integer ctId, Integer gtId, Integer integral, double totalmoney ) {
-	Map< String,Object > map = new HashMap< String,Object >();
-	// <!--查询下一个等级start-->
-	List< Map< String,Object > > gradeTypes = gradeTypeMapper.findByCtId( busId, ctId );
-
-	if ( gradeTypes != null ) {
-	    for ( int i = 0; i < gradeTypes.size(); i++ ) {
-		if ( CommonUtil.isNotEmpty( gradeTypes.get( i ).get( "gtId" ) ) ) {
-		    if ( gtId.equals( gradeTypes.get( i ).get( "gtId" ) ) ) {
-			if ( i < gradeTypes.size() - 1 ) {
-			    // 下一级id
-			    if ( CommonUtil.isNotEmpty( gradeTypes.get( i + 1 ).get( "gtId" ) ) ) {
-				Integer id = Integer.parseInt( gradeTypes.get( i + 1 ).get( "gtId" ).toString() );
-				MemberGiverule nextGiveRule = memberGiveruleDAO.findBybusIdAndGtIdAndCtId( busId, id, Integer.parseInt( ctId.toString() ) );
-				if ( CommonUtil.isEmpty( nextGiveRule ) ) {
-				    break;
-				}
-				// 积分升级
-				if ( 0 == nextGiveRule.getGrUpgradeType() ) {
-				    if ( integral >= nextGiveRule.getGrUpgradeCount() ) {
-					map.put( "gtId", id );
-					map.put( "grId", nextGiveRule.getGrId() );
-					return map;
-				    }
-				}
-
-				// 金额升级
-				if ( 1 == nextGiveRule.getGrUpgradeType() ) {
-				    if ( totalmoney >= nextGiveRule.getGrUpgradeCount() ) {
-					map.put( "gtId", id );
-					map.put( "grId", nextGiveRule.getGrId() );
-					return map;
-				    }
-				}
-			    }
-			}
-		    }
-		}
-	    }
-	    return null;
-	}
-	return null;
-    }
-
-
-    /**
-     * 泛会员 和正式会员完善资料 赠送物品
-     *
-     * @param memberOld
-     * @param memberParameter1
-     *
-     * @return
-     */
-    public boolean giveMemberGift( MemberEntity memberOld, MemberParameter memberParameter1 ) {
-	try {
-	    MemberOption memberOption = memberOptionDAO.findByBusId( memberOld.getBusId() );
-
-	    if ( CommonUtil.isEmpty( memberOption ) ) {
-		return false;
-	    }
-
-	    boolean flag = false;
-	    if ( CommonUtil.isNotEmpty( memberOption.getNameOption() ) && memberOption.getNameOption() == 1 && CommonUtil.isEmpty( memberOld.getName() ) ) {
-		flag = true;
-	    } else if ( CommonUtil.isNotEmpty( memberOption.getSexOption() ) && memberOption.getSexOption() == 1 && CommonUtil.isEmpty( memberOld.getSex() ) ) {
-		flag = true;
-	    } else if ( CommonUtil.isNotEmpty( memberOption.getPhoneOption() ) && memberOption.getPhoneOption() == 1 && CommonUtil.isEmpty( memberOld.getPhone() ) ) {
-		flag = true;
-	    } else if ( CommonUtil.isNotEmpty( memberOption.getAddrDetailOption() ) && memberOption.getAddrDetailOption() == 1 && CommonUtil.isNotEmpty( memberParameter1 )
-			    && CommonUtil.isEmpty( memberParameter1.getAddress() ) ) {
-		flag = true;
-	    } else if ( CommonUtil.isNotEmpty( memberOption.getMailOption() ) && memberOption.getMailOption() == 1 && CommonUtil.isEmpty( memberOld.getEmail() ) ) {
-		flag = true;
-	    } else if ( CommonUtil.isNotEmpty( memberOption.getBirthOption() ) && memberOption.getBirthOption() == 1 && CommonUtil.isEmpty( memberOld.getBirth() ) ) {
-		flag = true;
-	    } else if ( CommonUtil.isNotEmpty( memberOption.getCardOption() ) && memberOption.getCardOption() == 1 && CommonUtil.isEmpty( memberOld.getCardId() ) ) {
-		flag = true;
-	    } else if ( CommonUtil.isNotEmpty( memberOption.getAddrOption() ) && memberOption.getAddrOption() == 1 && CommonUtil.isNotEmpty( memberParameter1 ) && CommonUtil
-			    .isEmpty( memberParameter1.getProvinceCode() ) ) {
-		flag = true;
-	    } else if ( CommonUtil.isNotEmpty( memberOption.getGetMoneyOption() ) && memberOption.getGetMoneyOption() == 1 && CommonUtil.isNotEmpty( memberParameter1 )
-			    && CommonUtil.isEmpty( memberParameter1.getGetMoney() ) ) {
-		flag = true;
-	    }
-	    if ( flag ) {
-		// 赠送礼品
-		MemberCard card = memberCardDAO.selectById( memberOld.getMcId() );
-		MemberGift memberGift = null;
-		Integer modelCode = null;
-		if ( card.getApplyType() == 4 ) {
-		    // 泛会员完善资料
-		    modelCode = 1;
-		} else {
-		    modelCode = 2;
-		}
-		memberGift = memberGiftDAO.findBybusIdAndmodelCode( memberOld.getBusId(), modelCode );
-		boolean bool = false; // 需要修改
-		MemberEntity member = new MemberEntity();
-		if ( CommonUtil.isNotEmpty( memberGift ) ) {
-		    member.setId( memberOld.getId() );
-		    if ( memberGift.getJifen() > 0 ) {
-			// 积分操作
-			Integer balace = memberOld.getIntegral() + memberGift.getJifen().intValue();
-			member.setIntegral( balace );
-			saveCardRecordOrderCodeNew( memberOld.getId(), 2, memberGift.getJifen().doubleValue(), "完善资料赠送积分", memberOld.getBusId(), balace.doubleValue(), "", 1 );
-			bool = true;
-		    }
-
-		    if ( memberGift.getFenbi() > 0 ) {
-			Integer code = requestService.getPowerApi( 0, memberOld.getBusId(), memberGift.getFenbi(), "完善资料赠送粉币" );
-			if ( code == 0 ) {
-			    Double balaceFenbi = memberOld.getFansCurrency() + memberGift.getFenbi();
-			    member.setFansCurrency( balaceFenbi );
-			    // 粉币操作
-			    saveCardRecordOrderCodeNew( memberOld.getId(), 2, memberGift.getFenbi(), "完善资料赠送粉币", memberOld.getBusId(), balaceFenbi, "", 1 );
-			    bool = true;
-			}
-		    }
-		}
-
-		if ( memberGift.getFlow() > 0 ) {
-		    Integer balaceFlow = memberOld.getFlow() + memberGift.getFlow();
-		    member.setFlow( balaceFlow );
-		    saveCardRecordOrderCodeNew( memberOld.getId(), 4, memberGift.getFlow().doubleValue(), "完善资料赠送流量", memberOld.getBusId(), balaceFlow.doubleValue(), "", 1 );
-		    bool = true;
-		}
-		if ( bool ) {
-		    memberEntityDAO.updateById( member );
-		}
-	    }
-	} catch ( Exception e ) {
-	    LOG.error( "会员和泛会员完善资料赠送异常", e );
-	    return false;
-	}
-	return true;
     }
 }

@@ -144,10 +144,6 @@ public interface MemberEntityDAO extends BaseMapper<MemberEntity > {
      */
     int totalCountMember(@Param("busId")Integer busId);
 
-    /**
-     * 根据id去增加用户的(粉币or流量or积分)
-     */
-    int updateAddKey(MemberEntity memberEntity2 );
 
 
     /**
@@ -264,18 +260,15 @@ public interface MemberEntityDAO extends BaseMapper<MemberEntity > {
 
     /**
      * 查询粉丝信息 允许转换成member对象
-     * @param id
+     * @param memberId
      * @return
      */
     Map<String,Object> findMemberByMemberId(@Param("memberId")Integer memberId);
 
 
-    MemberEntity findNewMember(@Param("busId")Integer budId,@Param("memberId")Integer memberId);
-
-    List<MemberEntity> findMemberAll();
 
 
-    MemberEntity findMemberByOldId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId);
+
 
     List<MemberEntity> selectByPrimaryKeys(@Param("ids")String ids);
 

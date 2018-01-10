@@ -2,12 +2,9 @@ package com.gt.member.service.memberApi;
 
 import com.gt.api.bean.session.Member;
 import com.gt.common.entity.BusUserEntity;
-import com.gt.entityBo.PaySuccessBo;
-import com.gt.member.entity.MemberCard;
-import com.gt.member.entity.MemberCardtype;
-import com.gt.member.entity.MemberEntity;
-import com.gt.member.entity.MemberGradetype;
+import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
+import com.gt.entityBo.PaySuccessBo;
 import com.gt.member.util.Page;
 
 import javax.servlet.http.HttpServletRequest;
@@ -406,7 +403,7 @@ public interface MemberApiService {
      *
      * @param params
      */
-    public void updateJifenAndFenBiByPinglu( Map< String,Object > params )throws BusinessException;
+    public void updateJifenAndFenBiByPinglu( Map< String,Object > params )throws BusinessException ;
 
     /**
      * 粉币，积分抵扣规则
@@ -441,7 +438,7 @@ public interface MemberApiService {
      * @param erpRefundBo
      * @throws BusinessException
      */
-    public void refundErp( String erpRefundBo ) throws BusinessException;
+    public void refundErp(String erpRefundBo) throws BusinessException;
 
 
     /**
@@ -457,7 +454,7 @@ public interface MemberApiService {
      * @param json
      * @throws BusinessException
      */
-    public void jifenExchange( String json ) throws BusinessException;
+    public void jifenExchange(String json) throws BusinessException;
 
 
     /**
@@ -465,28 +462,23 @@ public interface MemberApiService {
      * @param params
      * @throws BusinessException
      */
-    public Page findMemberPage( String params ) throws BusinessException;
+    public Page findMemberPage(String params) throws BusinessException;
+
+
 
     /**
      * 查询商家发布的会员卡信息
      * @param busId
      * @return
      */
-    public List<Map<String,Object>> findGradeTypeBybusId( Integer busId );
+    public List<Map<String,Object>> findGradeTypeBybusId(Integer busId);
 
     /**
      * 统计会员数据和今日新增会员卡
      * @param busId
      * @return
      */
-    public Map<String,Object> coutMemberCard( Integer busId, Integer shopId );
-
-    /**
-     * 分配泛会员卡
-     * @param params
-     */
-    public void  applyCard(String params);
-
+    public Map<String,Object> coutMemberCard(Integer busId,Integer shopId);
 
     /**
      * 流量兑换通知
@@ -549,9 +541,5 @@ public interface MemberApiService {
      */
     public Map< String,Object > findChongZhiLogDetails( Integer ucId ) throws BusinessException ;
 
-    /**
-     * 整理之前member信息
-     */
-    public void zhengliMember();
 
 }

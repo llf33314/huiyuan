@@ -99,18 +99,6 @@ public interface MemberCommonService {
      */
     public void newMemberMerge(MemberEntity member,Integer busId,String phone)throws BusinessException;
 
-    /**
-     * 推荐赠送
-     * @param recommend
-     */
-    public void tuijianGive( MemberRecommend recommend );
-
-    /**
-     * 查询粉丝所有的id集合
-     * @param memberId
-     * @return
-     */
-    public List<Integer> findMemberIds(Integer memberId);
 
     /**
      * 主卡充值
@@ -159,14 +147,6 @@ public interface MemberCommonService {
      */
     public List<Map<String,Object>> findCityByCityCode(String cityCode);
 
-    /**
-     * 泛会员 和正式会员完善资料 赠送物品
-     * @param memberOld
-     * @param memberParameter1
-     * @return
-     */
-    public boolean giveMemberGift(MemberEntity memberOld,
-                    MemberParameter memberParameter1);
 
     /**
      * 支付方式

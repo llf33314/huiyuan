@@ -363,9 +363,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 	MemberDate memberdate = memberCommonService.findMemeberDate( busId, ctId );
 	List< Map< String,Object > > rechargeGives = null;
 	if ( CommonUtil.isNotEmpty( memberdate ) ) {
-	    rechargeGives = rechargeGiveMapper.findBybusIdAndGrId( busId, grId, 1 );
+	    rechargeGives = rechargeGiveMapper.findBybusIdAndGrId1( busId, grId, 1 );
 	} else {
-	    rechargeGives = rechargeGiveMapper.findBybusIdAndGrId( busId, grId, 0 );
+	    rechargeGives = rechargeGiveMapper.findBybusIdAndGrId1( busId, grId, 0 );
 	}
 	if ( rechargeGives == null || rechargeGives.size() == 0 ) {
 	    return 0;
@@ -779,9 +779,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 	// 判断会员日
 	MemberDate memberDate = memberCommonService.findMemeberDate( busId, card.getCtId() );
 	if ( CommonUtil.isNotEmpty( memberDate ) ) {
-	    recharges = rechargeGiveMapper.findBybusIdAndGrId( busId, card.getGrId(), 1 );
+	    recharges = rechargeGiveMapper.findBybusIdAndGrId1( busId, card.getGrId(), 1 );
 	} else {
-	    recharges = rechargeGiveMapper.findBybusIdAndGrId( busId, card.getGrId(), 0 );
+	    recharges = rechargeGiveMapper.findBybusIdAndGrId1( busId, card.getGrId(), 0 );
 	}
 	return recharges;
     }
@@ -1390,9 +1390,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 			double banlan = card.getMoney() - totalMoney;
 			card.setMoney( banlan );
 			memberCardDAO.updateById( card );
-			memberCommonService
+			MemberCardrecordNew memberCardrecordNew=memberCommonService
 					.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, totalMoney, "消费", memberEntity.getBusId(), banlan, paySuccessBo.getOrderCode(), 0 );
-			systemMsgService.sendChuzhiXiaofei( memberEntity, totalMoney );
+			systemMsgService.sendChuzhiCard( memberEntity, memberCardrecordNew );
 
 			uc.setBalance( banlan );
 		    } else {
@@ -1985,11 +1985,11 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 		MemberDate memberDate = memberCommonService.findMemeberDate( memberEntity.getBusId(), card.getCtId() );
 		if ( CommonUtil.isNotEmpty( memberDate ) ) {
-		    List< Map< String,Object > > recharges = rechargeGiveMapper.findBybusIdAndGrId( busId, card.getGrId(), 1 );
+		    List< Map< String,Object > > recharges = rechargeGiveMapper.findBybusIdAndGrId1( busId, card.getGrId(), 1 );
 		    map.put( "recharges", recharges );
 		    map.put( "cardDate", "1" );
 		} else {
-		    List< Map< String,Object > > recharges = rechargeGiveMapper.findBybusIdAndGrId( busId, card.getGrId(), 0 );
+		    List< Map< String,Object > > recharges = rechargeGiveMapper.findBybusIdAndGrId1( busId, card.getGrId(), 0 );
 		    map.put( "recharges", recharges );
 		    map.put( "cardDate", "0" );
 		}
@@ -2493,10 +2493,10 @@ public class MemberApiServiceImpl implements MemberApiService {
 			    memberCardDAO.updateById( updateCard );
 
 			    bool = true;
-			    memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, payTypeBo.getPayMoney(), "储值卡消费", memberEntity.getBusId(), banlan,
+			    MemberCardrecordNew memberCardrecordNew=   memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, payTypeBo.getPayMoney(), "储值卡消费", memberEntity.getBusId(), banlan,
 					    erpPaySuccess.getOrderCode(), 0 );
 
-			    systemMsgService.sendChuzhiXiaofei( memberEntity, payTypeBo.getPayMoney() );
+			    systemMsgService.sendChuzhiCard( memberEntity, memberCardrecordNew );
 			    uc.setBalance( banlan );
 			} else {
 			    throw new BusinessException( ResponseMemberEnums.MEMBER_CHUZHI_CARD );
@@ -2864,6 +2864,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}
     }
 
+
+
     public List< Map< String,Object > > findGradeTypeBybusId( Integer busId ) {
 	return memberGradetypeDAO.findGradeTypeByBusId( busId );
     }
@@ -3123,22 +3125,5 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}
     }
 
-    public void zhengliMember() {
-	List< MemberEntity > list = memberDAO.findMemberAll();
-	for ( MemberEntity m : list ) {
-	    String str = m.getOldId();
-	    if ( CommonUtil.isNotEmpty( str ) ) {
-		String[] strs = str.split( "," );
-		for ( int i = 0; i < strs.length; i++ ) {
-		    if ( CommonUtil.isNotEmpty( strs[i] ) && !"null".equals( strs[i] ) && !"0".equals( strs[i] ) ) {
-			MemberOldId memberOldId = new MemberOldId();
-			memberOldId.setMemberId( m.getId() );
-			memberOldId.setOldId( CommonUtil.toInteger( strs[i] ) );
-			memberOldIdDAO.insert( memberOldId );
-		    }
-		}
-	    }
-	}
-    }
 
 }

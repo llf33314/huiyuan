@@ -492,12 +492,6 @@
 			and t.recommendType=#{recommendType}
 		</if>
 
-        <if test="search!=null">
-            and (t.name=#{search} or t.phone=#{search})
-        </if>
-        order by t.id desc
-        limit #{fristpage},#{pagesize}
-    </select>
 		<if test="search!=null">
 			and m.phone=#{search}
 		</if>
@@ -609,8 +603,6 @@
         from t_wx_bus_member where busId=#{busId} and phone =#{phone}
     </select>
 
-    <select id="countJifen" resultType="java.lang.Integer">
-		select sum(m.integral) from t_wx_bus_member m inner join t_member_card c on m.mc_id=c.mc_id  where m.busId=#{busId} and c.ct_id=1
 	<select id="countJifen" resultType="java.lang.Integer">
 		select sum(m.integral) from t_wx_bus_member m inner join t_member_card c on m.mc_id=c.mc_id
 		 where m.busId=#{busId}
@@ -620,7 +612,7 @@
 
 	</select>
 
-  <select id="findSexGroupBySex" resultType="Map">
+	<select id="findSexGroupBySex" resultType="Map">
 		SELECT COUNT(m.id) as countId,m.sex FROM t_wx_bus_member m
 		inner join t_member_card c on m.mc_id=c.mc_id  WHERE  m.busId=#{busId}
 

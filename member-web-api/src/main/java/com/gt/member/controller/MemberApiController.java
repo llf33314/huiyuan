@@ -663,7 +663,7 @@ public class MemberApiController extends BaseController {
 
 	try {
 	    Map< String,Object > requestBody = JSONObject.parseObject( param );
-	    Map<String,Object> map = memberApiService.coutMemberCard( CommonUtil.toInteger( requestBody.get( "busId" ) ) ,CommonUtil.toInteger( requestBody.get( "shopId" ) ));
+	    Map<String,Object> map = memberApiService.coutMemberCard( CommonUtil.toInteger( requestBody.get( "busId" ) ) , CommonUtil.toInteger( requestBody.get( "shopId" ) ));
 	    return ServerResponse.createBySuccess( map );
 	} catch ( Exception e ) {
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getMsg());
@@ -689,6 +689,7 @@ public class MemberApiController extends BaseController {
     @ApiOperation( value = "findMemberPage", notes = "分页查询会员信息" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "pageSize", value = "每页条数", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "curPage", value = "当前页", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "cardNo", value = "卡号", paramType = "query", required = true, dataType = "string" ),
 		    @ApiImplicitParam( name = "phone", value = "手机号", paramType = "query", required = true, dataType = "string" ),
 		    @ApiImplicitParam( name = "ctId", value = "会员卡类型", paramType = "query", required = true, dataType = "int" ),
@@ -707,6 +708,7 @@ public class MemberApiController extends BaseController {
 	}
     }
 
+
     @ApiOperation( value = "loginMemberByPhone", notes = "手机号+验证码登录,验证码不足校验处理" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
@@ -716,8 +718,8 @@ public class MemberApiController extends BaseController {
     public ServerResponse loginMemberByPhone(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
 	try {
 	    Map< String,Object > requestBody = JSONObject.parseObject( param );
-	    Integer busId=CommonUtil.toInteger( requestBody.get("busId") );
-	    String phone=CommonUtil.toString( requestBody.get( "phone" ) );
+	    Integer busId= CommonUtil.toInteger( requestBody.get("busId") );
+	    String phone= CommonUtil.toString( requestBody.get( "phone" ) );
 	    memberApiService.loginMemberByPhone(request,busId, phone );
 	    return ServerResponse.createBySuccess( );
 	} catch ( BusinessException e ) {
@@ -733,7 +735,7 @@ public class MemberApiController extends BaseController {
 
 	try {
 	    Map< String,Object > requestBody = JSONObject.parseObject( param );
-	    Integer busId=CommonUtil.toInteger( requestBody.get("busId") );
+	    Integer busId= CommonUtil.toInteger( requestBody.get("busId") );
 	    Integer dengji=memberApiService.findCardDengji(busId);
 	    return ServerResponse.createBySuccess(dengji );
 	} catch ( Exception e ) {
@@ -750,7 +752,7 @@ public class MemberApiController extends BaseController {
     public ServerResponse personCenter(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
 	try {
 	    Map< String,Object > requestBody = JSONObject.parseObject( param );
-	    Integer memberId=CommonUtil.toInteger( requestBody.get("memberId") );
+	    Integer memberId= CommonUtil.toInteger( requestBody.get("memberId") );
 	    Map<String,Object> dengji=memberApiService.personCenter(memberId);
 	    return ServerResponse.createBySuccess(dengji );
 	} catch ( Exception e ) {
@@ -768,7 +770,7 @@ public class MemberApiController extends BaseController {
     public ServerResponse findNewMemberId(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
 	try {
 	    Map< String,Object > requestBody = JSONObject.parseObject( param );
-	    Integer memberId=CommonUtil.toInteger( requestBody.get("memberId") );
+	    Integer memberId= CommonUtil.toInteger( requestBody.get("memberId") );
 	    Integer id=memberApiService.findNewMemberId(memberId);
 	    return ServerResponse.createBySuccess(id );
 	} catch ( BusinessException e ) {
@@ -789,8 +791,8 @@ public class MemberApiController extends BaseController {
     public ServerResponse findMemberByPhoneAndbusId(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
 	try {
 	    Map< String,Object > requestBody = JSONObject.parseObject( param );
-	    Integer busId=CommonUtil.toInteger( requestBody.get("busId") );
-	    String phone=CommonUtil.toString( requestBody.get("phone") );
+	    Integer busId= CommonUtil.toInteger( requestBody.get("busId") );
+	    String phone= CommonUtil.toString( requestBody.get("phone") );
 	    Member member =memberApiService.findMemberByPhoneAndbusId(busId,phone);
 	    return ServerResponse.createBySuccess(member );
 	} catch ( BusinessException e ) {
@@ -823,7 +825,7 @@ public class MemberApiController extends BaseController {
     public ServerResponse rechargeLogDetails(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
 	try {
 	    Map< String,Object > requestBody = JSONObject.parseObject( param );
-	    Integer ucId=CommonUtil.toInteger( requestBody.get("ucId") );
+	    Integer ucId= CommonUtil.toInteger( requestBody.get("ucId") );
 	    Map<String,Object> map =memberApiService.findChongZhiLogDetails(ucId);
 	    return ServerResponse.createBySuccess(map );
 	} catch ( BusinessException e ) {

@@ -1,9 +1,18 @@
 package com.gt.member.service.common.membercard;
 
 import com.gt.api.util.RequestUtils;
+import com.gt.member.exception.BusinessException;
+import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
+import com.gt.util.entity.param.pay.ApiEnterprisePayment;
+import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
+import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
+import com.gt.util.entity.result.wx.WxJsSdkResult;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 请求接口
@@ -125,13 +134,13 @@ public interface RequestService {
      * 查询世界手机区号
      * @return
      */
-    public List<Map> findAreaPhone();
+    public List<Map > findAreaPhone();
     /**
      * 判断商家是否过期
      * @param busId
      */
     public void getWxPulbicMsg(Integer busId)throws BusinessException;
 
-    public Integer getPowerApi(Integer status,Integer busId,Double powNum,String remarks);
+
 
 }

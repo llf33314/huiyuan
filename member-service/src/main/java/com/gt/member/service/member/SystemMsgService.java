@@ -56,6 +56,9 @@ public interface SystemMsgService {
 	public boolean sendChuzhiCard( MemberEntity memberEntity,  MemberCardrecordNew cardRecord );
 
 
+
+
+
 	/**
 	 * 次卡充值推送
 	 * @param memberEntity

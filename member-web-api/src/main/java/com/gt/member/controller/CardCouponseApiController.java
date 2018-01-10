@@ -666,7 +666,7 @@ public class CardCouponseApiController {
     public ServerResponse findDuofenCardGets(HttpServletRequest request,
                     HttpServletResponse response,@RequestBody String param){
         try {
-            List<DuofenCard> duofenCards= cardCouponsApiService.findDuofenCardGets(param);
+            List<DuofenCard > duofenCards= cardCouponsApiService.findDuofenCardGets(param);
             return ServerResponse.createBySuccess(duofenCards);
         }catch ( Exception e ){
             return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());

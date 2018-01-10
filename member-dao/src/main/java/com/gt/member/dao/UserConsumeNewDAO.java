@@ -4,6 +4,10 @@ import com.gt.member.entity.UserConsumeNew;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 /**
  * <p>
   *  Mapper 接口
@@ -57,7 +61,7 @@ public interface UserConsumeNewDAO extends BaseMapper<UserConsumeNew> {
     /**
      * 查询7天的交易总额
      */
-    List<Map<String, Object>> sum7DayOrder(@Param("busId")Integer busId,@Param("ctId")Integer ctId,
+    List<Map<String, Object> > sum7DayOrder(@Param("busId")Integer busId,@Param("ctId")Integer ctId,
                     @Param("startDate")Date startDate,@Param("endDate")Date endDate);
 
 
@@ -116,8 +120,6 @@ public interface UserConsumeNewDAO extends BaseMapper<UserConsumeNew> {
     Integer userCiKa(@Param("busId")Integer busId);
 
 
-    List<Map<String,Object>> findUserConsumeChongZhiByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("startDate")String startDate,@Param("endDate")String endDate,@Param("first")Integer first,
-                    @Param("pageSize")Integer pageSize);
 
     Integer countUserConsumeChongZhiByMemberId(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param("startDate")String startDate,@Param("endDate")String endDate);
 

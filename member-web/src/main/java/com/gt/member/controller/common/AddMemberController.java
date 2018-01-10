@@ -208,8 +208,8 @@ public class AddMemberController {
 	    newApiSms.setParamsStr(no );
 	    newApiSms.setBusId(busId);
 	    newApiSms.setModel(9);
-
-	    newApiSms.setTmplId( Long.parseLong(PropertiesUtil.getSmstmplId())  );
+	    //#多粉 11510 微站 14202
+	    newApiSms.setTmplId( 11510L  );
 	    requestUtils.setReqdata( newApiSms );
 	    try {
 		String smsStr = requestService.sendSmsNew( requestUtils );
