@@ -2159,7 +2159,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 	    Date endDate = null;
 	    if ( CommonUtil.isNotEmpty( enddate ) ) {
-		endDate = DateTimeKit.parse( startTime + " 23:59:59", "yyyy-MM-dd hh:mm:ss" );
+		endDate = DateTimeKit.parse( enddate + " 23:59:59", "yyyy-MM-dd hh:mm:ss" );
 	    }
 	    List< Map< String,Object > > sumdayOrder = userConsumeNewDAO.sum7DayOrder( busId, ctId, beginDate,endDate );
 
