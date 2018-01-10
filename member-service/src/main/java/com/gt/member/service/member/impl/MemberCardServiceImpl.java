@@ -3599,7 +3599,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		UserConsumeNew uc = new UserConsumeNew();
 		uc.setBusId( memberEntity.getBusId() );
 		uc.setMemberId( memberEntity.getId() );
-		uc.setRecordType( 2 );
+		uc.setRecordType( 3 );
 		uc.setUcType( 133 );
 		String orderCode = CommonUtil.getMEOrderCode();
 		uc.setOrderCode( orderCode );
