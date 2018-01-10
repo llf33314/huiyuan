@@ -401,8 +401,13 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 	    member.setMcId( card.getMcId() );
 	    memberDAO.updateById( member );
 
-	    memberCommonService.saveCardRecordOrderCodeNew( uc.getMemberId(), 1, uc.getDiscountAfterMoney(), "购买会员卡", uc.getBusId(), 0.0, uc.getOrderCode(), 0 );
-
+	    if(card.getCtId()==3) {
+		memberCommonService.saveCardRecordOrderCodeNew( uc.getMemberId(), 1, uc.getDiscountAfterMoney(), "购买会员卡", uc.getBusId(), card.getMoney(), uc.getOrderCode(), 0 );
+	    }else if(card.getCtId()==5){
+		memberCommonService.saveCardRecordOrderCodeNew( uc.getMemberId(), 1, uc.getDiscountAfterMoney(), "购买会员卡", uc.getBusId(), card.getFrequency().doubleValue(), uc.getOrderCode(), 0 );
+	    }else{
+		memberCommonService.saveCardRecordOrderCodeNew( uc.getMemberId(), 1, uc.getDiscountAfterMoney(), "购买会员卡", uc.getBusId(), 0.0,uc.getOrderCode(), 0 );
+	    }
 	    // 新增会员短信通知
 	    member = memberDAO.selectById( uc.getMemberId() );
 	    systemMsgService.sendNewMemberMsg( member );

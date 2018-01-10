@@ -208,7 +208,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
      * @throws Exception
      */
     @Transactional
-    public Map<String,Object> linquMemberCard( Map< String,Object > params, Integer memberId ) throws BusinessException {
+    public Map<String,Object> linquMemberCard(HttpServletRequest request, Map< String,Object > params, Integer memberId ) throws BusinessException {
 	try {
 	    Map<String,Object> map=new HashMap<>(  );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
@@ -471,6 +471,9 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		uc.setGtId( gtId );
 		uc.setBusId( busUserEntity.getId() );
 		uc.setShopId( shopId );
+		//数据来源 0:pc端 1:微信 2:uc端 3:小程序 4魔盒 5:ERP
+		Integer dataSource=memberCommonService.dataSource(request);
+		uc.setDataSource( dataSource );
 
 		userConsumeNewDAO.insert( uc );
 
@@ -663,7 +666,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 	    //
 	  PublicParameterset parameterset=publicParametersetDAO.findBybusId( busId );
-	    if(parameterset.getButtonType()==0){
+	    if(CommonUtil.isNotEmpty( parameterset ) && parameterset.getButtonType()==0){
 	        String youhuiMaidanUrl=PropertiesUtil.getWxmp_home()+"/phone_2MemberController/79B4DE7C/discountPay.do?busId="+busId;
 	        map.put( "youhuiMaidanUrl",youhuiMaidanUrl );
 	    }

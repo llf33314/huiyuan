@@ -2258,8 +2258,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 		if ( CommonUtil.isNotEmpty( uc.get( "payStatus" ) ) ) {
 		    uc.put( "payStatus", payStatus.get( CommonUtil.toString( uc.get( "payStatus" ) ) ) );
 		}
-		if ( CommonUtil.isNotEmpty( uc.get( "dataSource" ) ) ) {
+		if(CommonUtil.isNotEmpty( uc.get( "dataSource" ) )) {
 		    uc.put( "dataSource", map.get( CommonUtil.toString( uc.get( "dataSource" ) ) ) );
+		}else{
+		    uc.put( "dataSource","未知");
 		}
 		uc.put( "createDate", CommonUtil.toString( uc.get( "createDate" ) ) );
 		newList.add( uc );
@@ -2364,8 +2366,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    SortedMap< String,Object > map = dictService.getDict( "A003" );
 	    SortedMap< String,Object > payStatus = dictService.getDict( "A004" );
 	    for ( Map< String,Object > uc : list ) {
-		if ( CommonUtil.isNotEmpty( uc.get( "dataSource" ) ) ) {
+		if(CommonUtil.isNotEmpty( uc.get( "dataSource" ) )) {
 		    uc.put( "dataSource", map.get( CommonUtil.toString( uc.get( "dataSource" ) ) ) );
+		}else{
+		    uc.put( "dataSource","未知");
 		}
 		newList.add( uc );
 	    }
@@ -2464,7 +2468,11 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    SortedMap< String,Object > payStatus = dictService.getDict( "A004" );
 	    for ( Map< String,Object > uc : list ) {
 		uc.put( "payStatus", payStatus.get( CommonUtil.toString( uc.get( "payStatus" ) ) ) );
-		uc.put( "dataSource", map.get( CommonUtil.toString( uc.get( "dataSource" ) ) ) );
+		if(CommonUtil.isNotEmpty( uc.get( "dataSource" ) )) {
+		    uc.put( "dataSource", map.get( CommonUtil.toString( uc.get( "dataSource" ) ) ) );
+		}else{
+		    uc.put( "dataSource","未知");
+		}
 		uc.put( "createDate", CommonUtil.toString( uc.get( "createDate" ) ) );
 		newList.add( uc );
 	    }
@@ -2578,7 +2586,11 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    SortedMap< String,Object > payStatusMap = dictService.getDict( "A004" );
 	    for ( Map< String,Object > uc : userConsumes ) {
 		uc.put( "payStatus", payStatusMap.get( CommonUtil.toString( uc.get( "payStatus" ) ) ) );
-		uc.put( "dataSource", map.get( CommonUtil.toString( uc.get( "dataSource" ) ) ) );
+		if(CommonUtil.isNotEmpty( uc.get( "dataSource" ) )) {
+		    uc.put( "dataSource", map.get( CommonUtil.toString( uc.get( "dataSource" ) ) ) );
+		}else{
+		    uc.put( "dataSource","未知");
+		}
 		uc.put( "createDate", CommonUtil.toString( uc.get( "createDate" ) ) );
 		newList.add( uc );
 	    }
@@ -3273,8 +3285,15 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    card = memberCardDAO.selectById( memberEntity.getMcId() );
 		}
 	    }
-	    if ( CommonUtil.isEmpty( memberEntity ) ) {
+	    if( CommonUtil.isEmpty( memberEntity ) && CommonUtil.isEmpty( card )){
+		map.put( "youke", 2 );
+	    }else if ( CommonUtil.isEmpty( memberEntity ) ) {
 		map.put( "youke", 1 );
+		if ( CommonUtil.isNotEmpty( card ) ) {
+		    memberEntity = memberMapper.findByMcIdAndbusId( busId, card.getMcId() );
+		    map.put( "memberId", memberEntity.getId() );
+		    map.put( "usehuiyuanquanyi", 1 );
+		}
 	    } else if ( CommonUtil.isEmpty( card ) ) {
 		map.put( "usehuiyuanquanyi", 0 );
 		//throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR.getCode(), ResponseMemberEnums.NOT_MEMBER_CAR.getMsg() );
@@ -3334,7 +3353,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    }
 		}
 	    }
-	    if ( CommonUtil.isNotEmpty( memberEntity ) ) {
+	    //游客不能使用优惠券 或 借款也不能使用优惠券
+	    if ( CommonUtil.isNotEmpty( memberEntity ) && !map.containsKey( "youke" )) {
 		map.put( "nickName", memberEntity.getNickname() );
 		map.put( "phone", memberEntity.getPhone() );
 		// 查询能使用的多粉优惠券
@@ -3404,6 +3424,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		Integer useCoupon = CommonUtil.toInteger( map.get( "useCoupon" ) );
 		MemberShopEntity ce = new MemberShopEntity();
 		ce.setTotalMoney( xiaofeiMoney );
+		ce.setBalanceMoney( xiaofeiMoney );
 		ce.setUsehuiyuanquanyi( usehuiyuanquanyi );
 		ce.setMemberId( memberId );
 		ce.setUseCoupon( useCoupon );
@@ -3415,11 +3436,13 @@ public class MemberCardServiceImpl implements MemberCardService {
 		ce.setUseFenbi( useFenbi );
 		Integer userJifen = CommonUtil.toInteger( map.get( "useJifen" ) );
 		ce.setUserJifen(  userJifen);
-		ce = memberCommonService.publicMemberCountMoney( ce );
-
+		Integer youke=CommonUtil.toInteger( map.get( "youke" ) );
+		if(youke==0) {
+		    ce = memberCommonService.publicMemberCountMoney( ce );
+		}
 		Double jisuanMoney = CommonUtil.toDouble( map.get( "jisuanMoney" ) );//前端计算的支付金额
-		if ( ce.getBalanceMoney() == jisuanMoney ) {
-		    throw new BusinessException( ResponseMemberEnums.ERROR_QR_CODE );
+		if ( !ce.getBalanceMoney().equals( jisuanMoney )  ) {
+		    throw new BusinessException( ResponseMemberEnums.ERROR_COUNT );
 		}
 
 
@@ -3497,7 +3520,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 				bool = true;
 				MemberCardrecordNew memberCardrecordNew = memberCommonService
-						.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, ce.getBalanceMoney(), "储值卡消费", memberEntity.getBusId(), banlan,
+						.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, ce.getBalanceMoney(), "消费", memberEntity.getBusId(), banlan,
 								uc.getOrderCode(), 0 );
 
 				systemMsgService.sendChuzhiCard( memberEntity, memberCardrecordNew );

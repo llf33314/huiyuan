@@ -220,7 +220,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    Member member = SessionUtils.getLoginMember( request, busId );
-	    Map<String,Object> map= memberCardPhoneService.linquMemberCard( params, member.getId() );
+	    Map<String,Object> map= memberCardPhoneService.linquMemberCard( request,params, member.getId() );
 	    return ServerResponse.createBySuccess(map);
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );

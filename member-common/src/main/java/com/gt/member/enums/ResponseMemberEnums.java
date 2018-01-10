@@ -50,6 +50,7 @@ public enum ResponseMemberEnums {
     NOT_RECHARGE_JFIEN(5030,"积分卡不能充值"),
     SEND_NOTICE(5031,"模板已经发送不能删除"),
     PLEASE_RECHARGE(5032,"卡内剩余次数不足,请充值"),
+    ERROR_COUNT(5033,"计算错误"),
 
 
 
