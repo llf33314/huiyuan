@@ -292,8 +292,12 @@
 		<if test="memberId!=null">
 			and memberId=#{memberId}
 		</if>
-		<if test="date!=null">
-			and isendDate <![CDATA[>=]]> #{date}
+		<if test="startDate!=null">
+			and createDate <![CDATA[>=]]> #{startDate}
+		</if>
+
+		<if test="endDate!=null">
+			and createDate <![CDATA[<=]]> #{endDate}
 		</if>
 	</select>
 
@@ -302,8 +306,12 @@
 		<if test="memberId!=null">
 			and memberId=#{memberId}
 		</if>
-		<if test="date!=null">
-			and isendDate <![CDATA[>=]]> #{date}
+		<if test="startDate!=null">
+			and createDate <![CDATA[>=]]> #{startDate}
+		</if>
+
+		<if test="endDate!=null">
+			and createDate <![CDATA[<=]]> #{endDate}
 		</if>
 		ORDER BY id DESC limit #{first},#{pageSize}
 	</select>
@@ -314,8 +322,12 @@
 		<if test="memberId!=null">
 			and memberId=#{memberId}
 		</if>
-		<if test="date!=null">
-			and isendDate <![CDATA[>=]]> #{date}
+		<if test="startDate!=null">
+			and createDate <![CDATA[>=]]> #{startDate}
+		</if>
+
+		<if test="endDate!=null">
+			and createDate <![CDATA[<=]]> #{endDate}
 		</if>
 	</select>
 
@@ -326,8 +338,12 @@
 		<if test="memberId!=null">
 			and memberId=#{memberId}
 		</if>
-		<if test="date!=null">
-			and isendDate <![CDATA[>=]]> #{date}
+		<if test="startDate!=null">
+			and createDate <![CDATA[>=]]> #{startDate}
+		</if>
+
+		<if test="endDate!=null">
+			and createDate <![CDATA[<=]]> #{endDate}
 		</if>
 	</select>
 
@@ -337,8 +353,12 @@
 		<if test="memberId!=null">
 			and memberId=#{memberId}
 		</if>
-		<if test="date!=null">
-			and isendDate <![CDATA[>=]]> #{date}
+		<if test="startDate!=null">
+			and createDate <![CDATA[>=]]> #{startDate}
+		</if>
+
+		<if test="endDate!=null">
+			and createDate <![CDATA[<=]]> #{endDate}
 		</if>
 		ORDER BY id DESC limit #{first},#{pageSize}
 	</select>
@@ -352,8 +372,12 @@
 		<if test="payStatus!=null">
 			and payStatus=#{payStatus}
 		</if>
-		<if test="date!=null">
-			and isendDate <![CDATA[>=]]> #{date}
+		<if test="startDate!=null">
+			and createDate <![CDATA[>=]]> #{startDate}
+		</if>
+
+		<if test="endDate!=null">
+			and createDate <![CDATA[<=]]> #{endDate}
 		</if>
 	</select>
 
@@ -366,8 +390,12 @@
 		<if test="payStatus!=null">
 			and payStatus=#{payStatus}
 		</if>
-		<if test="date!=null">
-			and isendDate <![CDATA[>=]]> #{date}
+		<if test="startDate!=null">
+			and createDate <![CDATA[>=]]> #{startDate}
+		</if>
+
+		<if test="endDate!=null">
+			and createDate <![CDATA[<=]]> #{endDate}
 		</if>
 		ORDER BY id DESC limit #{first},#{pageSize}
 	</select>
