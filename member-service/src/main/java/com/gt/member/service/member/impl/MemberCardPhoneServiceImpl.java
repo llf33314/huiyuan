@@ -660,6 +660,14 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		    }
 		}
 	    }
+
+	    //
+	  PublicParameterset parameterset=publicParametersetDAO.findBybusId( busId );
+	    if(parameterset.getButtonType()==0){
+	        String youhuiMaidanUrl=PropertiesUtil.getWxmp_home()+"/phone_2MemberController/79B4DE7C/discountPay.do?busId="+busId;
+	        map.put( "youhuiMaidanUrl",youhuiMaidanUrl );
+	    }
+	    map.put( "parameterset",parameterset );
 	    return map;
 	} catch ( BusinessException e ) {
 	    throw e;
