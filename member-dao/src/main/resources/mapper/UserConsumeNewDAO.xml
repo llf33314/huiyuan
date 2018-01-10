@@ -93,7 +93,7 @@
 	<select id="sum7DayBuyCard" resultType="Map">
 		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS buytime1, SUM(discountAfterMoney) AS buyDiscountAfterMoney FROM t_wx_user_consume_new
 		where
-		ucType=13 and ctId=#{ctId} and busId=#{busId} and payStatus=1 and
+		ucType=13 and ctId=#{ctId} and busId=#{busId} and payStatus=1
 		<if test="startDate!=null">
 			and createDate <![CDATA[>=]]>#{startDate}
 		</if>
