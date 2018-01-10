@@ -3298,7 +3298,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		map.put( "usehuiyuanquanyi", 0 );
 		map.put( "youke",0 );
 		//throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR.getCode(), ResponseMemberEnums.NOT_MEMBER_CAR.getMsg() );
-	    } else if ( card.getCardStatus() == 1 ) {
+	    } else if ( card.getCardStatus() == 1 && card.getIsChecked()==0 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
 		List< Map< String,Object > > cards = memberCardDAO.findCardById( card.getMcId() );
