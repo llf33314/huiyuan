@@ -2569,28 +2569,18 @@ public class MemberCardServiceImpl implements MemberCardService {
 			    .findUserConsumeXiaoFeiByMemberId( busId, memberId, startDate, endDate, payStatus, CommonUtil.toInteger( params.get( "firstResult" ) ),
 					    CommonUtil.toInteger( params.get( "maxResult" ) ) );
 
-	    SortedMap< String,Object > sortemap = dictService.getDict( "1197" );
 	    List< Map< String,Object > > userConsumes = new ArrayList<>();
-	    for ( Map< String,Object > map : list ) {
-		Object obj = sortemap.get( CommonUtil.toString( map.get( "ucType" ) ) );
-		if ( CommonUtil.isNotEmpty( obj ) ) {
-		    map.put( "ucTypeName", obj );
-		} else {
-		    map.put( "ucTypeName", "未知" );
-		}
-		userConsumes.add( map );
-	    }
-
 	    List< Map< String,Object > > newList = new ArrayList<>();
 	    SortedMap< String,Object > map = dictService.getDict( "A003" );
 	    SortedMap< String,Object > payStatusMap = dictService.getDict( "A004" );
-	    for ( Map< String,Object > uc : userConsumes ) {
+	     for ( Map< String,Object > uc : userConsumes ) {
 		uc.put( "payStatus", payStatusMap.get( CommonUtil.toString( uc.get( "payStatus" ) ) ) );
 		if(CommonUtil.isNotEmpty( uc.get( "dataSource" ) )) {
 		    uc.put( "dataSource", map.get( CommonUtil.toString( uc.get( "dataSource" ) ) ) );
 		}else{
 		    uc.put( "dataSource","未知");
 		}
+
 		uc.put( "createDate", CommonUtil.toString( uc.get( "createDate" ) ) );
 		newList.add( uc );
 	    }
@@ -2637,15 +2627,27 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    map.put( "refundFenbi", ucNew.getRefundFenbi() );
 	    map.put( "refundJifen", ucNew.getRefundJifen() );
 	    map.put( "refundDate", DateTimeKit.getDateTime( ucNew.getRefundDate() ) );
+	    SortedMap< String,Object > xiaofeiType = dictService.getDict( "1197" );
+	    if(CommonUtil.isNotEmpty( ucNew.getUcType() )){
+		map.put( "ucType", xiaofeiType.get( CommonUtil.toString( ucNew.getUcType() ) ) );
+	    }else{
+		map.put( "ucType", "未知" );
+	    }
 
 	    SortedMap< String,Object > payStatus = dictService.getDict( "A004" );
-	    map.put( "payStatus", payStatus.get( CommonUtil.toString( ucNew.getPayStatus() ) ) );
+	    if(CommonUtil.isNotEmpty(  ucNew.getPayStatus())) {
+		map.put( "payStatus", payStatus.get( CommonUtil.toString( ucNew.getPayStatus() ) ) );
+	    }else{
+		map.put( "payStatus","未知");
+	    }
 
 	    List< UserConsumePay > userConsumePays = userConsumePayDAO.findByUcId( ucId );
 	    SortedMap< String,Object > sortemap = dictService.getDict( "1198" );
 	    String payType = "";
 	    for ( UserConsumePay userConsumePay : userConsumePays ) {
-		payType = CommonUtil.toString( sortemap.get( CommonUtil.toString( userConsumePay.getPaymentType() ) ) ) + "   ";
+	        if(CommonUtil.isNotEmpty(  userConsumePay.getPaymentType() )) {
+		    payType = CommonUtil.toString( sortemap.get( CommonUtil.toString( userConsumePay.getPaymentType() ) ) ) + "   ";
+		}
 	    }
 	    map.put( "payType", payType );
 	    return map;

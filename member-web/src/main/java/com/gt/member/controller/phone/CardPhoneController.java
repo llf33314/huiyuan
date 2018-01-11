@@ -180,6 +180,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    newApiSms.setModel( 9 );
 	    newApiSms.setTmplId( 11510L );
 	    newApiSms.setCountry( country );
+	    requestUtils.setReqdata( newApiSms );
 	    String smsStr = requestService.sendSmsNew( requestUtils );
 	    JSONObject returnJson = JSONObject.parseObject( smsStr );
 	    if ( "0".equals( CommonUtil.toString( returnJson.get( "code" ) ) ) ) {
