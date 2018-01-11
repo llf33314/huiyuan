@@ -168,7 +168,7 @@
         <dependency>
             <groupId>com.gt.wxmp</groupId>
             <artifactId>lfx_wxmp_entity</artifactId>
-            <version>1.0.16</version>
+            <version>1.0.17</version>
         </dependency>
 
 
