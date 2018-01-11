@@ -149,13 +149,6 @@ public interface MemberCommonService {
 
 
 
-    /**
-     * 支付方式
-     * @param request
-     * @param busId
-     * @return
-     */
-    public List<Map<String,Object>>  payType(HttpServletRequest request,Integer busId);
 
     /**
      * 判断数据来源

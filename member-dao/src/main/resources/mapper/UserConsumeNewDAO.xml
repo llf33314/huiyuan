@@ -288,7 +288,7 @@
 
 
 	<select id="countUserConsumeChongZhiByMemberId" resultType="java.lang.Integer">
-		select count(id) from t_wx_user_consume_new where busId=#{busId} and recordType=2
+		select count(id) from t_wx_user_consume_new where busId=#{busId} and recordType=1
 		<if test="memberId!=null">
 			and memberId=#{memberId}
 		</if>
@@ -302,7 +302,7 @@
 	</select>
 
 	<select id="findUserConsumeDuiHuanByMemberId" resultType="Map">
-		select * from t_wx_user_consume_new where busId=#{busId} and recordType=2
+		select * from t_wx_user_consume_new where busId=#{busId} and recordType=0
 		<if test="memberId!=null">
 			and memberId=#{memberId}
 		</if>
@@ -318,7 +318,7 @@
 
 
 	<select id="countUserConsumeDuiHuanByMemberId" resultType="java.lang.Integer">
-		select count(id) from t_wx_user_consume_new where busId=#{busId} and recordType=2
+		select count(id) from t_wx_user_consume_new where busId=#{busId} and recordType=0
 		<if test="memberId!=null">
 			and memberId=#{memberId}
 		</if>

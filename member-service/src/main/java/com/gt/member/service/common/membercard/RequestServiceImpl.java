@@ -19,6 +19,7 @@ import com.gt.member.util.EncryptUtil;
 import com.gt.member.util.PropertiesUtil;
 import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
 import com.gt.util.entity.param.pay.ApiEnterprisePayment;
+import com.gt.util.entity.param.pay.PayWay;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +82,8 @@ public class RequestServiceImpl implements RequestService {
     private final static String GETVIDEOURL = "/8A5DA52E/videoCourceApi/getVoiceUrl.do";
 
     private final static String AREAPHONE="/8A5DA52E/areaPhoneApi/selectList.do";
+
+    private final static String PAY_TYPE="/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/getPayWay.do";
 
     public String codeConsume( String cardId, String code, Integer busId ) throws Exception {
 	try {
@@ -354,6 +358,40 @@ public class RequestServiceImpl implements RequestService {
 	    LOG.error( "调用陈丹区号异常",e );
 	}
 	return null;
+    }
+
+
+    public List<Map<String,Object>> getPayType(Integer busId){
+	List<Map<String,Object>> list=new ArrayList<>(  );
+	RequestUtils< Integer > requestUtils = new RequestUtils< Integer >();
+	requestUtils.setReqdata( busId );
+	String url = PropertiesUtil.getWxmp_home() + PAY_TYPE;
+	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+	JSONObject json = JSON.parseObject( returnData );
+	if ( "0".equals( json.getString( "code" ) ) ) {
+	    PayWay payWay = JSONObject.parseObject( json.getString( "data" ), PayWay.class );
+	    if(payWay.getWxpay()==1){
+		Map<String,Object> map=new HashMap<>(  );
+		map.put( "payType", 1 );  //微信支付
+		map.put( "name","微信" );
+		list.add( map );
+	    }
+
+	    if(payWay.getAlipay()==1){
+		Map<String,Object> map=new HashMap<>(  );
+		map.put( "payType", 2 );  //支付宝支付
+		map.put( "name","支付宝" );
+		list.add( map );
+	    }
+
+	    if(payWay.getDfpay()==1){
+		Map<String,Object> map=new HashMap<>(  );
+		map.put( "payType", 3 );  //微信支付
+		map.put( "name","多粉钱包" );
+		list.add( map );
+	    }
+	}
+	return list;
     }
 
 }

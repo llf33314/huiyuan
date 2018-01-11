@@ -141,6 +141,10 @@ public interface RequestService {
      */
     public void getWxPulbicMsg(Integer busId)throws BusinessException;
 
-
-
+    /**
+     * 获取支付方式
+     * @param busId
+     * @return
+     */
+    public List<Map<String,Object>> getPayType(Integer busId);
 }

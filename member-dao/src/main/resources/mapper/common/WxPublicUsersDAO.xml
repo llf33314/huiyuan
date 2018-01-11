@@ -69,7 +69,7 @@
 		select
 		<include refid="Base_Column_List" />
 		from t_wx_public_users
-		where bus_user_id = #{userId,jdbcType=INTEGER}
+		where bus_user_id = #{userId,jdbcType=INTEGER} LIMIT 1
 	</select>
 
 </mapper>

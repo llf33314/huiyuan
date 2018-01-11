@@ -1113,28 +1113,6 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
 
 
-    //1---微信支付 2---支付宝 3---多粉钱包支付
-    public List<Map<String,Object>> payType(HttpServletRequest request,Integer busId){
-	List<Map<String,Object>> listMap=new ArrayList<>(  );
-        Integer browser=CommonUtil.judgeBrowser( request );
-	AlipayUser alipayUser = alipayUserMapper.selectByBusId( busId );
-	if ( browser.equals( 99 ) && CommonUtil.isNotEmpty( alipayUser ) ) {
-	    Map<String,Object> map=new HashMap<>(  );
-	    map.put( "payType", 2 );  //支付宝支付
-	    map.put( "name","支付宝" );
-	    listMap.add( map );
-	}
-
-	WxPublicUsersEntity wxPublicUsers = wxPublicUsersDAO.selectByUserId( busId );
-	if ( browser.equals( 1 ) && CommonUtil.isNotEmpty( wxPublicUsers ) ) {
-	    Map<String,Object> map=new HashMap<>(  );
-	    map.put( "payType", 1 );  //微信支付
-	    map.put( "name","微信" );
-	    listMap.add( map );
-	}
-	return listMap;
-    }
-
 
     public Integer dataSource(HttpServletRequest request){
 	Integer browser=CommonUtil.judgeBrowser( request );

@@ -177,7 +177,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
     public Map< String,Object > findLingquData( HttpServletRequest request, Integer busId ) {
 	Map< String,Object > map = new HashMap<>();
 	//查询支付方式
-	List<Map<String,Object>> payTypes= memberCommonService.payType( request,busId );
+	List<Map<String,Object>> payTypes= requestService.getPayType(busId );
 	map.put( "payTypes",payTypes );
 
 	List< Map< String,Object > > gradeTypes = memberGradetypeDAO.findBybusId1( busId );
@@ -826,7 +826,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    map.put( "shixiaoKaTime",memberCard.getExpireDate() );
 
 	    //支付方式
-	    List<Map<String,Object>> payTypes= memberCommonService.payType( request,busId );
+	    List<Map<String,Object>> payTypes= requestService.getPayType(busId );
 	    map.put( "payTypes",payTypes );
 
 	    if ( memberCard.getCtId() != 4 && memberCard.getCtId() == chongzhiCtId ) {
