@@ -89,9 +89,9 @@ public class AddMemberController {
     public String erpAddMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 //	SessionUtils.setLoginStyle( request, 1 );
 //	BusUser busUser=new BusUser();
-//	busUser.setId( 36 );
+//	busUser.setId( 42 );
 //	SessionUtils.setLoginUser( request, busUser );
-//	SessionUtils.setPidBusId( request, 36 );
+//	SessionUtils.setPidBusId( request, 42 );
 
 	try {
 	    Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
@@ -134,6 +134,8 @@ public class AddMemberController {
 		    }
 		}
 	    }
+	    List<Map> areaPhone=requestService.findAreaPhone();
+	    request.setAttribute( "areaPhone",JSON.toJSON(areaPhone) );
 	    request.setAttribute( "busId", busId );
 	    request.setAttribute( "shopId", shopId );
 	    request.setAttribute( "memberUser", "member_" + loginStyle + "_" + userId );
@@ -158,6 +160,7 @@ public class AddMemberController {
     public void findCardType( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer cardType ) throws IOException {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
+
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, cardType );
 	    if(gradeTypes.size()>0 ) {
@@ -185,7 +188,7 @@ public class AddMemberController {
      * @throws IOException
      */
     @RequestMapping( value = "/sendMsgerp" )
-    public void sendMsgerp( @RequestParam String telNo,@RequestParam Integer busId, HttpServletResponse response, HttpServletRequest request ) throws IOException {
+    public void sendMsgerp( @RequestParam String country,@RequestParam String telNo,@RequestParam Integer busId, HttpServletResponse response, HttpServletRequest request ) throws IOException {
 	Map< String,Object > map = new HashMap< String,Object >();
         try {
 	    if ( LOG.isDebugEnabled() ) {
@@ -210,6 +213,7 @@ public class AddMemberController {
 	    newApiSms.setModel(9);
 	    //#多粉 11510 微站 14202
 	    newApiSms.setTmplId( 11510L  );
+	    newApiSms.setCountry( country );
 	    requestUtils.setReqdata( newApiSms );
 	    try {
 		String smsStr = requestService.sendSmsNew( requestUtils );

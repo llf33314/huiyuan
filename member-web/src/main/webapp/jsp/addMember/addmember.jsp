@@ -3,6 +3,7 @@ pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,11 +12,12 @@ pageEncoding="UTF-8" %>
     <title>新增会员</title>
     <!-- 引入样式 -->
 
-    <link rel="stylesheet" href="/js/elementui/elementui.css">
+    <%--<link rel="stylesheet" href="/js/elementui/elementui.css">--%>
+
+    <link rel="stylesheet" href="/js/elementui/_element-ui@2.0.8@element-ui/lib/theme-chalk/index.css">
     <link rel="stylesheet" href="/css/member/common.css">
     <link rel="stylesheet" href="/css/member/member.css">
     <link rel="stylesheet" href="/css/iconfont/iconfont.css">
-
     <style>
         [v-cloak] {
             display: none;
@@ -49,33 +51,41 @@ pageEncoding="UTF-8" %>
                     <c:if test="${gongzhong==1}">
                         <el-form-item label="关注公众号办理：" prop="follow">
                             <el-switch on-text="" off-text="" v-model="ruleForm.follow" @change="fnGuanZhu" style="margin-top: 7px;"></el-switch>
+
                         </el-form-item>
                     </c:if>
-                    <el-form-item label="会员卡类型：" prop="cardType">
-                        <el-select v-model="cardType"  placeholder="" size="small" @change="fnGradeType">
+                    <el-form-item label="会员卡类型：" prop="cardType" >
+                        <el-select v-model="cardType"  placeholder="" size="small" @change="fnGradeType" class="form-input">
                                <el-option :label="option.ctName" :value="option.ctId" v-for="option in options"></el-option>
                           </el-select>
                     </el-form-item>
                     <el-form-item label="会员卡等级：" prop="cardRank">
-                        <el-select v-model="cardRank"   placeholder="请选择会员卡等级" size="small" @change="fnGradeTypeBuy">
-                                <el-option :label="option.gt_name"   :value="option"    v-for="option in gradeTypesOption"></el-option>
+                        <el-select v-model="cardRank"  placeholder="请选择会员卡等级" size="small" @change="fnGradeTypeBuy" class="form-input">
+                                <el-option :label="option.gt_name" :value="option.gt_id" v-for="option in gradeTypesOption"></el-option>
                         </el-select>
-                        <span class="grey-warning"></span>
+                        <label class="grey-warning"></label>
                     </el-form-item>
 
                     <el-form-item label="会员卡价格：" prop="cardPrice" v-if="cardPriceVisible" >
                         <div class="colorfe5 font18">￥<span class="buyMoneyHtml">${gradeTypes[0].buyMoney}</span></div>
                     </el-form-item>
 
+
+
                     <el-form-item label="手机号码：" prop="phone">
-                        <el-input v-model="ruleForm.phone" size="small" class="widthAuto"></el-input>
-                        <el-button type="primary" size="small" @click="getCode(ruleForm)" :disabled="!show">
+                        <el-input placeholder="请输入手机号" v-model="ruleForm.phone" class="input-with-select" size="small">
+                            <el-select slot="prepend" placeholder="请选择" class="quhao-select" size="small" v-model="countryCode" @change="countryCodeChange">
+                                <el-option v-for="(item,index) in areaPhone" :label="item.country+'(+'+item.areacode+')'" :value="item.areacode"></el-option>
+                            </el-select>
+                        </el-input>
+                        <%--<el-input v-model="ruleForm.phone" size="small" class="widthAuto"></el-input>--%>
+                        <el-button type="primary" size="small" @click="getCode(ruleForm)" :disabled="!show" >
                             <span v-show="show">获取验证码</span>
                             <span v-show="!show">{{count}}s后重发</span>
                         </el-button>
                     </el-form-item>
                     <el-form-item label="短信验证码：" prop="verification">
-                        <el-input v-model="ruleForm.verification" size="small"></el-input>
+                        <el-input v-model="ruleForm.verification" size="small" class="form-input"></el-input>
                     </el-form-item>
                     <el-form-item class="pt50">
                         <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
@@ -143,11 +153,12 @@ pageEncoding="UTF-8" %>
 
     <script src="/js/vue.min.js"></script>
     <!-- 引入组件库 -->
-    <script src="/js/elementui/elementui.js"></script>
+    <%--<script src="/js/elementui/elementui.js"></script>--%>
     <script src="/js/jquery-2.2.2.js"></script>
     <script src="/js/phone.js"></script>
     <script type="text/javascript" src="/js/socket.io/socket.io.js"></script>
-
+    <!-- 引入组件库 -->
+    <script src="/js/elementui/_element-ui@2.0.8@element-ui/lib/index.js"></script>
     <script>
         const TIME_COUNT = 120;
 
@@ -168,6 +179,8 @@ pageEncoding="UTF-8" %>
                     callback()
                 };
                 return{
+                    areaPhone:[],
+                    countryCode:'+86',
                     search: '',
                     codeShow: false,
                     qrcode:'',
@@ -203,7 +216,9 @@ pageEncoding="UTF-8" %>
                     }
                 }
             },
+
             mounted(){
+                this.areaPhone  = ${areaPhone};
                 var gradeTypes=${gradeTypes};
                 var mapList=${mapList};
                 if(mapList!=""){
@@ -215,11 +230,19 @@ pageEncoding="UTF-8" %>
                         this.cardPriceVisible =true;
                     }
                     this.gradeTypesOption=gradeTypes;
-                    this.cardRank=gradeTypes[0].gt_name;
+                    this.cardRank=gradeTypes[0].gt_id;
                     this.carID=gradeTypes[0].gt_id;
                 }
             },
             methods: {
+//                countryCodeChange(value){
+//                    console.log(value);
+//                    this.countryCode = '+'+ value
+//                },
+                countryCodeChange: function (value) {
+                    console.log(value);
+                    this.countryCode = '+'+ value
+                },
                 handleIconClick: function (ev) {
                     var cardno=vm.search;
                     if(cardno==null || cardno==""){
@@ -336,6 +359,7 @@ pageEncoding="UTF-8" %>
                 },
 
                 getCode: function (ruleForm) {
+                        var country=vm.countryCode.substr(1);
                         var phone = vm.ruleForm.phone;
                         if(phone==null || phone==""){
                             return null;
@@ -343,6 +367,7 @@ pageEncoding="UTF-8" %>
                         var validphone= Mobilephone(phone);
                         if(validphone==true) {
                             $.get("/addMember/sendMsgerp.do", {
+                                country:country,
                                 telNo: phone,
                                 busId:$("#busId").val(),
                             }, function (data) {
@@ -484,7 +509,8 @@ pageEncoding="UTF-8" %>
                                     $(".grey-warning").html("");
                                 }
                                 vm.$set(vm,"gradeTypesOption",data.gradeTypes);
-                                vm.cardRank=data.gradeTypes[0];
+                                vm.cardRank=data.gradeTypes[0].gt_id;
+                                console.log(data.gradeTypes)
                             }else{
                                 $(".error-txt").html(data.message);
                                 this.dialogVisible3=true;

@@ -194,6 +194,45 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	return map;
     }
 
+
+    @Transactional
+    public void judgeMemberCard(Integer memberId, Integer busId,
+		    String phone, String vcode,Integer areaId,String areacode){
+	try {
+	    if (CommonUtil.isEmpty(vcode)) {
+		throw new BusinessException( ResponseMemberEnums.PLEASE_PHONE_CODE );
+	    }
+	    String value = redisCacheUtil.get( phone + "_" + vcode );
+	    if ( CommonUtil.isEmpty( value ) ) {
+		throw new BusinessException( ResponseMemberEnums.NO_PHONE_CODE );
+	    }
+	    MemberEntity member = memberMapper.selectById(memberId);
+	    memberCommonService.newMemberMerge(member,busId, phone); // 数据合并
+	    MemberEntity m=new MemberEntity();
+	    m.setId(memberId);
+	    m.setPhone(phone);
+	    memberMapper.updateById(member);
+
+	    MemberParameter memberParameter=memberParameterMapper.findByMemberId( memberId );
+	    MemberParameter mp=new MemberParameter();
+	    mp.setArerCode(areacode);
+	    mp.setArerId( areaId);
+	    if(CommonUtil.isNotEmpty( memberParameter )){
+		mp.setId( memberParameter.getId() );
+		memberParameterMapper.updateById( mp );
+	    }else{
+		memberParameterMapper.insert( mp );
+	    }
+
+
+	}catch ( BusinessException e ){
+	    throw e;
+	}catch (Exception e) {
+	    LOG.error("领取会员卡绑定实体卡异常", e);
+	    throw new BusinessException(ResponseEnums.ERROR);
+	}
+    }
+
     public List< Map< String,Object > > findBuyGradeTypes( String json ) {
 	JSONObject params = JSON.parseObject( json );
 	Integer busId = CommonUtil.toInteger( params.get( "busId" ) );

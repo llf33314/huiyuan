@@ -413,7 +413,8 @@ margin-top: 0;
 }
 .grey-warning{
 	font-size: 13px;
-	color: #999999
+	color: #999999;
+	/*vertical-align: middle;*/
 }
 .el-col-5{
 	width: 20%!important

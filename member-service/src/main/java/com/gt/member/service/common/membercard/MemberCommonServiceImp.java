@@ -432,62 +432,52 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	MemberEntity m1 = memberEntityDAO.findByPhone( busId, phone );
 	if ( CommonUtil.isNotEmpty( m1 ) && !memberEntity.getId().equals( m1.getId() ) ) {
 	    // 合并member数据
-	    m1.setFlow( m1.getFlow() + memberEntity.getFlow() );
-	    m1.setIntegral( m1.getIntegral() + memberEntity.getIntegral() );
-	    m1.setFansCurrency( m1.getFansCurrency() + memberEntity.getFansCurrency() );
+	    memberEntity.setFlow( m1.getFlow() + memberEntity.getFlow() );
+	    memberEntity.setIntegral( m1.getIntegral() + memberEntity.getIntegral() );
+	    memberEntity.setFansCurrency( m1.getFansCurrency() + memberEntity.getFansCurrency() );
 	    if ( CommonUtil.isNotEmpty( memberEntity.getPwd() ) ) {
-		m1.setPwd( memberEntity.getPwd() );
+		memberEntity.setPwd( memberEntity.getPwd() );
 	    }
 
-	    if ( CommonUtil.isNotEmpty( m1.getOldId() ) ) {
-		m1.setOldId( m1.getOldId() + "," + memberEntity.getId() );
+	    if ( CommonUtil.isNotEmpty( memberEntity.getOldId() ) ) {
+		memberEntity.setOldId( m1.getOldId() + "," + memberEntity.getId() );
 	    } else {
-		m1.setOldId( m1.getId() + "," + memberEntity.getId() );
+		memberEntity.setOldId( m1.getId() + "," + memberEntity.getId() );
 	    }
 
-	    if ( CommonUtil.isNotEmpty( memberEntity.getOpenid() ) && CommonUtil.isEmpty( m1.getOpenid() ) ) {
-		m1.setOpenid( memberEntity.getOpenid() );
+	    if ( CommonUtil.isEmpty( memberEntity.getOpenid() ) && CommonUtil.isNotEmpty( m1.getOpenid() ) ) {
+		memberEntity.setOpenid( m1.getOpenid() );
 	    }
 
 	    //如果之前就存在会员卡 已当前会员卡为主
 	    if(CommonUtil.isNotEmpty( m1.getMcId() )){
-	        //用触发器取代
-	        //MemberCard memberCardDelete=memberCardDAO.selectById( m1.getMcId() );
-		// MemberCardOld memberCardOld = JSONObject.toJavaObject( JSON.parseObject( JSONObject.toJSONString( memberCardDelete ) ), MemberCardOld.class );
-		//memberCardOldDAO.insert( memberCardOld );
-		memberCardDAO.deleteById(   m1.getMcId() );
+		memberEntity.setMcId( m1.getMcId() );
 	    }
-
-	    m1.setPhone( phone );
-	    m1.setMcId( memberEntity.getMcId() );
-	    m1.setNickname( memberEntity.getNickname() );
-	    m1.setHeadimgurl( memberEntity.getHeadimgurl() );
-	    m1.setTotalMoney( memberEntity.getTotalMoney() + m1.getTotalMoney() );
-	    m1.setTotalIntegral( memberEntity.getTotalIntegral() + m1.getTotalIntegral() );
-	    m1.setRemark( memberEntity.getRemark() );
-	    m1.setLoginMode( 0 );
-	//    MemberOld old = JSONObject.toJavaObject( JSON.parseObject( JSONObject.toJSONString( memberEntity ) ), MemberOld.class );
-
+	    memberEntity.setPhone( phone );
+	    memberEntity.setHeadimgurl( memberEntity.getHeadimgurl() );
+	    memberEntity.setTotalMoney( memberEntity.getTotalMoney() + m1.getTotalMoney() );
+	    memberEntity.setTotalIntegral( memberEntity.getTotalIntegral() + m1.getTotalIntegral() );
+	    memberEntity.setRechargeMoney( memberEntity.getRechargeMoney()+m1.getRechargeMoney() );
+	    memberEntity.setRemark( memberEntity.getRemark() );
+	    memberEntity.setLoginMode( 0 );
 	    // 删除数据做移出到memberold
-	  //  memberOldDao.insert( old );
+	    memberEntityDAO.deleteById( m1.getId() );
 
-	    memberEntityDAO.deleteById( memberEntity.getId() );
+	    memberEntityDAO.updateById( memberEntity );
 
-	    memberEntityDAO.updateById( m1 );
-
-	    MemberParameter mp = memberParameterDAO.findByMemberId( memberEntity.getId() );
+	    MemberParameter mp = memberParameterDAO.findByMemberId( m1.getId() );
 	    if ( CommonUtil.isNotEmpty( mp ) ) {
 		memberParameterDAO.deleteById( mp.getId() );
 	    }
 
 	    //数据合并建立关系表
 	    MemberOldId memberOldId = new MemberOldId();
-	    memberOldId.setOldId( memberEntity.getId() );
-	    memberOldId.setMemberId( m1.getId() );
+	    memberOldId.setOldId( m1.getId() );
+	    memberOldId.setMemberId( memberEntity.getId() );
 	    memberOldIdDAO.insert( memberOldId );
 
 	    // 修改小程序之前openId对应的memberId
-	    memberAppletOpenidDAO.updateMemberId( m1.getId(), memberEntity.getId() );
+	    memberAppletOpenidDAO.updateMemberId( memberEntity.getId(), m1.getId() );
 	}else{
 	    //如果是当前粉丝没有绑定过手机号码，判断粉丝是否存在泛会员卡，如果存在，升级到正式会员卡
 	    if(CommonUtil.isNotEmpty( memberEntity.getMcId() )){
@@ -505,13 +495,9 @@ public class MemberCommonServiceImp implements MemberCommonService {
 		    memberCardDAO.updateById(card1);
 		}
 	    }
-
-
 	}
 
-
-
-	if ( CommonUtil.isNotEmpty( m1 ) && CommonUtil.isNotEmpty( m1.getMcId() ) ) {
+	if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
 	    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
 	}
     }

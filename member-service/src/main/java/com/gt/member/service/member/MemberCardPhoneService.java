@@ -22,6 +22,17 @@ public interface MemberCardPhoneService {
     public Map<String,Object> findLingquData( HttpServletRequest request, Integer busId );
 
     /**
+     * 购买会员卡之前手机判断
+     * @param memberId
+     * @param busId
+     * @param phone
+     * @param vcode
+     * @return
+     */
+    public void judgeMemberCard(Integer memberId, Integer busId,
+                    String phone, String vcode,Integer areaId,String areacode);
+
+    /**
      * 查询购买会员卡等级信息
      * @param json
      * @return

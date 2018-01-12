@@ -28,7 +28,7 @@ body {
   margin-right: 20px;
 }
 .add-member-box input[type='text'] {
-  width: 221.4px;
+  /*width: 221.4px;*/
 }
 .right-box {
   border: 1px solid #dfe6ec;
@@ -181,4 +181,13 @@ body {
 }
 .dialog-item .lineH{
   line-height: 55px
+}
+.quhao-select{
+  width: 80px;
+}
+.input-with-select,.form-input{
+  width: 250px!important;
+}
+.input-with-select,.el-input-group__prepend{
+  vertical-align: baseline!important;
 }
