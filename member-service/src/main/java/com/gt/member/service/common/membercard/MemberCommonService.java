@@ -100,7 +100,7 @@ public interface MemberCommonService {
      * @return
      */
     public MemberCardrecordNew saveCardRecordOrderCodeNew(Integer memberId, Integer recordType, Double number,
-                    String itemName, Integer busId, Double balance, String orderCode,Integer rtype,String unit);
+                    String itemName, Integer busId, Double balance, String orderCode,Integer rtype,Integer unit);
 
     /**
      * 关注公众号的接口

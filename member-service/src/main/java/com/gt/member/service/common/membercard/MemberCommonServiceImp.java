@@ -393,7 +393,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
 
     public MemberCardrecordNew saveCardRecordOrderCodeNew( Integer memberId, Integer recordType, Double number, String itemName, Integer busId, Double balance, String orderCode,
-		    Integer rtype,String unit ) {
+		    Integer rtype,Integer unit ) {
 	MemberCardrecordNew cr = new MemberCardrecordNew();
 	cr.setMemberId( memberId );
 	cr.setRecordType( recordType );

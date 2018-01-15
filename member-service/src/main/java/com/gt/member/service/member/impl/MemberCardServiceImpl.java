@@ -3629,7 +3629,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		Integer frequencyBalace=frequency-cikaCount;
 		uc.setBalanceCount(  frequencyBalace);
 		userConsumeNewDAO.insert( uc );
-		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, cikaCount.doubleValue(), "消费次数", memberEntity.getBusId(), frequencyBalace.doubleValue(), uc.getOrderCode(), 0,"次" );
+		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, cikaCount.doubleValue(), "消费次数", memberEntity.getBusId(), frequencyBalace.doubleValue(), uc.getOrderCode(), 0,1 );
 	   	MemberCard m=new MemberCard();
 	   	m.setMcId( memberCard.getMcId() );
 	   	m.setFrequency(frequencyBalace  );
