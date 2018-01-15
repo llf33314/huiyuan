@@ -1015,6 +1015,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    parameterset.setButtonUrl( CommonUtil.toString( map.get( "buttonUrl" ) ) );
 		}
 	    }
+	    parameterset.setIsPhoneQuery( CommonUtil.toInteger( map.get( "isPhoneQuery" ) ) );
+
 	    parameterset.setId( CommonUtil.toInteger( map.get( "id" ) ) );
 	    if ( CommonUtil.isNotEmpty( parameterset.getId() ) ) {
 		publicParametersetDAO.updateById( parameterset );
@@ -3218,9 +3220,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 		cardNodecrypt = EncryptUtil.decrypt( cardNoKey, cardNo );
 	    } catch ( Exception e ) {
 		// 如果不是扫码 判断商家是否允许不扫码
-		SortedMap< String,Object > maps = dictService.getDict( "A001" );
-		Object obj = maps.get( busId.toString() );
-		if ( CommonUtil.isEmpty( obj ) ) {
+		PublicParameterset ps=publicParametersetDAO.findBybusId( busId );
+		if ( ps.getIsPhoneQuery()==0) {
 		    map.put( "tishiMsg", "请扫码支付,可享受更多的会员权益。" );
 		    map.put( "usehuiyuanquanyi", 0 );
 		}

@@ -104,6 +104,9 @@ public class PublicParameterset extends Model<PublicParameterset> {
 	@TableField("pickMoney")
 	private Double pickMoney;
 
+	@TableField("isPhoneQuery")
+	private Integer isPhoneQuery;
+
 
 	@Override
 	protected Serializable pkVal() {

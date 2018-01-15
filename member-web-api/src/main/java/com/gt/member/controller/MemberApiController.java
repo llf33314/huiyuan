@@ -242,7 +242,6 @@ public class MemberApiController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/bingdingPhoneH5AreaPhone", method = RequestMethod.POST )
     public ServerResponse bingdingPhoneH5AreaPhone(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
-
 	try {
 	    Map< String,Object > requestBody = JSONObject.parseObject( param );
 	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
