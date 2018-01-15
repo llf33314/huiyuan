@@ -140,6 +140,21 @@ public interface MemberApiService {
     public void bingdingPhoneH5( HttpServletRequest request,Integer memberId, String phone,  Integer busId ) throws BusinessException;
 
 
+
+    /*
+ * 小程序绑定手机号码
+ * @return
+ */
+    public MemberEntity bingdingPhoneAreaPhone( HttpServletRequest request,Integer memberId, String phone,  Integer busId,Integer areaId,String areaCode ) throws BusinessException;
+
+
+    /*
+    * h5绑定手机号码
+    * @return
+    */
+    public void bingdingPhoneH5AreaPhone( HttpServletRequest request,Integer memberId, String phone,  Integer busId ,Integer areaId,String areaCode) throws BusinessException;
+
+
     /*
      *
      * 会员卡充值查询接口

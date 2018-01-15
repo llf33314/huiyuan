@@ -207,6 +207,58 @@ public class MemberApiController extends BaseController {
 
 
 
+
+
+
+    @ApiOperation( value = "小程序绑定手机号码(加世界区号) 返回id需要重新set到前端session中", notes = "小程序绑定手机号码 返回member对象数据" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "areaId", value = "区号id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "areaCode", value = "区号code", paramType = "query", required = true, dataType = "string" )} )
+    @ResponseBody
+    @RequestMapping( value = "/bingdingPhoneAreaPhone", method = RequestMethod.POST )
+    public ServerResponse bingdingPhoneAreaPhone( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
+	    String phone = CommonUtil.toString( requestBody.get( "phone" ) );
+	    Integer areaId = CommonUtil.toInteger( requestBody.get( "areaId" ) );
+	    String areaCode = CommonUtil.toString( requestBody.get( "areaCode" ) );
+	    MemberEntity memberEntity = memberApiService.bingdingPhoneAreaPhone( request,memberId, phone, busId,areaId ,areaCode);
+	    return ServerResponse.createBySuccess( memberEntity );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+    @ApiOperation( value = "H5绑定手机号码,将会把新的member信息set到session中", notes = "H5绑定手机号码,将会把新的member信息set到session中" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "areaId", value = "区号id", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "areaCode", value = "区号code", paramType = "query", required = true, dataType = "string" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/bingdingPhoneH5AreaPhone", method = RequestMethod.POST )
+    public ServerResponse bingdingPhoneH5AreaPhone(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    Integer memberId = CommonUtil.toInteger( requestBody.get( "memberId" ) );
+	    Integer busId = CommonUtil.toInteger( requestBody.get( "busId" ) );
+	    String phone = CommonUtil.toString( requestBody.get( "phone" ) );
+	    Integer areaId = CommonUtil.toInteger( requestBody.get( "areaId" ) );
+	    String areaCode = CommonUtil.toString( requestBody.get( "areaCode" ) );
+	    memberApiService.bingdingPhoneH5AreaPhone( request,memberId, phone, busId,areaId,areaCode );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+
+
     @ApiOperation( value = "统计会员数量", notes = "根据商家id统计会员数量" )
     @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" )
     @ResponseBody

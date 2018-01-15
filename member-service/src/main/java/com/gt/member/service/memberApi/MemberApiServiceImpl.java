@@ -769,6 +769,146 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}
     }
 
+
+    @Transactional
+    @Override
+    public MemberEntity bingdingPhoneAreaPhone( HttpServletRequest request, Integer memberId, String phone, Integer busId,Integer areaId,String areaCode ) throws BusinessException {
+	Map< String,Object > map = new HashMap< String,Object >();
+	try {
+	    // 短信校验
+	    if ( CommonUtil.isEmpty( memberId ) ) {
+		throw new BusinessException( ResponseMemberEnums.NULL );
+	    }
+
+	    if ( CommonUtil.isEmpty( phone ) ) {
+		throw new BusinessException( ResponseMemberEnums.NULL );
+	    }
+
+	    if ( CommonUtil.isEmpty( busId ) ) {
+		throw new BusinessException( ResponseMemberEnums.NULL );
+	    }
+	    // 短信判断
+
+	    // 查询要绑定的手机号码
+	    MemberEntity oldMemberEntity = memberDAO.findByPhone( busId, phone );
+
+	    MemberEntity memberEntity = null;
+	    if ( CommonUtil.isEmpty( oldMemberEntity ) ) {
+		// 新用户
+		memberEntity = memberDAO.selectById( memberId );
+		MemberEntity m = new MemberEntity();
+		m.setId( memberEntity.getId() );
+		m.setPhone( phone );
+		memberDAO.updateById( m );
+		memberEntity.setPhone( phone );
+	    } else {
+		memberEntity = memberDAO.selectById( memberId );
+		memberCommonService.newMemberMerge( memberEntity, busId, phone );
+		memberEntity = memberDAO.findByPhone( busId, phone );
+	    }
+
+	    MemberParameter mp=memberParameterDAO.findByMemberId(  memberEntity.getId());
+	    if(CommonUtil.isNotEmpty( mp )){
+		MemberParameter m=new MemberParameter();
+		m.setArerId( areaId );
+		m.setArerCode( areaCode );
+		m.setId( mp.getId() );
+		memberParameterDAO.updateById( m );
+	    }else{
+		MemberParameter m=new MemberParameter();
+		m.setArerId( areaId );
+		m.setArerCode( areaCode );
+		memberParameterDAO.insert( m );
+	    }
+
+	    Member member = new Member();
+	    member.setId( memberEntity.getId() );
+	    member.setNickname( memberEntity.getNickname() );
+	    member.setIntegral( memberEntity.getIntegral() );
+	    member.setFansCurrency( memberEntity.getFansCurrency() );
+	    member.setPhone( memberEntity.getPhone() );
+	    member.setMcId( memberEntity.getMcId() );
+	    return memberEntity;
+	} catch ( BusinessException e ) {
+	    throw new BusinessException( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    LOG.error( "小程序绑定手机号码异常", e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+    @Transactional
+    @Override
+    public void bingdingPhoneH5AreaPhone( HttpServletRequest request, Integer memberId, String phone, Integer busId ,Integer areaId,String areaCode) throws BusinessException {
+	Map< String,Object > map = new HashMap< String,Object >();
+	try {
+	    // 短信校验
+	    if ( CommonUtil.isEmpty( memberId ) ) {
+		throw new BusinessException( ResponseMemberEnums.NULL );
+	    }
+
+	    if ( CommonUtil.isEmpty( phone ) ) {
+		throw new BusinessException( ResponseMemberEnums.NULL );
+	    }
+
+	    if ( CommonUtil.isEmpty( busId ) ) {
+		throw new BusinessException( ResponseMemberEnums.NULL );
+	    }
+
+	    // 查询要绑定的手机号码
+	    MemberEntity oldMemberEntity = memberDAO.findByPhone( busId, phone );
+
+	    MemberEntity memberEntity = null;
+	    if ( CommonUtil.isEmpty( oldMemberEntity ) ) {
+		// 新用户
+		memberEntity = memberDAO.selectById( memberId );
+		MemberEntity m = new MemberEntity();
+		m.setId( memberEntity.getId() );
+		m.setPhone( phone );
+		memberDAO.updateById( m );
+		memberEntity.setPhone( phone );
+	    } else {
+		memberEntity = memberDAO.selectById( memberId );
+		memberCommonService.newMemberMerge( memberEntity, busId, phone );
+		memberEntity = memberDAO.findByPhone( busId, phone );
+	    }
+	    MemberParameter mp=memberParameterDAO.findByMemberId(  memberEntity.getId());
+	    if(CommonUtil.isNotEmpty( mp )){
+		MemberParameter m=new MemberParameter();
+		m.setArerId( areaId );
+		m.setArerCode( areaCode );
+		m.setId( mp.getId() );
+		memberParameterDAO.updateById( m );
+	    }else{
+		MemberParameter m=new MemberParameter();
+		m.setArerId( areaId );
+		m.setArerCode( areaCode );
+		memberParameterDAO.insert( m );
+	    }
+
+
+	    Member member = new Member();
+	    member.setId( memberEntity.getId() );
+	    member.setNickname( memberEntity.getNickname() );
+	    member.setIntegral( memberEntity.getIntegral() );
+	    member.setFansCurrency( memberEntity.getFansCurrency() );
+	    member.setPhone( memberEntity.getPhone() );
+	    member.setMcId( memberEntity.getMcId() );
+	    member.setHeadimgurl( memberEntity.getHeadimgurl() );
+	    SessionUtils.setLoginMember( request, member );
+	} catch ( BusinessException e ) {
+	    throw new BusinessException( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    LOG.error( "H5绑定手机号码异常", e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+
+
+
     @Override
     public List< Map< String,Object > > findMemberCardRecharge( Integer busId, String cardNo ) {
 	MemberCard card = memberCardDAO.findCardByCardNo( busId, cardNo );
