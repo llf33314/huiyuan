@@ -72,7 +72,7 @@ public interface MemberCommonService {
 
 
     /**
-     *
+     * 添加记录
      * @param memberId
      * @param recordType
      * @param number
@@ -85,6 +85,22 @@ public interface MemberCommonService {
      */
     public MemberCardrecordNew saveCardRecordOrderCodeNew(Integer memberId, Integer recordType, Double number,
                     String itemName, Integer busId, Double balance, String orderCode,Integer rtype);
+
+
+    /**
+     * 添加记录 次卡的
+     * @param memberId
+     * @param recordType
+     * @param number
+     * @param itemName
+     * @param busId
+     * @param balance
+     * @param orderCode
+     * @param rtype
+     * @return
+     */
+    public MemberCardrecordNew saveCardRecordOrderCodeNew(Integer memberId, Integer recordType, Double number,
+                    String itemName, Integer busId, Double balance, String orderCode,Integer rtype,String unit);
 
     /**
      * 关注公众号的接口

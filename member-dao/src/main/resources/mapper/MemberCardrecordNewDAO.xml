@@ -14,6 +14,7 @@
 		<result column="rtype" property="rtype" />
 		<result column="busId" property="busId" />
 		<result column="orderCode" property="orderCode" />
+		<result column="unit" typeHandler="unit"/>
 	</resultMap>
 
     <!-- 通用查询结果列 -->

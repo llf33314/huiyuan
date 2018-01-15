@@ -391,6 +391,31 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	return null;
     }
 
+
+    public MemberCardrecordNew saveCardRecordOrderCodeNew( Integer memberId, Integer recordType, Double number, String itemName, Integer busId, Double balance, String orderCode,
+		    Integer rtype,String unit ) {
+	MemberCardrecordNew cr = new MemberCardrecordNew();
+	cr.setMemberId( memberId );
+	cr.setRecordType( recordType );
+	cr.setNumber( number );
+	cr.setCreateDate( new Date() );
+	cr.setItemName( itemName );
+	cr.setBusId( busId );
+	cr.setBalance( balance );
+	cr.setOrderCode( orderCode );
+	cr.setRtype( rtype );
+	cr.setUnit( unit );
+	try {
+	    memberCardrecordNewDAO.insert( cr );
+	    return cr;
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    LOG.error( "保存手机端记录异常",e);
+	}
+	return null;
+    }
+
+
     public String findWxQcode( Integer busId, Integer busType, String scene_id ) {
 	try {
 	    MemberQcodeWx mqw = memberQcodeWxDAO.findByBusId( busId, 0 );
