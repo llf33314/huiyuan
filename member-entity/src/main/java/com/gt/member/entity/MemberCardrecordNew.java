@@ -64,7 +64,7 @@ public class MemberCardrecordNew extends Model<MemberCardrecordNew> {
 	private String orderCode;
 
     	@TableField("unit")
-	private String unit;
+	private Integer unit;
 
 	@Override
 	protected Serializable pkVal() {
