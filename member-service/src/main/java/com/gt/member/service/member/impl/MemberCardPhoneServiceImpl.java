@@ -241,6 +241,14 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	return gradeTypes;
     }
 
+
+    public void judgeMember(Integer busId,String phone){
+        MemberEntity memberEntity=memberEntityDAO.findByPhone( busId,phone );
+        if(CommonUtil.isEmpty( memberEntity ) || CommonUtil.isEmpty( memberEntity.getMcId() )){
+            throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
+	}
+    }
+
     /**
      * uc端注册并领取会员卡
      *

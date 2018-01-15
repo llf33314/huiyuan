@@ -739,7 +739,7 @@ public class MemberController {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    Integer dangqianbusId = SessionUtils.getLoginUser( request ).getId();
-	   Map<String,Object> map= memberCardService.consumefindMemberCard(busId,cardNo,dangqianbusId);
+	   Map<String,Object> map= memberCardService.consumefindMemberCard(busId,cardNo,shopId);
 	    return ServerResponse.createBySuccess( map  );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );

@@ -39,6 +39,9 @@ public interface MemberCardPhoneService {
      */
     public List<Map<String,Object>> findBuyGradeTypes(String json);
 
+
+    public void judgeMember(Integer busId,String phone);
+
     /**
      * 领取会员卡
      * @param params

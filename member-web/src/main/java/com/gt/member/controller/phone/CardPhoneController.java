@@ -157,6 +157,49 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	}
     }
 
+    @ApiOperation( value = "判断是否是会员并发送短信", notes = "判断是否是会员并发送短信" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
+		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = false, dataType = "int" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/judgeMembersendMsg", method = RequestMethod.POST )
+    public ServerResponse judgeMembersendMsg( HttpServletResponse response, HttpServletRequest request, @RequestParam String json ) {
+	try {
+	    Map< String,Object > map = JSON.parseObject( json, Map.class );
+	    String phone = CommonUtil.toString( map.get( "phone" ) );
+	    Integer busId = CommonUtil.toInteger( map.get( "busId" ) );
+	    memberCardPhoneService.judgeMember(busId,phone);
+	    String country=CommonUtil.toString( map.get( "country" ) );
+	    RequestUtils< NewApiSms > requestUtils = new RequestUtils< NewApiSms >();
+	    String no = CommonUtil.getPhoneCode();
+	    redisCacheUtil.set( phone + "_" + no, no, 5 * 60 );
+	    LOG.debug( "进入短信发送,手机号:" + no );
+	    NewApiSms newApiSms = new NewApiSms();
+	    newApiSms.setMobile( phone );
+	    newApiSms.setParamsStr(no );
+	    newApiSms.setBusId( busId );
+	    newApiSms.setModel( 9 );
+	    newApiSms.setTmplId( 11510L );
+	    newApiSms.setCountry( country );
+	    requestUtils.setReqdata( newApiSms );
+	    String smsStr = requestService.sendSmsNew( requestUtils );
+	    JSONObject returnJson = JSONObject.parseObject( smsStr );
+	    if ( "0".equals( CommonUtil.toString( returnJson.get( "code" ) ) ) ) {
+		return ServerResponse.createBySuccess("",no);
+	    } else {
+		return ServerResponse.createByError( "发送失败:" + returnJson.get( "msg" ) );
+	    }
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    LOG.error( "短信发送失败", e );
+	    return ServerResponse.createByError();
+	}
+    }
+
+
+
+
     @ApiOperation( value = "发送短信", notes = "发送短信" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
 		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = false, dataType = "int" ) } )
