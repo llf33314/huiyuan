@@ -244,7 +244,7 @@ public class RequestServiceImpl implements RequestService {
 
 
 
-    public List< Map > findShopByBusId( Integer busId ) {
+    public List< Map > findShopAllByBusId( Integer busId ) {
 	LOG.error( "请求当前用户管理的门店信息参数:"+busId);
 	RequestUtils< Integer > requestUtils = new RequestUtils< Integer >();
 	requestUtils.setReqdata( busId );
