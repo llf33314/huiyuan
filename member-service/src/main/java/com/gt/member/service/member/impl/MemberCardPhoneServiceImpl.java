@@ -1354,7 +1354,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
     }
 
     public List< Map > findWxShop( Integer busId, Double longt1, Double lat1 ) throws BusinessException {
-	List< Map > list = requestService.findShopByBusId( busId );
+        List<Map >  list = requestService.findShopAllByBusId( busId );
 	if ( CommonUtil.isEmpty( longt1 ) || CommonUtil.isEmpty( lat1 ) ) {
 	    return list;
 	}

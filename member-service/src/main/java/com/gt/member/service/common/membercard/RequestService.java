@@ -76,6 +76,15 @@ public interface RequestService {
     public List<WsWxShopInfoExtend > findShopsByBusId(Integer busId) throws BusinessException;
 
 
+
+    /**
+     *  根据商家id查询门店信息
+     * @param busId
+     * @return
+     */
+    public List<Map> findShopAllByBusId(Integer busId);
+
+
     /**
      * 微信支付包 多粉钱包支付
      * @return

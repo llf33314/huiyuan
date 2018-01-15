@@ -242,6 +242,23 @@ public class RequestServiceImpl implements RequestService {
 	}
     }
 
+
+
+    public List< Map > findShopByBusId( Integer busId ) {
+	LOG.error( "请求当前用户管理的门店信息参数:"+busId);
+	RequestUtils< Integer > requestUtils = new RequestUtils< Integer >();
+	requestUtils.setReqdata( busId );
+	String url = PropertiesUtil.getWxmp_home() + WXSHOP_BYBUSID;
+	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+	JSONObject json = JSON.parseObject( returnData );
+	if ( "0".equals( json.getString( "code" ) ) ) {
+	    List< Map > mapList = JSONArray.parseArray( json.getString( "data" ), Map.class );
+	    return mapList;
+	} else {
+	    throw new BusinessException( ResponseMemberEnums.QUERY_SHOP_BUSID );
+	}
+    }
+
     /**
      * 微信支付包 多粉钱包支付
      *
