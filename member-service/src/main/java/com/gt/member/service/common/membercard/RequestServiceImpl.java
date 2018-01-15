@@ -25,6 +25,7 @@ import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
 import com.gt.util.entity.param.wxcard.CodeConsume;
+import com.gt.util.entity.result.shop.WsWxShopInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +85,8 @@ public class RequestServiceImpl implements RequestService {
     private final static String AREAPHONE="/8A5DA52E/areaPhoneApi/selectList.do";
 
     private final static String PAY_TYPE="/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/getPayWay.do";
+
+    private final static String SELECTMAINSHOPBYBUSID="/8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/selectMainShopByBusId.do";
 
     public String codeConsume( String cardId, String code, Integer busId ) throws Exception {
 	try {
@@ -209,7 +212,23 @@ public class RequestServiceImpl implements RequestService {
 	return changeFlowStr;
     }
 
+    public WsWxShopInfo findMainShop(Integer busId){
+	LOG.error( "请求主门店信息参数:"+busId);
+	String url = PropertiesUtil.getWxmp_home() + SELECTMAINSHOPBYBUSID;
+	RequestUtils< Integer > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( busId );
+	String shopStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+	JSONObject json = JSON.parseObject( shopStr );
+	if ( "0".equals( json.getString( "code" ) ) ) {
+	    WsWxShopInfo  wsWxShopInfo = JSON.parseObject( json.getString( "data" ), WsWxShopInfo.class );
+	    return wsWxShopInfo;
+	} else {
+	    throw new BusinessException( ResponseMemberEnums.QUERY_SHOP_BUSID );
+	}
+    }
+
     public List< WsWxShopInfoExtend > findShopsByBusId( Integer busId ) {
+	LOG.error( "请求当前用户管理的门店信息参数:"+busId);
 	String url = PropertiesUtil.getWxmp_home() + WXSHOP_BYBUSID;
 	RequestUtils< Integer > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( busId );
@@ -270,18 +289,7 @@ public class RequestServiceImpl implements RequestService {
 
     }
 
-    public List< Map > findShopByBusId( Integer busId ) {
-	RequestUtils< Integer > requestUtils = new RequestUtils< Integer >();
-	requestUtils.setReqdata( busId );
-	String url = PropertiesUtil.getWxmp_home() + WXSHOP_BYBUSID;
-	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
-	JSONObject json = JSON.parseObject( returnData );
-	if ( "0".equals( json.getString( "code" ) ) ) {
-	    List< Map > mapList = JSONArray.parseArray( json.getString( "data" ), Map.class );
-	    return mapList;
-	}
-	return null;
-    }
+
 
     public WxJsSdkResult wxShare( Integer publicId, String url ) {
 	String wxshareUrl = PropertiesUtil.getWxmp_home() + WX_SHARE;

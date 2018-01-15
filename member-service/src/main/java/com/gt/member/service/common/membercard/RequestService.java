@@ -8,6 +8,7 @@ import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
+import com.gt.util.entity.result.shop.WsWxShopInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import com.gt.util.entity.result.wx.WxJsSdkResult;
 
@@ -61,6 +62,13 @@ public interface RequestService {
     public String changeFlow(RequestUtils<AdcServicesInfo > requestUtils);
 
     /**
+     * 获取主门店id
+     * @param busId
+     * @return
+     */
+    public WsWxShopInfo findMainShop(Integer busId);
+
+    /**
      * 根据当前用户 查询当前用户的门店信息
      * @param busId
      * @return
@@ -108,12 +116,6 @@ public interface RequestService {
      */
     public Map<String,Object> enterprisePayment(RequestUtils<ApiEnterprisePayment > requestUtils);
 
-    /**
-     *  根据商家id查询门店信息
-     * @param busId
-     * @return
-     */
-    public List<Map> findShopByBusId(Integer busId);
 
     /**
      * 分享
@@ -147,4 +149,5 @@ public interface RequestService {
      * @return
      */
     public List<Map<String,Object>> getPayType(Integer busId);
+
 }

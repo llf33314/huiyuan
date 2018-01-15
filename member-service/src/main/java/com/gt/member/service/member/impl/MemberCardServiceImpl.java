@@ -40,6 +40,7 @@ import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.*;
 
 import com.gt.util.entity.param.sms.OldApiSms;
+import com.gt.util.entity.result.shop.WsWxShopInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.*;
@@ -3207,6 +3208,35 @@ public class MemberCardServiceImpl implements MemberCardService {
 
     public List< Map< String,Object > > findGradeTypeByCtId( Integer busId, Integer ctId ) {
 	return memberGradetypeDAO.findGradeTypeByCtId( busId, ctId );
+    }
+
+
+    public List<Map<String,Object>> findBusUserShop(Integer pbusId,Integer dangqianUserId){
+	List<Map<String,Object>> list=new ArrayList<>(  );
+        if(pbusId.equals( dangqianUserId )){
+	    //主门店
+	    Map<String,Object> map=new HashMap<>(  );
+	    WsWxShopInfo wsWxShopInfo= requestService.findMainShop( pbusId );
+	    if(CommonUtil.isEmpty( wsWxShopInfo )){
+	        throw new BusinessException( ResponseMemberEnums.PLESAS_SET_SHOP );
+	    }
+	    map.put( "shopId",wsWxShopInfo.getId() );
+	    map.put( "shopName",wsWxShopInfo.getBusinessName() );
+	    list.add( map );
+	}else{
+	    List<WsWxShopInfoExtend > wsWxShopInfoExtends= requestService.findShopsByBusId( dangqianUserId );
+	    if(CommonUtil.isEmpty( wsWxShopInfoExtends )){
+		throw new BusinessException( ResponseMemberEnums.NOT_MANAGE_SHOP );
+	    }
+	    Map<String,Object> map=null;
+	    for ( WsWxShopInfoExtend wsWxShopInfoExtend:wsWxShopInfoExtends ){
+		map=new HashMap<>(  );
+		map.put( "shopId",wsWxShopInfoExtend.getId() );
+		map.put( "shopName",wsWxShopInfoExtend.getBusinessName() );
+		list.add(  map );
+	    }
+	}
+	return list;
     }
 
     public Map< String,Object > consumefindMemberCard( Integer busId, String cardNo, Integer dangqianBusId ) {

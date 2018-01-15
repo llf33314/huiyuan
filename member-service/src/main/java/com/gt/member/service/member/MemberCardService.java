@@ -408,6 +408,14 @@ public interface MemberCardService {
     public List<Map<String,Object>> findGradeTypeByCtId(Integer busId,Integer ctId);
 
     /**
+     * 查询当前商家管理的门店信息
+     * @param pbusId
+     * @param dangqianUserId
+     * @return
+     */
+    public List<Map<String,Object>> findBusUserShop(Integer pbusId,Integer dangqianUserId);
+
+    /**
      * 会员卡消费查询信息
      * @param busId
      * @param cardNo

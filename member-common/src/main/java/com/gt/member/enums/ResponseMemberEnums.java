@@ -18,6 +18,7 @@ public enum ResponseMemberEnums {
     PLEASE_PHONE_CODE(4011,"请输入验证码"),
     PLEASE_LOGIN(4012,"请登录"),
     OVERDUE_BUSUSER(4013,"商家已过期"),
+    NOT_MANAGE_SHOP(4014,"商家未管理门店,不能操作"),
 
     CARD_STATUS(5001, "会员卡已停用"),
     MEMBER_LESS_JIFEN(5002,"积分不足"),

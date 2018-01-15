@@ -709,6 +709,24 @@ public class MemberController {
 	}
     }
 
+    @ApiOperation( value = "查询商家管理的门店信息", notes = "查询商家管理的门店信息" )
+    @ResponseBody
+    @RequestMapping( value = "/consumefindMemberCard", method = RequestMethod.GET )
+    public ServerResponse findBusUserShop(HttpServletRequest request,
+		    HttpServletResponse response){
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    Integer dangqianbusId = SessionUtils.getLoginUser( request ).getId();
+	    List<Map<String,Object>> list= memberCardService.findBusUserShop(busId,dangqianbusId);
+	    return ServerResponse.createBySuccess(  list );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}catch ( Exception e ){
+	    return ServerResponse.createByError(ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
+	}
+
+    }
+
 
     @ApiOperation( value = "会员卡消费查询信息", notes = "会员卡消费查询信息" )
     @ApiImplicitParams({
