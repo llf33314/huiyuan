@@ -735,7 +735,7 @@ public class MemberController {
     @ResponseBody
     @RequestMapping( value = "/consumefindMemberCard", method = RequestMethod.GET )
     public ServerResponse consumefindMemberCard(HttpServletRequest request,
-		    HttpServletResponse response,  String cardNo){
+		    HttpServletResponse response,  String cardNo,Integer shopId){
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    Integer dangqianbusId = SessionUtils.getLoginUser( request ).getId();

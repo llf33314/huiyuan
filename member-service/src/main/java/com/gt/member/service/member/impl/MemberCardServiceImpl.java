@@ -3239,7 +3239,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	return list;
     }
 
-    public Map< String,Object > consumefindMemberCard( Integer busId, String cardNo, Integer dangqianBusId ) {
+    public Map< String,Object > consumefindMemberCard( Integer busId, String cardNo,Integer shopId ) {
 	Map< String,Object > map = new HashMap<>();
 	map.put( "usehuiyuanquanyi", 1 );
 	String cardNodecrypt = "";
@@ -3255,19 +3255,6 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    map.put( "tishiMsg", "请扫码支付,可享受更多的会员权益。" );
 		    map.put( "usehuiyuanquanyi", 0 );
 		}
-	    }
-
-	    // 获取当前登录人所属门店
-	    List< WsWxShopInfoExtend > shops = requestService.findShopsByBusId( dangqianBusId );
-	    Integer shopId = 0;
-	    if ( shops.size() > 1 ) {
-		throw new BusinessException( ResponseMemberEnums.MANAGE_SHOP_THAN2 );
-	    }
-	    if ( shops.size() == 0 ) {
-		WxShop wxShop = wxShopDAO.selectMainShopByBusId( busId );
-		shopId = wxShop.getId();
-	    } else {
-		shopId = shops.get( 0 ).getId();
 	    }
 	    map.put( "shopId", shopId );
 

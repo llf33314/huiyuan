@@ -421,7 +421,7 @@ public interface MemberCardService {
      * @param cardNo
      * @return
      */
-    public Map<String,Object>  consumefindMemberCard(Integer busId,String cardNo,Integer dangqianBusId);
+    public Map<String,Object>  consumefindMemberCard(Integer busId,String cardNo,Integer shopId);
 
     /**
      * 会员卡消费
