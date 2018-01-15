@@ -711,7 +711,7 @@ public class MemberController {
 
     @ApiOperation( value = "查询商家管理的门店信息", notes = "查询商家管理的门店信息" )
     @ResponseBody
-    @RequestMapping( value = "/consumefindMemberCard", method = RequestMethod.GET )
+    @RequestMapping( value = "/findBusUserShop", method = RequestMethod.GET )
     public ServerResponse findBusUserShop(HttpServletRequest request,
 		    HttpServletResponse response){
 	try {
