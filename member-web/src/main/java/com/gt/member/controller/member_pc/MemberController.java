@@ -701,8 +701,7 @@ public class MemberController {
 
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    Integer dangqianbusId = SessionUtils.getLoginUser( request ).getId();
-	    memberCardService.rechargeMemberCard(busId,dangqianbusId,params);
+	    memberCardService.rechargeMemberCard(busId,params);
 	    return ServerResponse.createBySuccess(   );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );

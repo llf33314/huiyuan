@@ -390,7 +390,7 @@ public interface MemberCardService {
      * 会员卡充值
      * @param busId
      */
-    public void rechargeMemberCard( Integer busId, Integer dangqianBusId, String jsonObj )throws BusinessException;
+    public void rechargeMemberCard( Integer busId, String jsonObj )throws BusinessException;
 
     /**
      * 查询商家发布的会员卡类型

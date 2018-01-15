@@ -2998,12 +2998,13 @@ public class MemberCardServiceImpl implements MemberCardService {
     }
 
     @Transactional
-    public void rechargeMemberCard( Integer busId, Integer dangqianBusId, String jsonObj ) throws BusinessException {
+    public void rechargeMemberCard( Integer busId, String jsonObj ) throws BusinessException {
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( jsonObj ), Map.class );
 	    String cardNo = CommonUtil.toString( params.get( "cardNo" ) );
 	    Integer ctId = CommonUtil.toInteger( params.get( "ctId" ) );  //充值选择的卡片
 	    Double money = CommonUtil.toDouble( params.get( "money" ) );
+	    Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
 	    MemberCard card = memberCardDAO.findCardByCardNo( busId, cardNo );
 	    if ( CommonUtil.isEmpty( card ) ) {
 		throw new BusinessException( ResponseMemberEnums.MEMBER_NOT_CARD );
@@ -3011,18 +3012,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 	    MemberEntity member = memberMapper.findByMcIdAndbusId( busId, card.getMcId() );
 
-	    // 获取当前登录人所属门店
-	    List< WsWxShopInfoExtend > shops = requestService.findShopsByBusId( dangqianBusId );
-	    Integer shopId = 0;
-	    if ( shops.size() > 1 ) {
-		throw new BusinessException( ResponseMemberEnums.MANAGE_SHOP_THAN2 );
-	    }
-	    if ( shops.size() == 0 ) {
-		WxShop wxShop = wxShopDAO.selectMainShopByBusId( busId );
-		shopId = wxShop.getId();
-	    } else {
-		shopId = shops.get( 0 ).getId();
-	    }
+
 
 	    // 添加会员记录
 	    UserConsumeNew uc = new UserConsumeNew();
@@ -3040,6 +3030,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    uc.setIschongzhi( 1 );
 	    uc.setFukaCtId( ctId );
 	    uc.setDataSource( 0 );
+	    uc.setShopId( shopId );
 
 	    Integer numberCount = 0;
 	    //判断是否主卡充值 还是 副卡充值
