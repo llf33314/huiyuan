@@ -730,6 +730,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 		int easyApply = CommonUtil.toInteger( map.get( "easyApply" ) );
 		gt.setEasyApply( easyApply );
 
+		if(CommonUtil.isNotEmpty( map.get( "isPublish" ) )){
+		    gt.setIsUploadImg( CommonUtil.toInteger( map.get( "isPublish" ) ) );
+		}
+
 		//推荐信息
 		Integer isrecommend = CommonUtil.toInteger( publicParams.get( "isrecommend" ) );
 		gt.setIsrecommend( isrecommend );

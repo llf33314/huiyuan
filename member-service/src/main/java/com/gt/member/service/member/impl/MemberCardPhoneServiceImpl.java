@@ -815,6 +815,11 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    if ( !"0".equals( CommonUtil.toString( json.get( "code" ) ) ) ) {
 		throw new BusinessException( ResponseMemberEnums.ERROR_CHARGE_FLOW.getCode(), CommonUtil.toString( json.get( "msg" ) ) );
 	    }
+	    MemberEntity m=new MemberEntity();
+	    m.setFlow( flowBalance );
+	    m.setId( memberEntity.getId() );
+	    memberEntityDAO.updateById( m );
+
 	    memberCommonService.saveCardRecordOrderCodeNew( memberId, 4, prizeCount.doubleValue(), "流量兑换中", busId, flowBalance.doubleValue(), orderCode, 0 );
 	} catch ( BusinessException e ) {
 	    throw e;

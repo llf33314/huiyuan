@@ -8,6 +8,7 @@ import com.gt.member.exception.BaseException;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.exception.NeedLoginException;
 import com.gt.member.exception.ResponseEntityException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
  * @create 2017/6/21
  */
 @ControllerAdvice
+@Slf4j
 public class GlobalDefaultExceptionHandler {
     // 全局默认错误页
     public static final String DEFAULT_ERROR_VIEW = "error/defaultError";
@@ -46,7 +48,7 @@ public class GlobalDefaultExceptionHandler {
     @ResponseBody
     @ExceptionHandler( value = BaseException.class )
     public ErrorInfo< String > defaultErrorHandler(HttpServletRequest request, BaseException e ) {
-        log
+        log.error( "你代码报错了请看一下报错",e );
         if (e instanceof ResponseEntityException || e instanceof BusinessException ) {
             return ErrorInfo.createByErrorCodeMessage(e.getCode(), e.getMessage(),e.getUrl());
         } else if (e instanceof NeedLoginException) {
