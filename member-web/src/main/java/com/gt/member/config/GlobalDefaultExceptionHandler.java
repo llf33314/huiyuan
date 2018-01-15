@@ -46,6 +46,7 @@ public class GlobalDefaultExceptionHandler {
     @ResponseBody
     @ExceptionHandler( value = BaseException.class )
     public ErrorInfo< String > defaultErrorHandler(HttpServletRequest request, BaseException e ) {
+        log
         if (e instanceof ResponseEntityException || e instanceof BusinessException ) {
             return ErrorInfo.createByErrorCodeMessage(e.getCode(), e.getMessage(),e.getUrl());
         } else if (e instanceof NeedLoginException) {
