@@ -2,12 +2,10 @@ package com.gt.member.controller.common;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.TCommonStaff;
 import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.RequestUtils;
 import com.gt.api.util.SessionUtils;
-import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.member.dao.MemberGradetypeDAO;
 import com.gt.member.dao.MemberQcodeWxDAO;
@@ -41,7 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.gt.member.MpGenerator.url;
 
 /**
  * <p>
