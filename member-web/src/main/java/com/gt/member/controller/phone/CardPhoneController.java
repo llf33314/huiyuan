@@ -254,6 +254,32 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	}
     }
 
+    @ApiOperation( value = "已有会员卡登录", notes = "已有会员卡登录" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
+		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/loginMemberCard", method = RequestMethod.GET )
+    public ServerResponse loginMemberCard( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    memberCardPhoneService.loginMemberCard( request,params, member.getId() );
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}catch ( Exception e ){
+	    return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
+	}
+    }
+
+
     @ApiOperation( value = "领取会员卡", notes = "领取会员卡" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
 		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" ) } )
@@ -264,10 +290,18 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
 	    Map<String,Object> map= memberCardPhoneService.linquMemberCard( request,params, member.getId() );
 	    return ServerResponse.createBySuccess(map);
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}catch ( Exception e ){
+	    return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
 	}
     }
 

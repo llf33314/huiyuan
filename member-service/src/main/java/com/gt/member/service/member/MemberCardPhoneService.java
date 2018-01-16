@@ -42,6 +42,16 @@ public interface MemberCardPhoneService {
 
     public void judgeMember(Integer busId,String phone);
 
+
+    /**
+     * 已有会员卡，合并数据并登录
+     * @param params
+     * @return
+     * @throws BusinessException
+     */
+    public void loginMemberCard( HttpServletRequest request,Map< String,Object > params,Integer memberId  ) throws BusinessException;
+
+
     /**
      * 领取会员卡
      * @param params

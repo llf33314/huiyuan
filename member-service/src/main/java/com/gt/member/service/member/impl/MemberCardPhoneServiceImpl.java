@@ -249,6 +249,29 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	}
     }
 
+
+    /**
+     * 已有会员卡，合并数据并登录
+     * @param params
+     * @return
+     * @throws BusinessException
+     */
+    public void loginMemberCard( HttpServletRequest request,Map< String,Object > params,Integer memberId  ) throws BusinessException{
+	Map<String,Object> map=new HashMap<>(  );
+	Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	String phone = CommonUtil.toString( params.get( "phone" ) );
+	MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
+	String code = CommonUtil.toString( params.get( "code" ) );
+	String value = redisCacheUtil.get( phone + "_" + code );
+	if ( CommonUtil.isEmpty( value ) ) {
+	    throw new BusinessException( ResponseMemberEnums.NO_PHONE_CODE );
+	}
+
+	// 判断相同的手机号码存在会员卡
+	memberCommonService.newMemberMerge( memberEntity, busId, phone );
+	}
+
+
     /**
      * uc端注册并领取会员卡
      *
