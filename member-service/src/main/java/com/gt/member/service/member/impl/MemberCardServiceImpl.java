@@ -570,6 +570,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	}else{
 	    map.put( "notCard",0 );
 	}
+	return map;
     }
 
     /**
