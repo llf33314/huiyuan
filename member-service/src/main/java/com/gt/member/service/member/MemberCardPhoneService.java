@@ -19,7 +19,7 @@ public interface MemberCardPhoneService {
      * @param busId
      * @return
      */
-    public Map<String,Object> findLingquData( HttpServletRequest request, Integer busId );
+    public Map<String,Object> findLingquData( HttpServletRequest request,Integer memberId, Integer busId );
 
     /**
      * 购买会员卡之前手机判断

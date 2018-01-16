@@ -174,7 +174,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
      *
      * @return
      */
-    public Map< String,Object > findLingquData( HttpServletRequest request, Integer busId ) {
+    public Map< String,Object > findLingquData( HttpServletRequest request, Integer memberId,Integer busId ) {
 	Map< String,Object > map = new HashMap<>();
 	//查询支付方式
 	List<Map<String,Object>> payTypes= requestService.getPayType(busId );
@@ -191,6 +191,9 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	map.put( "basisCitys", basisCitys );
 
 	map.put( "loginImg", requestService.loginImg( busId ) );
+
+	MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
+	map.put( "member", memberEntity);
 	return map;
     }
 

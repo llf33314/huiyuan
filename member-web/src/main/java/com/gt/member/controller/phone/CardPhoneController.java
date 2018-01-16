@@ -94,8 +94,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    Map< String,Object > returnMap = memberCardPhoneService.findLingquData( request, busId );
-	    returnMap.put( "member", member );
+	    Map< String,Object > returnMap = memberCardPhoneService.findLingquData( request,member.getId(), busId );
 	    return ServerResponse.createBySuccess( returnMap );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
