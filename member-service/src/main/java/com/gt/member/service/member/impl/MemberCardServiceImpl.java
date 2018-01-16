@@ -561,6 +561,17 @@ public class MemberCardServiceImpl implements MemberCardService {
 	}
     }
 
+
+    public Map<String,Object> isSurplusMemberCard(Integer busId){
+	Map<String,Object> map=new HashMap<>(  );
+        List<Map<String, Object>> list=memberGradetypeDAO.findGradeTyeBybusId(  busId);
+	if(list.size()==5){
+	    map.put( "notCard",1 );
+	}else{
+	    map.put( "notCard",0 );
+	}
+    }
+
     /**
      * 保存会员卡设置
      *

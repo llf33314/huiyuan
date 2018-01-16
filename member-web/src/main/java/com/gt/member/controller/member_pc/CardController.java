@@ -146,6 +146,24 @@ public class CardController {
 	}
     }
 
+
+    @ApiOperation( value = "添加完成判断是否还有要添加的会员卡", notes = "添加完成判断是否还有要添加的会员卡" )
+    @ResponseBody
+    @RequestMapping( value = "/isSurplusMemberCard", method = RequestMethod.POST )
+    public ServerResponse isSurplusMemberCard(HttpServletRequest request, HttpServletResponse response){
+	Integer busId = SessionUtils.getPidBusId( request );
+
+	try {
+	   Map<String,Object> map=memberCardService.isSurplusMemberCard( busId );
+	    return ServerResponse.createBySuccess();
+	} catch ( Exception e ) {
+	    LOG.error( "添加完成判断是否还有要添加的会员卡：", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());
+	}
+
+    }
+
+
     @ApiOperation( value = "保存会员卡设置", notes = "保存会员卡设置" )
     @ApiImplicitParams( @ApiImplicitParam( name = "json", value = "会员卡json类型", paramType = "query", required = false, dataType = "String" ) )
     @ResponseBody
