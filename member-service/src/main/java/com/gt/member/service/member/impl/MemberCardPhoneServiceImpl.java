@@ -256,7 +256,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
      * @return
      * @throws BusinessException
      */
-    public void loginMemberCard( HttpServletRequest request,Map< String,Object > params,Integer memberId  ) throws BusinessException{
+    public void loginMemberCard(Map< String,Object > params,Integer memberId  ) throws BusinessException{
 	Map<String,Object> map=new HashMap<>(  );
 	Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	String phone = CommonUtil.toString( params.get( "phone" ) );

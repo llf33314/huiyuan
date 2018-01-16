@@ -270,7 +270,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    memberCardPhoneService.loginMemberCard( request,params, member.getId() );
+	    memberCardPhoneService.loginMemberCard( params, member.getId() );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );

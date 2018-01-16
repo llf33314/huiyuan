@@ -49,7 +49,7 @@ public interface MemberCardPhoneService {
      * @return
      * @throws BusinessException
      */
-    public void loginMemberCard( HttpServletRequest request,Map< String,Object > params,Integer memberId  ) throws BusinessException;
+    public void loginMemberCard( Map< String,Object > params,Integer memberId  ) throws BusinessException;
 
 
     /**
