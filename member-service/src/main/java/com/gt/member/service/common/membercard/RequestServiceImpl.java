@@ -386,7 +386,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
 
-    public List<Map<String,Object>> getPayType(Integer busId){
+    public List<Map<String,Object>> getPayType(Integer busId,Integer type){
 	List<Map<String,Object>> list=new ArrayList<>(  );
 	RequestUtils< Integer > requestUtils = new RequestUtils< Integer >();
 	requestUtils.setReqdata( busId );
@@ -395,21 +395,21 @@ public class RequestServiceImpl implements RequestService {
 	JSONObject json = JSON.parseObject( returnData );
 	if ( "0".equals( json.getString( "code" ) ) ) {
 	    PayWay payWay = JSONObject.parseObject( json.getString( "data" ), PayWay.class );
-	    if(payWay.getWxpay()==1){
+	    if(payWay.getWxpay()==0 && type==1){
 		Map<String,Object> map=new HashMap<>(  );
 		map.put( "payType", 1 );  //微信支付
 		map.put( "name","微信" );
 		list.add( map );
 	    }
 
-	    if(payWay.getAlipay()==1){
+	    if(payWay.getAlipay()==0 && type==99){
 		Map<String,Object> map=new HashMap<>(  );
 		map.put( "payType", 2 );  //支付宝支付
 		map.put( "name","支付宝" );
 		list.add( map );
 	    }
 
-	    if(payWay.getDfpay()==1){
+	    if(payWay.getDfpay()==0){
 		Map<String,Object> map=new HashMap<>(  );
 		map.put( "payType", 3 );  //微信支付
 		map.put( "name","多粉钱包" );

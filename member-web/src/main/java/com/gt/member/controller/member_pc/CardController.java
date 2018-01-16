@@ -155,7 +155,7 @@ public class CardController {
 
 	try {
 	   Map<String,Object> map=memberCardService.isSurplusMemberCard( busId );
-	    return ServerResponse.createBySuccess();
+	    return ServerResponse.createBySuccess(map);
 	} catch ( Exception e ) {
 	    LOG.error( "添加完成判断是否还有要添加的会员卡：", e );
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getMsg());

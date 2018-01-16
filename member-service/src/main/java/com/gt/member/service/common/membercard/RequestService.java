@@ -157,6 +157,6 @@ public interface RequestService {
      * @param busId
      * @return
      */
-    public List<Map<String,Object>> getPayType(Integer busId);
+    public List<Map<String,Object>> getPayType(Integer busId,Integer type);
 
 }
