@@ -258,7 +258,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
 		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
-    @RequestMapping( value = "/loginMemberCard", method = RequestMethod.GET )
+    @RequestMapping( value = "/loginMemberCard", method = RequestMethod.POST )
     public ServerResponse loginMemberCard( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
@@ -284,7 +284,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
 		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
-    @RequestMapping( value = "/linquMemberCard", method = RequestMethod.GET )
+    @RequestMapping( value = "/linquMemberCard", method = RequestMethod.POST )
     public ServerResponse linquMemberCard( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
