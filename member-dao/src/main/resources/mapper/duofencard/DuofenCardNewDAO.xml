@@ -26,6 +26,7 @@
 		<result column="endTimestamp" property="endTimestamp" />
 		<result column="fixedTerm" property="fixedTerm" />
 		<result column="fixedBeginTerm" property="fixedBeginTerm" />
+		<result column="useTime" property="useTime"/>
 		<result column="servicePhone" property="servicePhone" />
 		<result column="canShare" property="canShare" />
 		<result column="canGiveFriend" property="canGiveFriend" />
@@ -53,6 +54,7 @@
           reduceCost AS reduceCost, discount, gift, defaultDetail AS defaultDetail,
            title, subTitle AS subTitle, color, notice, description, type, beginTimestamp AS beginTimestamp,
            endTimestamp AS endTimestamp, fixedTerm AS fixedTerm, fixedBeginTerm AS fixedBeginTerm,
+           useTime as useTime,
            servicePhone AS servicePhone, canShare AS canShare, canGiveFriend AS canGiveFriend, summary,
            iconUrlList AS iconUrlList, textImageList AS textImageList, cardStatus AS cardStatus,
            createBusId,
