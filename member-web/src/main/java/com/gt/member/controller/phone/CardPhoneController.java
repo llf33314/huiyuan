@@ -6,24 +6,13 @@ import com.gt.api.bean.session.Member;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.RequestUtils;
 import com.gt.api.util.SessionUtils;
-import com.gt.common.entity.AlipayUser;
-import com.gt.common.entity.BusFlow;
-import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.member.controller.RemoteAuthori.AuthorizeOrLoginController;
-import com.gt.member.dao.common.BusFlowDAO;
-import com.gt.member.dao.common.WxShopDAO;
 import com.gt.member.dto.ServerResponse;
-import com.gt.member.entity.MemberCardmodel;
-import com.gt.member.entity.MemberCardtype;
-import com.gt.member.entity.MemberGift;
-import com.gt.member.entity.MemberOption;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.MemberCardPhoneService;
-import com.gt.member.service.member.MemberCardService;
-import com.gt.member.service.member.MemberNoticeService;
 import com.gt.member.util.*;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.result.wx.WxJsSdkResult;
@@ -31,7 +20,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.jbarcode.JBarcode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +28,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -108,8 +94,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    Map< String,Object > returnMap = memberCardPhoneService.findLingquData( request, busId );
-	    returnMap.put( "member", member );
+	    Map< String,Object > returnMap = memberCardPhoneService.findLingquData( request,member.getId(), busId );
 	    return ServerResponse.createBySuccess( returnMap );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -254,20 +239,87 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	}
     }
 
+    @ApiOperation( value = "已有会员卡登录", notes = "已有会员卡登录" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
+		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/loginMemberCard", method = RequestMethod.POST )
+    public ServerResponse loginMemberCard( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    memberCardPhoneService.loginMemberCard( params, member.getId() );
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}catch ( Exception e ){
+	    return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
+	}
+    }
+
+
+    @ApiOperation( value = "已有会员卡登录", notes = "已有会员卡登录" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
+		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/judgeMemberCard", method = RequestMethod.POST )
+    public ServerResponse judgeMemberCard( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    String phone=CommonUtil.toString( params.get( "phone" ) );
+	    String vcode=CommonUtil.toString( params.get( "vcode" ) );
+	    Integer areaId=CommonUtil.toInteger( params.get( "areaId" ) );
+	    String areacode=CommonUtil.toString( params.get( "areacode" ) );
+	    memberCardPhoneService.judgeMemberCard( member.getId(),busId,phone,vcode,areaId, areacode);
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}catch ( Exception e ){
+	    return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
+	}
+    }
+
+
+
+
+
     @ApiOperation( value = "领取会员卡", notes = "领取会员卡" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
 		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
-    @RequestMapping( value = "/linquMemberCard", method = RequestMethod.GET )
+    @RequestMapping( value = "/linquMemberCard", method = RequestMethod.POST )
     public ServerResponse linquMemberCard( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
 	    Map<String,Object> map= memberCardPhoneService.linquMemberCard( request,params, member.getId() );
 	    return ServerResponse.createBySuccess(map);
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}catch ( Exception e ){
+	    return ServerResponse.createByError(ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg());
 	}
     }
 
