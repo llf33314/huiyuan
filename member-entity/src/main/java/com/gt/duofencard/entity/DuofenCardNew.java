@@ -114,12 +114,12 @@ public class DuofenCardNew extends Model<DuofenCardNew> {
      * 起用时间
      */
 	@TableField("beginTimestamp")
-	private Date beginTimestamp;
+	private String beginTimestamp;
     /**
      * 结束时间
      */
 	@TableField("endTimestamp")
-	private Date endTimestamp;
+	private String endTimestamp;
     /**
      * 自领取后多少天内有效
      */
