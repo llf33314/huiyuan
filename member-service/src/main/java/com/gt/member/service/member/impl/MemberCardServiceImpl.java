@@ -2081,6 +2081,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    Double buyCard = userConsumeNewDAO.buyCard( busId, ctId );
 	    map.put( "sumXiaofei", sumXiaofei );
 	    map.put( "buyCard", buyCard );
+	    map.put( "path",PropertiesUtil.getWebHome() );
 
 	    switch ( ctId ) {
 		case 0:
@@ -2588,11 +2589,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 			    .findUserConsumeXiaoFeiByMemberId( busId, memberId, startDate, endDate, payStatus, CommonUtil.toInteger( params.get( "firstResult" ) ),
 					    CommonUtil.toInteger( params.get( "maxResult" ) ) );
 
-	    List< Map< String,Object > > userConsumes = new ArrayList<>();
 	    List< Map< String,Object > > newList = new ArrayList<>();
 	    SortedMap< String,Object > map = dictService.getDict( "A003" );
 	    SortedMap< String,Object > payStatusMap = dictService.getDict( "A004" );
-	     for ( Map< String,Object > uc : userConsumes ) {
+	     for ( Map< String,Object > uc : list ) {
 		uc.put( "payStatus", payStatusMap.get( CommonUtil.toString( uc.get( "payStatus" ) ) ) );
 		if(CommonUtil.isNotEmpty( uc.get( "dataSource" ) )) {
 		    uc.put( "dataSource", map.get( CommonUtil.toString( uc.get( "dataSource" ) ) ) );
