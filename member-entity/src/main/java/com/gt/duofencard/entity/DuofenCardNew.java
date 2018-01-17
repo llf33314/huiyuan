@@ -130,6 +130,9 @@ public class DuofenCardNew extends Model<DuofenCardNew> {
      */
 	@TableField("fixedBeginTerm")
 	private Integer fixedBeginTerm;
+
+    	@TableField("useTime")
+	private Integer useTime;
     /**
      * 客服电话
      */
