@@ -387,6 +387,7 @@ public class RequestServiceImpl implements RequestService {
 
 
     public List<Map<String,Object>> getPayType(Integer busId,Integer type){
+        LOG.error( "查询支付方式接口参数:"+busId+" 请求类型 "+type );
 	List<Map<String,Object>> list=new ArrayList<>(  );
 	RequestUtils< Integer > requestUtils = new RequestUtils< Integer >();
 	requestUtils.setReqdata( busId );
