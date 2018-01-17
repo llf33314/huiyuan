@@ -410,12 +410,12 @@ public class RequestServiceImpl implements RequestService {
 		list.add( map );
 	    }
 
-	    if(payWay.getDfpay()==0){
-		Map<String,Object> map=new HashMap<>(  );
-		map.put( "payType", 3 );  //微信支付
-		map.put( "name","多粉钱包" );
-		list.add( map );
-	    }
+//	    if(payWay.getDfpay()==0){
+//		Map<String,Object> map=new HashMap<>(  );
+//		map.put( "payType", 3 );  //微信支付
+//		map.put( "name","多粉钱包" );
+//		list.add( map );
+//	    }
 	}
 	return list;
     }
