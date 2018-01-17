@@ -28,6 +28,9 @@ public class DuofenCardTime extends Model<DuofenCardTime> {
 
 	@TableId(value="id", type= IdType.AUTO)
 	private Integer id;
+
+    	@TableField("cardId")
+	private Integer cardId;
     /**
      * 卡券id
      */
