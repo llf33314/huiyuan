@@ -39,6 +39,7 @@ public class GlobalDefaultExceptionHandler {
 	modelAndView.addObject( "ex", e );
 	modelAndView.addObject( "url", request.getRequestURL() );
 	modelAndView.setViewName( DEFAULT_ERROR_VIEW );
+	e.printStackTrace();
 	return modelAndView;
 
 

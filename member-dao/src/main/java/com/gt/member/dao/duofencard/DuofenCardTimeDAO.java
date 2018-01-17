@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
  * @author pengjiangli
  * @since 2018-01-16
  */
-public interface DuofenCardTimeDAO extends BaseMapper<DuofenCardTime> {
+public interface DuofenCardTimeDAO extends BaseMapper<DuofenCardTime > {
 
 }

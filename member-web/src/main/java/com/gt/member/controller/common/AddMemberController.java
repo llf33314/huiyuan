@@ -41,8 +41,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.gt.member.MpGenerator.url;
-
 /**
  * <p>
  * 统一新增会员卡页面
