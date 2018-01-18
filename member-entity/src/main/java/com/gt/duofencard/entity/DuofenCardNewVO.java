@@ -1,15 +1,8 @@
 package com.gt.duofencard.entity;
 
-import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * <p>
@@ -99,5 +92,4 @@ public class DuofenCardNewVO extends DuofenCardNew {
      */
     @TableField("otherTimeSet")
     private String otherTimeSet;
-
 }

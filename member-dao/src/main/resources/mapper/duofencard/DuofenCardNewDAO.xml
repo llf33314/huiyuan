@@ -17,7 +17,6 @@
 		<result column="gift" property="gift" />
 		<result column="defaultDetail" property="defaultDetail" />
 		<result column="title" property="title" />
-		<result column="subTitle" property="subTitle" />
 		<result column="color" property="color" />
 		<result column="notice" property="notice" />
 		<result column="description" property="description" />
@@ -52,7 +51,7 @@
         id, loginUrl AS loginUrl, busId AS busId, brandName AS brandName, useType AS useType,
          cardType AS cardType, dealDetail AS dealDetail, cashLeastCost AS cashLeastCost,
           reduceCost AS reduceCost, discount, gift, defaultDetail AS defaultDetail,
-           title, subTitle AS subTitle, color, notice, description, type, beginTimestamp AS beginTimestamp,
+           title, color, notice, description, type, beginTimestamp AS beginTimestamp,
            endTimestamp AS endTimestamp, fixedTerm AS fixedTerm, fixedBeginTerm AS fixedBeginTerm,
            useTime as useTime,
            servicePhone AS servicePhone, canShare AS canShare, canGiveFriend AS canGiveFriend, summary,
