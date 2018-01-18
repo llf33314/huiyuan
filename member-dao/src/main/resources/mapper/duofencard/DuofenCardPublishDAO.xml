@@ -9,6 +9,10 @@
 		<result column="number" property="number" />
 		<result column="isBuy" property="isBuy" />
 		<result column="buyMoney" property="buyMoney" />
+		<result column="giftBuyMoney" property="giftBuyMoney" />
+		<result column="isDiscount" property="isDiscount" />
+		<result column="isFenbi" property="isFenbi" />
+		<result column="isJifen" property="isJifen" />
 		<result column="isReceiveNum" property="isReceiveNum" />
 		<result column="limitType" property="limitType" />
 		<result column="limitNum" property="limitNum" />
@@ -21,7 +25,20 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, cardId AS cardId, number, isBuy AS isBuy, buyMoney AS buyMoney, isReceiveNum AS isReceiveNum, limitType AS limitType, limitNum AS limitNum, isRecommend AS isRecommend, jifen, fenbi, flow, money
+        id, cardId AS cardId,isDiscount,isFenbi,isJifen, number, isBuy AS isBuy, buyMoney AS buyMoney, giftBuyMoney as giftBuyMoney,isReceiveNum AS isReceiveNum, limitType AS limitType, limitNum AS limitNum, isRecommend AS isRecommend, jifen, fenbi, flow, money
     </sql>
+
+	<select id="findPublishDuofenCard" resultType="Map">
+		select id as publishId, cardId AS cardId, number, isBuy AS isBuy, buyMoney AS buyMoney, giftBuyMoney AS giftBuyMoney
+		 isReceiveNum AS isReceiveNum, limitType AS limitType, limitNum AS limitNum,
+		  isRecommend AS isRecommend, jifen, fenbi, flow, money,c.* from t_duofen_card_publish cp
+		 inner join t_duofen_card_new c on cp.cardId=c.id
+		 where c.busId=#{busId} and cardStatus=2
+		 limit #{page},#{pageSize}
+	</select>
+
+	<select id="findByCardId" resultMap="BaseResultMap">
+		select * from t_duofen_card_publish where cardId=#{cardId}
+	</select>
 
 </mapper>
