@@ -39,6 +39,9 @@ public class DuofenCardGetNew extends Model<DuofenCardGetNew> {
      */
 	@TableField("getType")
 	private Integer getType;
+
+    	@TableField("isbuy")
+	private Integer isbuy;
     /**
      * 卡券核销编码
      */

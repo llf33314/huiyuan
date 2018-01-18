@@ -103,6 +103,8 @@ public interface MemberCardService {
 
     public void saveOrUpdateOption( String json, Integer busId ) throws BusinessException;
 
+    public Map<String,Object> isSurplusMemberCard(Integer busId);
+
     /**
      * 保存会员卡设置
      *

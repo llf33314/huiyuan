@@ -19,7 +19,7 @@ public interface MemberCardPhoneService {
      * @param busId
      * @return
      */
-    public Map<String,Object> findLingquData( HttpServletRequest request, Integer busId );
+    public Map<String,Object> findLingquData( HttpServletRequest request,Integer memberId, Integer busId );
 
     /**
      * 购买会员卡之前手机判断
@@ -41,6 +41,16 @@ public interface MemberCardPhoneService {
 
 
     public void judgeMember(Integer busId,String phone);
+
+
+    /**
+     * 已有会员卡，合并数据并登录
+     * @param params
+     * @return
+     * @throws BusinessException
+     */
+    public void loginMemberCard( Map< String,Object > params,Integer memberId  ) throws BusinessException;
+
 
     /**
      * 领取会员卡

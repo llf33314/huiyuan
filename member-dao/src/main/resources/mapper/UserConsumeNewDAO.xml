@@ -57,97 +57,17 @@
 
 	</select>
 
-	<select id="countOrder" resultType="java.lang.Integer">
-		select count(id) from t_wx_user_consume_new where ctId=#{ctId} and busId=#{busId} and payStatus=1
-	</select>
-
-	<select id="sumXiaofei" resultType="java.lang.Double">
-		select sum(discountAfterMoney) from t_wx_user_consume_new where 	recordType=2 and ctId=#{ctId} and busId=#{busId} and payStatus=1
-	</select>
-
-	<select id="buyCard" resultType="java.lang.Double">
-		select sum(discountAfterMoney) from t_wx_user_consume_new where ucType=13 and ctId=#{ctId} and payStatus=1
-	</select>
-
-
-	<select id="sum7DayOrder" resultType="Map">
-		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS time, SUM(discountAfterMoney) AS discountAfterMoney FROM t_wx_user_consume_new
-		where recordType=2 and ctId=#{ctId} and busId=#{busId} and payStatus=1 and createDate <![CDATA[<=]]>#{date}
-		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
-		ORDER BY time DESC  LIMIT 7
-	</select>
-
-
-	<select id="sum7DayBuyCard" resultType="Map">
-		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS buytime1, SUM(discountAfterMoney) AS buyDiscountAfterMoney FROM t_wx_user_consume_new
-		where
-		ucType=13 and ctId=#{ctId} and busId=#{busId} and payStatus=1 and createDate <![CDATA[<=]]>#{date}
-		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
-		ORDER BY buytime1 DESC  LIMIT 7
-	</select>
-
-
-	<select id="countJifenDuiHan" resultType="Map">
-		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS createDate, SUM(integral) as integralCount FROM t_wx_user_consume_new WHERE  busId=#{busId} and  ctId=1   GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
-		ORDER BY a1 DESC  LIMIT 7
-	</select>
-
-
-	<select id="countUseJifen" resultType="java.lang.Integer">
-		SELECT SUM(integral) FROM t_wx_user_consume_new  WHERE  ctId=1 and busId=#{busId} and payStatus=1
-	</select>
-
-
-	<select id="sum7DayDiscount" resultType="Map">
-		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') as createDate,SUM(discountMoney) AS discountMoney FROM t_wx_user_consume_new
-		WHERE recordType=2 and  ctId=2 AND busId=#{busId} AND payStatus=1
-		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
-		ORDER BY createDate DESC   LIMIT 7
-	</select>
-
-
-	<select id="sumDisCount" resultType="java.lang.Double">
-		SELECT SUM(discountMoney)  FROM t_wx_user_consume_new
-		WHERE recordType=2  AND ctId=2 AND busId=#{busId} AND payStatus=1
-	</select>
-
-	<select id="sumChongzhi" resultType="java.lang.Double">
-		select sum(discountAfterMoney) as discountAfterMoney from t_wx_user_consume_new where recordType=1 and busId=#{busId} and ctId=3 AND payStatus=1
-	</select>
-
-
-
-	<select id="sumChongzhi7Day" resultType="Map">
-		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS createDate ,SUM(discountAfterMoney) AS discountAfterMoney FROM t_wx_user_consume_new WHERE  recordType=1  AND busId=#{busId} AND ctId=3 AND payStatus=1
-		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
-		ORDER BY createDate DESC
-		LIMIT 7
-	</select>
-
-
-	<select id="sumCiKa" resultType="Map">
-		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS createDate,SUM(uccount) AS uccount FROM t_wx_user_consume_new WHERE  recordType=2 AND busId=#{busId} AND ctId=5 AND payStatus=1
-		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
-		ORDER BY createDate DESC
-		LIMIT 7
-	</select>
-
-
-	<select id="userCiKa" resultType="java.lang.Integer">
-		SELECT SUM(uccount) FROM t_wx_user_consume_new WHERE recordType=2 AND busId=#{busId} AND payStatus=1
-	</select>
-
-
-
 
 	<select id="countOrder" resultType="java.lang.Integer">
 		select count(id) from t_wx_user_consume_new where ctId=#{ctId} and busId=#{busId} and payStatus=1
 	</select>
+
 
 	<select id="sumXiaofei" resultType="java.lang.Double">
 		select sum(discountAfterMoney) from t_wx_user_consume_new
 		where 	recordType=2 and ctId=#{ctId} and busId=#{busId} and payStatus=1
 	</select>
+
 
 	<select id="buyCard" resultType="java.lang.Double">
 		select sum(discountAfterMoney) from t_wx_user_consume_new where ucType=13 and ctId=#{ctId} and payStatus=1
@@ -173,6 +93,8 @@
 	</select>
 
 
+
+
 	<select id="sum7DayBuyCard" resultType="Map">
 		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS buytime1, SUM(discountAfterMoney) AS buyDiscountAfterMoney FROM t_wx_user_consume_new
 		where
@@ -188,30 +110,25 @@
 	</select>
 
 
-
 	<select id="countJifenDuiHan" resultType="Map">
 		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS createDate, SUM(integral) as integralCount FROM t_wx_user_consume_new WHERE  busId=#{busId} and  ctId=1   GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
 		ORDER BY createDate DESC  LIMIT 7
 	</select>
 
 
+
 	<select id="countUseJifen" resultType="java.lang.Integer">
-		SELECT SUM(integral) FROM t_wx_user_consume_new  WHERE  ctId=1 and busId=#{busId} and payStatus=1
+		SELECT SUM(integral) FROM t_wx_user_consume_new  WHERE  busId=#{busId} and payStatus=1
 	</select>
 
-
-	<select id="sum7DayDiscount" resultType="Map">
-		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') as createDate,SUM(discountMoney) AS discountMoney FROM t_wx_user_consume_new
-		WHERE recordType=2 and  ctId=2 AND busId=#{busId} AND payStatus=1
-		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
-		ORDER BY createDate DESC   LIMIT 7
-	</select>
 
 
 	<select id="sumDisCount" resultType="java.lang.Double">
 		SELECT SUM(discountMoney)  FROM t_wx_user_consume_new
 		WHERE recordType=2  AND ctId=2 AND busId=#{busId} AND payStatus=1
 	</select>
+
+
 
 	<select id="sumChongzhi" resultType="java.lang.Double">
 		select sum(discountAfterMoney) as discountAfterMoney from t_wx_user_consume_new where recordType=1 and busId=#{busId} and ctId=3 AND payStatus=1
@@ -228,6 +145,7 @@
 	</select>
 
 
+
 	<select id="sumCiKa" resultType="Map">
 		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') AS createDate,SUM(uccount) AS uccount FROM t_wx_user_consume_new WHERE  recordType=2 AND busId=#{busId} AND ctId=5 AND payStatus=1
 		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
@@ -236,12 +154,17 @@
 	</select>
 
 
-	<select id="userCiKa" resultType="java.lang.Integer">
-		SELECT SUM(uccount) FROM t_wx_user_consume_new WHERE recordType=2 AND busId=#{busId} AND payStatus=1
+	<select id="sum7DayDiscount" resultType="Map">
+		SELECT DATE_FORMAT(createDate, '%Y-%m-%d') as createDate,SUM(discountMoney) AS discountMoney FROM t_wx_user_consume_new
+		WHERE recordType=2 and  ctId=2 AND busId=#{busId} AND payStatus=1
+		GROUP BY DATE_FORMAT(createDate, '%Y-%m-%d')
+		ORDER BY createDate DESC   LIMIT 7
 	</select>
 
 
-
+	<select id="userCiKa" resultType="java.lang.Integer">
+		SELECT SUM(uccount) FROM t_wx_user_consume_new WHERE recordType=2 AND busId=#{busId} AND payStatus=1
+	</select>
 
 	<select id="findOneByCode" resultMap="BaseResultMap">
 		select * from t_wx_user_consume_new where orderCode=#{orderCode}

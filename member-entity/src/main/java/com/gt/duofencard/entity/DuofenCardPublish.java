@@ -46,7 +46,20 @@ public class DuofenCardPublish extends Model<DuofenCardPublish> {
      * 购买金额
      */
 	@TableField("buyMoney")
-	private String buyMoney;
+	private Double buyMoney;
+
+    	@TableField("giftBuyMoney")
+	private String giftBuyMoney;
+
+    	@TableField("isDiscount")
+	private Integer isDiscount;
+
+    	@TableField("isFenbi")
+    	private Integer isFenbi;
+
+    	@TableField("isJifen")
+    	private Integer isJifen;
+
     /**
      * 领取数量限制设置 0不限制 1限制
      */

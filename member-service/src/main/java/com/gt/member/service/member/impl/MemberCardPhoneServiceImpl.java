@@ -174,10 +174,11 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
      *
      * @return
      */
-    public Map< String,Object > findLingquData( HttpServletRequest request, Integer busId ) {
+    public Map< String,Object > findLingquData( HttpServletRequest request, Integer memberId,Integer busId ) {
 	Map< String,Object > map = new HashMap<>();
 	//查询支付方式
-	List<Map<String,Object>> payTypes= requestService.getPayType(busId );
+	Integer type=CommonUtil.judgeBrowser(request);
+	List<Map<String,Object>> payTypes= requestService.getPayType(busId ,type);
 	map.put( "payTypes",payTypes );
 
 	List< Map< String,Object > > gradeTypes = memberGradetypeDAO.findBybusId1( busId );
@@ -191,6 +192,9 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	map.put( "basisCitys", basisCitys );
 
 	map.put( "loginImg", requestService.loginImg( busId ) );
+
+	MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
+	map.put( "member", memberEntity);
 	return map;
     }
 
@@ -248,6 +252,29 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
             throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
 	}
     }
+
+
+    /**
+     * 已有会员卡，合并数据并登录
+     * @param params
+     * @return
+     * @throws BusinessException
+     */
+    public void loginMemberCard(Map< String,Object > params,Integer memberId  ) throws BusinessException{
+	Map<String,Object> map=new HashMap<>(  );
+	Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	String phone = CommonUtil.toString( params.get( "phone" ) );
+	MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
+	String code = CommonUtil.toString( params.get( "code" ) );
+	String value = redisCacheUtil.get( phone + "_" + code );
+	if ( CommonUtil.isEmpty( value ) ) {
+	    throw new BusinessException( ResponseMemberEnums.NO_PHONE_CODE );
+	}
+
+	// 判断相同的手机号码存在会员卡
+	memberCommonService.newMemberMerge( memberEntity, busId, phone );
+	}
+
 
     /**
      * uc端注册并领取会员卡
@@ -877,8 +904,10 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    map.put( "chuZhikamoney",memberCard.getMoney() );
 	    map.put( "shixiaoKaTime",memberCard.getExpireDate() );
 
+	    Integer type=CommonUtil.judgeBrowser(request);
+
 	    //支付方式
-	    List<Map<String,Object>> payTypes= requestService.getPayType(busId );
+	    List<Map<String,Object>> payTypes= requestService.getPayType(busId,type );
 	    map.put( "payTypes",payTypes );
 
 	    if ( memberCard.getCtId() != 4 && memberCard.getCtId() == chongzhiCtId ) {

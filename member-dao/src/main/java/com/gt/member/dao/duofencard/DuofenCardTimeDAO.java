@@ -1,7 +1,8 @@
 package com.gt.member.dao.duofencard;
 
-import com.gt.member.entity.DuofenCardTime;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.gt.duofencard.entity.DuofenCardTime;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -13,4 +14,5 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
  */
 public interface DuofenCardTimeDAO extends BaseMapper<DuofenCardTime > {
 
+    public DuofenCardTime findDuofenCardTimeByCardId(@Param( "cardId" )Integer cardId);
 }
