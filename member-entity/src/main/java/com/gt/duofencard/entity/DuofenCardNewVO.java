@@ -100,8 +100,4 @@ public class DuofenCardNewVO extends DuofenCardNew {
     @TableField("otherTimeSet")
     private String otherTimeSet;
 
-    @Override
-    protected Serializable pkVal() {
-	return this.id;
-    }
 }

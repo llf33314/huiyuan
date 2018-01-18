@@ -30,7 +30,6 @@ public class DuofenCardNewServiceImpl implements DuofenCardNewService{
         Integer cardId =cardMapper.insert( coupon );
 	coupon.setCardId( cardId );
 	cardTimeMapper.insert( coupon );
-
-	return
+	return -1;
     }
 }

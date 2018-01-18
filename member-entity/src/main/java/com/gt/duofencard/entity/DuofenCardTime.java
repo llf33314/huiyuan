@@ -32,11 +32,6 @@ public class DuofenCardTime extends Model<DuofenCardTime> {
     	@TableField("cardId")
 	private Integer cardId;
     /**
-     * 卡券id
-     */
-    @TableField("cardId")
-    private Integer cardId;
-    /**
      * 一周不可用时间
      */
 	private String week;
