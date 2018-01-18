@@ -46,7 +46,7 @@ public class DuofenCardPublish extends Model<DuofenCardPublish> {
      * 购买金额
      */
 	@TableField("buyMoney")
-	private Integer buyMoney;
+	private Double buyMoney;
 
     	@TableField("giftBuyMoney")
 	private String giftBuyMoney;
