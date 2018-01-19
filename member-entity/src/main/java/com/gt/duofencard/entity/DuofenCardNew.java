@@ -218,6 +218,9 @@ public class DuofenCardNew extends Model<DuofenCardNew> {
 	@TableField("addUser")
 	private Integer addUser;
 
+    	@TableField("useScene")
+	private Integer useScene;
+
 
 	@Override
 	protected Serializable pkVal() {
