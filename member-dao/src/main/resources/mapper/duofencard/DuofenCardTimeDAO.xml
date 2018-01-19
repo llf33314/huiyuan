@@ -17,4 +17,9 @@
         id,cardId, week, holidays, otherTime AS otherTime, otherTimeSet AS otherTimeSet
     </sql>
 
+	<select id="findDuofenCardTimeByCardId" resultMap="BaseResultMap">
+		select * from t_duofen_card_time where cardId=#{cardId} limit 1
+
+	</select>
+
 </mapper>

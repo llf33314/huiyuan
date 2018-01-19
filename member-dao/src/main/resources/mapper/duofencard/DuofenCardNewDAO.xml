@@ -45,6 +45,7 @@
 		<result column="timeType" property="timeType" />
 		<result column="examine_id" property="examineId" />
 		<result column="addUser" property="addUser" />
+		<result column="useScene" property="useScene"/>
 	</resultMap>
 
     <!-- 通用查询结果列 -->
@@ -59,7 +60,7 @@
            iconUrlList AS iconUrlList, textImageList AS textImageList, cardStatus AS cardStatus,
            createBusId,
             createDate AS createDate, pass_time, isSendMsg AS isSendMsg, areaCode AS areaCode, phone,
-            isOwnUse AS isOwnUse, image, timeType AS timeType, examine_id, addUser AS addUser
+            isOwnUse AS isOwnUse, image, timeType AS timeType, examine_id, addUser AS addUser,useScene
     </sql>
 
 </mapper>

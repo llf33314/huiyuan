@@ -7,6 +7,7 @@
 		<id column="id" property="id" />
 		<result column="cardId" property="cardId" />
 		<result column="getType" property="getType" />
+		<result column="isbuy" property="isbuy" />
 		<result column="code" property="code" />
 		<result column="state" property="state" />
 		<result column="getDate" property="getDate" />
@@ -22,7 +23,15 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, cardId AS cardId, getType AS getType, code, state, getDate AS getDate, memberId AS memberId, startTime AS startTime, endTime AS endTime, busId AS busId, storeId AS storeId, operateBusId AS operateBusId, operateDate AS operateDate, recommendId AS recommendId
+        id, cardId AS cardId, getType AS getType,isbuy, code, state, getDate AS getDate, memberId AS memberId, startTime AS startTime, endTime AS endTime, busId AS busId, storeId AS storeId, operateBusId AS operateBusId, operateDate AS operateDate, recommendId AS recommendId
     </sql>
+
+	<select id="countDuofenCardGetByCardId" resultType="java.lang.Integer">
+		select count(*) from t_duofen_card_get_new where memberId=#{memberId} and cardId=#{cardId}
+		<if test="date!=null">
+			and getDate>=#{date}
+		</if>
+
+	</select>
 
 </mapper>
