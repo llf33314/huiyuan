@@ -330,10 +330,10 @@ public class RequestServiceImpl implements RequestService {
 	    switch ( model ) {
 		case 60:
 		    memberVideo = CommonConst.MEMBER_VIDEO_URL_60;
-		    break;
+		    return memberVideo;
 		case 107:
 		    memberVideo = CommonConst.MEMBER_VIDEO_URL_107;
-		    break;
+		    return memberVideo;
 		default:
 		    break;
 	    }

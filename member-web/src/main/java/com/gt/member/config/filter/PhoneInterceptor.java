@@ -46,6 +46,10 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
 	logger.info( "进入拦截器" );
 	try {
 	    boolean isSuccess = true;
+//	    Member m=new Member();
+//	    m.setId( 339 );
+//	    m.setBusid( 42 );
+//	    SessionUtils.setLoginMember( servletRequest,m );
 	    return isSuccess;// 只有返回true才会继续向下执行，返回false取消当前请求
 	}catch ( BusinessException e ){
 	    throw  e;

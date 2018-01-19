@@ -1033,7 +1033,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		}
 	    }
 	    parameterset.setIsPhoneQuery( CommonUtil.toInteger( map.get( "isPhoneQuery" ) ) );
-
+	    parameterset.setPickMoney( CommonUtil.toDouble( map.get( "pickMoney" ) ) );
 	    parameterset.setId( CommonUtil.toInteger( map.get( "id" ) ) );
 	    if ( CommonUtil.isNotEmpty( parameterset.getId() ) ) {
 		publicParametersetDAO.updateById( parameterset );
@@ -1464,6 +1464,38 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    return null;
 	}
 
+    }
+
+
+    public Map<String,Object> findMemberByMemberId(Integer memberId){
+	Map<String,Object> map=new HashMap<>(  );
+	MemberEntity memberEntity=memberMapper.selectById( memberId );
+	map.put( "name",memberEntity.getName() );
+	map.put( "birth",memberEntity.getBirth() );
+	map.put( "remark",memberEntity.getRemark() );
+	map.put( "memberId",memberId );
+	return map;
+    }
+
+    /**
+     * 修改会员资料
+     */
+    public void updateMember(String json){
+        Map<String,Object> map=JSONObject.parseObject( json,Map.class );
+        Integer memberId=CommonUtil.toInteger( map.get( "memberId" ) );
+        if(CommonUtil.isEmpty( memberId )){
+            throw new BusinessException( ResponseMemberEnums.NO_DATA );
+	}
+	String name=CommonUtil.toString( map.get( "name" ) );
+        String birth=CommonUtil.toString( map.get( "birth" ) );
+        Date date=DateTimeKit.parseDate( birth,"yyyy-MM-dd" );
+        MemberEntity memberEntity=new MemberEntity();
+	memberEntity.setId( memberId );
+	memberEntity.setBirth(date  );
+	memberEntity.setName( name );
+	String remark=CommonUtil.toString( map.get( "remark" ) );
+	memberEntity.setRemark(remark);
+	memberMapper.updateById( memberEntity );
     }
 
     /**

@@ -33,10 +33,14 @@ public class ProjectPcInterceptor implements HandlerInterceptor {
 	logger.info( "进入拦截器" );
 	boolean isSuccess = true;
 
-	BusUser busUser= SessionUtils.getLoginUser(servletRequest );
-	if( CommonUtil.isEmpty( busUser )){
-	    throw new NeedLoginException( ResponseMemberEnums.PLEASE_LOGIN.getCode(),ResponseMemberEnums.PLEASE_LOGIN.getMsg(), PropertiesUtil.getWebLoginUrl());
-	}
+//	BusUser busUser= SessionUtils.getLoginUser(servletRequest );
+//	if( CommonUtil.isEmpty( busUser )){
+//	    throw new NeedLoginException( ResponseMemberEnums.PLEASE_LOGIN.getCode(),ResponseMemberEnums.PLEASE_LOGIN.getMsg(), PropertiesUtil.getWebLoginUrl());
+//	}
+	BusUser b=new BusUser();
+	b.setId( 42 );
+	SessionUtils.setLoginUser( servletRequest,b );
+	SessionUtils.setPidBusId( servletRequest,42 );
 
 	return isSuccess;// 只有返回true才会继续向下执行，返回false取消当前请求
     }

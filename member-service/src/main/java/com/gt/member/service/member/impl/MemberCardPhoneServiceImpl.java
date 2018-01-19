@@ -312,15 +312,15 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 	    List< Map< String,Object > > gradeTypes = memberGradetypeDAO.findBybusIdAndCtId3( memberEntity.getBusId(), ctId );
 	    if ( CommonUtil.toInteger( gradeTypes.get( 0 ).get( "applyType" ) ) != 3 ) {
-
-		String code = CommonUtil.toString( params.get( "code" ) );
-		String value = redisCacheUtil.get( phone + "_" + code );
-		if ( CommonUtil.isEmpty( value ) ) {
-		    throw new BusinessException( ResponseMemberEnums.NO_PHONE_CODE );
+		if(!memberEntity.getPhone().equals( phone )) {
+		    String code = CommonUtil.toString( params.get( "code" ) );
+		    String value = redisCacheUtil.get( phone + "_" + code );
+		    if ( CommonUtil.isEmpty( value ) ) {
+			throw new BusinessException( ResponseMemberEnums.NO_PHONE_CODE );
+		    }
+		    // 判断相同的手机号码存在会员卡
+		    memberCommonService.newMemberMerge( memberEntity, busId, phone );
 		}
-
-		// 判断相同的手机号码存在会员卡
-		memberCommonService.newMemberMerge( memberEntity, busId, phone );
 
 		MemberEntity member1 = new MemberEntity();
 		member1.setId( memberId );
@@ -1261,15 +1261,15 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 	for ( int i = 0; i < recommends.size(); i++ ) {
 	    //优惠券
-	    if ( "1".equals( CommonUtil.toString( recommends.get( i ).get( "recommendType" ) ) ) ) {
-		getCount = getCount + CommonUtil.toInteger( recommends.get( i ).get( "lingquNum" ) );
-		useCount = useCount + CommonUtil.toInteger( recommends.get( i ).get( "userNum" ) );
-		userMoney = userMoney + CommonUtil.toInteger( recommends.get( i ).get( "userNum" ) ) * CommonUtil.toDouble( recommends.get( i ).get( "money" ) );
-		jifenYhjCount += CommonUtil.toInteger( recommends.get( i ).get( "userNum" ) ) * CommonUtil.toInteger( recommends.get( i ).get( "integral" ) );
-		fenbiYhjCount += CommonUtil.toInteger( recommends.get( i ).get( "userNum" ) ) * CommonUtil.toDouble( recommends.get( i ).get( "fenbi" ) );
-		flowYhjCount += CommonUtil.toInteger( recommends.get( i ).get( "userNum" ) ) * CommonUtil.toInteger( recommends.get( i ).get( "flow" ) );
-
-	    } else {
+//	    if ( "1".equals( CommonUtil.toString( recommends.get( i ).get( "recommendType" ) ) ) ) {
+//		getCount = getCount + CommonUtil.toInteger( recommends.get( i ).get( "lingquNum" ) );
+//		useCount = useCount + CommonUtil.toInteger( recommends.get( i ).get( "userNum" ) );
+//		userMoney = userMoney + CommonUtil.toInteger( recommends.get( i ).get( "userNum" ) ) * CommonUtil.toDouble( recommends.get( i ).get( "money" ) );
+//		jifenYhjCount += CommonUtil.toInteger( recommends.get( i ).get( "userNum" ) ) * CommonUtil.toInteger( recommends.get( i ).get( "integral" ) );
+//		fenbiYhjCount += CommonUtil.toInteger( recommends.get( i ).get( "userNum" ) ) * CommonUtil.toDouble( recommends.get( i ).get( "fenbi" ) );
+//		flowYhjCount += CommonUtil.toInteger( recommends.get( i ).get( "userNum" ) ) * CommonUtil.toInteger( recommends.get( i ).get( "flow" ) );
+//
+//	    } else {
 		memberCount++;
 		jifenMemberCount += CommonUtil.toInteger( recommends.get( i ).get( "integral" ) );
 		fenbiMemberCount += CommonUtil.toDouble( recommends.get( i ).get( "fenbi" ) );
@@ -1277,7 +1277,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		if ( CommonUtil.isNotEmpty( recommends.get( i ).get( "money" ) ) ) {
 		    memberMoneyCount += CommonUtil.toDouble( recommends.get( i ).get( "money" ) );
 		}
-	    }
+	    //}
 	}
 	map.put( "jifenYhjCount", jifenYhjCount );
 	map.put( "fenbiYhjCount", fenbiYhjCount );
@@ -1289,9 +1289,9 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	map.put( "memberMoneyCount", memberMoneyCount );
 
 	map.put( "memberCount", memberCount );
-	map.put( "getCount", getCount );
-	map.put( "useCount", useCount );
-	map.put( "userMoney", userMoney );
+//	map.put( "getCount", getCount );
+//	map.put( "useCount", useCount );
+//	map.put( "userMoney", userMoney );
 
 	Integer browser = CommonUtil.judgeBrowser( request );
 	WxPublicUsersEntity wxPublicUsers = wxPublicUsersMapper.selectByUserId( memberEntity.getBusId() );

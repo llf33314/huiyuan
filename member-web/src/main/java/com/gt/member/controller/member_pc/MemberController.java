@@ -278,7 +278,44 @@ public class MemberController {
 	}
     }
 
+    @ApiOperation( value = "查询修改会员资料", notes = "修改会员资料" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "memberId", value = "会员id", paramType = "query", required = false, dataType = "int" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findMemberByMemberId", method = RequestMethod.GET )
+    public ServerResponse findMemberByMemberId(HttpServletRequest request,
+		    HttpServletResponse response,Integer memberId){
 
+	try {
+	    Map<String,Object> map=memberCardService.findMemberByMemberId(memberId);
+	    return ServerResponse.createBySuccess(map  );
+	} catch ( Exception e ) {
+	    LOG.error( "查询会员详情：", e );
+	    e.printStackTrace();
+	    return ServerResponse.createByError( "修改会员资料失败");
+	}
+    }
+
+
+    @ApiOperation( value = "修改会员资料保存", notes = "修改会员资料" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "memberId", value = "会员id", paramType = "query", required = false, dataType = "int" )
+    })
+    @ResponseBody
+    @RequestMapping( value = "/updateMember", method = RequestMethod.POST )
+    public ServerResponse updateMember(HttpServletRequest request,
+		    HttpServletResponse response,@RequestParam  String json){
+
+	try {
+	    memberCardService.updateMember(json);
+	    return ServerResponse.createBySuccess(  );
+	} catch ( Exception e ) {
+	    LOG.error( "查询会员详情：", e );
+	    e.printStackTrace();
+	    return ServerResponse.createByError( "修改会员资料失败");
+	}
+    }
 
 
     @ApiOperation( value = "导入实体卡", notes = "导入实体卡" )
@@ -737,7 +774,6 @@ public class MemberController {
 		    HttpServletResponse response,  String cardNo,Integer shopId){
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    Integer dangqianbusId = SessionUtils.getLoginUser( request ).getId();
 	   Map<String,Object> map= memberCardService.consumefindMemberCard(busId,cardNo,shopId);
 	    return ServerResponse.createBySuccess( map  );
 	} catch ( BusinessException e ) {
