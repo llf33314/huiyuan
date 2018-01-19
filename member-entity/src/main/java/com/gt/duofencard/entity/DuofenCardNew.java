@@ -90,11 +90,6 @@ public class DuofenCardNew extends Model<DuofenCardNew> {
      */
 	private String title;
     /**
-     * 券名
-     */
-	@TableField("subTitle")
-	private String subTitle;
-    /**
      * 券颜色
      */
 	private String color;
@@ -227,48 +222,5 @@ public class DuofenCardNew extends Model<DuofenCardNew> {
 		return this.id;
 	}
 
-	@Override
-	public String toString() {
-		return "DuofenCardNew{" +
-			"id=" + id +
-			", loginUrl=" + loginUrl +
-			", busId=" + busId +
-			", brandName=" + brandName +
-			", useType=" + useType +
-			", cardType=" + cardType +
-			", dealDetail=" + dealDetail +
-			", cashLeastCost=" + cashLeastCost +
-			", reduceCost=" + reduceCost +
-			", discount=" + discount +
-			", gift=" + gift +
-			", defaultDetail=" + defaultDetail +
-			", title=" + title +
-			", subTitle=" + subTitle +
-			", color=" + color +
-			", notice=" + notice +
-			", description=" + description +
-			", type=" + type +
-			", beginTimestamp=" + beginTimestamp +
-			", endTimestamp=" + endTimestamp +
-			", fixedTerm=" + fixedTerm +
-			", fixedBeginTerm=" + fixedBeginTerm +
-			", servicePhone=" + servicePhone +
-			", canShare=" + canShare +
-			", canGiveFriend=" + canGiveFriend +
-			", summary=" + summary +
-			", iconUrlList=" + iconUrlList +
-			", textImageList=" + textImageList +
-			", cardStatus=" + cardStatus +
-			", createDate=" + createDate +
-			", passTime=" + passTime +
-			", isSendMsg=" + isSendMsg +
-			", areaCode=" + areaCode +
-			", phone=" + phone +
-			", isOwnUse=" + isOwnUse +
-			", image=" + image +
-			", timeType=" + timeType +
-			", examineId=" + examineId +
-			", addUser=" + addUser +
-			"}";
-	}
+
 }

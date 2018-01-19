@@ -1,5 +1,11 @@
 package com.gt.member.service.member;
 
+import com.gt.duofencard.entity.DuofenCardNewVO;
+import com.gt.member.util.Page;
+
+import java.util.List;
+import java.util.Map;
+
 /**
  * 多粉优惠券pc端
  *
@@ -7,4 +13,13 @@ package com.gt.member.service.member;
  */
 public interface DuofenCardNewService {
 
+    Integer addCoupon( DuofenCardNewVO coupon );
+
+    Page getCouponListByBusId( Integer curPage, Integer pageSize, Integer busId, Integer expired, Integer cardStatus, String title, Integer useType );
+
+    Integer updateCouponById( DuofenCardNewVO coupon );
+
+    Page getReceiveCouponListById( Integer curPage, Integer pageSize, Integer couponId, String searchContent );
+
+    List< Map< String,Object > > selectById( Integer id );
 }

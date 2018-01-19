@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.Param;
  * @author pengjiangli
  * @since 2018-01-16
  */
-public interface DuofenCardTimeDAO extends BaseMapper<DuofenCardTime> {
+public interface DuofenCardTimeDAO extends BaseMapper<DuofenCardTime > {
 
     public DuofenCardTime findDuofenCardTimeByCardId(@Param( "cardId" )Integer cardId);
 }
