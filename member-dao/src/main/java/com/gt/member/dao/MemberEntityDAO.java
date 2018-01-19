@@ -269,7 +269,6 @@ public interface MemberEntityDAO extends BaseMapper<MemberEntity > {
 
 
 
-
     List<MemberEntity> selectByPrimaryKeys(@Param("ids")String ids);
 
 

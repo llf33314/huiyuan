@@ -20,6 +20,7 @@ import com.gt.member.util.QRcodeKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,7 @@ public class DuofenCardController extends AuthorizeOrLoginController {
     @ApiOperation( value = "新增优惠券", notes = "新增优惠券" )
     @ResponseBody
     @RequestMapping( value = "/addCoupon", method = RequestMethod.POST )
-    public ServerResponse addCoupon( HttpServletRequest request, HttpServletResponse response,@RequestParam DuofenCardNewVO coupon ) {
+    public ServerResponse addCoupon( HttpServletRequest request, HttpServletResponse response, @RequestParam DuofenCardNewVO coupon ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    Member member = SessionUtils.getLoginMember( request, busId );
@@ -73,11 +74,11 @@ public class DuofenCardController extends AuthorizeOrLoginController {
 		coupon.setCardStatus( 2 );
 	    }
 
-	    duofenCardNewService.addCoupon(coupon);
+	    duofenCardNewService.addCoupon( coupon );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    log.error( "新增优惠券异常：", e );
-	    return ServerResponse.createByError( e.getCode(),e.getMessage() );
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
 
@@ -90,16 +91,17 @@ public class DuofenCardController extends AuthorizeOrLoginController {
 	    return ServerResponse.createBySuccess( coupon );
 	} catch ( BusinessException e ) {
 	    LOG.error( "优惠券修改异常", e );
-	    return ServerResponse.createByError( e.getCode(),e.getMessage() );
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 
 	}
     }
+
     @ApiOperation( value = "优惠券详情", notes = "优惠券详情" )
     @ResponseBody
     @RequestMapping( value = "/findCouponById", method = RequestMethod.GET )
     public ServerResponse findCouponById( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer id ) {
 	try {
-	    List<Map<String,Object>> coupon = duofenCardNewService.selectById(id );
+	    List< Map< String,Object > > coupon = duofenCardNewService.selectById( id );
 	    return ServerResponse.createBySuccess( coupon );
 	} catch ( Exception e ) {
 	    LOG.error( "优惠券查询异常", e );
@@ -107,15 +109,16 @@ public class DuofenCardController extends AuthorizeOrLoginController {
 	}
     }
 
-
     @ApiOperation( value = "获取优惠券列表", notes = "获取优惠券列表" )
     @ResponseBody
     @RequestMapping( value = "/getCouponListByBusId", method = RequestMethod.GET )
-    public ServerResponse getCouponListByBusId( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer curPage,
-		    @RequestParam Integer pageSize, Integer expired, Integer cardStatus, String couponName, Integer useType  ) {
+    public ServerResponse getCouponListByBusId( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer curPage, @RequestParam Integer pageSize,
+		    Integer expired, Integer cardStatus, String couponName, Integer useType, Integer busId ) {
 	try {
-	    Integer busId = SessionUtils.getPidBusId( request );
-	    Page page = duofenCardNewService.getCouponListByBusId(busId,curPage, pageSize, expired, cardStatus, couponName, useType );
+	    if ( busId == null ) {
+		busId = SessionUtils.getPidBusId( request );
+	    }
+	    Page page = duofenCardNewService.getCouponListByBusId(  curPage, pageSize,busId, expired, cardStatus, couponName, useType );
 	    return ServerResponse.createBySuccess( page );
 	} catch ( BusinessException e ) {
 	    LOG.error( "获取优惠券异常", e );
@@ -123,20 +126,19 @@ public class DuofenCardController extends AuthorizeOrLoginController {
 	}
     }
 
-
     @ApiOperation( value = "优惠券领取列表", notes = "优惠券领取列表" )
     @ResponseBody
     @RequestMapping( value = "/getReceiveCouponListById", method = RequestMethod.GET )
-    public ServerResponse getReceiveCouponListById( HttpServletRequest request, HttpServletResponse response,@RequestParam  Integer curPage,@RequestParam  Integer pageSize,@RequestParam Integer couponId,String searchContent) {
-	try {
-	    Page page = duofenCardNewService.getReceiveCouponListById(curPage,pageSize,couponId,searchContent);
+    public ServerResponse getReceiveCouponListById( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer curPage, @RequestParam Integer pageSize,
+		    @RequestParam Integer couponId, String searchContent ) {
+        try {
+	    Page page = duofenCardNewService.getReceiveCouponListById( curPage, pageSize, couponId, searchContent );
 	    return ServerResponse.createBySuccess( page );
-	}  catch ( BusinessException e ) {
+	} catch ( BusinessException e ) {
 	    LOG.error( "获取领取列表异常", e );
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
-
 
     @ApiOperation( value = "删除核销人员", notes = "删除核销人员" )
     @ResponseBody
@@ -146,7 +148,6 @@ public class DuofenCardController extends AuthorizeOrLoginController {
 	return ServerResponse.createBySuccess();
     }
 
-
     @ApiOperation( value = "核销人员列表", notes = "核销人员列表" )
     @ResponseBody
     @RequestMapping( value = "/authorization/getAuthorizationUser", method = RequestMethod.GET )
@@ -155,7 +156,6 @@ public class DuofenCardController extends AuthorizeOrLoginController {
 	Page page = authorizationService.getAuthorizationUser( curPage, pageSize, busId );
 	return ServerResponse.createBySuccess( page );
     }
-
 
     @ApiOperation( value = "增加核销用户", notes = "增加核销用户" )
     @ResponseBody
@@ -187,15 +187,11 @@ public class DuofenCardController extends AuthorizeOrLoginController {
 	}
     }
 
-
     @ApiOperation( value = "生成二维码", notes = "生成二维码" )
     @ResponseBody
     @RequestMapping( value = "/qrCode", method = RequestMethod.GET )
     public void qrCode( HttpServletRequest request, HttpServletResponse response, String content, Integer width, Integer height ) {
 	QRcodeKit.buildQRcode( content, width, height, response );
     }
-
-
-
 
 }

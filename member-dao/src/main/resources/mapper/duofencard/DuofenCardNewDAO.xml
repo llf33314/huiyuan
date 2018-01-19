@@ -35,14 +35,14 @@
 		<result column="cardStatus" property="cardStatus" />
 		<result column="createBusId" property="createBusId"/>
 		<result column="createDate" property="createDate" />
-		<result column="pass_time" property="passTime" />
+		<result column="passTime" property="passTime" />
 		<result column="isSendMsg" property="isSendMsg" />
 		<result column="areaCode" property="areaCode" />
 		<result column="phone" property="phone" />
 		<result column="isOwnUse" property="isOwnUse" />
 		<result column="image" property="image" />
 		<result column="timeType" property="timeType" />
-		<result column="examine_id" property="examineId" />
+		<result column="examineId" property="examineId" />
 		<result column="addUser" property="addUser" />
 	</resultMap>
 
@@ -57,8 +57,8 @@
            servicePhone AS servicePhone, canShare AS canShare, canGiveFriend AS canGiveFriend, summary,
            iconUrlList AS iconUrlList, textImageList AS textImageList, cardStatus AS cardStatus,
            createBusId,
-            createDate AS createDate, pass_time, isSendMsg AS isSendMsg, areaCode AS areaCode, phone,
-            isOwnUse AS isOwnUse, image, timeType AS timeType, examine_id, addUser AS addUser
+            createDate AS createDate, passTime, isSendMsg AS isSendMsg, areaCode AS areaCode, phone,
+            isOwnUse AS isOwnUse, image, timeType AS timeType, examineId, addUser AS addUser
     </sql>
 
 </mapper>

@@ -80,6 +80,8 @@ mybatis-plus:
   #自定义SQL注入器
   #sql-injector: com.baomidou.springboot.xxx
  configuration:
+  #map 结果集字段为null 也返回
+  call-setters-on-nulls: true
   map-underscore-to-camel-case: false
   cache-enabled: false
 

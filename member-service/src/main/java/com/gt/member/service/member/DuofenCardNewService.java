@@ -1,6 +1,8 @@
 package com.gt.member.service.member;
 
+import com.gt.duofencard.entity.DuofenCardNew;
 import com.gt.duofencard.entity.DuofenCardNewVO;
+import com.gt.member.base.BaseService;
 import com.gt.member.util.Page;
 
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.Map;
  *
  * Created by Administrator on 2018/1/16.
  */
-public interface DuofenCardNewService {
+public interface DuofenCardNewService extends BaseService<DuofenCardNew > {
 
     Integer addCoupon( DuofenCardNewVO coupon );
 

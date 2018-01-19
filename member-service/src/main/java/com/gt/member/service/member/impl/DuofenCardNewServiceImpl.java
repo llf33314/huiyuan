@@ -2,9 +2,12 @@ package com.gt.member.service.member.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.google.common.base.Objects;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.duofencard.entity.*;
+import com.gt.member.base.BaseServiceImpl;
 import com.gt.member.dao.MemberEntityDAO;
 import com.gt.member.dao.UserConsumeNewDAO;
 import com.gt.member.dao.duofencard.DuofenCardGetNewDAO;
@@ -23,10 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 多粉优惠券pc端
@@ -35,7 +35,7 @@ import java.util.Map;
  */
 @SuppressWarnings( "ALL" )
 @Service
-public class DuofenCardNewServiceImpl implements DuofenCardNewService {
+public class DuofenCardNewServiceImpl extends BaseServiceImpl<DuofenCardNewDAO,DuofenCardNew > implements DuofenCardNewService {
     private static final Logger LOG = Logger.getLogger( DuofenCardNewServiceImpl.class );
 
     @Autowired
@@ -54,7 +54,7 @@ public class DuofenCardNewServiceImpl implements DuofenCardNewService {
     public Integer addCoupon( DuofenCardNewVO coupon ) throws BusinessException {
 	try {
 	    coupon.setCreateDate( new Date() );
-	    Integer cardId = cardMapper.insert( coupon );
+	    Integer cardId = baseMapper.insert( coupon );
 
 	    coupon.setCardId( cardId );
 
@@ -80,7 +80,7 @@ public class DuofenCardNewServiceImpl implements DuofenCardNewService {
 	    BeanUtils.copyProperties( cardTime, coupon );
 	    BeanUtils.copyProperties( cardPublish, coupon );
 
-	    cardMapper.updateById( coupon );
+	    baseMapper.updateById( coupon );
 	    cardTimeMapper.update( cardTime, new EntityWrapper< DuofenCardTime >().eq( "cardId", coupon.getCardId() ) );
 	    cardPublishMapper.update( cardPublish, new EntityWrapper< DuofenCardPublish >().eq( "cardId", coupon.getCardId() ) );
 	    return 1;
@@ -92,19 +92,41 @@ public class DuofenCardNewServiceImpl implements DuofenCardNewService {
 
     @Override
     public Page getReceiveCouponListById( Integer curPage, Integer pageSize, Integer couponId, String searchContent ) {
+
 	try {
-	    Wrapper< DuofenCardGetNew > couponReceiveWrapper = new EntityWrapper< DuofenCardGetNew >();
-	    couponReceiveWrapper.eq( "couponId", couponId );
-	    Integer recordCount = cardGetMapper.selectCount( couponReceiveWrapper );
+	    HashMap<String, Object> condition = new HashMap<String, Object>();
+	    condition.put( "cardId",couponId );
+
+	    if ( searchContent != null ) {
+		condition.put( "searchContent",searchContent );
+	    }
+
+	    Integer recordCount = cardGetMapper.selectReceiveCouponCount( condition );
+
+	    com.baomidou.mybatisplus.plugins.Page< DuofenCardGetNew > pagination = new com.baomidou.mybatisplus.plugins.Page< DuofenCardGetNew >( curPage, pageSize );
+	    List< Map< String,Object > > listItem = cardGetMapper.getReceiveCouponList(pagination,condition );
+
+//	    else {
+//		recordCount = cardGetMapper.selectCount( couponReceiveWrapper );
+//		listItem = cardGetMapper
+//				.selectMapsPage( new com.baomidou.mybatisplus.plugins.Page< DuofenCardGetNew >( curPage, pageSize ), couponReceiveWrapper );
+//
+//	    }
+
+
 	    if ( recordCount == 0 ) {
 		return new Page();
 	    }
-	    List< Map< String,Object > > listItem = cardGetMapper
-			    .selectMapsPage( new com.baomidou.mybatisplus.plugins.Page< DuofenCardGetNew >( curPage, pageSize ), couponReceiveWrapper );
+
+
+
+
 	    for ( Map< String,Object > couponReceiveMap : listItem ) {
+
 		MemberEntity member = MemberEntityMapper.selectById( (Serializable) couponReceiveMap.get( "memberId" ) );
 		couponReceiveMap.put( "phone", member.getPhone() );
 		couponReceiveMap.put( "nickname", member.getNickname() );
+
 		if ( Objects.equal( 1, couponReceiveMap.get( "isbuy" ) ) ) {
 		    Wrapper< UserConsumeNew > consumeCondition = new EntityWrapper< UserConsumeNew >();
 		    consumeCondition.eq( "busId", couponReceiveMap.get( "busId" ) );
@@ -112,17 +134,20 @@ public class DuofenCardNewServiceImpl implements DuofenCardNewService {
 		    consumeCondition.eq( "ucType", 201 );
 		    consumeCondition.eq( "cardType", 2 );
 		    consumeCondition.eq( "dvId", couponId );
+
 		    List< Map< String,Object > > consumeItem = userConsumeMapper.selectMaps( consumeCondition );
 		    if ( consumeItem.size() > 0 ) {
 			couponReceiveMap.putAll( consumeItem.get( 0 ) );
 		    }
 		}
 	    }
+
 	    Page page = new Page( curPage, pageSize, recordCount, "" );
 	    page.setSubList( listItem );
 	    return page;
 	} catch ( Exception e ) {
-	    LOG.error( "优惠券领取列表查询异常" );
+	    e.printStackTrace();
+		    LOG.error( "优惠券领取列表查询异常" );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券领取列表查询异常" );
 	}
     }
@@ -130,7 +155,7 @@ public class DuofenCardNewServiceImpl implements DuofenCardNewService {
     public List< Map< String,Object > > selectById( Integer id ) {
 
 	try {
-	    List< Map< String,Object > > couponMapItem = cardMapper.selectMaps( new EntityWrapper< DuofenCardNew >().eq( "id", id ) );
+	    List< Map< String,Object > > couponMapItem = baseMapper.selectMaps( new EntityWrapper< DuofenCardNew >().eq( "id", id ) );
 	    Map< String,Object > couponMap = couponMapItem.get( 0 );
 
 	    Integer cardId = (Integer) couponMap.get( "cardId" );
@@ -172,13 +197,13 @@ public class DuofenCardNewServiceImpl implements DuofenCardNewService {
 	    couponCondition.eq( "useType", useType );
 	}
 
-	Integer recordCount = cardMapper.selectCount( couponCondition );
+	Integer recordCount = baseMapper.selectCount( couponCondition );
 
 	if ( recordCount == 0 ) {
 	    return new Page();
 	}
 
-	List< Map< String,Object > > listItem = cardMapper.selectMapsPage( new com.baomidou.mybatisplus.plugins.Page< DuofenCardNew >( curPage, pageSize ), couponCondition );
+	List< Map< String,Object > > listItem = baseMapper.selectMapsPage( new com.baomidou.mybatisplus.plugins.Page< DuofenCardNew >( curPage, pageSize ), couponCondition );
 
 	try {
 	    Iterator< Map< String,Object > > it = listItem.iterator();
@@ -216,8 +241,9 @@ public class DuofenCardNewServiceImpl implements DuofenCardNewService {
 
 		//时间设置参数
 		List< Map< String,Object > > cardTimeItem = cardTimeMapper.selectMaps( new EntityWrapper< DuofenCardTime >().eq( "cardId", cardId ) );
-
+                if(cardPublishItem.size()>0)
 		couponMap.putAll( cardPublishItem.get( 0 ) );
+		if(cardTimeItem.size()>0)
 		couponMap.putAll( cardTimeItem.get( 0 ) );
 	    }
 

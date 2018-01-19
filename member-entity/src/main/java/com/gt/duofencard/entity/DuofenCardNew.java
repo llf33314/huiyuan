@@ -174,6 +174,7 @@ public class DuofenCardNew extends Model<DuofenCardNew> {
     /**
      * 审核通过时间
      */
+    	@TableField("passTime")
 	private Date passTime;
     /**
      * 是否短信通知 0不通知 1通知
@@ -206,6 +207,7 @@ public class DuofenCardNew extends Model<DuofenCardNew> {
     /**
      * t_duofen_card_examine中的id 0代表审核通过或者还未送审
      */
+    	@TableField("examineId")
 	private Integer examineId;
     /**
      * 是否允许叠加使用 0不允许 1允许
