@@ -2,28 +2,28 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gt.member.dao.duofencard.DuofenCardGetNewDAO">
 
-    <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.gt.duofencard.entity.DuofenCardGetNew">
-        <id column="id" property="id"/>
-        <result column="cardId" property="cardId"/>
-        <result column="getType" property="getType"/>
-        <result column="code" property="code"/>
-        <result column="state" property="state"/>
-        <result column="getDate" property="getDate"/>
-        <result column="memberId" property="memberId"/>
-        <result column="startTime" property="startTime"/>
-        <result column="endTime" property="endTime"/>
-        <result column="busId" property="busId"/>
-        <result column="storeId" property="storeId"/>
-        <result column="operateBusId" property="operateBusId"/>
-        <result column="operateDate" property="operateDate"/>
-        <result column="recommendId" property="recommendId"/>
-    </resultMap>
-
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.duofencard.entity.DuofenCardGetNew">
+		<id column="id" property="id" />
+		<result column="cardId" property="cardId" />
+		<result column="getType" property="getType" />
+		<result column="isbuy" property="isbuy" />
+		<result column="code" property="code" />
+		<result column="state" property="state" />
+		<result column="getDate" property="getDate" />
+		<result column="memberId" property="memberId" />
+		<result column="startTime" property="startTime" />
+		<result column="endTime" property="endTime" />
+		<result column="busId" property="busId" />
+		<result column="storeId" property="storeId" />
+		<result column="operateBusId" property="operateBusId" />
+		<result column="operateDate" property="operateDate" />
+		<result column="recommendId" property="recommendId" />
+	</resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, cardId AS cardId, getType AS getType, code, state, getDate AS getDate, memberId AS memberId, startTime AS startTime, endTime AS endTime, busId AS busId, storeId AS storeId, operateBusId AS operateBusId, operateDate AS operateDate, recommendId AS recommendId
+        id, cardId AS cardId, getType AS getType,isbuy, code, state, getDate AS getDate, memberId AS memberId, startTime AS startTime, endTime AS endTime, busId AS busId, storeId AS storeId, operateBusId AS operateBusId, operateDate AS operateDate, recommendId AS recommendId
     </sql>
     <select id="selectReceiveCouponCount"  parameterType="hashmap" resultType="java.lang.Integer">
         select count(1) from t_duofen_card_get_new c INNER JOIN t_wx_bus_member m on c.memberId=m.id
@@ -51,5 +51,13 @@
         </where>
     </select>
 
+
+	<select id="countDuofenCardGetByCardId" resultType="java.lang.Integer">
+		select count(*) from t_duofen_card_get_new where memberId=#{memberId} and cardId=#{cardId}
+		<if test="date!=null">
+			and getDate>=#{date}
+		</if>
+
+	</select>
 
 </mapper>

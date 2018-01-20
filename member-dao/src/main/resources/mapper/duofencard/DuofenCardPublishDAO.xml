@@ -29,9 +29,10 @@
     </sql>
 
 	<select id="findPublishDuofenCard" resultType="Map">
-		select id as publishId, cardId AS cardId, number, isBuy AS isBuy, buyMoney AS buyMoney, giftBuyMoney AS giftBuyMoney
-		 isReceiveNum AS isReceiveNum, limitType AS limitType, limitNum AS limitNum,
-		  isRecommend AS isRecommend, jifen, fenbi, flow, money,c.* from t_duofen_card_publish cp
+		select cp.id as publishId, cp.cardId AS cardId, cp.number, cp.isBuy AS isBuy, cp.buyMoney AS buyMoney,
+		 cp.giftBuyMoney AS giftBuyMoney,
+		 cp.isReceiveNum AS isReceiveNum, cp.limitType AS limitType, cp.limitNum AS limitNum,
+		  cp.isRecommend AS isRecommend, cp.jifen, cp.fenbi, cp.flow, cp.money,c.* from t_duofen_card_publish cp
 		 inner join t_duofen_card_new c on cp.cardId=c.id
 		 where c.busId=#{busId} and cardStatus=2
 		 limit #{page},#{pageSize}
