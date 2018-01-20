@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
+
 /**
  * <p>
  * 多粉优惠券VO
@@ -36,7 +38,20 @@ public class DuofenCardNewVO extends DuofenCardNew {
      * 购买金额
      */
     @TableField("buyMoney")
-    private String buyMoney;
+    private Double buyMoney;
+
+    @TableField("giftBuyMoney")
+    private String giftBuyMoney;
+
+    @TableField("isDiscount")
+    private Integer isDiscount;
+
+    @TableField("isFenbi")
+    private Integer isFenbi;
+
+    @TableField("isJifen")
+    private Integer isJifen;
+
     /**
      * 领取数量限制设置 0不限制 1限制
      */
@@ -73,7 +88,6 @@ public class DuofenCardNewVO extends DuofenCardNew {
      * 赠送金额
      */
     private Double money;
-
     /**
      * 一周不可用时间
      */

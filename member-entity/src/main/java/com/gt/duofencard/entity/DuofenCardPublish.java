@@ -26,8 +26,8 @@ public class DuofenCardPublish extends Model<DuofenCardPublish> {
 
     private static final long serialVersionUID = 1L;
 
-	@TableId(value="id", type= IdType.AUTO)
-	private Integer id;
+	@TableId(value="publishId", type= IdType.AUTO)
+	private Integer publishId;
     /**
      * 卡券id
      */
@@ -100,13 +100,13 @@ public class DuofenCardPublish extends Model<DuofenCardPublish> {
 
 	@Override
 	protected Serializable pkVal() {
-		return this.id;
+		return this.publishId;
 	}
 
 	@Override
 	public String toString() {
 		return "DuofenCardPublish{" +
-			"id=" + id +
+			"publishId=" + publishId +
 			", cardId=" + cardId +
 			", number=" + number +
 			", isBuy=" + isBuy +

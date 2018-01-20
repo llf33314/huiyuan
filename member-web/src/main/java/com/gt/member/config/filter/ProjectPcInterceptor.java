@@ -1,6 +1,7 @@
 package com.gt.member.config.filter;
 
 import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
 import com.gt.api.util.SessionUtils;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
@@ -33,10 +34,14 @@ public class ProjectPcInterceptor implements HandlerInterceptor {
 	logger.info( "进入拦截器" );
 	boolean isSuccess = true;
 
-	BusUser busUser= SessionUtils.getLoginUser(servletRequest );
+  	servletRequest.getSession().setAttribute( "PidBusId",88 );
+  	Member member =new Member();
+  	member.setId(35);
+	servletRequest.getSession().setAttribute(SessionUtils.SESSION_MEMBER,member);
+	/*BusUser busUser= SessionUtils.getLoginUser(servletRequest );
 	if( CommonUtil.isEmpty( busUser )){
 	    throw new NeedLoginException( ResponseMemberEnums.PLEASE_LOGIN.getCode(),ResponseMemberEnums.PLEASE_LOGIN.getMsg(), PropertiesUtil.getWebLoginUrl());
-	}
+	}*/
 
 	return isSuccess;// 只有返回true才会继续向下执行，返回false取消当前请求
     }

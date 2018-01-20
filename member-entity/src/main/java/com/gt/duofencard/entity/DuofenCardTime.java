@@ -26,8 +26,8 @@ public class DuofenCardTime extends Model<DuofenCardTime> {
 
     private static final long serialVersionUID = 1L;
 
-	@TableId(value="id", type= IdType.AUTO)
-	private Integer id;
+	@TableId(value="timeId", type= IdType.AUTO)
+	private Integer timeId;
 
     	@TableField("cardId")
 	private Integer cardId;
@@ -53,13 +53,13 @@ public class DuofenCardTime extends Model<DuofenCardTime> {
 
 	@Override
 	protected Serializable pkVal() {
-		return this.id;
+		return this.timeId;
 	}
 
 	@Override
 	public String toString() {
 		return "DuofenCardTime{" +
-			"id=" + id +
+			"timeId=" + timeId +
 			", week=" + week +
 			", holidays=" + holidays +
 			", otherTime=" + otherTime +

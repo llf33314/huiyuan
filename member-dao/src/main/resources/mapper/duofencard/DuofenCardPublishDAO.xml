@@ -4,7 +4,7 @@
 
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.gt.duofencard.entity.DuofenCardPublish">
-		<id column="id" property="id" />
+		<id column="publishId" property="publishId" />
 		<result column="cardId" property="cardId" />
 		<result column="number" property="number" />
 		<result column="isBuy" property="isBuy" />
@@ -25,11 +25,11 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, cardId AS cardId,isDiscount,isFenbi,isJifen, number, isBuy AS isBuy, buyMoney AS buyMoney, giftBuyMoney as giftBuyMoney,isReceiveNum AS isReceiveNum, limitType AS limitType, limitNum AS limitNum, isRecommend AS isRecommend, jifen, fenbi, flow, money
+        publishId, cardId AS cardId,isDiscount,isFenbi,isJifen, number, isBuy AS isBuy, buyMoney AS buyMoney, giftBuyMoney as giftBuyMoney,isReceiveNum AS isReceiveNum, limitType AS limitType, limitNum AS limitNum, isRecommend AS isRecommend, jifen, fenbi, flow, money
     </sql>
 
 	<select id="findPublishDuofenCard" resultType="Map">
-		select cp.id as publishId, cp.cardId AS cardId, cp.number, cp.isBuy AS isBuy, cp.buyMoney AS buyMoney,
+		select cp.publishId, cp.cardId AS cardId, cp.number, cp.isBuy AS isBuy, cp.buyMoney AS buyMoney,
 		 cp.giftBuyMoney AS giftBuyMoney,
 		 cp.isReceiveNum AS isReceiveNum, cp.limitType AS limitType, cp.limitNum AS limitNum,
 		  cp.isRecommend AS isRecommend, cp.jifen, cp.fenbi, cp.flow, cp.money,c.* from t_duofen_card_publish cp

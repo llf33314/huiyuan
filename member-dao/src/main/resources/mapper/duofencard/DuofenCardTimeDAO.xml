@@ -4,7 +4,7 @@
 
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.gt.duofencard.entity.DuofenCardTime">
-		<id column="id" property="id" />
+		<id column="timeId" property="timeId" />
 		<result column="cardId" property="cardId" />
 		<result column="week" property="week" />
 		<result column="holidays" property="holidays" />
@@ -14,7 +14,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id,cardId, week, holidays, otherTime AS otherTime, otherTimeSet AS otherTimeSet
+        timeId,cardId, week, holidays, otherTime AS otherTime, otherTimeSet AS otherTimeSet
     </sql>
 
 	<select id="findDuofenCardTimeByCardId" resultMap="BaseResultMap">

@@ -17,7 +17,7 @@ public interface DuofenCardNewService extends BaseService<DuofenCardNew > {
 
     Integer addCoupon( DuofenCardNewVO coupon );
 
-    Page getCouponListByBusId( Integer curPage, Integer pageSize, Integer busId, Integer expired, Integer cardStatus, String title, Integer useType );
+    Page getCouponListByBusId( Integer curPage, Integer pageSize, Integer busId, Integer cardStatus, String title, Integer useType );
 
     Integer updateCouponById( DuofenCardNewVO coupon );
 

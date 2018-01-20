@@ -2,8 +2,6 @@ package com.gt.member.service.member.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.google.common.base.Objects;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.duofencard.entity.*;
@@ -20,8 +18,8 @@ import com.gt.member.exception.BusinessException;
 import com.gt.member.service.member.DuofenCardNewService;
 import com.gt.member.util.DateTimeKit;
 import com.gt.member.util.Page;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,19 +52,23 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl<DuofenCardNewDAO,D
     public Integer addCoupon( DuofenCardNewVO coupon ) throws BusinessException {
 	try {
 	    coupon.setCreateDate( new Date() );
-	    Integer cardId = baseMapper.insert( coupon );
 
-	    coupon.setCardId( cardId );
+	    DuofenCardNew cardNew =new DuofenCardNew();
+	    BeanUtils.copyProperties( coupon,cardNew );
+	    Integer success = baseMapper.insert(cardNew);
+
+	    coupon.setCardId( cardNew.getId() );
+
 
 	    DuofenCardTime cardTime = new DuofenCardTime();
-	    DuofenCardPublish cardPublish = new DuofenCardPublish();
-
-	    BeanUtils.copyProperties( cardTime, coupon );
-	    BeanUtils.copyProperties( cardPublish, coupon );
-
+	    BeanUtils.copyProperties( coupon,cardTime);
 	    cardTimeMapper.insert( cardTime );
+
+
+	    DuofenCardPublish cardPublish = new DuofenCardPublish();
+	    BeanUtils.copyProperties( coupon,cardPublish );
 	    cardPublishMapper.insert( cardPublish );
-	    return cardId;
+	    return success;
 	} catch ( Exception e ) {
 	    LOG.error( "添加优惠失败", e );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "添加优惠失败" );
@@ -75,12 +77,19 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl<DuofenCardNewDAO,D
 
     public Integer updateCouponById( DuofenCardNewVO coupon ) {
 	try {
+
+	    DuofenCardNew cardNew =new DuofenCardNew();
 	    DuofenCardTime cardTime = new DuofenCardTime();
 	    DuofenCardPublish cardPublish = new DuofenCardPublish();
-	    BeanUtils.copyProperties( cardTime, coupon );
-	    BeanUtils.copyProperties( cardPublish, coupon );
 
-	    baseMapper.updateById( coupon );
+
+
+	    BeanUtils.copyProperties(  coupon,cardNew );
+	    coupon.setCardId( coupon.getId() );
+	    BeanUtils.copyProperties(  coupon,cardTime );
+	    BeanUtils.copyProperties(  coupon,cardPublish);
+
+	    baseMapper.updateById( cardNew );
 	    cardTimeMapper.update( cardTime, new EntityWrapper< DuofenCardTime >().eq( "cardId", coupon.getCardId() ) );
 	    cardPublishMapper.update( cardPublish, new EntityWrapper< DuofenCardPublish >().eq( "cardId", coupon.getCardId() ) );
 	    return 1;
@@ -183,7 +192,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl<DuofenCardNewDAO,D
     }
 
     @Override
-    public Page getCouponListByBusId( Integer curPage, Integer pageSize, Integer busId, Integer expired, Integer cardStatus, String title, Integer useType ) {
+    public Page getCouponListByBusId( Integer curPage, Integer pageSize, Integer busId, Integer cardStatus, String title, Integer useType ) {
 
 	EntityWrapper< DuofenCardNew > couponCondition = new EntityWrapper< DuofenCardNew >();
 	couponCondition.eq( "busId", busId );
@@ -209,28 +218,18 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl<DuofenCardNewDAO,D
 	    Iterator< Map< String,Object > > it = listItem.iterator();
 	    while ( it.hasNext() ) {
 		Map< String,Object > couponMap = it.next();
-		boolean expireFlag = false;
-		if ( couponMap.get( "beginTimestamp" ) != null && couponMap.get( "endTimestamp" ) != null ) {
-		    boolean isDateValid = DateTimeKit
-				    .isValidDate( couponMap.get( "beginTimestamp" ).toString(), couponMap.get( "endTimestamp" ).toString(), DateTimeKit.DEFAULT_DATE_FORMAT );
-		    if ( !isDateValid ) { //优惠券已经过期
-			expireFlag = true;
-		    }
-		}
 
-		if ( expired != null ) {
-		    if ( expireFlag && expired == 2 ) {  //只查询未过期的
-			it.remove();
-			break;
+		if ( cardStatus != null && couponMap.get( "beginTimestamp" ) != null ) {
+		    if ( cardStatus!=4 && couponMap.get( "cardStatus" ).equals( 4 ) ) {  //只查询未过期的
+			    it.remove();
+			    break;
 		    }
-		    if ( ( !expireFlag && expired == 1 ) && couponMap.get( "startDate" ) != null ) {  //只查询已经过期的   领取后有效不做判断
+		    if ( ! couponMap.get( "cardStatus" ).equals( 4 ) &&  cardStatus==4   ) {  //只查询已经过期的
 			it.remove();
 			break;
 		    }
 		}
-		couponMap.put( "cardStatus", ( expireFlag == true ? 99 : null ) );  //99为已过期标识
-
-		Integer cardId = (Integer) couponMap.get( "cardId" );
+		Integer cardId = (Integer) couponMap.get( "id" );
 
 		//领取数量
 		Integer receiveQuantity = cardGetMapper.selectCount( new EntityWrapper< DuofenCardGetNew >().eq( "cardId", cardId ) );

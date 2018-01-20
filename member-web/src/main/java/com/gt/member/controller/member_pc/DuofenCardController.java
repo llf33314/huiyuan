@@ -7,7 +7,6 @@ import com.gt.api.util.SessionUtils;
 import com.gt.duofencard.entity.DuofenCardNewVO;
 import com.gt.member.controller.RemoteAuthori.AuthorizeOrLoginController;
 import com.gt.member.dto.ServerResponse;
-import com.gt.member.entity.DuofenCard;
 import com.gt.member.entity.DuofencardAuthorization;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
@@ -20,7 +19,6 @@ import com.gt.member.util.QRcodeKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +41,7 @@ import java.util.Map;
 @Api( value = "DuofenCardController", description = "多粉优惠券" )
 @Controller
 @CrossOrigin
-@RequestMapping( "/memberPc/duofenCouponr" )
+@RequestMapping( "/memberPc/duofenCoupon" )
 @Slf4j
 public class DuofenCardController extends AuthorizeOrLoginController {
     private static final Logger LOG = LoggerFactory.getLogger( DuofenCardController.class );
@@ -60,10 +58,12 @@ public class DuofenCardController extends AuthorizeOrLoginController {
     @ApiOperation( value = "新增优惠券", notes = "新增优惠券" )
     @ResponseBody
     @RequestMapping( value = "/addCoupon", method = RequestMethod.POST )
-    public ServerResponse addCoupon( HttpServletRequest request, HttpServletResponse response, @RequestParam DuofenCardNewVO coupon ) {
+    public ServerResponse addCoupon( HttpServletRequest request, HttpServletResponse response, @RequestBody DuofenCardNewVO coupon ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    Member member = SessionUtils.getLoginMember( request, busId );
+	    //Member member = SessionUtils.getLoginMember( request, busId );
+	    Member member =new Member();
+	    member.setId(35);
 
 	    coupon.setBusId( busId );
 	    coupon.setCreateBusId( member.getId() );
@@ -73,7 +73,8 @@ public class DuofenCardController extends AuthorizeOrLoginController {
 	    if ( auditFlag ) {
 		coupon.setCardStatus( 2 );
 	    }
-
+            //使用场景通用券默认0
+	    coupon.setUseScene( 0 );
 	    duofenCardNewService.addCoupon( coupon );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
@@ -88,7 +89,7 @@ public class DuofenCardController extends AuthorizeOrLoginController {
     public ServerResponse updateCouponById( HttpServletRequest request, HttpServletResponse response, @RequestBody DuofenCardNewVO coupon ) {
 	try {
 	    duofenCardNewService.updateCouponById( coupon );
-	    return ServerResponse.createBySuccess( coupon );
+	    return ServerResponse.createBySuccess(  );
 	} catch ( BusinessException e ) {
 	    LOG.error( "优惠券修改异常", e );
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -112,13 +113,12 @@ public class DuofenCardController extends AuthorizeOrLoginController {
     @ApiOperation( value = "获取优惠券列表", notes = "获取优惠券列表" )
     @ResponseBody
     @RequestMapping( value = "/getCouponListByBusId", method = RequestMethod.GET )
-    public ServerResponse getCouponListByBusId( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer curPage, @RequestParam Integer pageSize,
-		    Integer expired, Integer cardStatus, String couponName, Integer useType, Integer busId ) {
+    public ServerResponse getCouponListByBusId( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer curPage, @RequestParam Integer pageSize,Integer cardStatus, String couponName, Integer useType, Integer busId ) {
 	try {
 	    if ( busId == null ) {
 		busId = SessionUtils.getPidBusId( request );
 	    }
-	    Page page = duofenCardNewService.getCouponListByBusId(  curPage, pageSize,busId, expired, cardStatus, couponName, useType );
+	    Page page = duofenCardNewService.getCouponListByBusId(  curPage, pageSize,busId, cardStatus, couponName, useType );
 	    return ServerResponse.createBySuccess( page );
 	} catch ( BusinessException e ) {
 	    LOG.error( "获取优惠券异常", e );
