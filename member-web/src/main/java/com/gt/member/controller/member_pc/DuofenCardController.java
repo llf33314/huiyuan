@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.gt.api.bean.session.Member;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.SessionUtils;
-import com.gt.duofencard.entity.DuofenCardNewVO;
+import com.gt.bean.vo.DuofenCardNewVO;
 import com.gt.member.controller.RemoteAuthori.AuthorizeOrLoginController;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.entity.DuofencardAuthorization;
@@ -73,8 +73,7 @@ public class DuofenCardController extends AuthorizeOrLoginController {
 	    if ( auditFlag ) {
 		coupon.setCardStatus( 2 );
 	    }
-            //使用场景通用券默认0
-	    coupon.setUseScene( 0 );
+
 	    duofenCardNewService.addCoupon( coupon );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {

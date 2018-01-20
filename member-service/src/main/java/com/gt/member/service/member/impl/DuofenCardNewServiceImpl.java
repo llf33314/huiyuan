@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.google.common.base.Objects;
 import com.gt.api.enums.ResponseEnums;
+import com.gt.bean.vo.DuofenCardNewVO;
 import com.gt.duofencard.entity.*;
 import com.gt.member.base.BaseServiceImpl;
 import com.gt.member.dao.MemberEntityDAO;
@@ -16,7 +17,6 @@ import com.gt.member.entity.MemberEntity;
 import com.gt.member.entity.UserConsumeNew;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.member.DuofenCardNewService;
-import com.gt.member.util.DateTimeKit;
 import com.gt.member.util.Page;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -52,6 +52,8 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl<DuofenCardNewDAO,D
     public Integer addCoupon( DuofenCardNewVO coupon ) throws BusinessException {
 	try {
 	    coupon.setCreateDate( new Date() );
+	    //使用场景通用券默认0
+	    coupon.setUseScene( 0 );
 
 	    DuofenCardNew cardNew =new DuofenCardNew();
 	    BeanUtils.copyProperties( coupon,cardNew );
@@ -90,8 +92,8 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl<DuofenCardNewDAO,D
 	    BeanUtils.copyProperties(  coupon,cardPublish);
 
 	    baseMapper.updateById( cardNew );
-	    cardTimeMapper.update( cardTime, new EntityWrapper< DuofenCardTime >().eq( "cardId", coupon.getCardId() ) );
-	    cardPublishMapper.update( cardPublish, new EntityWrapper< DuofenCardPublish >().eq( "cardId", coupon.getCardId() ) );
+	    cardTimeMapper.updateById( cardTime);
+	    cardPublishMapper.updateById( cardPublish );
 	    return 1;
 	} catch ( Exception e ) {
 	    LOG.error( "更新优惠券异常", e );

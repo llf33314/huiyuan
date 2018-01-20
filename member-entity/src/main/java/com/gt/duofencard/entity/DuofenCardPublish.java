@@ -81,6 +81,11 @@ public class DuofenCardPublish extends Model<DuofenCardPublish> {
 	@TableField("isRecommend")
 	private Integer isRecommend;
     /**
+     * 停用    0=启用  1=停用 ',
+     */
+	@TableField("forbidden")
+	private Integer forbidden;
+    /**
      * 赠送积分
      */
 	private Integer jifen;

@@ -1,7 +1,7 @@
 package com.gt.member.service.member;
 
+import com.gt.bean.vo.DuofenCardNewVO;
 import com.gt.duofencard.entity.DuofenCardNew;
-import com.gt.duofencard.entity.DuofenCardNewVO;
 import com.gt.member.base.BaseService;
 import com.gt.member.util.Page;
 

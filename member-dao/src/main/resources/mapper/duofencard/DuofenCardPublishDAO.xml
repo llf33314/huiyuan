@@ -14,6 +14,7 @@
 		<result column="isFenbi" property="isFenbi" />
 		<result column="isJifen" property="isJifen" />
 		<result column="isReceiveNum" property="isReceiveNum" />
+		<result column="forbidden" property="forbidden" />
 		<result column="limitType" property="limitType" />
 		<result column="limitNum" property="limitNum" />
 		<result column="isRecommend" property="isRecommend" />
@@ -25,7 +26,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        publishId, cardId AS cardId,isDiscount,isFenbi,isJifen, number, isBuy AS isBuy, buyMoney AS buyMoney, giftBuyMoney as giftBuyMoney,isReceiveNum AS isReceiveNum, limitType AS limitType, limitNum AS limitNum, isRecommend AS isRecommend, jifen, fenbi, flow, money
+        publishId, cardId AS cardId,isDiscount,isFenbi,isJifen,forbidden, number, isBuy AS isBuy, buyMoney AS buyMoney, giftBuyMoney as giftBuyMoney,isReceiveNum AS isReceiveNum, limitType AS limitType, limitNum AS limitNum, isRecommend AS isRecommend, jifen, fenbi, flow, money
     </sql>
 
 	<select id="findPublishDuofenCard" resultType="Map">
