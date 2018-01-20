@@ -1,10 +1,12 @@
-package com.gt.duofencard.entity;
+package com.gt.bean.vo;
 
 import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.enums.IdType;
+import com.gt.duofencard.entity.DuofenCardNew;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
 
 /**
  * <p>
@@ -20,11 +22,32 @@ public class DuofenCardNewVO extends DuofenCardNew {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 卡券id
-     */
+    @TableId(value="timeId", type= IdType.AUTO)
+    private Integer timeId;
+
     @TableField("cardId")
     private Integer cardId;
+    /**
+     * 一周不可用时间
+     */
+    private String week;
+    /**
+     * 节假日不可用
+     */
+    private Integer holidays;
+    /**
+     * 其他时间端 0未设置 1已设置
+     */
+    @TableField("otherTime")
+    private Integer otherTime;
+    /**
+     * 其他时间设置
+     */
+    @TableField("otherTimeSet")
+    private String otherTimeSet;
+
+    @TableId(value="publishId", type= IdType.AUTO)
+    private Integer publishId;
     /**
      * 发行数量
      */
@@ -88,22 +111,4 @@ public class DuofenCardNewVO extends DuofenCardNew {
      * 赠送金额
      */
     private Double money;
-    /**
-     * 一周不可用时间
-     */
-    private String week;
-    /**
-     * 节假日不可用
-     */
-    private Integer holidays;
-    /**
-     * 其他时间端 0未设置 1已设置
-     */
-    @TableField("otherTime")
-    private Integer otherTime;
-    /**
-     * 其他时间设置
-     */
-    @TableField("otherTimeSet")
-    private String otherTimeSet;
 }

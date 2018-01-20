@@ -4,7 +4,7 @@
 
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.gt.member.entity.DuofenCardGet">
-		<id column="id" property="id" />
+		<id column="receiveId" property="receiveId" />
 		<result column="cardId" property="cardId" />
 		<result column="getType" property="getType" />
 		<result column="code" property="code" />
@@ -23,7 +23,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, cardId, getType, code, state, getDate,
+        receiveId, cardId, getType, code, state, getDate,
         cardReceiveId, memberId, publicId, startTime, endTime, friendMemberId, busId, storeId, recommendId
     </sql>
 

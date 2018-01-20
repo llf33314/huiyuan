@@ -25,8 +25,8 @@ public class DuofenCardGet extends Model<DuofenCardGet> {
 
     private static final long serialVersionUID = 1L;
 
-	@TableId(value="id", type= IdType.AUTO)
-	private Integer id;
+	@TableId(value="receiveId", type= IdType.AUTO)
+	private Integer receiveId;
     /**
      * 卡券id
      */
@@ -81,13 +81,13 @@ public class DuofenCardGet extends Model<DuofenCardGet> {
 
 	@Override
 	protected Serializable pkVal() {
-		return this.id;
+		return this.receiveId;
 	}
 
 	@Override
 	public String toString() {
 		return "DuofenCardGet{" +
-			"id=" + id +
+			"receiveId=" + receiveId +
 			", cardId=" + cardId +
 			", getType=" + getType +
 			", code=" + code +
