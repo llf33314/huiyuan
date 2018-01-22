@@ -9,6 +9,7 @@ import com.gt.member.exception.BusinessException;
 import com.gt.member.exception.NeedLoginException;
 import com.gt.member.exception.ResponseEntityException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -41,8 +42,14 @@ public class GlobalDefaultExceptionHandler {
 	modelAndView.setViewName( DEFAULT_ERROR_VIEW );
 	e.printStackTrace();
 	return modelAndView;
+    }
 
-
+    // 页面
+    // 请求参数异常  全局处理
+    @ResponseBody
+    @ExceptionHandler( value = MissingServletRequestParameterException.class )
+    public ServerResponse defaultErrorHandler( HttpServletRequest request, MissingServletRequestParameterException e ) {
+	return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), "请求参数有误" );
     }
 
     // 统一异常处理 Ajax请求
