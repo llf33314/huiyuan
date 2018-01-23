@@ -1,12 +1,9 @@
 package com.gt.member.service.common.membercard;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.gt.api.bean.session.BusUser;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.sign.SignHttpUtils;
-import com.gt.common.entity.AlipayUser;
-import com.gt.common.entity.BusUserEntity;
 import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.entityBo.MemberShopEntity;
 import com.gt.member.dao.*;
@@ -22,14 +19,12 @@ import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.DateTimeKit;
 import com.gt.member.util.PropertiesUtil;
-import net.sf.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -292,9 +287,9 @@ public class MemberCommonServiceImp implements MemberCommonService {
 		case 3:
 		    // 区间
 		    String dateStr = memberdate.getDateStr();
-		    List< Map< String,Object > > list = JSONArray.toList( JSONArray.fromObject( dateStr ), Map.class );
+		    List< Map> list = JSONArray.parseArray( dateStr,Map.class );
 		    Integer year = DateTimeKit.getYear( new Date() );
-		    for ( Map< String,Object > map : list ) {
+		    for ( Map map : list ) {
 			String time = CommonUtil.toString( map.get( "time" ) );
 			if ( time.length() == 1 ) {
 			    time = "0" + time;
@@ -1375,5 +1370,25 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    return null;
 	}
 	return null;
+    }
+
+
+
+    public Double getBuyMoney(String giftBuyMoney,Double buyMoney){
+	//未设置实价
+        if(CommonUtil.isEmpty( giftBuyMoney )){
+            return buyMoney;
+	}
+	List<Map> list=JSONArray.parseArray( giftBuyMoney,Map.class );
+        for(Map map:list){
+	    String startTime=CommonUtil.toString( map.get( "startTime" ) )+" 00:00:00";
+	    String endTime=CommonUtil.toString( map.get( "endTime" ) )+" 23:59:59";
+	    Date startDate=DateTimeKit.parseDate( startTime,"yyyy-MM-dd hh:mm:ss" );
+	    Date endDate=DateTimeKit.parseDate( endTime,"yyyy-MM-dd hh:mm:ss" );
+	    if(DateTimeKit.isBetween( startDate, endDate)){
+	        return CommonUtil.toDouble( map.get( "buyMoney" ) );
+	    }
+	}
+	return buyMoney;
     }
 }

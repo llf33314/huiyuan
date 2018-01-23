@@ -63,6 +63,9 @@ public enum ResponseMemberEnums {
     COUPONSE_NO_EXIST(6004,"卡券不存在"),
     COUPONSE_NO_GUOQI(6005,"卡券过期或已核销,不能执行卡券核销操作"),
     COUPONSE_NOT_USE_SHOP(6006,"卡券不能在当前门店使用"),
+    PLESASE_BUY(6007,"请购买优惠券"),
+    PLESASE_FREE(6008,"免费领取不需要购买"),
+    PLEASASE_BUY_URL(6009,"购买地址"),
 
 
 

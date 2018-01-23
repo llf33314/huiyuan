@@ -23,6 +23,7 @@ import com.gt.util.entity.param.pay.PayWay;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
+import com.gt.util.entity.param.wx.QrcodeCreateFinal;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
 import com.gt.util.entity.param.wxcard.CodeConsume;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
@@ -87,6 +88,8 @@ public class RequestServiceImpl implements RequestService {
     private final static String PAY_TYPE="/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/getPayWay.do";
 
     private final static String SELECTMAINSHOPBYBUSID="/8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/selectMainShopByBusId.do";
+
+    private final static String NEW_QRCODE_CREATE_FINAL="/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/newqrcodeCreateFinal.do";
 
     public String codeConsume( String cardId, String code, Integer busId ) throws Exception {
 	try {
@@ -418,6 +421,26 @@ public class RequestServiceImpl implements RequestService {
 //	    }
 	}
 	return list;
+    }
+
+
+    public String newqrcodeCreateFinal(Integer publicId){
+        LOG.error( "调用关注接口请求参数",publicId );
+	RequestUtils<QrcodeCreateFinal > requestUtils=new RequestUtils<>(  );
+	QrcodeCreateFinal qrcodeCreateFinal=new QrcodeCreateFinal();
+	qrcodeCreateFinal.setPublicId( publicId );
+	qrcodeCreateFinal.setModel( 14 );
+	requestUtils.setReqdata( qrcodeCreateFinal );
+	String url=PropertiesUtil.getWxmp_home()+NEW_QRCODE_CREATE_FINAL;
+	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+	JSONObject json = JSON.parseObject( returnData );
+	if ( "0".equals( json.getString( "code" ) ) ) {
+	    return  json.getString( "data" );
+	}else{
+	    LOG.error( "调用李逢喜关注接口异常"+returnData );
+	}
+
+	return null;
     }
 
 }

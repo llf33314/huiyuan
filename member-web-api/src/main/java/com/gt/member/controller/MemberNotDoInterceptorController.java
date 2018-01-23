@@ -1,5 +1,6 @@
 package com.gt.member.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.memberApi.MemberApiService;
@@ -104,4 +105,35 @@ public class MemberNotDoInterceptorController {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
+
+    @ApiOperation( value = "购买优惠券支付成功回调", notes = "购买会员卡支付成功回调" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "out_trade_no", value = "订单号", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "payType", value = "0:微信，1：支付宝2：多粉钱包", paramType = "query", required = true, dataType = "int" )
+
+
+    } )
+    @ResponseBody
+    @RequestMapping( value = "/buyDuofenCardPaySuccess", method = RequestMethod.POST )
+    public ServerResponse buyDuofenCardPaySuccess(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String,Object> params){
+	try {
+	    memberNodoInterceptorService.buyDuofenCardPaySuccess( params );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+    @ResponseBody
+    @RequestMapping( value = "/followCallBack", method = RequestMethod.POST )
+    public ServerResponse followCallBack(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String,Object> params){
+	try {
+	    LOG.error( "关注你来了"+ JSONObject.toJSONString( params ) );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
+
+
 }

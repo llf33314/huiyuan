@@ -218,4 +218,12 @@ public interface MemberCommonService {
     public boolean giveMemberGift(MemberEntity memberOld,
                     MemberParameter memberParameter1);
 
+    /**
+     * 判断粉丝当前购买金额
+     * @param giftBuyMoney
+     * @param buyMoney
+     * @return
+     */
+    public Double getBuyMoney(String giftBuyMoney,Double buyMoney);
+
 }

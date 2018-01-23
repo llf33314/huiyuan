@@ -2,11 +2,18 @@ package com.gt.member.service.memberApi;
 
 import com.alibaba.fastjson.JSON;
 import com.gt.api.enums.ResponseEnums;
+import com.gt.duofencard.entity.DuofenCardGetNew;
+import com.gt.duofencard.entity.DuofenCardNew;
+import com.gt.duofencard.entity.DuofenCardPublish;
 import com.gt.member.dao.*;
+import com.gt.member.dao.duofencard.DuofenCardGetNewDAO;
+import com.gt.member.dao.duofencard.DuofenCardNewDAO;
+import com.gt.member.dao.duofencard.DuofenCardPublishDAO;
 import com.gt.member.entity.*;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.membercard.MemberCommonService;
+import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.DateTimeKit;
@@ -54,6 +61,18 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 
     @Autowired
     private MemberGradetypeDAO memberGradetypeDAO;
+
+    @Autowired
+    private RequestService requestService;
+
+    @Autowired
+    private DuofenCardPublishDAO duofenCardPublishDAO;
+
+    @Autowired
+    private DuofenCardNewDAO duofenCardNewDAO;
+
+    @Autowired
+    private DuofenCardGetNewDAO duofenCardGetNewDAO;
 
     @Transactional
     public void changeFlow( Map< String,Object > params ) throws BusinessException {
@@ -416,5 +435,100 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 	} catch ( Exception e ) {
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
+    }
+
+
+
+    public void buyDuofenCardPaySuccess(Map<String,Object> params)throws  BusinessException{
+	String orderCode = CommonUtil.toString( params.get( "out_trade_no" ) );
+	LOG.error( "支付回调订单单号 ：" + orderCode );
+	UserConsumeNew uc = userConsumeNewDAO.findOneByCode( orderCode );
+	if ( CommonUtil.isEmpty( uc ) ) {
+	    LOG.error( "支付回调查询订单出现异常" );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+	// 修改订单
+	UserConsume newUc = new UserConsume();
+	newUc.setId( uc.getId() );
+	String duofenCardCode=CommonUtil.getDuofenCardCode( uc.getBusId() );
+	newUc.setDisCountdepict(duofenCardCode);
+
+	newUc.setPayStatus( 1 );
+	userConsumeNewDAO.updateById( uc );
+	UserConsumePay userConsumePay = new UserConsumePay();
+	userConsumePay.setPayMoney( uc.getDiscountAfterMoney() );
+	userConsumePay.setUcId( uc.getId() );
+	//支付类型(0:微信，1：支付宝2：多粉钱包),
+	Integer payType = CommonUtil.toInteger( params.get( "payType" ) );
+	if ( payType == 0 ) {
+	    userConsumePay.setPaymentType( 1 );
+	} else if ( payType == 1 ) {
+	    userConsumePay.setPaymentType( 0 );
+	} else if ( payType == 2 ) {
+	    userConsumePay.setPaymentType( 15 );
+	}
+	userConsumePayDAO.insert( userConsumePay );
+
+	//扣除粉币、积分
+	Boolean flag=false;
+	MemberEntity memberEntity=memberDAO.selectById( uc.getMemberId() );
+	MemberEntity memberEntity1=new MemberEntity();
+	//调用扣除积分和粉币
+	if ( uc.getFenbi() > 0 ) {
+	    Double fenbi = memberEntity.getFansCurrency() - uc.getFenbi();
+	    Integer code = requestService.getPowerApi( 1, memberEntity.getBusId(), uc.getFenbi().doubleValue(), "消费抵扣粉币" );
+	    if ( code == 0 ) {
+		memberEntity1.setFansCurrency( fenbi );
+		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, uc.getFenbi().doubleValue(), "消费粉币", memberEntity.getBusId(), fenbi,
+				uc.getOrderCode(), 0 );
+		flag = true;
+	    } else {
+	        LOG.error( "调用粉币接口异常" );
+		//throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(), "调用粉币接口异常" );
+	    }
+	}
+	//积分使用
+	if ( uc.getIntegral()>0) {
+	    Integer jifenBanlan = memberEntity.getIntegral() -uc.getIntegral();
+	    memberEntity1.setIntegral( jifenBanlan );
+	    memberCommonService
+			    .saveCardRecordOrderCodeNew( memberEntity.getId(), 2, uc.getIntegral().doubleValue(), "消费积分", memberEntity.getBusId(), jifenBanlan.doubleValue(),
+					    uc.getOrderCode(), 0 );
+	    flag = true;
+	}
+	if(flag){
+	    memberEntity1.setId( uc.getMemberId() );
+	    memberDAO.updateById( memberEntity1 );
+	}
+
+
+	//分配优惠券
+	DuofenCardPublish duofenCardPublish = duofenCardPublishDAO.findByCardId( uc.getDvId() );
+	DuofenCardNew duofenCardNew = duofenCardNewDAO.selectById( uc.getDvId() );
+	//分配优惠券
+	DuofenCardGetNew dc = new DuofenCardGetNew();
+	dc.setCardId( uc.getDvId() );
+	dc.setGetType( 0 );
+	dc.setIsbuy( 1 );
+	dc.setCode( duofenCardCode );
+	dc.setGetDate( new Date() );
+	dc.setMemberId( uc.getMemberId() );
+	dc.setBusId( duofenCardNew.getBusId() );
+	if ( duofenCardNew.getType() == 0 ) {
+	    Date startTime = DateTimeKit.parse( duofenCardNew.getBeginTimestamp() + " 00:00:00", "yyyy-MM-dd hh:mm:ss" );
+	    dc.setStartTime( startTime );
+
+	    Date endTime = DateTimeKit.parse( duofenCardNew.getEndTimestamp() + " 23:59:59", "yyyy-MM-dd hh:mm:ss" );
+	    dc.setEndTime( endTime );
+	} else {
+	    Date currentTime = DateTimeKit.parse( DateTimeKit.getDate() + " 00:00:00", "yyyy-MM-dd hh:mm:ss" );
+	    Date startTime = DateTimeKit.addDate( currentTime, duofenCardNew.getFixedBeginTerm() );
+	    dc.setStartTime( startTime );
+
+	    Date currentTime1 = DateTimeKit.parse( DateTimeKit.getDate() + " 23:59:59", "yyyy-MM-dd hh:mm:ss" );
+	    Date endTime = DateTimeKit.addDate( currentTime1, duofenCardNew.getFixedTerm() );
+	    dc.setEndTime( endTime );
+	}
+	duofenCardGetNewDAO.insert( dc );
     }
 }

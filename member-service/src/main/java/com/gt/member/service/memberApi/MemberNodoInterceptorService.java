@@ -35,4 +35,11 @@ public interface MemberNodoInterceptorService {
      * @throws BusinessException
      */
     public void buyCardPaySuccess(Map<String,Object> params)throws  BusinessException;
+
+    /**
+     * 购买优惠券回调
+     * @param params
+     * @throws BusinessException
+     */
+    public void buyDuofenCardPaySuccess(Map<String,Object> params)throws  BusinessException;
 }

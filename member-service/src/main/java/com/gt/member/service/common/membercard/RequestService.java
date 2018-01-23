@@ -159,4 +159,11 @@ public interface RequestService {
      */
     public List<Map<String,Object>> getPayType(Integer busId,Integer type);
 
+    /**
+     * 生成永久二维码（新版）
+     * @param publicId
+     * @return
+     */
+    public String newqrcodeCreateFinal(Integer publicId);
+
 }

@@ -34,10 +34,7 @@ public class ProjectPcInterceptor implements HandlerInterceptor {
 	logger.info( "进入拦截器" );
 	boolean isSuccess = true;
 
-  	servletRequest.getSession().setAttribute( "PidBusId",88 );
-  	Member member =new Member();
-  	member.setId(35);
-	servletRequest.getSession().setAttribute(SessionUtils.SESSION_MEMBER,member);
+
 	/*BusUser busUser= SessionUtils.getLoginUser(servletRequest );
 	if( CommonUtil.isEmpty( busUser )){
 	    throw new NeedLoginException( ResponseMemberEnums.PLEASE_LOGIN.getCode(),ResponseMemberEnums.PLEASE_LOGIN.getMsg(), PropertiesUtil.getWebLoginUrl());
