@@ -43,6 +43,7 @@
 		<result column="image" property="image" />
 		<result column="timeType" property="timeType" />
 		<result column="examineId" property="examineId" />
+		<result column="examinedDetail" property="examinedDetail" />
 		<result column="addUser" property="addUser" />
 		<result column="useScene" property="useScene"/>
 	</resultMap>
@@ -59,7 +60,7 @@
            iconUrlList AS iconUrlList, textImageList AS textImageList, cardStatus AS cardStatus,
            createBusId,
             createDate AS createDate, passTime, isSendMsg AS isSendMsg, areaCode AS areaCode, phone,
-            isOwnUse AS isOwnUse, image, timeType AS timeType, examineId, addUser AS addUser,useScene
+            isOwnUse AS isOwnUse, image, timeType AS timeType, examineId,examinedDetail, addUser AS addUser,useScene
     </sql>
 
 </mapper>

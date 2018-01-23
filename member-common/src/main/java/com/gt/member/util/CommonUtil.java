@@ -5,6 +5,7 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,8 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
-import com.gt.api.bean.session.Member;
 import com.gt.api.util.ftp.ContinueFTP;
+import com.gt.member.constant.CommonConst;
+import com.gt.common.entity.BusUserEntity;
 import com.gt.member.entity.MemberEntity;
 import net.sf.json.JSONObject;
 
@@ -827,38 +829,8 @@ public class CommonUtil {
 	 * @return
 	 */
 	public static String getMEOrderCode() {
-	    StringBuffer buf = new StringBuffer(
-			    "1,2,3,4,5,6,7,8,9,0");
-	    String[] arr = buf.toString().split(",");
-	    StringBuffer sb = new StringBuffer();
-	    Random random = new Random();
-	    for (int i = 0; i < 4; i++) {
-		Integer count = arr.length;
-		int a = random.nextInt(count);
-		sb.append(arr[a]);
-	    }
-	    return "ME" + new Date().getTime()+sb.toString();
+		return "ME" + new Date().getTime();
 	}
-
-
-    /**
-     * 获取优惠券code
-     *
-     * @return
-     */
-    public static String getDuofenCardCode(Integer busId) {
-	StringBuffer buf = new StringBuffer(
-			"1,2,3,4,5,6,7,8,9,0");
-	String[] arr = buf.toString().split(",");
-	StringBuffer sb = new StringBuffer();
-	Random random = new Random();
-	for (int i = 0; i < 4; i++) {
-	    Integer count = arr.length;
-	    int a = random.nextInt(count);
-	    sb.append(arr[a]);
-	}
-	return busId+""+new Date().getTime()+sb.toString();
-    }
 	
 	
 	/**
@@ -998,16 +970,10 @@ public class CommonUtil {
 
     }
 
+    public static Object get( String key, Map<String, Object> requestBody ) {
+           if(requestBody.containsKey( key ))
+	           return requestBody.get( key );
 
-    public static Member memberEntityToMember(MemberEntity m){
-	Member member=new Member();
-	member.setId( m.getId() );
-	member.setNickname( m.getNickname() );
-	member.setBusid( m.getBusId() );
-	member.setPhone( m.getPhone() );
-	member.setHeadimgurl( m.getHeadimgurl() );
-	return member;
-    }
-
-
+	      return null;
+	   }
 }
