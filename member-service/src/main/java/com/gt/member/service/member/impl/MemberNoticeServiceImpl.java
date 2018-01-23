@@ -6,13 +6,10 @@ package com.gt.member.service.member.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.BusUser;
 import com.gt.api.enums.ResponseEnums;
-import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.RequestUtils;
-import com.gt.common.entity.BusUserEntity;
 import com.gt.member.dao.*;
-import com.gt.member.dao.common.BusUserDAO;
-import com.gt.member.dao.common.MsgTemplateDAO;
 import com.gt.member.entity.MemberNotice;
 import com.gt.member.entity.MemberNoticeuser;
 import com.gt.member.entity.SystemNotice;
@@ -44,8 +41,6 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
     @Autowired
     private SystemCalltypeDAO systemCalltypeDAO;
 
-    @Autowired
-    private MsgTemplateDAO msgTemplateDAO;
 
     @Autowired
     private MemberNoticeDAO memberNoticeDAO;
@@ -62,8 +57,6 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
     @Autowired
     private MemberCardDAO memberCardDAO;
 
-    @Autowired
-    private BusUserDAO busUserDAO;
 
     @Autowired
     private RequestService requestService;
@@ -86,7 +79,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 
 	List< Map< String,Object > > callTypes = systemCalltypeDAO.findAll();
 	map.put( "callTypes", callTypes );
-	List< Map< String,Object > > msgTemplates = msgTemplateDAO.selectTempObjByBusId( busId );
+	List< Map > msgTemplates = requestService.selectTempObjByBusId( busId );
 	map.put( "msgTemplates", msgTemplates );
 	return map;
     }
@@ -147,8 +140,7 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 		map.put( "notice", notice );
 		map.put( "memberCount", count );
 	    }
-
-	    BusUserEntity busUser = busUserDAO.selectById( busId );
+	    BusUser busUser=requestService.findBususer( busId );
 	    map.put( "smscount", busUser.getSmsCount() );
 	    return map;
 	} catch ( BusinessException e ) {

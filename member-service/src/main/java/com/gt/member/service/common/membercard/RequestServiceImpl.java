@@ -3,6 +3,8 @@ package com.gt.member.service.common.membercard;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.KeysUtil;
@@ -18,12 +20,12 @@ import com.gt.member.util.CommonUtil;
 import com.gt.member.util.EncryptUtil;
 import com.gt.member.util.PropertiesUtil;
 import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
+import com.gt.util.entity.param.fenbiFlow.BusFlow;
 import com.gt.util.entity.param.pay.ApiEnterprisePayment;
 import com.gt.util.entity.param.pay.PayWay;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
-import com.gt.util.entity.param.wx.QrcodeCreateFinal;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
 import com.gt.util.entity.param.wxcard.CodeConsume;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
@@ -89,7 +91,20 @@ public class RequestServiceImpl implements RequestService {
 
     private final static String SELECTMAINSHOPBYBUSID="/8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/selectMainShopByBusId.do";
 
-    private final static String NEW_QRCODE_CREATE_FINAL="/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/newqrcodeCreateFinal.do";
+    private final static String GETBUSUSERAPI="/8A5DA52E/busUserApi/getBusUserApi.do";
+
+    private final static String GETBUSFLOWSBYUSERID="/8A5DA52E/fenbiflow/6F6D9AD2/79B4DE7C/getBusFlowsByUserId.do";
+
+    private final static String GETWXPUBLICUSERS="/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/selectByUserId.do";
+
+    private final static String SELECTTEMPOBJBYBUSID="/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/selectTempObjByBusId.do";
+
+    private final static String GETSHOPBYID="/8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/getShopById.do";
+
+    private final static String GETMAINBUSID="/8A5DA52E/childBusUserApi/getMainBusId.do";
+
+    private final static String QUERYBASISBYNAME="8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/queryBasisByName.do";
+
 
     public String codeConsume( String cardId, String code, Integer busId ) throws Exception {
 	try {
@@ -218,6 +233,7 @@ public class RequestServiceImpl implements RequestService {
     public WsWxShopInfo findMainShop(Integer busId){
 	LOG.error( "请求主门店信息参数:"+busId);
 	String url = PropertiesUtil.getWxmp_home() + SELECTMAINSHOPBYBUSID;
+	LOG.error( "请求地址:"+url );
 	RequestUtils< Integer > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( busId );
 	String shopStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
@@ -230,8 +246,24 @@ public class RequestServiceImpl implements RequestService {
 	}
     }
 
+    public WsWxShopInfo getShopById(Integer shopId){
+	LOG.error( "调用李逢喜请求门店信息参数:"+shopId);
+	String url = PropertiesUtil.getWxmp_home() + SELECTMAINSHOPBYBUSID;
+	LOG.error( "请求地址:"+url );
+	RequestUtils< Integer > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( shopId );
+	String shopStr = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+	JSONObject json = JSON.parseObject( shopStr );
+	if ( "0".equals( json.getString( "code" ) ) ) {
+	    WsWxShopInfo  wsWxShopInfo = JSON.parseObject( json.getString( "data" ), WsWxShopInfo.class );
+	    return wsWxShopInfo;
+	} else {
+	    throw new BusinessException( ResponseMemberEnums.QUERY_SHOP_BUSID );
+	}
+    }
+
     public List< WsWxShopInfoExtend > findShopsByBusId( Integer busId ) {
-	LOG.error( "请求当前用户管理的门店信息参数:"+busId);
+	LOG.error( "请求当前用户管理的门店信息参数1:"+busId);
 	String url = PropertiesUtil.getWxmp_home() + WXSHOP_BYBUSID;
 	RequestUtils< Integer > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( busId );
@@ -333,10 +365,10 @@ public class RequestServiceImpl implements RequestService {
 	    switch ( model ) {
 		case 60:
 		    memberVideo = CommonConst.MEMBER_VIDEO_URL_60;
-		    break;
+		    return memberVideo;
 		case 107:
 		    memberVideo = CommonConst.MEMBER_VIDEO_URL_107;
-		    break;
+		    return memberVideo;
 		default:
 		    break;
 	    }
@@ -424,23 +456,171 @@ public class RequestServiceImpl implements RequestService {
     }
 
 
-    public String newqrcodeCreateFinal(Integer publicId){
-        LOG.error( "调用关注接口请求参数",publicId );
-	RequestUtils<QrcodeCreateFinal > requestUtils=new RequestUtils<>(  );
-	QrcodeCreateFinal qrcodeCreateFinal=new QrcodeCreateFinal();
-	qrcodeCreateFinal.setPublicId( publicId );
-	qrcodeCreateFinal.setModel( 14 );
-	requestUtils.setReqdata( qrcodeCreateFinal );
-	String url=PropertiesUtil.getWxmp_home()+NEW_QRCODE_CREATE_FINAL;
+    public BusUser findBususer(Integer busId){
+	try {
+	    String url = PropertiesUtil.getWxmp_home() + GETBUSUSERAPI;
+	    String returnMsg = SignHttpUtils.WxmppostByHttp( url, null, PropertiesUtil.getWxmpsignKey() );
+	    if ( CommonUtil.isNotEmpty( returnMsg ) ) {
+		Map< String,Object > json = JSON.parseObject( returnMsg, Map.class );
+		if("0".equals( CommonUtil.toString( json.get( "code" ) ) )){
+		  return JSONObject.parseObject( CommonUtil.toString( json.get( "data" ) ),BusUser.class );
+		}else{
+		    LOG.error( "调用陈丹区号异常"+returnMsg );
+		}
+
+	    }
+	}catch ( Exception e ){
+	    LOG.error( "调用陈丹区号异常",e );
+	}
+	return null;
+
+    }
+
+    public List<BusFlow > getBusFlowsByUserId(Integer busId){
+	LOG.error( "查询李逢喜商家流量接口参数:"+busId);
+	List<Map<String,Object>> list=new ArrayList<>(  );
+	RequestUtils< Integer > requestUtils = new RequestUtils< Integer >();
+	requestUtils.setReqdata( busId );
+	String url = PropertiesUtil.getWxmp_home() + GETBUSFLOWSBYUSERID;
 	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
 	JSONObject json = JSON.parseObject( returnData );
 	if ( "0".equals( json.getString( "code" ) ) ) {
-	    return  json.getString( "data" );
+	    List<BusFlow> returnList = JSONArray.parseArray( json.getString( "data" ), BusFlow.class );
+	    return returnList;
 	}else{
-	    LOG.error( "调用李逢喜关注接口异常"+returnData );
+	    LOG.error( "查询李逢喜商家流量接口返回参数:"+returnData);
+	    return null;
 	}
+    }
 
+    public WxPublicUsers findWxPublicUsersByBusId(Integer busId){
+	LOG.error( "查询李逢喜公众号接口参数:"+busId);
+	List<Map<String,Object>> list=new ArrayList<>(  );
+	RequestUtils< Integer > requestUtils = new RequestUtils< Integer >();
+	requestUtils.setReqdata( busId );
+	String url = PropertiesUtil.getWxmp_home() + GETWXPUBLICUSERS;
+	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+	JSONObject json = JSON.parseObject( returnData );
+	if ( "0".equals( json.getString( "code" ) ) ) {
+	    WxPublicUsers wxPublicUsers = JSONObject.parseObject( json.getString( "data" ), WxPublicUsers.class );
+	    return wxPublicUsers;
+	}else{
+	    LOG.error( "查查询李逢喜公众号接口参数:"+returnData);
+	    return null;
+	}
+    }
+
+    public WxPublicUsers findWxPublicUsersById(Integer id){
+	LOG.error( "查询李逢喜公众号接口参数1:"+id);
+	List<Map<String,Object>> list=new ArrayList<>(  );
+	RequestUtils< Integer > requestUtils = new RequestUtils< Integer >();
+	requestUtils.setReqdata( id );
+	String url = PropertiesUtil.getWxmp_home() + GETSHOPBYID;
+	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+	JSONObject json = JSON.parseObject( returnData );
+	if ( "0".equals( json.getString( "code" ) ) ) {
+	    WxPublicUsers wxPublicUsers = JSONObject.parseObject( json.getString( "data" ), WxPublicUsers.class );
+	    return wxPublicUsers;
+	}else{
+	    LOG.error( "查查询李逢喜公众号接口参数1:"+returnData);
+	    return null;
+	}
+    }
+
+
+    public List<Map> selectTempObjByBusId(Integer busId){
+	LOG.error( "查询李逢喜消息模板接口参数:"+busId);
+	List<Map<String,Object>> list=new ArrayList<>(  );
+	RequestUtils< Integer > requestUtils = new RequestUtils< Integer >();
+	requestUtils.setReqdata( busId );
+	String url = PropertiesUtil.getWxmp_home() + SELECTTEMPOBJBYBUSID;
+	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+	JSONObject json = JSON.parseObject( returnData );
+	if ( "0".equals( json.getString( "code" ) ) ) {
+	    WxPublicUsers wxPublicUsers = JSONObject.parseObject( json.getString( "data" ), WxPublicUsers.class );
+	    List<Map> returnList=JSONArray.parseArray( json.getString( "data" ),Map.class );
+	    return returnList;
+	}else{
+	    LOG.error( "查查询李逢喜消息模板接口参数:"+returnData);
+	    return null;
+	}
+    }
+
+
+    /**
+     * 获取主账户id
+     * @param busId
+     * @return
+     */
+    public Integer getMainBusId(Integer busId){
+	try {
+	    String url = PropertiesUtil.getWxmp_home() + GETMAINBUSID;
+	    String returnMsg = SignHttpUtils.WxmppostByHttp( url, null, PropertiesUtil.getWxmpsignKey() );
+	    if ( CommonUtil.isNotEmpty( returnMsg ) ) {
+		Map< String,Object > json = JSON.parseObject( returnMsg, Map.class );
+		if("0".equals( CommonUtil.toString( json.get( "code" ) ) )){
+		    JSONObject obj=JSONObject.parseObject(CommonUtil.toString( json.get( "data" ) )  );
+		    return CommonUtil.toInteger( obj.get( "mainBusId" ) );
+		}else{
+		    LOG.error( "调用陈丹主账户异常"+returnMsg );
+		}
+
+	    }
+	}catch ( Exception e ){
+	    LOG.error( "调用陈丹区号异常",e );
+	}
 	return null;
+    }
+
+    public Map<String, Object> queryBasisByName(String cityCode){
+	LOG.error( "查询李逢喜省市区接口参数:"+cityCode);
+	List<Map<String,Object>> list=new ArrayList<>(  );
+	RequestUtils< String > requestUtils = new RequestUtils< String >();
+	requestUtils.setReqdata( cityCode );
+	String url = PropertiesUtil.getWxmp_home() + QUERYBASISBYNAME;
+	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+	JSONObject json = JSON.parseObject( returnData );
+	if ( "0".equals( json.getString( "code" ) ) ) {
+	    Map<String, Object> map=JSONObject.parseObject( json.getString( "data" ),Map.class );
+	    return map;
+	}else{
+	    LOG.error( "查查询李逢喜省市区接口参数:"+returnData);
+	    return null;
+	}
+    }
+
+    public List<Map> queryCityByParentId(Integer pId){
+	LOG.error( "查询李逢喜根据父级ID查询城市数据接口参数:"+pId);
+	List<Map<String,Object>> list=new ArrayList<>(  );
+	RequestUtils< Integer > requestUtils = new RequestUtils< Integer >();
+	requestUtils.setReqdata( pId );
+	String url = PropertiesUtil.getWxmp_home() + QUERYBASISBYNAME;
+	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+	JSONObject json = JSON.parseObject( returnData );
+	if ( "0".equals( json.getString( "code" ) ) ) {
+	    List<Map> returnlist=JSONArray.parseArray( json.getString( "data" ),Map.class );
+	    return returnlist;
+	}else{
+	    LOG.error( "查查询李逢喜根据父级ID查询城市数据接口参数:"+returnData);
+	    return null;
+	}
+    }
+
+    public List<Map> queryCityByLevel(){
+	LOG.error( "查询李逢喜获取所有的省接口参数:");
+	List<Map<String,Object>> list=new ArrayList<>(  );
+	RequestUtils< Integer > requestUtils = new RequestUtils< Integer >();
+	requestUtils.setReqdata( 2 );
+	String url = PropertiesUtil.getWxmp_home() + QUERYBASISBYNAME;
+	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
+	JSONObject json = JSON.parseObject( returnData );
+	if ( "0".equals( json.getString( "code" ) ) ) {
+	    List<Map> returnlist=JSONArray.parseArray( json.getString( "data" ),Map.class );
+	    return returnlist;
+	}else{
+	    LOG.error( "查查询李逢喜获取所有的省数据接口参数:"+returnData);
+	    return null;
+	}
     }
 
 }

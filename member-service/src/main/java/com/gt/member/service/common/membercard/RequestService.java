@@ -1,8 +1,11 @@
 package com.gt.member.service.common.membercard;
 
+import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.util.RequestUtils;
 import com.gt.member.exception.BusinessException;
 import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
+import com.gt.util.entity.param.fenbiFlow.BusFlow;
 import com.gt.util.entity.param.pay.ApiEnterprisePayment;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.sms.NewApiSms;
@@ -67,6 +70,14 @@ public interface RequestService {
      * @return
      */
     public WsWxShopInfo findMainShop(Integer busId);
+
+    /**
+     * 获取门店信息
+     * @param shopId
+     * @return
+     */
+    public WsWxShopInfo getShopById(Integer shopId);
+
 
     /**
      * 根据当前用户 查询当前用户的门店信息
@@ -160,10 +171,65 @@ public interface RequestService {
     public List<Map<String,Object>> getPayType(Integer busId,Integer type);
 
     /**
-     * 生成永久二维码（新版）
-     * @param publicId
+     * 获取用户信息
+     * @param busId
      * @return
      */
-    public String newqrcodeCreateFinal(Integer publicId);
+    public BusUser findBususer(Integer busId);
+
+    /**
+     * 获取商家流量包
+     * @param busId
+     * @return
+     */
+    public List<BusFlow> getBusFlowsByUserId(Integer busId);
+
+    /**
+     * 查询公众号信息
+     * @param busId
+     * @return
+     */
+    public WxPublicUsers findWxPublicUsersByBusId(Integer busId);
+
+    /**
+     * 查询公众号信息
+     * @param id
+     * @return
+     */
+    public WxPublicUsers findWxPublicUsersById(Integer id);
+
+    /**
+     * 消息模板
+     * @param busId
+     * @return
+     */
+    public List<Map> selectTempObjByBusId(Integer busId);
+
+    /**
+     * 获取主账户id
+     * @param busId
+     * @return
+     */
+    public Integer getMainBusId(Integer busId);
+
+    /**
+     * 查询省市区
+     * @param cityCode
+     * @return
+     */
+    public Map<String, Object> queryBasisByName(String cityCode);
+
+    /**
+     * 根据父级ID查询城市数据
+     * @param pId
+     * @return
+     */
+    public List<Map> queryCityByParentId(Integer pId);
+
+    /**
+     * 获取到所有的省
+     * @return
+     */
+    public List<Map> queryCityByLevel();
 
 }

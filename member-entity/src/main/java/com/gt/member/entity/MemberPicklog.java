@@ -39,6 +39,8 @@ public class MemberPicklog extends Model<MemberPicklog> {
      */
 	private Date pickDate;
 
+	private Integer pickType;
+
 
 	@Override
 	protected Serializable pkVal() {

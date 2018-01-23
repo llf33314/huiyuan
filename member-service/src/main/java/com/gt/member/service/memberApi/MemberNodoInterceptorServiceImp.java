@@ -238,7 +238,7 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 		    uc1.setBalanceCount( frequency );
 
 		    memberCardrecordNew = memberCommonService
-				    .saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, frequency.doubleValue(), uc.getOrderCode(), 0 );
+				    .saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, frequency.doubleValue(), uc.getOrderCode(), 0,1 );
 		}
 
 	    } else {
@@ -292,7 +292,7 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 		    uc1.setBalanceCount( frequency );
 
 		    memberCardrecordNew = memberCommonService
-				    .saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, frequency.doubleValue(), uc.getOrderCode(), 0 );
+				    .saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, frequency.doubleValue(), uc.getOrderCode(), 0,1 );
 		}
 
 	    }

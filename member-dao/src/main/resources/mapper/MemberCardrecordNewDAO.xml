@@ -25,13 +25,13 @@
 
 
 	<select id="findCardrecordByMemberId" resultType="Map">
-		SELECT itemName,number,date_format(createDate, '%Y-%c-%d %h:%i:%s') as createDate FROM t_member_cardrecord_new WHERE recordType = 2
+		SELECT itemName,number,date_format(createDate, '%Y-%c-%d  %T') as createDate FROM t_member_cardrecord_new WHERE recordType = 2
 		 AND
 		<foreach close=")" collection="memberIds" item="memberId" open="("
 				 separator="or">
 			memberId= #{memberId}
 		</foreach>
-		SELECT itemName,number,date_format(createDate, '%Y-%c-%d %h:%i:%s') as createDate FROM t_member_cardrecord_new WHERE recordType = 2 AND
+		SELECT itemName,number,date_format(createDate, '%Y-%c-%d %T') as createDate FROM t_member_cardrecord_new WHERE recordType = 2 AND
 		<foreach close=")" collection="memberIds" item="memberId" open="("
 				 separator="or">
 			memberId= #{memberId}
@@ -42,7 +42,7 @@
 
 
 	<select id="findCardrecordByMemberIdAndRecordType" resultType="Map">
-		SELECT itemName,number,date_format(createDate, '%Y-%c-%d %h:%i:%s') as createDate,balance FROM t_member_cardrecord_new
+		SELECT itemName,number,date_format(createDate, '%Y-%c-%d %T') as createDate,balance,unit FROM t_member_cardrecord_new
 		WHERE recordType = #{recordType}
 		AND
 		<foreach close=")" collection="memberIds" item="memberId" open="("

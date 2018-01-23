@@ -2,16 +2,12 @@ package com.gt.member.service.common.quartz;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.RequestUtils;
 import com.gt.member.dao.*;
-import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.entity.*;
 import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.common.membercard.RequestService;
@@ -23,7 +19,6 @@ import com.gt.util.entity.param.sms.OldApiSms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +28,6 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
 
     private static final Logger LOG = LoggerFactory.getLogger( MemberQuartzServiceImpl.class );
 
-    @Autowired
-    private BusUserDAO userMapper;
 
     @Autowired
     private MemberEntityDAO memberMapper;

@@ -179,6 +179,7 @@ pageEncoding="UTF-8" %>
                     callback()
                 };
                 return{
+                    gradeTypes:{},
                     areaPhone:[],
                     countryCode:'+86',
                     search: '',
@@ -400,12 +401,17 @@ pageEncoding="UTF-8" %>
                         }
                 },
 
-                fnGradeTypeBuy:function(){
-                    var applyType=vm.cardRank.applyType;
+                fnGradeTypeBuy:function(value){
+                    var applyType = vm.gradeTypes[0].applyType
                     if(applyType==3){
                         vm.cardPriceVisible=true;
                         vm.$nextTick(function () {
-                           $(".buyMoneyHtml").html(vm.cardRank.buyMoney);
+                           for(i in vm.gradeTypes){
+                               console.log('111',vm.gradeTypes[i])
+                               if(vm.gradeTypes[i].gt_id == value){
+                                   $(".buyMoneyHtml").html(vm.gradeTypes[i].buyMoney);
+                               }
+                           }
                         })
                     }else{
                         vm.cardPriceVisible=false;
@@ -510,7 +516,14 @@ pageEncoding="UTF-8" %>
                                 }
                                 vm.$set(vm,"gradeTypesOption",data.gradeTypes);
                                 vm.cardRank=data.gradeTypes[0].gt_id;
-                                console.log(data.gradeTypes)
+                                vm.gradeTypes = data.gradeTypes
+                                var  ifShow = data.gradeTypes[0].applyType
+                                if(ifShow == 3){
+                                    vm.cardPriceVisible = true
+                                }else{
+                                    vm.cardPriceVisible=false
+                                }
+                                console.log(data.gradeTypes,'data.gradeTypes')
                             }else{
                                 $(".error-txt").html(data.message);
                                 this.dialogVisible3=true;

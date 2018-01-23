@@ -9,6 +9,7 @@
 		<result column="busId" property="busId" />
 		<result column="pickMoney" property="pickMoney" />
 		<result column="pickDate" property="pickDate" />
+		<result column="pickType" property="pickType"/>
 	</resultMap>
 
     <!-- 通用查询结果列 -->
@@ -30,7 +31,7 @@
 	</select>
 
 	<select id="countPickLog" resultType="java.lang.Integer">
-		select count(p.id) from   t_member_picklog p inner join t_wx_bus_member m on m.id=p.memberId where p.busId=#{busId}
+		select count(p.id) from   t_member_picklog p inner join t_wx_bus_member m on m.id=p.memberId where p.busId=#{busId} and pickType=0
 		<if test="search!=null">
 			and m.phone=#{search}
 		</if>
@@ -38,7 +39,7 @@
 
 	<select id="findPickLog" resultType="Map">
 		select p.id, p.pickMoney, p.pickDate,m.nickname,m.phone from t_member_picklog p inner join t_wx_bus_member m on m.id=p.memberId
-		where p.busId=#{busId}
+		where p.busId=#{busId} and pickType=0
 		<if test="search!=null">
 			and m.phone=#{search}
 		</if>

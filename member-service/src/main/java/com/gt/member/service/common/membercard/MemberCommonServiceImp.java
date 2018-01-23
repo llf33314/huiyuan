@@ -1,16 +1,11 @@
 package com.gt.member.service.common.membercard;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.sign.SignHttpUtils;
-import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.entityBo.MemberShopEntity;
 import com.gt.member.dao.*;
-import com.gt.member.dao.common.AlipayUserDAO;
-import com.gt.member.dao.common.BasisCityDAO;
-import com.gt.member.dao.common.BusUserDAO;
-import com.gt.member.dao.common.WxPublicUsersDAO;
 import com.gt.member.entity.*;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
@@ -19,6 +14,7 @@ import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.DateTimeKit;
 import com.gt.member.util.PropertiesUtil;
+import net.sf.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +45,6 @@ public class MemberCommonServiceImp implements MemberCommonService {
     private MemberDateDAO memberDateMapper;
 
     @Autowired
-    private BusUserDAO       busUserDAO;
-    @Autowired
     private SystemMsgService systemMsgService;
 
     @Autowired
@@ -62,8 +56,6 @@ public class MemberCommonServiceImp implements MemberCommonService {
     @Autowired
     private PropertiesUtil propertiesUtil;
 
-    @Autowired
-    private WxPublicUsersDAO wxPublicUsersDAO;
 
     @Autowired
     private MemberOldDAO memberOldDao;
@@ -98,11 +90,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
     @Autowired
     private MemberGiveconsumeNewDAO memberGiveconsumeNewDAO;
 
-    @Autowired
-    private BasisCityDAO basisCityDAO;
 
-    @Autowired
-    private AlipayUserDAO alipayUserMapper;
 
     @Autowired
     private DuofenCardGetDAO duofenCardGetMapper;
@@ -287,9 +275,9 @@ public class MemberCommonServiceImp implements MemberCommonService {
 		case 3:
 		    // 区间
 		    String dateStr = memberdate.getDateStr();
-		    List< Map> list = JSONArray.parseArray( dateStr,Map.class );
+		    List< Map< String,Object > > list = JSONArray.toList( JSONArray.fromObject( dateStr ), Map.class );
 		    Integer year = DateTimeKit.getYear( new Date() );
-		    for ( Map map : list ) {
+		    for ( Map< String,Object > map : list ) {
 			String time = CommonUtil.toString( map.get( "time" ) );
 			if ( time.length() == 1 ) {
 			    time = "0" + time;
@@ -416,11 +404,11 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    MemberQcodeWx mqw = memberQcodeWxDAO.findByBusId( busId, 0 );
 	    String imgUrl = "";
 	    if ( CommonUtil.isEmpty( mqw ) ) {
-		WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersDAO.selectByUserId( busId );
+		WxPublicUsers wxPublicUsers=requestService.findWxPublicUsersByBusId( busId );
 		Map< String,Object > querymap = new HashMap<>();
 		querymap.put( "scene_id", scene_id );
-		querymap.put( "publicId", wxPublicUsersEntity.getId() );
-		String url = propertiesUtil.getWxmp_home() + "/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/qrcodeCreateFinal.do";
+		querymap.put( "publicId", wxPublicUsers.getId() );
+		String url = PropertiesUtil.getWxmp_home() + "/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/qrcodeCreateFinal.do";
 		String json = SignHttpUtils.WxmppostByHttp( url, querymap, propertiesUtil.getWxmpsignKey() );
 
 		JSONObject obj = JSONObject.parseObject( json );
@@ -448,10 +436,10 @@ public class MemberCommonServiceImp implements MemberCommonService {
      * @param busId
      * @param phone
      */
-    public void newMemberMerge( MemberEntity memberEntity, Integer busId, String phone ) throws BusinessException {
+    public MemberEntity newMemberMerge( MemberEntity memberEntity, Integer busId, String phone ) throws BusinessException {
 	MemberEntity m1 = memberEntityDAO.findByPhone( busId, phone );
 	if ( CommonUtil.isNotEmpty( m1 ) && !memberEntity.getId().equals( m1.getId() ) ) {
-	    // 合并member数据
+	    // 合并member数据(保存最老的memberId,删除当前用户id)
 	    memberEntity.setFlow( m1.getFlow() + memberEntity.getFlow() );
 	    memberEntity.setIntegral( m1.getIntegral() + memberEntity.getIntegral() );
 	    memberEntity.setFansCurrency( m1.getFansCurrency() + memberEntity.getFansCurrency() );
@@ -481,23 +469,24 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    memberEntity.setRemark( memberEntity.getRemark() );
 	    memberEntity.setLoginMode( 0 );
 	    // 删除数据做移出到memberold
-	    memberEntityDAO.deleteById( m1.getId() );
+	    memberEntityDAO.deleteById( memberEntity.getId() );
 
+	    memberEntity.setId( m1.getId() );
 	    memberEntityDAO.updateById( memberEntity );
 
-	    MemberParameter mp = memberParameterDAO.findByMemberId( m1.getId() );
+	    MemberParameter mp = memberParameterDAO.findByMemberId( memberEntity.getId() );
 	    if ( CommonUtil.isNotEmpty( mp ) ) {
 		memberParameterDAO.deleteById( mp.getId() );
 	    }
 
 	    //数据合并建立关系表
 	    MemberOldId memberOldId = new MemberOldId();
-	    memberOldId.setOldId( m1.getId() );
-	    memberOldId.setMemberId( memberEntity.getId() );
+	    memberOldId.setOldId( memberEntity.getId() );
+	    memberOldId.setMemberId( m1.getId() );
 	    memberOldIdDAO.insert( memberOldId );
 
 	    // 修改小程序之前openId对应的memberId
-	    memberAppletOpenidDAO.updateMemberId( memberEntity.getId(), m1.getId() );
+	    memberAppletOpenidDAO.updateMemberId(  m1.getId(),memberEntity.getId() );
 	}else{
 	    //如果是当前粉丝没有绑定过手机号码，判断粉丝是否存在泛会员卡，如果存在，升级到正式会员卡
 	    if(CommonUtil.isNotEmpty( memberEntity.getMcId() )){
@@ -520,6 +509,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	if ( CommonUtil.isNotEmpty( memberEntity ) && CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
 	    throw new BusinessException( ResponseMemberEnums.IS_MEMBER_CARD );
 	}
+	return memberEntity;
     }
 
     /**
@@ -1020,8 +1010,9 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	return null;
     }
 
-    public List< Map< String,Object > > findCityByCityCode( String cityCode ) {
-	return basisCityDAO.findBaseisCityByCode( cityCode );
+    public List< Map< String,Object > > findCityByCityCode1( String cityCode ) {
+	return null;
+     //   return basisCityDAO.findBaseisCityByCode( cityCode );
     }
 
     /**
@@ -1186,11 +1177,11 @@ public class MemberCommonServiceImp implements MemberCommonService {
 				discount = memberDate.getDiscount().doubleValue();
 			    }
 			    discount = discount * gr.getGrDiscount() / 100.0;
-			    Double discountMemberMoney = formatNumber( pay * discount );
+			    Double discountMemberMoney = formatNumber( pay * (1-discount) );
 			    pay = pay - discountMemberMoney; // 折扣后的金额
 			    ce.setDiscountMemberMoney( discountMemberMoney ); // 会员优惠金额
 			}else if(card.getCtId()==3){
-			    Double discountMemberMoney = formatNumber( pay * fukaDiscount/10.0 );
+			    Double discountMemberMoney = formatNumber( pay * (1-fukaDiscount/10.0) );
 			    pay = pay - discountMemberMoney; // 折扣后的金额
 			    ce.setDiscountMemberMoney( discountMemberMoney ); // 会员优惠金额
 			}
@@ -1370,25 +1361,5 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    return null;
 	}
 	return null;
-    }
-
-
-
-    public Double getBuyMoney(String giftBuyMoney,Double buyMoney){
-	//未设置实价
-        if(CommonUtil.isEmpty( giftBuyMoney )){
-            return buyMoney;
-	}
-	List<Map> list=JSONArray.parseArray( giftBuyMoney,Map.class );
-        for(Map map:list){
-	    String startTime=CommonUtil.toString( map.get( "startTime" ) )+" 00:00:00";
-	    String endTime=CommonUtil.toString( map.get( "endTime" ) )+" 23:59:59";
-	    Date startDate=DateTimeKit.parseDate( startTime,"yyyy-MM-dd hh:mm:ss" );
-	    Date endDate=DateTimeKit.parseDate( endTime,"yyyy-MM-dd hh:mm:ss" );
-	    if(DateTimeKit.isBetween( startDate, endDate)){
-	        return CommonUtil.toDouble( map.get( "buyMoney" ) );
-	    }
-	}
-	return buyMoney;
     }
 }

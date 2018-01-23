@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -856,6 +857,7 @@ public class MemberApiController extends BaseController {
 
 
     @ApiOperation( value = "魔盒充值记录查询", notes = "魔盒充值记录查询" )
+    @ResponseBody
     @RequestMapping( value = "/rechargeLog", method = RequestMethod.POST )
     public ServerResponse rechargeLog(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
 	try {
@@ -888,8 +890,23 @@ public class MemberApiController extends BaseController {
     }
 
 
-
-
-
-
+    @ApiOperation( value = "会员赠送积分 粉币 流量（订单是属于延迟送）", notes = "会员赠送积分 粉币 流量（订单是属于延迟送）" )
+    @ApiImplicitParams({
+		    @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = true, dataType = "int" ),
+    })
+    @ResponseBody
+    @RequestMapping( value = "/findGiveRuleDelay", method = RequestMethod.POST )
+    public ServerResponse findGiveRuleDelay(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    Map< String,Object > requestBody = JSONObject.parseObject( param );
+	    String orderNo= CommonUtil.toString( requestBody.get("orderNo") );
+	    memberApiService.findGiveRuleDelay(orderNo);
+	    return ServerResponse.createBySuccess( );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(),e.getMessage() );
+	}catch ( Exception e ){
+	    LOG.error( "赠送商品延迟送",e );
+	    return ServerResponse.createByError( );
+	}
+    }
 }

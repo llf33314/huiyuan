@@ -38,11 +38,10 @@
 
 	<select id="findByMemberId" resultType="Map">
 		select  name,integral,fenbi,flow,recommendType,cardName,lingquNum,userNum,isGive,money,datetime from t_member_recommend
-		<where>
+		where recommendType=0 and
 			<foreach collection="memberIds" item="memberId"  separator="or">
-				memberId=#{memberId}
+				 memberId=#{memberId}
 			</foreach>
-		</where>
 		order by id desc
 	</select>
 

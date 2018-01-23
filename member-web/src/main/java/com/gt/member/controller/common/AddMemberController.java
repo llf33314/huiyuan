@@ -3,14 +3,12 @@ package com.gt.member.controller.common;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.TCommonStaff;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.RequestUtils;
 import com.gt.api.util.SessionUtils;
-import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.member.dao.MemberGradetypeDAO;
 import com.gt.member.dao.MemberQcodeWxDAO;
-import com.gt.member.dao.common.WxPublicUsersDAO;
-import com.gt.member.dao.common.WxShopDAO;
 import com.gt.member.entity.MemberQcodeWx;
 import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.common.membercard.RequestService;
@@ -58,10 +56,6 @@ public class AddMemberController {
     @Autowired
     private MemberQcodeWxDAO memberQcodeWxMapper;
 
-
-    @Autowired
-    private WxPublicUsersDAO wxPublicUsersMapper;
-
     @Autowired
     private MemberGradetypeDAO gradeTypeMapper;
 
@@ -75,9 +69,6 @@ public class AddMemberController {
     private RedisCacheUtil redisCacheUtil;
 
     @Autowired
-    private WxShopDAO wxShopDAO;
-
-    @Autowired
     private RequestService requestService;
 
     @ApiOperation( value = "新增会员统一页面", notes = "新增会员统一页面" )
@@ -86,9 +77,9 @@ public class AddMemberController {
     public String erpAddMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 //	SessionUtils.setLoginStyle( request, 1 );
 //	BusUser busUser=new BusUser();
-//	busUser.setId( 42 );
+//	busUser.setId( 36 );
 //	SessionUtils.setLoginUser( request, busUser );
-//	SessionUtils.setPidBusId( request, 42 );
+//	SessionUtils.setPidBusId( request, 36 );
 
 	try {
 	    Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
@@ -104,11 +95,11 @@ public class AddMemberController {
 	    Integer busId = SessionUtils.getPidBusId( request );
 
 	    if ( CommonUtil.isEmpty( shopId ) ) {  //门店为空的时候查询主店铺
-		shopId = wxShopDAO.selectMainShopByBusId( busId ).getId();
+		shopId = requestService.findMainShop( busId ).getId();
 	    }
-	    WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersMapper.selectByUserId( busId );
+	    WxPublicUsers wxPublicUsers=requestService.findWxPublicUsersByBusId( busId );
 
-	    if ( ( CommonUtil.isEmpty( wxPublicUsersEntity ) ) || wxPublicUsersEntity.getServiceTypeInfo() != 2 || wxPublicUsersEntity.getVerifyTypeInfo() != 0 ) {
+	    if ( ( CommonUtil.isEmpty( wxPublicUsers ) ) || wxPublicUsers.getServiceTypeInfo() != 2 || wxPublicUsers.getVerifyTypeInfo() != 0 ) {
 		request.setAttribute( "gongzhong", 0 );
 	    } else {
 		request.setAttribute( "gongzhong", 1 );
@@ -157,7 +148,6 @@ public class AddMemberController {
     public void findCardType( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer cardType ) throws IOException {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
-
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    List< Map< String,Object > > gradeTypes = gradeTypeMapper.findGradeTyeBybusIdAndctId( busId, cardType );
 	    if(gradeTypes.size()>0 ) {
@@ -197,12 +187,6 @@ public class AddMemberController {
 	    redisCacheUtil.set( telNo+"_"+no, no, 5 * 60 );
 	    LOG.debug( "进入短信发送,手机号:" + no );
 
-//	    OldApiSms oldApiSms=new OldApiSms();
-//	    oldApiSms.setMobiles(telNo);
-//	    oldApiSms.setContent( "会员短信校验码:"+no);
-//	    oldApiSms.setCompany(PropertiesUtil.getSms_name());
-//	    oldApiSms.setBusId(busId);
-//	    oldApiSms.setModel(9);
 	    NewApiSms newApiSms=new NewApiSms();
 	    newApiSms.setMobile( telNo );
 	    newApiSms.setParamsStr(no );
@@ -214,6 +198,7 @@ public class AddMemberController {
 	    requestUtils.setReqdata( newApiSms );
 	    try {
 		String smsStr = requestService.sendSmsNew( requestUtils );
+		LOG.error("新增会员短信发送:"+smsStr);
 		JSONObject json=JSONObject.parseObject( smsStr );
 		if ( "0".equals( CommonUtil.toString(json.get( "code" )  ) ) ) {
 		    map.put( "result", true );
@@ -285,7 +270,7 @@ public class AddMemberController {
 	}
 
 	Integer busId =CommonUtil.toInteger( params.get( "busId" ) );
-	busId = dictService.pidUserId( busId );
+	busId = requestService.getMainBusId( busId );
 	try {
 	    map = cardERPService.linquMemberCard( busId, params );
 	    redisCacheUtil.del( phone+"_"+vcode );
@@ -344,14 +329,6 @@ public class AddMemberController {
      */
     @RequestMapping( "/erpMember" )
     public String erpMember( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > param ) {
-//	BusUserEntity busUserEntity = CommonUtil.getLoginUser( request );
-//	Integer busId = busUserEntity.getId();
-//	if ( busUserEntity.getPid() > 0 ) {
-//	    busId = dictService.pidUserId( busUserEntity.getId() );
-//	}
-//	List< Map< String,Object > > listMap = cardERPService.findMemberIsNotCard( busId, param );
-//	request.setAttribute( "memberList", listMap );
-//	request.setAttribute( "shopId", param.get( "shopId" ) );
 	return "merchants/member/erp/chooseFans";
     }
 
@@ -391,11 +368,11 @@ public class AddMemberController {
 	if ( CommonUtil.isEmpty( mqw ) || CommonUtil.isEmpty( mqw.getCodeUrl() ) ) {
 	    Map< String,Object > querymap = new HashMap<>();
 	    pIduserId=SessionUtils.getPidBusId( request );
-	    WxPublicUsersEntity wxPublicUsersEntity =wxPublicUsersMapper.selectByUserId( pIduserId );
+	    WxPublicUsers wxPublicUsers=requestService.findWxPublicUsersByBusId( pIduserId );
 
 	    RequestUtils requestUtils=new RequestUtils<>(  );
 	    querymap.put( "scene_id", scene_id );
-	    querymap.put( "publicId", wxPublicUsersEntity.getId() );
+	    querymap.put( "publicId", wxPublicUsers.getId() );
 	    requestUtils.setReqdata( querymap );
 	    String url = PropertiesUtil.getWxmp_home() + "/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/qrcodeCreateFinal.do";
 	    Map<String,Object> jsonMap= HttpClienUtils.reqPostUTF8( JSON.toJSONString( requestUtils ),url,Map.class, PropertiesUtil.getWxmpsignKey() );

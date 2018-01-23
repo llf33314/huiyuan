@@ -205,7 +205,14 @@ public interface MemberCardService {
      *
      * @return
      */
-    public Map< String,Object > findMemberDetails( Integer memberId );
+    public Map< String,Object > findMemberDetails(Integer busId, Integer memberId );
+
+    public Map<String,Object> findMemberByMemberId(Integer memberId);
+
+    /**
+     * 修改会员资料
+     */
+    public void updateMember(String json);
 
     /**
      * 导入会员信息

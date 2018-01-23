@@ -4,29 +4,17 @@
 package com.gt.member.service.member.impl;
 
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.BusUser;
-import com.gt.api.bean.session.Member;
-import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.enums.ResponseEnums;
-import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.RequestUtils;
 import com.gt.api.util.SessionUtils;
-import com.gt.common.entity.BusUserEntity;
-import com.gt.common.entity.WxPublicUsersEntity;
-import com.gt.common.entity.WxShop;
 import com.gt.entityBo.MemberShopEntity;
-import com.gt.entityBo.PayTypeBo;
 import com.gt.member.dao.*;
-import com.gt.member.dao.common.BusUserBranchRelationDAO;
-import com.gt.member.dao.common.BusUserDAO;
-import com.gt.member.dao.common.WxPublicUsersDAO;
-import com.gt.member.dao.common.WxShopDAO;
 import com.gt.member.entity.*;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
@@ -50,7 +38,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.smartcardio.Card;
 
 /**
  * @author pengjiangli
@@ -118,14 +105,10 @@ public class MemberCardServiceImpl implements MemberCardService {
     @Autowired
     private MemberCardDAO memberCardDAO;
 
-    @Autowired
-    private BusUserDAO busUserDAO;
 
     @Autowired
     private DictService dictService;
 
-    @Autowired
-    private WxShopDAO wxShopDAO;
 
     @Autowired
     private MemberCardOldDAO memberCardOldDAO;
@@ -138,12 +121,6 @@ public class MemberCardServiceImpl implements MemberCardService {
 
     @Autowired
     private MemberCardLentDAO memberCardLentDAO;
-
-    @Autowired
-    private BusUserBranchRelationDAO busUserBranchRelationDAO;
-
-    @Autowired
-    private WxPublicUsersDAO wxPublicUsersDAO;
 
     @Autowired
     private WxCardReceiveDAO wxCardReceiveDAO;
@@ -1033,7 +1010,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		}
 	    }
 	    parameterset.setIsPhoneQuery( CommonUtil.toInteger( map.get( "isPhoneQuery" ) ) );
-
+	    parameterset.setPickMoney( CommonUtil.toDouble( map.get( "pickMoney" ) ) );
 	    parameterset.setId( CommonUtil.toInteger( map.get( "id" ) ) );
 	    if ( CommonUtil.isNotEmpty( parameterset.getId() ) ) {
 		publicParametersetDAO.updateById( parameterset );
@@ -1446,10 +1423,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 	memberCardDAO.updateById( c );
     }
 
-    public Map< String,Object > findMemberDetails( Integer memberId ) {
+    public Map< String,Object > findMemberDetails( Integer busId,Integer memberId ) {
 	List< Map< String,Object > > members = memberMapper.findById( memberId );
 	if ( members.size() > 0 ) {
-	    Map< String,Object > memberMap = memberMapper.findById( memberId ).get( 0 );
+	    Map< String,Object > memberMap = members.get( 0 );
 	    if ( memberMap.containsKey( "nickname" ) ) {
 		try {
 		    byte[] bytes = (byte[]) memberMap.get( "nickname" );
@@ -1459,11 +1436,65 @@ public class MemberCardServiceImpl implements MemberCardService {
 		}
 
 	    }
+
+	    Integer zhuctId=CommonUtil.toInteger( memberMap.get( "ct_id" ) );
+	    if(zhuctId==2){
+	        Integer gr_id=CommonUtil.toInteger( memberMap.get( "gr_id" ) );
+	        //折扣卡
+		MemberGiverule memberGiverule= memberGiveruleDAO.selectById( gr_id );
+		memberMap.put( "discount",memberGiverule.getGrDiscount() );
+	    }
+
+	    Integer assistantCard=CommonUtil.toInteger( memberMap.get( "assistantCard" ) );
+	    if(assistantCard==1){
+	        //副卡
+		Integer gt_id=CommonUtil.toInteger( memberMap.get( "gt_id" ) );
+		List<Integer> ctIds=memberGradetypeAssistantDAO.findAssistantBygtId( busId,gt_id );
+		memberMap.put( "ctIds", ctIds);
+		for(Integer ctId:ctIds){
+		    if(ctId==2){
+			MemberGradetypeAssistant memberGradetypeAssistant= memberGradetypeAssistantDAO.findAssistantBygtIdAndFuctId(  busId,gt_id,2);
+			memberMap.put( "discount", memberGradetypeAssistant.getDiscount());
+		    }
+		}
+	    }
 	    return memberMap;
 	} else {
 	    return null;
 	}
 
+    }
+
+
+    public Map<String,Object> findMemberByMemberId(Integer memberId){
+	Map<String,Object> map=new HashMap<>(  );
+	MemberEntity memberEntity=memberMapper.selectById( memberId );
+	map.put( "name",memberEntity.getName() );
+	map.put( "birth",memberEntity.getBirth() );
+	map.put( "remark",memberEntity.getRemark() );
+	map.put( "memberId",memberId );
+	return map;
+    }
+
+    /**
+     * 修改会员资料
+     */
+    public void updateMember(String json){
+        Map<String,Object> map=JSONObject.parseObject( json,Map.class );
+        Integer memberId=CommonUtil.toInteger( map.get( "memberId" ) );
+        if(CommonUtil.isEmpty( memberId )){
+            throw new BusinessException( ResponseMemberEnums.NO_DATA );
+	}
+	String name=CommonUtil.toString( map.get( "name" ) );
+        String birth=CommonUtil.toString( map.get( "birth" ) );
+        Date date=DateTimeKit.parseDate( birth,"yyyy-MM-dd" );
+        MemberEntity memberEntity=new MemberEntity();
+	memberEntity.setId( memberId );
+	memberEntity.setBirth(date  );
+	memberEntity.setName( name );
+	String remark=CommonUtil.toString( map.get( "remark" ) );
+	memberEntity.setRemark(remark);
+	memberMapper.updateById( memberEntity );
     }
 
     /**
@@ -1502,23 +1533,15 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    // 判断会员领卡数量
 	    int count = memberCardDAO.countCardisBinding( busId );
 
-	    BusUserEntity busUser = busUserDAO.selectById( busId );
 
-	    WxShop wxshop = wxShopDAO.selectMainShopByBusId( busId );
 
-	    if ( CommonUtil.isEmpty( wxshop ) ) {
+	    WsWxShopInfo wxShopInfo=requestService.findMainShop(busId);
+	    if ( CommonUtil.isEmpty( wxShopInfo ) ) {
 		throw new BusinessException( ResponseMemberEnums.PLESAS_SET_SHOP );
 	    }
-
-	    SortedMap< String,Object > dictMap = dictService.getDict( "1093" );
-	    int level = busUser.getLevel();
-	    for ( String dict : dictMap.keySet() ) {
-		if ( level == CommonUtil.toInteger( dict ) ) {
-		    if ( count + rowLength > CommonUtil.toInteger( dictMap.get( dict ) ) ) {
-			return wbs;
-		    }
-		    break;
-		}
+	    String dictNum= dictService.dictBusUserNum( busId,1093 );
+	    if ( count + rowLength > CommonUtil.toInteger( dictNum ) ) {
+		return wbs;
 	    }
 
 	    for ( int i = 1; i < rowLength; i++ ) {
@@ -1683,7 +1706,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 			card.setFrequency( Integer.parseInt( money ) );
 		    }
 
-		    card.setShopId( wxshop.getId() );
+		    card.setShopId( wxShopInfo.getId() );
 
 		    card.setOnline( 0 );
 
@@ -1914,9 +1937,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    cardNodecrypt = EncryptUtil.decrypt( PropertiesUtil.getCardNoKey(), cardNo );
 	} catch ( Exception e ) {
 	    // 如果不是扫码 判断商家是否允许不扫码
-	    SortedMap< String,Object > maps = dictService.getDict( "A001" );
-	    Object obj = maps.get( busId.toString() );
-	    if ( CommonUtil.isEmpty( obj ) ) {
+	    PublicParameterset ps=publicParametersetDAO.findBybusId( busId );
+	    if ( ps.getIsPhoneQuery()==0) {
 		throw new BusinessException( ResponseMemberEnums.PLEASE_SCAN_CODE );
 	    }
 	}
@@ -2018,9 +2040,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    uc.setIsend( 1 );
 	    uc.setBalance( shenyuJifen.doubleValue() );
 	    uc.setPayStatus( 1 );
-	    WxShop shop = wxShopDAO.selectMainShopByBusId( busId );
-	    if ( CommonUtil.isNotEmpty( shop ) ) {
-		uc.setShopId( shop.getId() );
+	    WsWxShopInfo wxShopInfo= requestService.findMainShop( busId );
+
+	    if ( CommonUtil.isNotEmpty( wxShopInfo ) ) {
+		uc.setShopId( wxShopInfo.getId() );
 	    }
 	    userConsumeNewDAO.insert( uc );
 
@@ -2322,11 +2345,22 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    SortedMap< String,Object > payStatus = dictService.getDict( "A004" );
 	    map.put( "payStatus", payStatus.get( CommonUtil.toString( ucNew.getPayStatus() ) ) );
 
+
+	    Integer fukaId=ucNew.getFukaCtId();
+	    map.put( "fukaId",fukaId );
+	    if(fukaId==3){
+		map.put( "chongzhiCtName","储值卡" );
+	    }else if(fukaId==4){
+		map.put( "chongzhiCtName","时效卡" );
+	    }else  if(fukaId==5){
+		map.put( "chongzhiCtName","次卡" );
+	    }
+
 	    List< UserConsumePay > userConsumePays = userConsumePayDAO.findByUcId( ucId );
 	    SortedMap< String,Object > sortemap = dictService.getDict( "1198" );
 	    String payType = "";
 	    for ( UserConsumePay userConsumePay : userConsumePays ) {
-		payType = CommonUtil.toString( sortemap.get( CommonUtil.toString( userConsumePay.getPaymentType() ) ) ) + "   ";
+		payType += CommonUtil.toString( sortemap.get( CommonUtil.toString( userConsumePay.getPaymentType() ) ) ) + "   ";
 	    }
 	    map.put( "payType", payType );
 	    return map;
@@ -2430,7 +2464,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    SortedMap< String,Object > sortemap = dictService.getDict( "1198" );
 	    String payType = "";
 	    for ( UserConsumePay userConsumePay : userConsumePays ) {
-		payType = CommonUtil.toString( sortemap.get( CommonUtil.toString( userConsumePay.getPaymentType() ) ) ) + "   ";
+		payType += CommonUtil.toString( sortemap.get( CommonUtil.toString( userConsumePay.getPaymentType() ) ) ) + "   ";
 	    }
 	    map.put( "payType", payType );
 	    return map;
@@ -2533,6 +2567,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    map.put( "orderCode", ucNew.getOrderCode() );
 	    map.put( "dateTime", ucNew.getCreateDate() );
 	    map.put( "uccount", ucNew.getUccount() );
+	    map.put( "balace",ucNew.getBalanceCount() );
 
 	    return map;
 	} catch ( Exception e ) {
@@ -2665,7 +2700,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    String payType = "";
 	    for ( UserConsumePay userConsumePay : userConsumePays ) {
 	        if(CommonUtil.isNotEmpty(  userConsumePay.getPaymentType() )) {
-		    payType = CommonUtil.toString( sortemap.get( CommonUtil.toString( userConsumePay.getPaymentType() ) ) ) + "   ";
+		    payType += CommonUtil.toString( sortemap.get( CommonUtil.toString( userConsumePay.getPaymentType() ) ) ) + "   ";
 		}
 	    }
 	    map.put( "payType", payType );
@@ -3128,7 +3163,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    uc.setBalanceCount( frequency );
 
 		    memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 1, uc.getDiscountAfterMoney(), "会员充值", member.getBusId(), frequency.doubleValue(),
-				    uc.getOrderCode(), 0 );
+				    uc.getOrderCode(), 0,1 );
 		}
 
 	    } else {
@@ -3153,6 +3188,8 @@ public class MemberCardServiceImpl implements MemberCardService {
 			    newCard.setExpireDate( DateTimeKit.addMonths( new Date(), rechargegiveAssistant.getValidDate() ) );
 			}
 		    }
+		    MemberCardrecordNew memberCardrecordNew = memberCommonService
+				    .saveCardRecordOrderCodeNew( member.getId(), 1, uc.getDiscountAfterMoney(), "会员充值", member.getBusId(), 0.0, uc.getOrderCode(), 0 );
 		    memberCardDAO.updateById( newCard );
 		} else if ( ctId == 3 ) {
 		    //储值卡充值
@@ -3182,7 +3219,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    uc.setBalanceCount( frequency );
 
 		    memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 1, uc.getDiscountAfterMoney(), "会员充值", member.getBusId(), frequency.doubleValue(),
-				    uc.getOrderCode(), 0 );
+				    uc.getOrderCode(), 0,1 );
 		    systemMsgService.sendCikaCard( member, money, numberCount );
 		}
 
@@ -3343,7 +3380,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		map.put( "memberId", memberEntity.getId() );
 		map.put( "cardId", card.getMcId() );
 
-		if ( "1".equals( CommonUtil.toString( cards.get( 0 ).get( "isrecommend" ) ) ) ) {
+		if ( "1".equals( CommonUtil.toString( cards.get( 0 ).get( "assistantCard" ) ) ) ) {
 		    List< Integer > fuCtIds = memberGradetypeAssistantDAO.findAssistantBygtId( busId, card.getGtId() );
 		    map.put( "fuCtIds", fuCtIds );
 		    //卡通副卡
@@ -3585,6 +3622,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 							uc.getOrderCode(), 0 );
 			flag = true;
 		    }
+		    uc.setPayStatus( 1 );
 		    userConsumeNewDAO.insert( uc );
 
 		    if ( flag == true ) {
