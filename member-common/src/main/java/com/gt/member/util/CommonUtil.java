@@ -970,6 +970,10 @@ public class CommonUtil {
 
     }
 
+    public static Object get( String key, Map<String, Object> requestBody ) {
+           if(requestBody.containsKey( key ))
+	           return requestBody.get( key );
 
-
+	      return null;
+	   }
 }

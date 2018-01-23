@@ -210,6 +210,11 @@ public class DuofenCardNew extends Model<DuofenCardNew> {
     	@TableField("examineId")
 	private Integer examineId;
     /**
+     * 审核通过 or 未通过 理由
+     */
+    	@TableField("examinedDetail")
+	private String examinedDetail;
+    /**
      * 是否允许叠加使用 0不允许 1允许
      */
 	@TableField("addUser")
