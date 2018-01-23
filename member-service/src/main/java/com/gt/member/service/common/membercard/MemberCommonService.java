@@ -113,7 +113,7 @@ public interface MemberCommonService {
      * @param busId
      * @param phone
      */
-    public void newMemberMerge(MemberEntity member,Integer busId,String phone)throws BusinessException;
+    public MemberEntity newMemberMerge(MemberEntity member,Integer busId,String phone)throws BusinessException;
 
 
     /**
@@ -161,7 +161,7 @@ public interface MemberCommonService {
      * @param cityCode
      * @return
      */
-    public List<Map<String,Object>> findCityByCityCode(String cityCode);
+    public List<Map<String,Object>> findCityByCityCode1(String cityCode);
 
 
 

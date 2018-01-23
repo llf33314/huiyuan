@@ -205,7 +205,7 @@ public interface MemberCardService {
      *
      * @return
      */
-    public Map< String,Object > findMemberDetails( Integer memberId );
+    public Map< String,Object > findMemberDetails(Integer busId, Integer memberId );
 
     public Map<String,Object> findMemberByMemberId(Integer memberId);
 

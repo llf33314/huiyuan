@@ -43,12 +43,10 @@ public interface DictService {
     /**
      * userid 商家id，level：商家等级，style：类型，dictstyle字典等级与数量关联
      * @param userid
-     * @param level
      * @param style
-     * @param dictstyle
      * @return
      */
-    public String dictBusUserNum(Integer userid, Integer level, Integer style, String dictstyle);
+    public String dictBusUserNum(Integer userid, Integer style);
    
 	
 	/**
@@ -65,11 +63,6 @@ public interface DictService {
 	public Map<String,Object> pidUserMap(Integer user_id);
 	
 	
-	/**
-	 * 根据子账号bus_user的用户，查找主账号bus_user 中的最初主账号的id
-	 * @param user_id
-	 * @return
-	 */
-	public Integer pidUserId(Integer user_id);
+
 
 }

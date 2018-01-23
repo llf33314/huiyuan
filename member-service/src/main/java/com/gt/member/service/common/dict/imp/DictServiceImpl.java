@@ -2,13 +2,14 @@ package com.gt.member.service.common.dict.imp;
 
 import java.util.*;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.gt.api.enums.ResponseEnums;
-import com.gt.common.entity.BusUserEntity;
-import com.gt.member.dao.common.BusUserDAO;
-import com.gt.member.dao.common.BusUserNumDAO;
-import com.gt.member.dao.common.DictItemsDAO;
+import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.dict.DictService;
+import com.gt.member.util.CommonUtil;
+import com.gt.member.util.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,22 +20,26 @@ public class DictServiceImpl implements DictService {
 
     private static final Logger LOG = LoggerFactory.getLogger( DictServiceImpl.class );
 
-    @Autowired
-    private DictItemsDAO dictItemsDAO;
+    private static final String GETDICTAPI="/8A5DA52E/dictApi/getDictApi.do";
 
-    @Autowired
-    private BusUserDAO busUserDAO;
+    private static final String GETDIBSERNUM="/8A5DA52E/dictApi/getDiBserNum.do";
 
-    @Autowired
-    private BusUserNumDAO busUserNumDAO;
 
     @Override
     public SortedMap<String, Object> getDict( String type) throws BusinessException {
 	try {
+	    String url= PropertiesUtil.getWxmp_home()+GETDICTAPI;
+	    Map< String,Object > queryMap = new HashMap<>();
+	    queryMap.put( "style", type );
+	    String result = SignHttpUtils.WxmppostByHttp( url, queryMap, PropertiesUtil.getWxmpsignKey() );
+	    JSONObject jsonObject = JSONObject.parseObject( result );
 	    SortedMap<String, Object> map = new TreeMap<String, Object>();
-	    List<Map<String, Object>> list =  dictItemsDAO.getDictReturnKeyAndValue( type );
-	    for (Map<String, Object> map2 : list) {
-		map.put(map2.get("item_key").toString(), map2.get("item_value"));
+	    if ( "0".equals( jsonObject.getString( "code" ) ) ) {
+	        JSONObject  data=JSONObject.parseObject(jsonObject.getString( "data" )  );
+		List<Map> list=JSONArray.parseArray( data.getString( "dictJSON" ),Map.class );
+		for (Map map2 : list) {
+		    map.put(map2.get("item_key").toString(), map2.get("item_value"));
+		}
 	    }
 	    return map;
 	} catch ( Exception e ) {
@@ -49,30 +54,63 @@ public class DictServiceImpl implements DictService {
      * @return
      */
     public List<Map<String, Object>> getDictbyList(String type) throws BusinessException{
-	List<Map<String, Object>> list =  dictItemsDAO.getDictReturnKeyAndValue( type );
-	return list;
+	try {
+	    String url= PropertiesUtil.getWxmp_home()+GETDICTAPI;
+	    Map< String,Object > queryMap = new HashMap<>();
+	    queryMap.put( "style", type );
+	    String result = SignHttpUtils.WxmppostByHttp( url, queryMap, PropertiesUtil.getWxmpsignKey() );
+	    JSONObject jsonObject = JSONObject.parseObject( result );
+	    if ( "0".equals( jsonObject.getString( "code" ) ) ) {
+		JSONObject  data=JSONObject.parseObject(jsonObject.getString( "data" )  );
+		List list=JSONArray.parseArray( data.getString( "dictJSON" ),List.class );
+		return list;
+	    }
+	} catch ( Exception e ) {
+	    LOG.error( "查询字典异常", e );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+	return null;
     }
 
     @Override
     public String getDictRuturnValue( String type, Integer key ) throws BusinessException {
 	try {
-	    return dictItemsDAO.getDiceReturnValue( type, key );
+	    String url= PropertiesUtil.getWxmp_home()+GETDICTAPI;
+	    Map< String,Object > queryMap = new HashMap<>();
+	    queryMap.put( "style", type );
+	    String result = SignHttpUtils.WxmppostByHttp( url, queryMap, PropertiesUtil.getWxmpsignKey() );
+	    JSONObject jsonObject = JSONObject.parseObject( result );
+	    if ( "0".equals( jsonObject.getString( "code" ) ) ) {
+		JSONObject  data=JSONObject.parseObject(jsonObject.getString( "data" )  );
+		List<Map> list=JSONArray.parseArray( data.getString( "dictJSON" ),Map.class );
+		for (Map map2 : list) {
+		  return CommonUtil.toString( map2.get( key.toString() ) );
+		}
+	    }
 	} catch ( Exception e ) {
-	    LOG.error( "查询字典值异常", e );
+	    LOG.error( "查询字典异常", e );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
+	return null;
     }
 
     @Override
-    public String dictBusUserNum( Integer userid, Integer level, Integer style, String dictstyle ) {
-	List<Map<String,Object>> obj = busUserNumDAO.findBusUserNum( userid, style);
-	if(obj.size()>0){
-	    return obj.get(0).get("usernum").toString();
-	}else{
-	    List<Map<String,Object>> obj1 =  dictItemsDAO.findMemberCountByUserId(dictstyle,level  );
-	    if(obj1.size()>0){
-		return  obj1.get(0).get("item_value").toString();
+    public String dictBusUserNum( Integer userid, Integer style ) {
+	try {
+	    String url= PropertiesUtil.getWxmp_home()+GETDIBSERNUM;
+	    Map< String,Object > queryMap = new HashMap<>();
+	    queryMap.put( "userId", userid );
+	    queryMap.put( "dictstyle", style );
+	    queryMap.put( "modelStyle", 4 );
+	    String result = SignHttpUtils.WxmppostByHttp( url, queryMap, PropertiesUtil.getWxmpsignKey() );
+	    JSONObject jsonObject = JSONObject.parseObject( result );
+	    if ( "0".equals( jsonObject.getString( "code" ) ) ) {
+		JSONObject  data=JSONObject.parseObject(jsonObject.getString( "data" )  );
+		return  CommonUtil.toString( data.get( "dictBusUserNum" ) );
 	    }
+	} catch ( Exception e ) {
+	    LOG.error( "查询字典异常", e );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
 	return "0";
     }
@@ -87,16 +125,6 @@ public class DictServiceImpl implements DictService {
     public Map< String,Object > pidUserMap( Integer user_id ) {
 	// TODO Auto-generated method stub
 	return null;
-    }
-
-    @Override
-    public Integer pidUserId( Integer user_id ) {
-	// TODO Auto-generated method stub
-	BusUserEntity busUserEntity = busUserDAO.selectById( user_id );
-	if ( busUserEntity.getPid() > 0 ) {
-	    pidUserId( busUserEntity.getPid() );
-	}
-	return busUserEntity.getId();
     }
 
 }

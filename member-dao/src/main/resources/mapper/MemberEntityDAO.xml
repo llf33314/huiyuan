@@ -323,8 +323,8 @@
 		nickname, sex,
 		province, city,
 		country, headimgurl, operate_type, totalMoney,
-		totalIntegral,mc.money,m.mc_id,name,
-		mc.cardNo,mc.receivedate,ct.ct_name,gt.gt_grade_name,remark FROM
+		totalIntegral,mc.money,mc.frequency,mc.expireDate,m.mc_id,name,
+		mc.cardNo,mc.receivedate,mc.ct_id,mc.gr_id,ct.ct_name,gt.gt_id,gt.gt_grade_name,gt.assistantCard,remark FROM
 		t_wx_bus_member m
 		RIGHT JOIN t_member_card mc ON m.mc_id=mc.mc_id
 		INNER

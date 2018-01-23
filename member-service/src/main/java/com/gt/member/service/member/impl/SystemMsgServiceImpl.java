@@ -1,11 +1,9 @@
 package com.gt.member.service.member.impl;
 
 import com.gt.api.util.RequestUtils;
-import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.member.dao.MemberCardDAO;
 import com.gt.member.dao.SystemNoticeDAO;
 import com.gt.member.dao.SystemnoticecallDAO;
-import com.gt.member.dao.common.WxPublicUsersDAO;
 import com.gt.member.entity.*;
 import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.SystemMsgService;
@@ -35,8 +33,6 @@ public class SystemMsgServiceImpl implements SystemMsgService {
     @Autowired
     private SystemNoticeDAO systemNoticeDAO;
 
-    @Autowired
-    private WxPublicUsersDAO wxPublicUsersDAO;
 
     @Autowired
     private RequestService requestService;
@@ -56,11 +52,10 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 		if ( systemNotice.getPublicMsg() == 1 ) {
 		    try {
 			// 公众号消息推送
-			WxPublicUsersEntity wxPublicUsers = wxPublicUsersDAO.selectByUserId( memberEntity.getBusId() );
 			SendWxMsgTemplate sendWxMsgTemplate = new SendWxMsgTemplate();
 			sendWxMsgTemplate.setId( systemNotice.getPublicIdMsgId() );
 			sendWxMsgTemplate.setMemberId( memberEntity.getId() );
-			sendWxMsgTemplate.setUrl( PropertiesUtil.getWebHome() + "/phoneMemberController/" + memberEntity.getBusId() + "/79B4DE7C/findMember_1.do" );
+			sendWxMsgTemplate.setUrl( PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/"+memberEntity.getBusId() );
 
 			List< Object > list = new ArrayList< Object >();
 			// first,keyword1,keyword2,keyword3,keyword4,remark
@@ -133,11 +128,10 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 	    if ( CommonUtil.isNotEmpty( systemNotice ) ) {
 		if ( systemNotice.getPublicMsg() == 1 ) {
 		    try {
-			WxPublicUsersEntity wxPublicUsers = wxPublicUsersDAO.selectByUserId( memberEntity.getBusId() );
 			SendWxMsgTemplate sendWxMsgTemplate = new SendWxMsgTemplate();
 			sendWxMsgTemplate.setId( systemNotice.getPublicIdMsgId() );
 			sendWxMsgTemplate.setMemberId( memberEntity.getId() );
-			sendWxMsgTemplate.setUrl( PropertiesUtil.getWebHome() + "/phoneMemberController/" + memberEntity.getBusId() + "/79B4DE7C/findMember_1.do" );
+			sendWxMsgTemplate.setUrl( PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/"+memberEntity.getBusId() );
 
 			List< Object > list = new ArrayList< Object >();
 			// first,keyword1,keyword2,keyword3,keyword4,remark
@@ -234,11 +228,10 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 	    if ( CommonUtil.isNotEmpty( systemNotice ) ) {
 		MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 		if ( systemNotice.getPublicMsg() == 1 ) {
-		    WxPublicUsersEntity wxPublicUsers = wxPublicUsersDAO.selectByUserId( memberEntity.getBusId() );
 		    SendWxMsgTemplate sendWxMsgTemplate = new SendWxMsgTemplate();
 		    sendWxMsgTemplate.setId( systemNotice.getPublicIdMsgId() );
 		    sendWxMsgTemplate.setMemberId( memberEntity.getId() );
-		    sendWxMsgTemplate.setUrl( PropertiesUtil.getWebHome() + "/phoneMemberController/" + memberEntity.getBusId() + "/79B4DE7C/findMember_1.do" );
+		    sendWxMsgTemplate.setUrl( PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/"+memberEntity.getBusId() );
 
 		    List< Object > list = new ArrayList< Object >();
 		    list.add( cardRecord.getItemName() );
@@ -295,11 +288,10 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 	    if ( CommonUtil.isNotEmpty( systemNotice ) ) {
 		MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 		if ( systemNotice.getPublicMsg() == 1 ) {
-		    WxPublicUsersEntity wxPublicUsers = wxPublicUsersDAO.selectByUserId( memberEntity.getBusId() );
 		    SendWxMsgTemplate sendWxMsgTemplate = new SendWxMsgTemplate();
 		    sendWxMsgTemplate.setId( systemNotice.getPublicIdMsgId() );
 		    sendWxMsgTemplate.setMemberId( memberEntity.getId() );
-		    sendWxMsgTemplate.setUrl( PropertiesUtil.getWebHome() + "/phoneMemberController/" + memberEntity.getBusId() + "/79B4DE7C/findMember_1.do" );
+		    sendWxMsgTemplate.setUrl( PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/"+memberEntity.getBusId() );
 
 		    try {
 			List< Object > list = new ArrayList< Object >();
@@ -357,11 +349,10 @@ public class SystemMsgServiceImpl implements SystemMsgService {
 	    if ( CommonUtil.isNotEmpty( systemNotice ) ) {
 		MemberCard card = memberCardDAO.selectById( memberEntity.getMcId() );
 		if ( systemNotice.getPublicMsg() == 1 ) {
-		    WxPublicUsersEntity wxPublicUsers = wxPublicUsersDAO.selectByUserId( memberEntity.getBusId() );
 		    SendWxMsgTemplate sendWxMsgTemplate = new SendWxMsgTemplate();
 		    sendWxMsgTemplate.setId( systemNotice.getPublicIdMsgId() );
 		    sendWxMsgTemplate.setMemberId( memberEntity.getId() );
-		    sendWxMsgTemplate.setUrl( PropertiesUtil.getWebHome() + "/phoneMemberController/" + memberEntity.getBusId() + "/79B4DE7C/findMember_1.do" );
+		    sendWxMsgTemplate.setUrl( PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/"+memberEntity.getBusId() );
 		    try {
 			List< Object > list = new ArrayList< Object >();
 			list.add( "次卡消费提醒" );

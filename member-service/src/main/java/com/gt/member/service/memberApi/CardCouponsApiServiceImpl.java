@@ -2,18 +2,10 @@ package com.gt.member.service.memberApi;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.enums.ResponseEnums;
-import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.RequestUtils;
-import com.gt.api.util.sign.SignHttpUtils;
-import com.gt.common.entity.BusUserEntity;
-import com.gt.common.entity.WxPublicUsersEntity;
-import com.gt.common.entity.WxShop;
-import com.gt.member.dao.common.BusUserDAO;
 import com.gt.member.dao.*;
-import com.gt.member.dao.common.FenbiFlowRecordDAO;
-import com.gt.member.dao.common.WxPublicUsersDAO;
-import com.gt.member.dao.common.WxShopDAO;
 import com.gt.member.entity.*;
 import com.gt.member.entity.DuofenCard;
 import com.gt.member.entity.DuofenCardGet;
@@ -22,11 +14,10 @@ import com.gt.member.entity.DuofenCardReceivelog;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.membercard.MemberCommonService;
-import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.common.membercard.RequestService;
-import com.gt.member.service.member.MemberCardService;
 import com.gt.member.util.*;
 import com.gt.util.entity.param.sms.OldApiSms;
+import com.gt.util.entity.result.shop.WsWxShopInfo;
 import net.sf.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,14 +59,10 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     @Autowired
     private MemberEntityDAO memberMapper;
 
-    @Autowired
-    private BusUserDAO busUserDAO;
 
     @Autowired
     private MemberApiService memberApiService;
 
-    @Autowired
-    private WxPublicUsersDAO wxPublicUsersDAO;
 
     @Autowired
     private MemberCommonService memberCommonService;
@@ -83,8 +70,6 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     @Autowired
     private MemberRecommendDAO recommendMapper;
 
-    @Autowired
-    private WxShopDAO wxShopDAO;
 
     @Autowired
     private RequestService requestService;
@@ -95,9 +80,9 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 	if ( CommonUtil.isEmpty( wxPublicUsersId ) ) {
 	    return null;
 	}
-	WxShop wxShop = wxShopDAO.selectById( shopId );
+	WsWxShopInfo wsWxShopInfo=requestService.getShopById(shopId);
 
-	if ( CommonUtil.isEmpty( wxShop ) || CommonUtil.isEmpty( wxShop.getPoiId() ) ) {
+	if ( CommonUtil.isEmpty( wsWxShopInfo ) || CommonUtil.isEmpty( wsWxShopInfo.getPoiid() ) ) {
 	    return null;
 	}
 
@@ -138,7 +123,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 		if ( !map2.get( "time_limit" ).toString().contains( day ) ) {
 		    continue;
 		}
-		if ( map2.get( "location_id_list" ).toString().contains( wxShop.getPoiId() ) ) {
+		if ( map2.get( "location_id_list" ).toString().contains( wsWxShopInfo.getPoiid() ) ) {
 		    list.add( map2 );
 		}
 	    }
@@ -151,8 +136,8 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 	if ( CommonUtil.isEmpty( wxPublicUsersId ) ) {
 	    return null;
 	}
-	WxShop wxShop = wxShopDAO.selectById( shopId );
-	if ( CommonUtil.isEmpty( wxShop ) || CommonUtil.isEmpty( wxShop.getPoiId() ) ) {
+	WsWxShopInfo wsWxShopInfo=requestService.getShopById(shopId);
+	if ( CommonUtil.isEmpty( wsWxShopInfo ) || CommonUtil.isEmpty( wsWxShopInfo.getPoiid() ) ) {
 	    return null;
 	}
 
@@ -201,7 +186,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 		    }
 		}
 
-		if ( map2.get( "location_id_list" ).toString().contains( wxShop.getPoiId() ) ) {
+		if ( map2.get( "location_id_list" ).toString().contains( wsWxShopInfo.getPoiid() ) ) {
 		    list.add( map2 );
 		}
 	    }
@@ -221,8 +206,9 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 		throw new BusinessException( ResponseMemberEnums.NO_DATA.getCode(), ResponseMemberEnums.NO_DATA.getMsg() );
 	    }
 
-	    WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersDAO.selectById( wxPublicUsersId );
-	    String result = requestService.codeConsume( wcr.getCardId(), code, wxPublicUsersEntity.getBusUserId() );
+	    WxPublicUsers wxPublicUsers= requestService.findWxPublicUsersById( wxPublicUsersId );
+
+	    String result = requestService.codeConsume( wcr.getCardId(), code, wxPublicUsers.getBusUserId() );
 
 	    JSONObject returnJSON = JSONObject.parseObject( result );
 	    if ( !"0".equals( returnJSON.get( "code" ).toString() ) ) {
@@ -250,8 +236,8 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
 		throw new BusinessException( ResponseMemberEnums.NO_DATA.getCode(), ResponseMemberEnums.COUPONSE_VERIFICATION.getMsg() );
 	    }
 	    Map< String,Object > map = new HashMap<>();
-	    WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersDAO.selectById( wxPublicUsersId );
-	    String result = requestService.codeConsume( wcr.getCardId(), code, wxPublicUsersEntity.getBusUserId() );
+	    WxPublicUsers wxPublicUsers= requestService.findWxPublicUsersById( wxPublicUsersId );
+	    String result = requestService.codeConsume( wcr.getCardId(), code, wxPublicUsers.getBusUserId() );
 
 	    JSONObject returnJSON = JSONObject.parseObject( result );
 	    if ( !"0".equals( returnJSON.get( "code" ).toString() ) ) {
@@ -1582,12 +1568,7 @@ public class CardCouponsApiServiceImpl implements CardCouponsApiService {
     private Map< String,Object > returnfansCurrency( Integer busId, Double fans_currency ) {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
-	    BusUserEntity busUserEntity = busUserDAO.selectById( busId );
-	    BusUserEntity busUserEntity1 = new BusUserEntity();
-	    busUserEntity1.setId( busId );
-	    Double fansCurrency = busUserEntity.getFansCurrency().doubleValue() + fans_currency;
-	    busUserEntity1.setFansCurrency( BigDecimal.valueOf( fansCurrency ) );
-	    busUserDAO.updateById( busUserEntity1 );
+	    Map< String,Object > returnMap = requestService.getPowerApiMsg( 1, busId, fans_currency, "归还商户粉币" );
 	    map.put( "result", true );
 	    map.put( "message", "归还商户粉币成功" );
 	} catch ( Exception e ) {

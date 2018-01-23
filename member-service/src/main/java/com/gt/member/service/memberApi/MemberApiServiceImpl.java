@@ -6,21 +6,16 @@ package com.gt.member.service.memberApi;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.SessionUtils;
-import com.gt.common.entity.BusUserEntity;
-import com.gt.common.entity.WxPublicUsersEntity;
-import com.gt.common.entity.WxShop;
 import com.gt.entityBo.ErpRefundBo;
 import com.gt.entityBo.NewErpPaySuccessBo;
 import com.gt.entityBo.PaySuccessBo;
 import com.gt.entityBo.PayTypeBo;
 import com.gt.member.dao.*;
-import com.gt.member.dao.common.BusUserDAO;
-import com.gt.member.dao.common.FenbiFlowRecordDAO;
-import com.gt.member.dao.common.WxPublicUsersDAO;
-import com.gt.member.dao.common.WxShopDAO;
 import com.gt.member.entity.*;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
@@ -30,6 +25,7 @@ import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.MemberCardService;
 import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.*;
+import com.gt.util.entity.result.shop.WsWxShopInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,12 +55,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 
     @Autowired
     private MemberGiveconsumeDAO giveConsumeMapper;
-
-    @Autowired
-    private WxPublicUsersDAO wxPublicUsersMapper;
-
-    @Autowired
-    private BusUserDAO busUserMapper;
 
     @Autowired
     private MemberCardrecordDAO cardRecordMapper;
@@ -108,8 +98,6 @@ public class MemberApiServiceImpl implements MemberApiService {
     @Autowired
     private MemberRecommendDAO recommendMapper;
 
-    @Autowired
-    private WxShopDAO wxShopDAO;
 
     @Autowired
     private CardCouponsApiService cardCouponsApiService;
@@ -123,8 +111,6 @@ public class MemberApiServiceImpl implements MemberApiService {
     @Autowired
     private MemberCommonService memberCommonService;
 
-    @Autowired
-    private FenbiFlowRecordDAO fenbiFlowRecordDAO;
 
     @Autowired
     private MemberCardDAO memberCardDAO;
@@ -696,8 +682,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		memberEntity.setPhone( phone );
 	    } else {
 		memberEntity = memberDAO.selectById( memberId );
-		memberCommonService.newMemberMerge( memberEntity, busId, phone );
-		memberEntity = memberDAO.findByPhone( busId, phone );
+		memberEntity=memberCommonService.newMemberMerge( memberEntity, busId, phone );
 	    }
 	    Member member = new Member();
 	    member.setId( memberEntity.getId() );
@@ -748,8 +733,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		memberEntity.setPhone( phone );
 	    } else {
 		memberEntity = memberDAO.selectById( memberId );
-		memberCommonService.newMemberMerge( memberEntity, busId, phone );
-		memberEntity = memberDAO.findByPhone( busId, phone );
+		memberEntity=memberCommonService.newMemberMerge( memberEntity, busId, phone );
 	    }
 	    Member member = new Member();
 	    member.setId( memberEntity.getId() );
@@ -803,8 +787,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		memberEntity.setPhone( phone );
 	    } else {
 		memberEntity = memberDAO.selectById( memberId );
-		memberCommonService.newMemberMerge( memberEntity, busId, phone );
-		memberEntity = memberDAO.findByPhone( busId, phone );
+		memberEntity=memberCommonService.newMemberMerge( memberEntity, busId, phone );
 	    }
 
 	    MemberParameter mp=memberParameterDAO.findByMemberId(  memberEntity.getId());
@@ -870,8 +853,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		memberEntity.setPhone( phone );
 	    } else {
 		memberEntity = memberDAO.selectById( memberId );
-		memberCommonService.newMemberMerge( memberEntity, busId, phone );
-		memberEntity = memberDAO.findByPhone( busId, phone );
+		memberEntity=memberCommonService.newMemberMerge( memberEntity, busId, phone );
 	    }
 	    MemberParameter mp=memberParameterDAO.findByMemberId(  memberEntity.getId());
 	    if(CommonUtil.isNotEmpty( mp )){
@@ -1078,14 +1060,14 @@ public class MemberApiServiceImpl implements MemberApiService {
 		map.put( "fenbiRatio", ratio );
 		map.put( "fenbiStartMoney", 10 );
 
-		WxShop wxShop = wxShopDAO.selectById( shopId );
+		WsWxShopInfo wsWxShopInfo = requestService.getShopById( shopId );
 
-		WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersMapper.selectByUserId( memberEntity.getBusId() );
+		WxPublicUsers wxPublicUsers=requestService.findWxPublicUsersByBusId(memberEntity.getBusId());
 
-		if ( CommonUtil.isNotEmpty( wxPublicUsersEntity ) && CommonUtil.isNotEmpty( memberEntity.getOpenid() ) && CommonUtil.isNotEmpty( wxShop )
-				&& wxShop.getStatus() == 2 ) {
+		if ( CommonUtil.isNotEmpty( wxPublicUsers ) && CommonUtil.isNotEmpty( memberEntity.getOpenid() ) && CommonUtil.isNotEmpty( wsWxShopInfo )
+				&& wsWxShopInfo.getStatus() == 2 ) {
 		    // 查询优惠券信息
-		    List< Map< String,Object > > cardList = wxCardReceiveMapper.findByOpenId1( wxPublicUsersEntity.getId(), memberEntity.getOpenid() );
+		    List< Map< String,Object > > cardList = wxCardReceiveMapper.findByOpenId1( wxPublicUsers.getId(), memberEntity.getOpenid() );
 		    List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
 		    if ( CommonUtil.isNotEmpty( cardList ) && cardList.size() > 0 ) {
 			for ( Map< String,Object > map2 : cardList ) {
@@ -1113,7 +1095,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 				continue;
 			    }
 
-			    if ( map2.get( "location_id_list" ).toString().contains( CommonUtil.toString( wxShop.getPoiId() ) ) ) {
+			    if ( map2.get( "location_id_list" ).toString().contains( CommonUtil.toString( wsWxShopInfo.getPoiid() ) ) ) {
 				list.add( map2 );
 			    }
 			}
@@ -1157,10 +1139,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    } catch ( Exception e ) {
 	    }
 
-	    BusUserEntity busUserEntity = busUserMapper.selectById( busId );
-	    if ( busUserEntity.getPid() != 0 ) {
-		busId = dictService.pidUserId( busUserEntity.getPid() );
-	    }
+
+
+	    busId = requestService.getMainBusId( busId );
 
 	    if ( cardNodecrypt.contains( "?time" ) ) {
 		// 查询卡号是否存在
@@ -1263,14 +1244,14 @@ public class MemberApiServiceImpl implements MemberApiService {
 		map.put( "fenbiRatio", ratio );
 		map.put( "fenbiStartMoney", 10 );
 
-		WxShop wxShop = wxShopDAO.selectById( shopId );
+		WsWxShopInfo wsWxShopInfo = requestService.getShopById( shopId );
 
-		WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersMapper.selectByUserId( busId );
+		WxPublicUsers wxPublicUsers=requestService.findWxPublicUsersByBusId(memberEntity.getBusId());
 
-		if ( CommonUtil.isNotEmpty( wxPublicUsersEntity ) && CommonUtil.isNotEmpty( memberEntity.getOpenid() ) && CommonUtil.isNotEmpty( wxShop )
-				&& wxShop.getStatus() == 2 ) {
+		if ( CommonUtil.isNotEmpty( wxPublicUsers ) && CommonUtil.isNotEmpty( memberEntity.getOpenid() ) && CommonUtil.isNotEmpty( wsWxShopInfo )
+				&& wsWxShopInfo.getStatus() == 2 ) {
 		    // 查询优惠券信息
-		    List< Map< String,Object > > cardList = wxCardReceiveMapper.findByOpenId1( wxPublicUsersEntity.getId(), memberEntity.getOpenid() );
+		    List< Map< String,Object > > cardList = wxCardReceiveMapper.findByOpenId1( wxPublicUsers.getId(), memberEntity.getOpenid() );
 		    List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
 		    if ( CommonUtil.isNotEmpty( cardList ) && cardList.size() > 0 ) {
 			for ( Map< String,Object > map2 : cardList ) {
@@ -1298,7 +1279,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 				continue;
 			    }
 
-			    if ( map2.get( "location_id_list" ).toString().contains( CommonUtil.toString( wxShop.getPoiId() ) ) ) {
+			    if ( map2.get( "location_id_list" ).toString().contains( CommonUtil.toString( wsWxShopInfo.getPoiid() ) ) ) {
 				list.add( map2 );
 			    }
 			}
@@ -1334,7 +1315,7 @@ public class MemberApiServiceImpl implements MemberApiService {
      * 判断用户是否是会员 false 不是 true 是
      */
     @Override
-    public boolean isMememberByApplet( BusUserEntity busUserEntity, String cardNoKey, String cardNo ) {
+    public boolean isMememberByApplet( BusUser busUser, String cardNoKey, String cardNo ) {
 	Map< String,Object > map = new HashMap< String,Object >();
 	String cardNodecrypt = "";
 	try {
@@ -1343,9 +1324,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 	} catch ( Exception e ) {
 	}
 
-	int busId = busUserEntity.getId();
-	if ( busUserEntity.getPid() != 0 ) {
-	    busId = dictService.pidUserId( busUserEntity.getPid() );
+	int busId = busUser.getId();
+	if ( busUser.getPid() != 0 ) {
+	    busId = requestService.getMainBusId(busId);
 	}
 
 	if ( cardNodecrypt.contains( "?time" ) ) {
@@ -1545,7 +1526,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    if ( paySuccessBo.isUseCoupon() ) {
 		if ( paySuccessBo.getCouponType() == 0 ) {
 		    //微信
-		    Integer publicId = wxPublicUsersMapper.selectByUserId( memberEntity.getBusId() ).getId();
+		    WxPublicUsers wxPublicUsers= requestService.findWxPublicUsersByBusId( memberEntity.getBusId() );
+		    Integer publicId = wxPublicUsers.getId();
 		    cardCouponsApiService.wxCardReceive( publicId, paySuccessBo.getCodes() );
 		    String code = paySuccessBo.getCodes();
 		    uc.setDisCountdepict( paySuccessBo.getCodes() );
@@ -1624,7 +1606,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 
     @Override
     public Map< String,Object > countMember( Integer busId ) {
-	WxShop wxShop = wxShopDAO.selectMainShopByBusId( busId );
+	WsWxShopInfo wsWxShopInfo= requestService.findMainShop(busId  );
 
 	// 统计会员卡
 	List< Map< String,Object > > countCard = memberCardDAO.countMember( busId );
@@ -1651,7 +1633,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		continue;
 	    }
 	    // 主店铺
-	    if ( wxShop.getId().equals( CommonUtil.toInteger( map.get( "shopId" ) ) ) ) {
+	    if ( wsWxShopInfo.getId().equals( CommonUtil.toInteger( map.get( "shopId" ) ) ) ) {
 		if ( "0".equals( CommonUtil.toString( map.get( "online" ) ) ) ) {
 		    map.put( "countId", CommonUtil.toInteger( map.get( "countId" ) ) + onlinecount0 );
 		}
@@ -1826,16 +1808,16 @@ public class MemberApiServiceImpl implements MemberApiService {
 		map.put( "fenbiRatio", ratio );
 		map.put( "fenbiStartMoney", 10 );
 
-		WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersMapper.selectByUserId( memberEntity.getBusId() );
+		WxPublicUsers wxPublicUsers=requestService.findWxPublicUsersByBusId(memberEntity.getBusId());
 
 		String[] str = shopIds.split( "," );
 		for ( int i = 0; i < str.length; i++ ) {
 		    if ( CommonUtil.isEmpty( str[i] ) ) continue;
 		    Integer shopId = CommonUtil.toInteger( str[i] );
-		    WxShop wxShop = wxShopDAO.selectById( shopId );
-		    if ( CommonUtil.isNotEmpty( wxPublicUsersEntity ) && CommonUtil.isNotEmpty( memberEntity.getOpenid() ) && wxShop.getStatus() == 2 ) {
+		    WsWxShopInfo wsWxShopInfo = requestService.getShopById( shopId );
+		    if ( CommonUtil.isNotEmpty( wxPublicUsers ) && CommonUtil.isNotEmpty( memberEntity.getOpenid() ) && wsWxShopInfo.getStatus() == 2 ) {
 			// 查询优惠券信息
-			List< Map< String,Object > > cardList = wxCardReceiveMapper.findByOpenId1( wxPublicUsersEntity.getId(), memberEntity.getOpenid() );
+			List< Map< String,Object > > cardList = wxCardReceiveMapper.findByOpenId1( wxPublicUsers.getId(), memberEntity.getOpenid() );
 			List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
 			if ( CommonUtil.isNotEmpty( cardList ) && cardList.size() > 0 ) {
 			    for ( Map< String,Object > map2 : cardList ) {
@@ -1863,7 +1845,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 				    continue;
 				}
 
-				if ( map2.get( "location_id_list" ).toString().contains( CommonUtil.toString( wxShop.getPoiId() ) ) ) {
+				if ( map2.get( "location_id_list" ).toString().contains( CommonUtil.toString( wsWxShopInfo.getPoiid() ) ) ) {
 				    list.add( map2 );
 				}
 			    }
@@ -2151,10 +2133,9 @@ public class MemberApiServiceImpl implements MemberApiService {
     public void linquMemberCard( Map< String,Object > params ) throws BusinessException {
 	try {
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
-	    busId = dictService.pidUserId( busId );
-	    BusUserEntity busUserEntity = busUserMapper.selectById( busId );
+	    busId =   requestService.getMainBusId( busId );
 	    int count = memberCardDAO.countCardisBinding( busId );
-	    String dictNum = dictService.dictBusUserNum( busUserEntity.getId(), busUserEntity.getLevel(), 4, "1093" ); // 多粉 翼粉
+	    String dictNum=dictService.dictBusUserNum( busId,1093 );
 	    if ( CommonUtil.toInteger( dictNum ) < count ) {
 		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_COUNT );
 	    }
@@ -2166,18 +2147,15 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
 		Integer memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 		memberEntity = memberDAO.selectById( memberId );
-		memberCommonService.newMemberMerge( memberEntity, busId, phone );
+		memberEntity=memberCommonService.newMemberMerge( memberEntity, busId, phone );
 	    }
 
-	    if ( CommonUtil.isEmpty( memberEntity ) ) {
-		memberEntity = memberDAO.findByPhone( busId, phone );
-	    }
 
 	    if ( CommonUtil.isEmpty( memberEntity ) ) {
 		// 新增用户
 		memberEntity = new MemberEntity();
 		memberEntity.setPhone( phone );
-		memberEntity.setBusId( busUserEntity.getId() );
+		memberEntity.setBusId( busId);
 		memberEntity.setLoginMode( 1 );
 		memberEntity.setNickname( "Fans_" + phone.substring( 4 ) );
 		memberDAO.insert( memberEntity );
@@ -2567,7 +2545,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		//优惠券
 		if ( erpPaySuccess.getCouponType() == 0 ) {
 		    //微信
-		    Integer publicId = wxPublicUsersMapper.selectByUserId( memberEntity.getBusId() ).getId();
+		    Integer publicId =  requestService.findWxPublicUsersByBusId( memberEntity.getBusId() ).getId();
 		    //微信
 		    WxCardReceive wxCardReceive = wxCardReceiveMapper.selectById( erpPaySuccess.getCardId() );
 		    cardCouponsApiService.wxCardReceive( publicId, wxCardReceive.getUserCardCode() );
@@ -3015,7 +2993,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	// 今日新增统计
 	String date = DateTimeKit.getDate() + " 00:00:00";
 
-	WxShop wxShop = wxShopDAO.selectMainShopByBusId( busId );
+	WsWxShopInfo wxShop = requestService.findMainShop( busId );
 	if ( ( CommonUtil.isNotEmpty( wxShop ) && wxShop.getId().equals( shopId ) ) || CommonUtil.isEmpty( shopId ) ) {
 	    int count = memberCardDAO.countCardByTime( busId, date );
 	    map.put( "jinriCount", count );
@@ -3265,5 +3243,9 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}
     }
 
+
+    public void findGiveRuleDelay(String orderNo){
+        memberCommonService.findGiveRuleDelay( orderNo );
+    }
 
 }

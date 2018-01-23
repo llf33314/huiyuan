@@ -10,6 +10,7 @@ import com.gt.member.controller.RemoteAuthori.AuthorizeOrLoginController;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
+import com.gt.member.service.bo.ErrorWorkbook;
 import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.MemberCardPhoneService;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -115,7 +117,9 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    String cityCode = CommonUtil.toString( params.get( "cityCode" ) );
-	    List< Map< String,Object > > listMap = memberCommonService.findCityByCityCode( cityCode );
+	    List<  Map<String,Object> > listMap =new ArrayList<>(  );
+	    Map<String,Object> map = requestService.queryBasisByName( cityCode );
+	    listMap.add( map );
 	    return ServerResponse.createBySuccess( listMap );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -255,7 +259,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    memberCardPhoneService.loginMemberCard( params, member.getId() );
+	    memberCardPhoneService.loginMemberCard(request, params, member.getId() );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -285,7 +289,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    String vcode=CommonUtil.toString( params.get( "vcode" ) );
 	    Integer areaId=CommonUtil.toInteger( params.get( "areaId" ) );
 	    String areacode=CommonUtil.toString( params.get( "areacode" ) );
-	    memberCardPhoneService.judgeMemberCard( member.getId(),busId,phone,vcode,areaId, areacode);
+	    memberCardPhoneService.judgeMemberCard( request, member.getId(),busId,phone,vcode,areaId, areacode);
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -608,7 +612,7 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    memberCardPhoneService.updateMemberUser( json, member.getId() );
+	    memberCardPhoneService.updateMemberUser( request,json, member.getId() );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );

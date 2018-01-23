@@ -1,16 +1,14 @@
 package com.gt.member.service.member.impl;
 
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.sign.SignHttpUtils;
-import com.gt.common.entity.BusUserEntity;
-import com.gt.common.entity.WxPublicUsersEntity;
 import com.gt.member.dao.*;
-import com.gt.member.dao.common.BusUserDAO;
-import com.gt.member.dao.common.WxPublicUsersDAO;
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.common.dict.DictService;
+import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.CardERPService;
 import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.*;
@@ -54,13 +52,7 @@ public class CardERPServiceImpl implements CardERPService {
 
     @Autowired
     private SystemMsgService systemMsgService;
-    
 
-    @Autowired
-    private WxPublicUsersDAO wxPublicUsersDAO;
-
-    @Autowired
-    private BusUserDAO busUserDAO;
 
     @Autowired
     private RedisCacheUtil redisCacheUtil;
@@ -70,6 +62,9 @@ public class CardERPServiceImpl implements CardERPService {
 
     @Autowired
     private UserConsumePayDAO userConsumePayDAO;
+
+    @Autowired
+    private  RequestService requestService;
 
     @Override
     public List< Map< String,Object > > findMemberIsNotCard( Integer busId, Map< String,Object > params ) {
@@ -109,9 +104,8 @@ public class CardERPServiceImpl implements CardERPService {
 
 	    int count = cardMapper.countCardisBinding( busId );
 
-	    BusUserEntity busUserEntity = busUserDAO.selectById( busId );
+	    String dictNum = dictService.dictBusUserNum( busId,1093 );
 
-	    String dictNum = dictService.dictBusUserNum( busId, busUserEntity.getLevel(), 4, "1093" ); // 多粉 翼粉
 	    if ( CommonUtil.toInteger( dictNum ) < count ) {
 		returnMap.put( "code", -1 );
 		returnMap.put( "message", "会员卡已领取完!" );
@@ -125,14 +119,14 @@ public class CardERPServiceImpl implements CardERPService {
 		memberEntity = memberMapper.selectById( memberId );
 		memberCommonService.newMemberMerge( memberEntity, busId, phone );
 	    } else {
-		memberEntity = memberMapper.findByPhone( busUserEntity.getId(), phone );
+		memberEntity = memberMapper.findByPhone(busId, phone );
 	    }
 
 	    if ( CommonUtil.isEmpty( memberEntity ) ) {
 		// 新增用户
 		memberEntity = new MemberEntity();
 		memberEntity.setPhone( phone );
-		memberEntity.setBusId( busUserEntity.getId() );
+		memberEntity.setBusId( busId );
 		memberEntity.setLoginMode( 1 );
 		memberEntity.setNickname( "Fans_" + phone.substring( 4 ) );
 		memberMapper.insert( memberEntity );
@@ -214,12 +208,11 @@ public class CardERPServiceImpl implements CardERPService {
 		String orderCode = CommonUtil.getMEOrderCode();
 		uc.setOrderCode( orderCode );
 		uc.setGtId( gtId );
-		uc.setBusId( busUserEntity.getId() );
+		uc.setBusId( busId );
 		uc.setShopId( shopId );
 
 		String notityUrl = PropertiesUtil.getWebHome() + "/addMember/79B4DE7C/successPayBuyCard";
-		WxPublicUsersEntity wxPublicUsersEntity = wxPublicUsersDAO.selectByUserId( busUserEntity.getId() );
-
+		WxPublicUsers wxPublicUsers= requestService.findWxPublicUsersByBusId( busId );
 		userConsumeNewDAO.insert( uc );
 
 		MemberEntity memberEntity1 = new MemberEntity();
@@ -227,8 +220,8 @@ public class CardERPServiceImpl implements CardERPService {
 		memberEntity1.setPhone( phone );
 		memberMapper.updateById( memberEntity1 );
 
-		String url = PropertiesUtil.getWxmp_home() + "/pay/B02A45A5/79B4DE7C/createPayQR.do" + "?totalFee=" + gradeType.getBuyMoney() + "&model=13&busId=" + busUserEntity.getId()
-				+ "&orderNum=" + orderCode +"&desc=支付&notifyUrl=" + notityUrl + "&appid=" + wxPublicUsersEntity.getAppid() + "&appidType=0&isSendMessage=0&payWay=0&sourceType=1";
+		String url = PropertiesUtil.getWxmp_home() + "/pay/B02A45A5/79B4DE7C/createPayQR.do" + "?totalFee=" + gradeType.getBuyMoney() + "&model=13&busId=" + busId
+				+ "&orderNum=" + orderCode +"&desc=支付&notifyUrl=" + notityUrl + "&appid=" + wxPublicUsers.getAppid() + "&appidType=0&isSendMessage=0&payWay=0&sourceType=1";
 		returnMap.put( "memberId", memberEntity.getId() );
 		returnMap.put( "code", 2 );
 		returnMap.put( "message", "未支付" );
@@ -362,7 +355,7 @@ public class CardERPServiceImpl implements CardERPService {
 	} catch ( Exception e ) {
 	}
 
-	busId = dictService.pidUserId( busId );
+	busId = requestService.getMainBusId( busId );
 
 	if ( cardNodecrypt.contains( "?time" ) ) {
 	    // 查询卡号是否存在

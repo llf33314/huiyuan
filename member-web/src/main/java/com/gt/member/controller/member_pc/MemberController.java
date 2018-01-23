@@ -269,7 +269,8 @@ public class MemberController {
 		    HttpServletResponse response,Integer memberId){
 
 	try {
-	     Map<String,Object> map= memberCardService.findMemberDetails(memberId);
+	    Integer busId = SessionUtils.getPidBusId( request );
+	     Map<String,Object> map= memberCardService.findMemberDetails(busId,memberId);
 	    return ServerResponse.createBySuccess( map );
 	} catch ( Exception e ) {
 	    LOG.error( "查询会员详情：", e );

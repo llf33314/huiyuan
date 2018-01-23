@@ -1,7 +1,7 @@
 package com.gt.member.service.memberApi;
 
+import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
-import com.gt.common.entity.BusUserEntity;
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
 import com.gt.entityBo.PaySuccessBo;
@@ -238,7 +238,7 @@ public interface MemberApiService {
 	 * @return
 	 */
 
-    public boolean isMememberByApplet( BusUserEntity busUserEntity, String cardNoKey, String cardNo );
+    public boolean isMememberByApplet( BusUser busUser, String cardNoKey, String cardNo );
 
     /**
      * 统计门店线上和线下会员数量
@@ -555,6 +555,12 @@ public interface MemberApiService {
      * @throws BusinessException
      */
     public Map< String,Object > findChongZhiLogDetails( Integer ucId ) throws BusinessException ;
+
+    /**
+     * 会员消费，赠送商品（延迟送接口）
+     * @param orderNo
+     */
+    public void findGiveRuleDelay(String orderNo);
 
 
 }

@@ -1,7 +1,6 @@
 package com.gt.member.service.member;
 
 import com.gt.api.bean.session.Member;
-import com.gt.common.entity.BusFlow;
 import com.gt.member.exception.BusinessException;
 import com.gt.util.entity.result.wx.WxJsSdkResult;
 
@@ -29,7 +28,7 @@ public interface MemberCardPhoneService {
      * @param vcode
      * @return
      */
-    public void judgeMemberCard(Integer memberId, Integer busId,
+    public void judgeMemberCard(HttpServletRequest request,Integer memberId, Integer busId,
                     String phone, String vcode,Integer areaId,String areacode);
 
     /**
@@ -49,7 +48,7 @@ public interface MemberCardPhoneService {
      * @return
      * @throws BusinessException
      */
-    public void loginMemberCard( Map< String,Object > params,Integer memberId  ) throws BusinessException;
+    public void loginMemberCard( HttpServletRequest request,Map< String,Object > params,Integer memberId  ) throws BusinessException;
 
 
     /**
@@ -138,7 +137,7 @@ public interface MemberCardPhoneService {
      * @param json
      * @throws BusinessException
      */
-    public void updateMemberUser(String json,Integer memberId)throws  BusinessException;
+    public void updateMemberUser(HttpServletRequest request,String json,Integer memberId)throws  BusinessException;
 
     /**
      * 查询粉丝会员卡卡号 并加密

@@ -5,7 +5,6 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,9 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
+import com.gt.api.bean.session.Member;
 import com.gt.api.util.ftp.ContinueFTP;
-import com.gt.member.constant.CommonConst;
-import com.gt.common.entity.BusUserEntity;
 import com.gt.member.entity.MemberEntity;
 import net.sf.json.JSONObject;
 
@@ -970,6 +968,16 @@ public class CommonUtil {
 
     }
 
+
+    public static Member memberEntityToMember(MemberEntity m){
+	Member member=new Member();
+	member.setId( m.getId() );
+	member.setNickname( m.getNickname() );
+	member.setBusid( m.getBusId() );
+	member.setPhone( m.getPhone() );
+	member.setHeadimgurl( m.getHeadimgurl() );
+	return member;
+    }
 
 
 }
