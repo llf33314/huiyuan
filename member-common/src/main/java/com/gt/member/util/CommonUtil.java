@@ -548,7 +548,7 @@ public class CommonUtil {
     }
 
 
-    public static String getDuofenCardCode(){
+    public static String getDuofenCardCode(Integer busId){
 	StringBuffer buf = new StringBuffer( "1,2,3,4,5,6,7,8,9,0" );
 	String[] arr = buf.toString().split( "," );
 	StringBuffer sb = new StringBuffer();
@@ -559,14 +559,10 @@ public class CommonUtil {
 	    sb.append( arr[a] );
 	}
 	Long date = new Date().getTime();
-	String duofenCardCode = date.toString() + sb.toString();
+	String duofenCardCode = busId+date.toString() + sb.toString();
 	return duofenCardCode;
     }
 
-    public static void main( String[] args ) {
-	String aa = getDuofenCardCode();
-	System.out.println( aa );
-    }
 
     /**
      * 获取推荐码 6位
