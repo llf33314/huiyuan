@@ -547,8 +547,24 @@ public class CommonUtil {
 	return cardNo;
     }
 
+
+    public static String getDuofenCardCode(){
+	StringBuffer buf = new StringBuffer( "1,2,3,4,5,6,7,8,9,0" );
+	String[] arr = buf.toString().split( "," );
+	StringBuffer sb = new StringBuffer();
+	Random random = new Random();
+	for ( int i = 0; i < 4; i++ ) {
+	    Integer count = arr.length;
+	    int a = random.nextInt( count );
+	    sb.append( arr[a] );
+	}
+	Long date = new Date().getTime();
+	String duofenCardCode = date.toString() + sb.toString();
+	return duofenCardCode;
+    }
+
     public static void main( String[] args ) {
-	String aa = getCode();
+	String aa = getDuofenCardCode();
 	System.out.println( aa );
     }
 
@@ -830,7 +846,17 @@ public class CommonUtil {
      * @return
      */
     public static String getMEOrderCode() {
-	return "ME" + new Date().getTime();
+	StringBuffer buf = new StringBuffer(
+			"1,2,3,4,5,6,7,8,9,0");
+	String[] arr = buf.toString().split(",");
+	StringBuffer sb = new StringBuffer();
+	Random random = new Random();
+	for (int i = 0; i < 4; i++) {
+	    Integer count = arr.length;
+	    int a = random.nextInt(count);
+	    sb.append(arr[a]);
+	}
+	return "ME" + new Date().getTime()+sb.toString();
     }
 
     /**
