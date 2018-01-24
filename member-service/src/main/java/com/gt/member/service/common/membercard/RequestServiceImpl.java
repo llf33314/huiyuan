@@ -258,6 +258,7 @@ public class RequestServiceImpl implements RequestService {
 	    WsWxShopInfo  wsWxShopInfo = JSON.parseObject( json.getString( "data" ), WsWxShopInfo.class );
 	    return wsWxShopInfo;
 	} else {
+	    LOG.error( "调用李逢喜请求门店信息返回参数"+shopStr);
 	    throw new BusinessException( ResponseMemberEnums.QUERY_SHOP_BUSID );
 	}
     }
@@ -459,18 +460,20 @@ public class RequestServiceImpl implements RequestService {
     public BusUser findBususer(Integer busId){
 	try {
 	    String url = PropertiesUtil.getWxmp_home() + GETBUSUSERAPI;
-	    String returnMsg = SignHttpUtils.WxmppostByHttp( url, null, PropertiesUtil.getWxmpsignKey() );
+	    Map<String,Object> map=new HashMap<>(  );
+	    map.put( "userId",busId );
+	    String returnMsg = SignHttpUtils.WxmppostByHttp( url, map, PropertiesUtil.getWxmpsignKey() );
 	    if ( CommonUtil.isNotEmpty( returnMsg ) ) {
 		Map< String,Object > json = JSON.parseObject( returnMsg, Map.class );
 		if("0".equals( CommonUtil.toString( json.get( "code" ) ) )){
 		  return JSONObject.parseObject( CommonUtil.toString( json.get( "data" ) ),BusUser.class );
 		}else{
-		    LOG.error( "调用陈丹区号异常"+returnMsg );
+		    LOG.error( "调用陈丹商家信息异常"+returnMsg );
 		}
 
 	    }
 	}catch ( Exception e ){
-	    LOG.error( "调用陈丹区号异常",e );
+	    LOG.error( "调用陈丹商家信息异常",e );
 	}
 	return null;
 
@@ -555,7 +558,9 @@ public class RequestServiceImpl implements RequestService {
     public Integer getMainBusId(Integer busId){
 	try {
 	    String url = PropertiesUtil.getWxmp_home() + GETMAINBUSID;
-	    String returnMsg = SignHttpUtils.WxmppostByHttp( url, null, PropertiesUtil.getWxmpsignKey() );
+	    Map<String,Object> map=new HashMap<>(  );
+	    map.put( "userId",busId );
+	    String returnMsg = SignHttpUtils.WxmppostByHttp( url, map, PropertiesUtil.getWxmpsignKey() );
 	    if ( CommonUtil.isNotEmpty( returnMsg ) ) {
 		Map< String,Object > json = JSON.parseObject( returnMsg, Map.class );
 		if("0".equals( CommonUtil.toString( json.get( "code" ) ) )){
