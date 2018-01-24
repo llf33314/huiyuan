@@ -62,6 +62,14 @@ public interface DuofenCardNewPhoneService {
      */
     public Map<String,Object> useDuofenCardByCardId(Integer duofenCardGetId,Integer memberId);
 
+
+    /**
+     * 购买多粉优惠券详情
+     * @param cardId
+     * @return
+     */
+    public Map<String,Object> findDuofenCardDetailsByCardId(Integer cardId);
+
     /**
      * 多粉优惠券详情
      * @param duofenCardGetId

@@ -251,6 +251,26 @@ public class DuofenCardPhoneController extends AuthorizeOrLoginController {
 	}
     }
 
+
+    @ApiOperation( value = "购买优惠券详情", notes = "购买优惠券详情" )
+    @ResponseBody
+    @RequestMapping( value = "/findDuofenCardDetailsByCardId", method = RequestMethod.POST )
+    public ServerResponse findBuyDuofenCardDetailsByDuofenCardGetId(HttpServletRequest request, HttpServletResponse response,@RequestParam String json){
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer cardId=CommonUtil.toInteger( params.get( "cardId" ) );
+	    Map<String,Object> map=duofenCardNewPhoneService.findDuofenCardDetailsByCardId(cardId);
+	    return ServerResponse.createBySuccess( map  );
+	}catch ( BusinessException e ){
+	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	} catch ( Exception e ) {
+	    log.error( "我的优惠券查询异常：", e );
+	    e.printStackTrace();
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
+
+
     @ApiOperation( value = "单张优惠券详情", notes = "单张优惠券详情" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
 		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" )} )

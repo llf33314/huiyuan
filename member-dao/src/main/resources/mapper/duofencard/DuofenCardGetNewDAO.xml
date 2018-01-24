@@ -60,4 +60,18 @@
 
 	</select>
 
+
+    <select id="countByCardIds" resultType="java.util.Map">
+        select cardId, count(*) as count from t_duofen_card_get_new
+        <where>
+            <foreach close=")" collection="cardIds" item="cardId" open="("
+                     separator="or">
+                cardId=#{cardId}
+            </foreach>
+        </where>
+
+        group by cardId
+
+    </select>
+
 </mapper>
