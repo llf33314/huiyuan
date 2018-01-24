@@ -248,7 +248,7 @@ public class RequestServiceImpl implements RequestService {
 
     public WsWxShopInfo getShopById(Integer shopId){
 	LOG.error( "调用李逢喜请求门店信息参数:"+shopId);
-	String url = PropertiesUtil.getWxmp_home() + SELECTMAINSHOPBYBUSID;
+	String url = PropertiesUtil.getWxmp_home() + GETSHOPBYID;
 	LOG.error( "请求地址:"+url );
 	RequestUtils< Integer > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( shopId );
@@ -291,7 +291,7 @@ public class RequestServiceImpl implements RequestService {
 	    List< Map > mapList = JSONArray.parseArray( json.getString( "data" ), Map.class );
 	    return mapList;
 	} else {
-	    throw new BusinessException( ResponseMemberEnums.QUERY_SHOP_BUSID );
+	    throw new BusinessException( ResponseMemberEnums.QUERY_SHOP_BUSID.getCode(),CommonUtil.toString( json.get( "msg" ) ) );
 	}
     }
 
