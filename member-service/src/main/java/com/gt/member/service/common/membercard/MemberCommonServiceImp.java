@@ -1362,4 +1362,28 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	}
 	return null;
     }
+
+    public boolean getAutoAuditFlag( Integer busId ) {
+	try {
+	    List< Map< String,Object > > list = dictService.getDictbyList( "1196" );
+
+	    Integer flag = null;
+	    String autoAuditFlag = (String) list.get( 0 ).get( "item_value" );
+	    for ( Map< String,Object > map2 : list ) {
+		System.out.println( map2.get( "item_value" ) );
+		if ( map2.get( "item_value" ).equals( busId.toString() ) ) {
+		    flag = 1;
+		    break;
+		}
+	    }
+	    if ( flag != null ) {
+		return !autoAuditFlag.equals( "2" );
+	    } else {
+		return !autoAuditFlag.equals( "1" );
+	    }
+	} catch ( Exception e ) {
+	    LOG.error( "自动审核查询异常", e );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(),"自动审核查询异常");
+	}
+    }
 }

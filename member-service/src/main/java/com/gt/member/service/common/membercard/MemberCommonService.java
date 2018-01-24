@@ -1,5 +1,6 @@
 package com.gt.member.service.common.membercard;
 
+import com.gt.api.enums.ResponseEnums;
 import com.gt.entityBo.MemberShopEntity;
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
@@ -226,4 +227,10 @@ public interface MemberCommonService {
      */
     public Double getBuyMoney(String giftBuyMoney,Double buyMoney);
 
+    /**
+     * 根据商家判断是否自动审核
+     * @param busId
+     * @return
+     */
+    boolean getAutoAuditFlag( Integer busId );
 }
