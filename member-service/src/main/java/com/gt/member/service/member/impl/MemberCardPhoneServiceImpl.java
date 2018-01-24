@@ -297,7 +297,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 	    List< Map< String,Object > > gradeTypes = memberGradetypeDAO.findBybusIdAndCtId3( memberEntity.getBusId(), ctId );
 	    if ( CommonUtil.toInteger( gradeTypes.get( 0 ).get( "applyType" ) ) != 3 ) {
-		if ( !memberEntity.getPhone().equals( phone ) ) {
+		if ( !phone.equals(memberEntity.getPhone()) ) {
 		    String code = CommonUtil.toString( params.get( "code" ) );
 		    String value = redisCacheUtil.get( phone + "_" + code );
 		    if ( CommonUtil.isEmpty( value ) ) {
