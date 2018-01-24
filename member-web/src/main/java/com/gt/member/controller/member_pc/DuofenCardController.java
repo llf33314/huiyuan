@@ -11,6 +11,7 @@ import com.gt.member.entity.DuofencardAuthorization;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.dict.DictService;
+import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.member.DuofenCardNewService;
 import com.gt.member.service.member.DuofencardAuthorizationService;
 import com.gt.member.util.CommonUtil;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,14 +43,14 @@ import java.util.Map;
 @CrossOrigin
 @RequestMapping( "/memberPc/duofenCoupon" )
 @Slf4j
-public class DuofenCardController extends AuthorizeOrLoginController {
+public class DuofenCardController {
     private static final Logger LOG = LoggerFactory.getLogger( DuofenCardController.class );
 
     @Autowired
     private DuofenCardNewService duofenCardNewService;
 
     @Autowired
-    private DictService dictService;
+    private MemberCommonService memberCommonService;
 
     @Autowired
     private DuofencardAuthorizationService authorizationService;
@@ -69,7 +69,7 @@ public class DuofenCardController extends AuthorizeOrLoginController {
 	    coupon.setCreateBusId( member.getId() );
 
 	    // 自动审核
-	    boolean auditFlag = dictService.getAutoAuditFlag( busId );
+	    boolean auditFlag = memberCommonService.getAutoAuditFlag( busId );
 	    if ( auditFlag ) {
 		coupon.setCardStatus( 2 );
 	    }
@@ -87,21 +87,23 @@ public class DuofenCardController extends AuthorizeOrLoginController {
     @RequestMapping( value = "/updateCouponById", method = RequestMethod.POST )
     public ServerResponse updateCouponById( HttpServletRequest request, HttpServletResponse response, @RequestBody DuofenCardNewVO coupon ) {
 	try {
+	    if(coupon.getId()==null){
+		return ServerResponse.createByError( "修改优惠券不存在" );
+	    }
 	    duofenCardNewService.updateCouponById( coupon );
 	    return ServerResponse.createBySuccess(  );
 	} catch ( BusinessException e ) {
 	    LOG.error( "优惠券修改异常", e );
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
-
 	}
     }
 
-    @ApiOperation( value = "优惠券详情", notes = "优惠券详情" )
+    @ApiOperation( value = "优惠券信息", notes = "优惠券信息" )
     @ResponseBody
-    @RequestMapping( value = "/findCouponById", method = RequestMethod.GET )
+    @RequestMapping( value = "/findCouponById",method ={RequestMethod.POST,RequestMethod.GET} )
     public ServerResponse findCouponById( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer id ) {
 	try {
-	    List< Map< String,Object > > coupon = duofenCardNewService.selectById( id );
+	     Map< String,Object >  coupon = duofenCardNewService.findCouponById( id );
 	    return ServerResponse.createBySuccess( coupon );
 	} catch ( Exception e ) {
 	    LOG.error( "优惠券查询异常", e );
@@ -109,10 +111,24 @@ public class DuofenCardController extends AuthorizeOrLoginController {
 	}
     }
 
+    @ApiOperation( value = "优惠券详情", notes = "优惠券详情" )
+    @ResponseBody
+    @RequestMapping( value = "/findCouponDetail" ,method ={RequestMethod.POST,RequestMethod.GET})
+    public ServerResponse findCouponDetail( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer id ) {
+	try {
+	    Map< String,Object >  coupon = duofenCardNewService.findCouponDetail( id );
+	    return ServerResponse.createBySuccess( coupon );
+	} catch ( Exception e ) {
+	    LOG.error( "优惠券查询异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), "优惠券查询异常" );
+	}
+    }
+
+
     @ApiOperation( value = "获取优惠券列表", notes = "获取优惠券列表" )
     @ResponseBody
-    @RequestMapping( value = "/getCouponListByBusId", method = RequestMethod.GET )
-    public ServerResponse getCouponListByBusId( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer curPage, @RequestParam Integer pageSize,Integer cardStatus, String couponName, Integer useType, Integer busId ) {
+    @RequestMapping( value = "/getCouponListByBusId",method ={RequestMethod.POST,RequestMethod.GET} )
+    public ServerResponse getCouponListByBusId( HttpServletRequest request, HttpServletResponse response, @RequestParam(defaultValue ="1" ) Integer curPage, @RequestParam(defaultValue ="10" ) Integer pageSize,Integer cardStatus, String couponName, Integer useType, Integer busId ) {
 	try {
 	    if ( busId == null ) {
 		busId = SessionUtils.getPidBusId( request );
@@ -127,8 +143,8 @@ public class DuofenCardController extends AuthorizeOrLoginController {
 
     @ApiOperation( value = "优惠券领取列表", notes = "优惠券领取列表" )
     @ResponseBody
-    @RequestMapping( value = "/getReceiveCouponListById", method = RequestMethod.GET )
-    public ServerResponse getReceiveCouponListById( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer curPage, @RequestParam Integer pageSize,
+    @RequestMapping( value = "/getReceiveCouponListById",method ={RequestMethod.POST,RequestMethod.GET} )
+    public ServerResponse getReceiveCouponListById( HttpServletRequest request, HttpServletResponse response, @RequestParam(defaultValue ="1" ) Integer curPage, @RequestParam(defaultValue ="10" ) Integer pageSize,
 		    @RequestParam Integer couponId, String searchContent ) {
         try {
 	    Page page = duofenCardNewService.getReceiveCouponListById( curPage, pageSize, couponId, searchContent );
@@ -139,9 +155,22 @@ public class DuofenCardController extends AuthorizeOrLoginController {
 	}
     }
 
+    @ApiOperation( value = "优惠券购买详情", notes = "优惠券购买详情" )
+    @ResponseBody
+    @RequestMapping( value = "/getPaymentDetailById",method ={RequestMethod.POST,RequestMethod.GET} )
+    public ServerResponse getPaymentDetailById( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer id ) {
+	try {
+	    Map<String,Object> map = duofenCardNewService.getPaymentDetailById( id );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( BusinessException e ) {
+	    LOG.error( "查询购买详情异常", e );
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
     @ApiOperation( value = "删除核销人员", notes = "删除核销人员" )
     @ResponseBody
-    @RequestMapping( value = "/authorization/deleteById", method = RequestMethod.GET )
+    @RequestMapping( value = "/authorization/deleteById",method ={RequestMethod.POST,RequestMethod.GET} )
     public ServerResponse deleteById( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer id ) {
 	authorizationService.deleteById( id );
 	return ServerResponse.createBySuccess();
@@ -149,14 +178,14 @@ public class DuofenCardController extends AuthorizeOrLoginController {
 
     @ApiOperation( value = "核销人员列表", notes = "核销人员列表" )
     @ResponseBody
-    @RequestMapping( value = "/authorization/getAuthorizationUser", method = RequestMethod.GET )
-    public ServerResponse getAuthorizationUser( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer curPage, @RequestParam Integer pageSize ) {
+    @RequestMapping( value = "/authorization/getAuthorizationUser",method ={RequestMethod.POST,RequestMethod.GET} )
+    public ServerResponse getAuthorizationUser( HttpServletRequest request, HttpServletResponse response, @RequestParam(defaultValue ="1" ) Integer curPage, @RequestParam(defaultValue ="10" ) Integer pageSize ) {
 	Integer busId = SessionUtils.getPidBusId( request );
 	Page page = authorizationService.getAuthorizationUser( curPage, pageSize, busId );
 	return ServerResponse.createBySuccess( page );
     }
 
-    @ApiOperation( value = "增加核销用户", notes = "增加核销用户" )
+  /*  @ApiOperation( value = "增加核销用户", notes = "增加核销用户" )
     @ResponseBody
     @RequestMapping( value = "/authorization/authorizationUser", method = RequestMethod.POST )
     public ServerResponse authorizationUser( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
@@ -184,11 +213,11 @@ public class DuofenCardController extends AuthorizeOrLoginController {
 	} catch ( Exception e ) {
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
-    }
+    }*/
 
     @ApiOperation( value = "生成二维码", notes = "生成二维码" )
     @ResponseBody
-    @RequestMapping( value = "/qrCode", method = RequestMethod.GET )
+    @RequestMapping( value = "/qrCode",method ={RequestMethod.POST,RequestMethod.GET})
     public void qrCode( HttpServletRequest request, HttpServletResponse response, String content, Integer width, Integer height ) {
 	QRcodeKit.buildQRcode( content, width, height, response );
     }

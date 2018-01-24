@@ -1,15 +1,15 @@
 package com.gt.member.service.member.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.gt.common.entity.WxShop;
 import com.gt.member.base.BaseServiceImpl;
 import com.gt.member.dao.DuofencardAuthorizationDAO;
 import com.gt.member.dao.MemberEntityDAO;
-import com.gt.member.dao.common.WxShopDAO;
 import com.gt.member.entity.DuofencardAuthorization;
 import com.gt.member.entity.MemberEntity;
+import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.DuofencardAuthorizationService;
 import com.gt.member.util.Page;
+import com.gt.util.entity.result.shop.WsWxShopInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +35,7 @@ public class DuofencardAuthorizationServiceImpl extends BaseServiceImpl< Duofenc
     private MemberEntityDAO MemberEntityMapper;
 
     @Autowired
-    private WxShopDAO wxShopMapper;
+    private RequestService wxShopMapper;
 
     public Page getAuthorizationUser( Integer curPage, Integer pageSize, Integer busId ) {
 
@@ -53,7 +53,7 @@ public class DuofencardAuthorizationServiceImpl extends BaseServiceImpl< Duofenc
 	    System.out.println( authrization.toString() );
 	    MemberEntity member = MemberEntityMapper.selectById( (Serializable) authrization.get( "memberId" ) );
 	    authrization.put( "nickName", member.getNickname() );
-	    WxShop wxshop =wxShopMapper.selectById( (Serializable) authrization.get( "shopId" ) );
+	    WsWxShopInfo wxshop =wxShopMapper.getShopById( (Integer) authrization.get( "shopId" ) );
 	    authrization.put( "businessName",wxshop.getBusinessName());
 	}
 

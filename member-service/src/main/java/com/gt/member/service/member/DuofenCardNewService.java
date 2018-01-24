@@ -5,7 +5,6 @@ import com.gt.duofencard.entity.DuofenCardNew;
 import com.gt.member.base.BaseService;
 import com.gt.member.util.Page;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,5 +22,9 @@ public interface DuofenCardNewService extends BaseService<DuofenCardNew > {
 
     Page getReceiveCouponListById( Integer curPage, Integer pageSize, Integer couponId, String searchContent );
 
-    List< Map< String,Object > > selectById( Integer id );
+    Map< String,Object > findCouponDetail( Integer id );
+
+    Map<String,Object> findCouponById( Integer id );
+
+    Map< String,Object > getPaymentDetailById( Integer couponId );
 }
