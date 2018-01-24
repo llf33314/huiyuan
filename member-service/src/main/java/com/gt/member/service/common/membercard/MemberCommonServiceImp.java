@@ -1363,6 +1363,26 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	return null;
     }
 
+    public Double getBuyMoney(String giftBuyMoney,Double buyMoney){
+	//未设置实价
+	if(CommonUtil.isEmpty( giftBuyMoney )){
+	    return buyMoney;
+	}
+	List<Map> list= com.alibaba.fastjson.JSONArray.parseArray( giftBuyMoney,Map.class );
+	for(Map map:list){
+	    String startTime=CommonUtil.toString( map.get( "startTime" ) )+" 00:00:00";
+	    String endTime=CommonUtil.toString( map.get( "endTime" ) )+" 23:59:59";
+	    Date startDate=DateTimeKit.parseDate( startTime,"yyyy-MM-dd hh:mm:ss" );
+	    Date endDate=DateTimeKit.parseDate( endTime,"yyyy-MM-dd hh:mm:ss" );
+	    if(DateTimeKit.isBetween( startDate, endDate)){
+		return CommonUtil.toDouble( map.get( "buyMoney" ) );
+	    }
+	}
+	return buyMoney;
+    }
+
+
+
     public boolean getAutoAuditFlag( Integer busId ) {
 	try {
 	    List< Map< String,Object > > list = dictService.getDictbyList( "1196" );

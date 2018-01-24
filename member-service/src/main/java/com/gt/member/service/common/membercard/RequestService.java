@@ -232,4 +232,11 @@ public interface RequestService {
      */
     public List<Map> queryCityByLevel();
 
+    /**
+     * 公众号关注
+     * @param publicId
+     * @return
+     */
+    public String newqrcodeCreateFinal(Integer publicId);
+
 }
