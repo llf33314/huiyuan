@@ -62,7 +62,7 @@ public class DictServiceImpl implements DictService {
 	    JSONObject jsonObject = JSONObject.parseObject( result );
 	    if ( "0".equals( jsonObject.getString( "code" ) ) ) {
 		JSONObject  data=JSONObject.parseObject(jsonObject.getString( "data" )  );
-		List list=JSONArray.parseArray( data.getString( "dictJSON" ),List.class );
+		List list=JSONArray.parseArray( data.getString( "dictJSON" ),Map.class );
 		return list;
 	    }
 	} catch ( Exception e ) {
