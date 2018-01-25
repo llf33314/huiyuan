@@ -80,7 +80,7 @@ web:
  wxmp_home: http://nb.deeptel.com.cn/
  wxmpsignKey: WXMP2017
  mallHome: http://nb.mall.deeptel.com.cn/
- cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6
+ cardNoKey: Pxh3XQbUCg7TiluB
  sms_name: 多粉平台
  socket_url: http://183.47.242.2:8881
  redis_ip: 113.106.202.51

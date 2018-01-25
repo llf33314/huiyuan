@@ -79,7 +79,7 @@ web:
  webHome: https://member.duofriend.com/
  wxmp_home: https://duofriend.com/
  wxmpsignKey: WXMP2017
- cardNoKey: 4204D69FDC8932B631653F5D3E0EB6A6
+ cardNoKey: Pxh3XQbUCg7TiluB
  sms_name: 多粉平台
  socket_url: http://183.47.242.2:8881
  redis_ip: 10.10.242.2
