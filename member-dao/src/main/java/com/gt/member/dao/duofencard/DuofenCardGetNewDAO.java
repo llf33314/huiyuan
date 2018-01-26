@@ -1,7 +1,6 @@
 package com.gt.member.dao.duofencard;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.gt.duofencard.entity.DuofenCardGetNew;
 import org.apache.ibatis.annotations.Param;

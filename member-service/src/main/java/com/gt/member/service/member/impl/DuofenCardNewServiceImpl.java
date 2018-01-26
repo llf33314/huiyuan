@@ -2,7 +2,6 @@ package com.gt.member.service.member.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.google.common.base.Objects;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.bean.vo.DuofenCardNewVO;
 import com.gt.duofencard.entity.*;
@@ -256,6 +255,12 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
     }
 
     @Override
+    public Integer getCouponReceiveQuantity( Integer id ) {
+	return  cardGetMapper.selectCount( new EntityWrapper< DuofenCardGetNew >().eq( "cardId", id ) );
+
+    }
+
+    @Override
     public Page getCouponListByBusId( Integer curPage, Integer pageSize, Integer busId, Integer cardStatus, String title, Integer useType ) {
 
 	EntityWrapper< DuofenCardNew > couponCondition = new EntityWrapper< DuofenCardNew >();
@@ -296,7 +301,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 		Integer cardId = (Integer) couponMap.get( "id" );
 
 		//领取数量
-		Integer receiveQuantity = cardGetMapper.selectCount( new EntityWrapper< DuofenCardGetNew >().eq( "cardId", cardId ) );
+		Integer receiveQuantity = getCouponReceiveQuantity(cardId);
 		couponMap.put( "receiveQuantity", receiveQuantity );
 
 		//发布设置参数

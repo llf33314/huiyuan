@@ -53,7 +53,12 @@ public interface MemberQuartzService {
 	 */
 	public void birthdaySms();
 
-
-
-	
+    /**
+     * 更新过期优惠券
+     */
+    public void updateExpiredCoupond();
+    /**
+     * 更新已到期的领取券
+     */
+    public void updateExpiredReceiveCoupon();
 }

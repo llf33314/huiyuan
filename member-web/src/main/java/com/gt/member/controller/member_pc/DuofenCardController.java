@@ -1,25 +1,18 @@
 package com.gt.member.controller.member_pc;
 
-import com.alibaba.fastjson.JSON;
 import com.gt.api.bean.session.Member;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.SessionUtils;
 import com.gt.bean.vo.DuofenCardNewVO;
-import com.gt.member.controller.RemoteAuthori.AuthorizeOrLoginController;
 import com.gt.member.dto.ServerResponse;
-import com.gt.member.entity.DuofencardAuthorization;
-import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
-import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.member.DuofenCardNewService;
 import com.gt.member.service.member.DuofencardAuthorizationService;
-import com.gt.member.util.CommonUtil;
 import com.gt.member.util.Page;
 import com.gt.member.util.QRcodeKit;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,15 +35,14 @@ import java.util.Map;
 @Controller
 @CrossOrigin
 @RequestMapping( "/memberPc/duofenCoupon" )
-@Slf4j
 public class DuofenCardController {
-    private static final Logger LOG = LoggerFactory.getLogger( DuofenCardController.class );
+    private static final Logger log = LoggerFactory.getLogger( DuofenCardController.class );
 
     @Autowired
     private DuofenCardNewService duofenCardNewService;
 
     @Autowired
-    private MemberCommonService memberCommonService;
+    private MemberCommonService  memberCommonService;
 
     @Autowired
     private DuofencardAuthorizationService authorizationService;
@@ -58,15 +50,14 @@ public class DuofenCardController {
     @ApiOperation( value = "新增优惠券", notes = "新增优惠券" )
     @ResponseBody
     @RequestMapping( value = "/addCoupon", method = RequestMethod.POST )
-    public ServerResponse addCoupon( HttpServletRequest request, HttpServletResponse response, @RequestBody DuofenCardNewVO coupon ) {
+    //@PostMapping(value="add",produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse addCoupon( HttpServletRequest request, HttpServletResponse response,@RequestBody @ModelAttribute DuofenCardNewVO coupon ) {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    //Member member = SessionUtils.getLoginMember( request, busId );
-	    Member member =new Member();
-	    member.setId(35);
+	    Integer createBusId = SessionUtils.getLoginUser( request ).getId();
 
 	    coupon.setBusId( busId );
-	    coupon.setCreateBusId( member.getId() );
+	    coupon.setCreateBusId( createBusId );
 
 	    // 自动审核
 	    boolean auditFlag = memberCommonService.getAutoAuditFlag( busId );
@@ -85,7 +76,7 @@ public class DuofenCardController {
     @ApiOperation( value = "修改优惠券", notes = "修改优惠券" )
     @ResponseBody
     @RequestMapping( value = "/updateCouponById", method = RequestMethod.POST )
-    public ServerResponse updateCouponById( HttpServletRequest request, HttpServletResponse response, @RequestBody DuofenCardNewVO coupon ) {
+    public ServerResponse updateCouponById( HttpServletRequest request, HttpServletResponse response, @RequestBody @ModelAttribute DuofenCardNewVO coupon ) {
 	try {
 	    if(coupon.getId()==null){
 		return ServerResponse.createByError( "修改优惠券不存在" );
@@ -93,7 +84,7 @@ public class DuofenCardController {
 	    duofenCardNewService.updateCouponById( coupon );
 	    return ServerResponse.createBySuccess(  );
 	} catch ( BusinessException e ) {
-	    LOG.error( "优惠券修改异常", e );
+	    log.error( "优惠券修改异常", e );
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
@@ -106,7 +97,7 @@ public class DuofenCardController {
 	     Map< String,Object >  coupon = duofenCardNewService.findCouponById( id );
 	    return ServerResponse.createBySuccess( coupon );
 	} catch ( Exception e ) {
-	    LOG.error( "优惠券查询异常", e );
+	    log.error( "优惠券查询异常", e );
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), "优惠券查询异常" );
 	}
     }
@@ -119,9 +110,26 @@ public class DuofenCardController {
 	    Map< String,Object >  coupon = duofenCardNewService.findCouponDetail( id );
 	    return ServerResponse.createBySuccess( coupon );
 	} catch ( Exception e ) {
-	    LOG.error( "优惠券查询异常", e );
+	    log.error( "优惠券查询异常", e );
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), "优惠券查询异常" );
 	}
+    }
+
+  /* 获取会员已领取优惠券数量 receiveRule 领取规则 0=每人每天最多领取 1=每人最多领取
+    @ResponseBody
+    @RequestMapping( value = "/getReceiveQuantity", method = RequestMethod.GET )
+    public ServerResponse getReceiveQuantity( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer userId, @RequestParam Integer couponId,
+		    @RequestParam Integer receiveRule ) {
+	Integer receiveQuantity = duofenCardNewService.getReceiveQuantity( userId, couponId, receiveRule );
+	return ServerResponse.createBySuccess( receiveQuantity );
+    }*/
+
+    @ApiOperation( value = "优惠券已领取数量  ", notes = "优惠券已领取数量  " )
+    @ResponseBody
+    @RequestMapping( value = "/getCouponReceiveQuantity", method = RequestMethod.GET )
+    public ServerResponse getReceiveQuantity( HttpServletRequest request, HttpServletResponse response,  @RequestParam Integer id ) {
+	Integer receiveQuantity = duofenCardNewService.getCouponReceiveQuantity(id );
+	return ServerResponse.createBySuccess( receiveQuantity );
     }
 
 
@@ -136,7 +144,7 @@ public class DuofenCardController {
 	    Page page = duofenCardNewService.getCouponListByBusId(  curPage, pageSize,busId, cardStatus, couponName, useType );
 	    return ServerResponse.createBySuccess( page );
 	} catch ( BusinessException e ) {
-	    LOG.error( "获取优惠券异常", e );
+	    log.error( "获取优惠券异常", e );
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
@@ -150,7 +158,7 @@ public class DuofenCardController {
 	    Page page = duofenCardNewService.getReceiveCouponListById( curPage, pageSize, couponId, searchContent );
 	    return ServerResponse.createBySuccess( page );
 	} catch ( BusinessException e ) {
-	    LOG.error( "获取领取列表异常", e );
+	    log.error( "获取领取列表异常", e );
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
@@ -163,7 +171,7 @@ public class DuofenCardController {
 	    Map<String,Object> map = duofenCardNewService.getPaymentDetailById( id );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
-	    LOG.error( "查询购买详情异常", e );
+	    log.error( "查询购买详情异常", e );
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
@@ -214,6 +222,9 @@ public class DuofenCardController {
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }*/
+
+
+
 
     @ApiOperation( value = "生成二维码", notes = "生成二维码" )
     @ResponseBody

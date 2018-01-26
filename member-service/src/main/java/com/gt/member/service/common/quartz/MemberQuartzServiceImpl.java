@@ -1,13 +1,15 @@
 package com.gt.member.service.common.quartz;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.gt.api.util.RequestUtils;
+import com.gt.duofencard.entity.DuofenCardGetNew;
+import com.gt.duofencard.entity.DuofenCardNew;
 import com.gt.member.dao.*;
+import com.gt.member.dao.duofencard.DuofenCardGetNewDAO;
+import com.gt.member.dao.duofencard.DuofenCardNewDAO;
 import com.gt.member.entity.*;
 import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.common.membercard.RequestService;
@@ -58,6 +60,11 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
 
     @Autowired
     private MemberCommonService memberCommonService;
+    @Autowired
+    private DuofenCardNewDAO    cardMapper;
+
+    @Autowired
+    private DuofenCardGetNewDAO cardGetMapper;
 
     /**
      * 过期卡券 修改领取卡券状态
@@ -513,6 +520,48 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
 	}
 	if ( list.size() > 0 ) {
 	    memberBirMapper.insertList( list );
+	}
+    }
+
+    @Override
+    public void updateExpiredCoupond() {
+	try {
+	    EntityWrapper< DuofenCardNew > couponCondition = new EntityWrapper<>();
+	    couponCondition.eq( "cardStatus", 2 );
+	    couponCondition.eq( "type", 0 );
+	    List< DuofenCardNew > listItem = cardMapper.selectList( couponCondition );
+
+	    for ( DuofenCardNew coupon : listItem ) {
+		if ( coupon.getBeginTimestamp() != null && coupon.getEndTimestamp() != null ) {
+		    boolean isDateValid = DateTimeKit.isValidDate( coupon.getBeginTimestamp(), coupon.getEndTimestamp(), DateTimeKit.DEFAULT_DATE_FORMAT );
+		    if ( !isDateValid ) { //优惠券已经过期
+                         coupon.setCardStatus( 4 );
+                         cardMapper.updateById( coupon );
+		    }
+		}
+	    }
+	} catch ( Exception e ) {
+	    LOG.error( "更新优惠券过期失败" );
+	    e.printStackTrace();
+	}
+    }
+    @Override
+    public void updateExpiredReceiveCoupon() {
+	EntityWrapper< DuofenCardGetNew > couponCondition = new EntityWrapper<DuofenCardGetNew>();
+	couponCondition.eq( "state", 0 );
+	List< DuofenCardGetNew > listItem = cardGetMapper.selectList(couponCondition);
+	try {
+	    for ( DuofenCardGetNew receiveCoupon : listItem ) {
+		if ( receiveCoupon.getStartTime() != null && receiveCoupon.getEndTime() != null ) {
+		    boolean isDateValid = DateTimeKit.isValidDate(receiveCoupon.getStartTime(), receiveCoupon.getEndTime(), DateTimeKit.DEFAULT_DATE_FORMAT );
+		    if ( !isDateValid ) { //优惠券已经过期
+			receiveCoupon.setState( 2 );
+			cardGetMapper.updateById( receiveCoupon );
+		    }
+		}
+	    }
+	} catch ( Exception e ) {
+	    e.printStackTrace();
 	}
     }
 

@@ -27,4 +27,6 @@ public interface DuofenCardNewService extends BaseService<DuofenCardNew > {
     Map<String,Object> findCouponById( Integer id );
 
     Map< String,Object > getPaymentDetailById( Integer couponId );
+
+    Integer getCouponReceiveQuantity( Integer id );
 }

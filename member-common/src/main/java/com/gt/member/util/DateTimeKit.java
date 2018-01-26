@@ -495,6 +495,27 @@ public class DateTimeKit {
 	}
 	return result;
     }
+    /**
+     * 功能描述：格式化输出日期
+     *
+     * @param date
+     *            Date 日期
+     * @param format
+     *            String 格式
+     * @return 返回字符型日期
+     */
+    public static Date format2(Date date, String format) {
+	Date dateResult = null;
+	try {
+	    if (date != null) {
+		dateFormat = new SimpleDateFormat(format);
+		String result = dateFormat.format(date);
+		dateResult=parseDate(result,format);
+	    }
+	} catch (Exception e) {
+	}
+	return dateResult;
+    }
 
     /**
      * 功能描述：将带有时间的日期格式化为只有年月日
@@ -1685,12 +1706,14 @@ public class DateTimeKit {
     /**
      * 判断时间是否已过期
      *
-     * @param startDate
-     * @param endDate
+     * @param startDateS
+     * @param endDateS
      *
-     * @return true 有效   false 无效
+     * @return true 未过期   false 过期
      */
-    public static boolean isValidDate( String startDate, String endDate, String format ) throws Exception {
+    public static boolean isValidDate( String startDateS, String endDateS, String format ) throws Exception {
+	Date startDate =parseDate( startDateS, format );
+	Date endDate =parseDate( endDateS, format );
 	Date now = getNowDate( format );
 	if ( isAfterToday( startDate, format ) ) {
 	    return true;
@@ -1698,7 +1721,27 @@ public class DateTimeKit {
 	if ( isAfterToday( endDate, format ) && isBeforeToday( startDate, format ) ) {
 	    return true;
 	}
-	return isSameDay( parseDate( startDate, format ), now ) || isSameDay( parseDate( endDate, format ), now );
+	return isSameDay( startDate, now ) || isSameDay( endDate, now );
+    }
+    /**
+     * 判断时间是否已过期
+     *
+     * @param startDate
+     * @param endDate
+     *
+     * @return true 有效   false 无效
+     */
+    public static boolean isValidDate( Date startDate, Date endDate, String format ) throws Exception {
+        startDate=format2( startDate,format );
+	endDate=format2( endDate,format );
+	Date now = getNowDate( format );
+	if ( isAfterToday( startDate, format ) ) {
+	    return true;
+	}
+	if ( isAfterToday( endDate, format ) && isBeforeToday( startDate, format ) ) {
+	    return true;
+	}
+	return isSameDay( startDate, now ) || isSameDay( endDate, now );
     }
 
     /**

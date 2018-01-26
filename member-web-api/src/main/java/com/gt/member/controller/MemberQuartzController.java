@@ -142,6 +142,30 @@ public class MemberQuartzController {
         }
     }
 
+    /**
+     * 更新已过期的优惠券
+     */
+    @RequestMapping( value = "/updateExpiredCoupond", method = RequestMethod.POST )
+    public ServerResponse updateExpiredCoupond(HttpServletRequest request, HttpServletResponse response){
+        try {
+            memberQuartzService.updateExpiredCoupond();
+            return ServerResponse.createBySuccess(  );
+        } catch ( Exception e ) {
+            return ServerResponse.createByError( "更新优惠券过期失败" );
+        }
+    }
 
+    /**
+     * 更新已到期的领取券
+     */
+    @RequestMapping( value = "/updateExpiredReceiveCoupon", method = RequestMethod.POST )
+    public ServerResponse updateExpiredReceiveCoupon(HttpServletRequest request, HttpServletResponse response){
+        try {
+            memberQuartzService.updateExpiredReceiveCoupon();
+            return ServerResponse.createBySuccess(  );
+        } catch ( Exception e ) {
+            return ServerResponse.createByError( "更新优惠券过期失败" );
+        }
+    }
 
 }

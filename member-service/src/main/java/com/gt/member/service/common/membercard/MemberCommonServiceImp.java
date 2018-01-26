@@ -1385,7 +1385,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
     public boolean getAutoAuditFlag( Integer busId ) {
 	try {
-	    List< Map< String,Object > > list = dictService.getDictbyList( "1196" );
+	  List<Map< String,Object >>   list = dictService.getDictbyList( "1196" );
 
 	    Integer flag = null;
 	    String autoAuditFlag = (String) list.get( 0 ).get( "item_value" );

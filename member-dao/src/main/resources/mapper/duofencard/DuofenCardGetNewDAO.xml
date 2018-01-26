@@ -4,7 +4,7 @@
 
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.gt.duofencard.entity.DuofenCardGetNew">
-		<id column="id" property="id" />
+		<id column="receiveId" property="receiveId" />
 		<result column="cardId" property="cardId" />
 		<result column="getType" property="getType" />
 		<result column="isbuy" property="isbuy" />
@@ -23,7 +23,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, cardId AS cardId, getType AS getType,isbuy, code, state, getDate AS getDate, memberId AS memberId, startTime AS startTime, endTime AS endTime, busId AS busId, storeId AS storeId, operateBusId AS operateBusId, operateDate AS operateDate, recommendId AS recommendId
+        receiveId, cardId AS cardId, getType AS getType,isbuy, code, state, getDate AS getDate, memberId AS memberId, startTime AS startTime, endTime AS endTime, busId AS busId, storeId AS storeId, operateBusId AS operateBusId, operateDate AS operateDate, recommendId AS recommendId
     </sql>
     <select id="selectReceiveCouponCount"  parameterType="hashmap" resultType="java.lang.Integer">
         select count(1) from t_duofen_card_get_new c INNER JOIN t_wx_bus_member m on c.memberId=m.id
