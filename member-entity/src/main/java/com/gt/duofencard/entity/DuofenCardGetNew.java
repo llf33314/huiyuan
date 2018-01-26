@@ -92,6 +92,11 @@ public class DuofenCardGetNew extends Model<DuofenCardGetNew> {
      */
 	@TableField("recommendId")
 	private Integer recommendId;
+    /**
+     * 使用来源 1=mobile 2=pc
+     */
+	@TableField("useLocation")
+	private Integer useLocation;
 
 
 	@Override
@@ -99,23 +104,5 @@ public class DuofenCardGetNew extends Model<DuofenCardGetNew> {
 		return this.receiveId;
 	}
 
-	@Override
-	public String toString() {
-		return "DuofenCardGetNew{" +
-			"receiveId=" + receiveId +
-			", cardId=" + cardId +
-			", getType=" + getType +
-			", code=" + code +
-			", state=" + state +
-			", getDate=" + getDate +
-			", memberId=" + memberId +
-			", startTime=" + startTime +
-			", endTime=" + endTime +
-			", busId=" + busId +
-			", storeId=" + storeId +
-			", operateBusId=" + operateBusId +
-			", operateDate=" + operateDate +
-			", recommendId=" + recommendId +
-			"}";
-	}
+
 }

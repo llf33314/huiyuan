@@ -19,11 +19,12 @@
 		<result column="operateBusId" property="operateBusId" />
 		<result column="operateDate" property="operateDate" />
 		<result column="recommendId" property="recommendId" />
+		<result column="useLocation" property="useLocation" />
 	</resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        receiveId, cardId AS cardId, getType AS getType,isbuy, code, state, getDate AS getDate, memberId AS memberId, startTime AS startTime, endTime AS endTime, busId AS busId, storeId AS storeId, operateBusId AS operateBusId, operateDate AS operateDate, recommendId AS recommendId
+        receiveId, cardId AS cardId, getType AS getType,isbuy, code, state, getDate AS getDate, memberId AS memberId, startTime AS startTime, endTime AS endTime, busId AS busId, storeId AS storeId, operateBusId AS operateBusId, operateDate AS operateDate, recommendId AS recommendId,useLocation
     </sql>
     <select id="selectReceiveCouponCount"  parameterType="hashmap" resultType="java.lang.Integer">
         select count(1) from t_duofen_card_get_new c INNER JOIN t_wx_bus_member m on c.memberId=m.id
@@ -72,6 +73,19 @@
 
         group by cardId
 
+    </select>
+    <select id="usageStatistics" resultType="java.util.Map" parameterType="integer">
+        SELECT
+          storeId,
+          COUNT(1) AS quantity,
+          t.business_name
+        FROM
+          t_duofen_card_get_new n
+          LEFT JOIN t_wx_shop t
+            ON n.storeId = t.id
+        WHERE storeId != 0
+          AND busid = #{busId}
+        GROUP BY storeId
     </select>
 
 </mapper>
