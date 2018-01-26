@@ -422,7 +422,7 @@ public interface MemberCardService {
      * @param dangqianUserId
      * @return
      */
-    public List<Map<String,Object>> findBusUserShop(Integer pbusId,Integer dangqianUserId);
+    public Map<String,Object> findBusUserShop(Integer pbusId,Integer dangqianUserId);
 
     /**
      * 会员卡消费查询信息

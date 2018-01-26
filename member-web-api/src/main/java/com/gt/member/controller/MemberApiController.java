@@ -687,6 +687,20 @@ public class MemberApiController extends BaseController {
 	}
     }
 
+    @ApiOperation( value = "支付失败回滚", notes = "支付失败回滚" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "orderCode", value = "订单号", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/errorPayRollback", method = RequestMethod.POST )
+    public ServerResponse errorPayRollback(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    memberApiService.errorPayRollback( param );
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+
     @ApiOperation( value = "积分兑换商品", notes = "积分兑换商品" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "shopId", value = "门店id", paramType = "query", required = true, dataType = "int" ),

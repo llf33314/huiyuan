@@ -822,6 +822,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    adcServicesInfo.setId( uc.getId() );
 	    String notifyUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/changeFlow.do";
 	    adcServicesInfo.setNotifyUrl( notifyUrl );
+
 	    requestUtils.setReqdata( adcServicesInfo );
 	    String result = requestService.changeFlow( requestUtils );
 	    JSONObject json = JSONObject.parseObject( result );
@@ -833,7 +834,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    m.setId( memberEntity.getId() );
 	    memberEntityDAO.updateById( m );
 
-	    memberCommonService.saveCardRecordOrderCodeNew( memberId, 4, prizeCount.doubleValue(), "流量兑换中", busId, flowBalance.doubleValue(), orderCode, 0 );
+	    memberCommonService.saveCardRecordOrderCodeNew( memberId, 4, prizeCount.doubleValue(), "流量兑换", busId, flowBalance.doubleValue(), orderCode, 0 );
 	} catch ( BusinessException e ) {
 	    throw e;
 	}

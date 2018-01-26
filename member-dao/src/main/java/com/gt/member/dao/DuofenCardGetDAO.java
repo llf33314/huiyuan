@@ -201,4 +201,11 @@ public interface DuofenCardGetDAO extends BaseMapper<DuofenCardGet> {
 
    List<Integer> findReceiveByMemberId(@Param("memberIds")List<Integer> memberIds);
 
+
+    /**
+     * 卡券回滚
+     * @param codes
+     * @return
+     */
+    int updateStateByCodes(@Param( "busId" )Integer busId,@Param("codes")List<String> codes);
 }

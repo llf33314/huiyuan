@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.util.Date;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -140,10 +141,9 @@ public class EncryptUtil {
     }
 
     public static void main(String[] args) throws Exception {
-		String aa=encrypt("CFCCBD99C12B62E52952EA90A931A01F","++");
+		String aa=encrypt("Pxh3XQbUCg7TiluB","156dfggdfgf596344545451893111111823?time="+new Date().getTime());
 		System.out.println(aa);
-		System.out.println(decrypt("CFCCBD99C12B62E52952EA90A931A01F", aa));
+		System.out.println(decrypt("Pxh3XQbUCg7TiluB", aa));
 
-		System.out.println(encrypt("CFCCBD99C12B62E52952EA90A931A01F","++"));
 	}
 }

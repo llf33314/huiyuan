@@ -458,7 +458,23 @@ public class MemberNoticeServiceImpl implements MemberNoticeService {
 	params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
 
 	List< Map< String,Object > > list = memberNoticeuserDAO.findNoticeuser( noticeId, status, Integer.parseInt( params.get( "firstResult" ).toString() ), pageSize );
-	page.setSubList( list );
+	List< Map< String,Object > > pageList=new ArrayList<>(  );
+	for(Map< String,Object >  map:list){
+	    if ( map.containsKey( "nickName" ) ) {
+		try {
+		    byte[] bytes = (byte[]) map.get( "nickName" );
+		    map.put( "nickName", new String( bytes, "UTF-8" ) );
+		} catch ( Exception e ) {
+		    map.put( "nickName", null );
+		}
+		pageList.add( map );
+	    } else {
+		pageList.add( map );
+	    }
+	}
+
+
+	page.setSubList( pageList );
 	return page;
     }
 

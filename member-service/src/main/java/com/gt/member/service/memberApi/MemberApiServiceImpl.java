@@ -1139,8 +1139,6 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    } catch ( Exception e ) {
 	    }
 
-
-
 	    busId = requestService.getMainBusId( busId );
 
 	    if ( cardNodecrypt.contains( "?time" ) ) {
@@ -2774,6 +2772,107 @@ public class MemberApiServiceImpl implements MemberApiService {
 	} catch ( BusinessException e ) {
 	    throw e;
 	} catch ( Exception e ) {
+	    LOG.error( "退款异常",e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+
+    public void errorPayRollback(String params) throws BusinessException{
+	try {
+	    Map<String,Object> map = JSONObject.parseObject( params,Map.class );
+	    Integer busId=CommonUtil.toInteger( map.get( "busId") );
+	    String orderCode=CommonUtil.toString( map.get( "orderCode" ) );
+	    if(CommonUtil.isEmpty( busId ) || CommonUtil.isEmpty( orderCode )){
+	        throw new BusinessException( ResponseMemberEnums.NULL );
+	    }
+	    UserConsumeNew uc = userConsumeNewDAO.findByCode( busId, orderCode );
+	    if ( CommonUtil.isEmpty( uc ) ) {
+		throw new BusinessException( ResponseMemberEnums.NOT_ORDER );
+	    }
+	    if(uc.getPayStatus()!=1){
+	        throw new BusinessException( ResponseMemberEnums.ORDER_NOT_PAY );
+	    }
+
+	    UserConsumeNew updateUc = new UserConsumeNew();
+	    updateUc.setId( uc.getId() );
+	    updateUc.setPayStatus(2);
+	    userConsumeNewDAO.updateById( updateUc );
+
+	    Boolean bool = false;
+	    MemberEntity member = memberDAO.selectById( uc.getMemberId() );
+	    MemberCard card = null;
+	    if ( CommonUtil.isNotEmpty( uc.getMcId() ) ) {
+		card = memberCardDAO.selectById( uc.getMcId() );
+	    }
+
+	    if(CommonUtil.isNotEmpty( uc.getDisCountdepict() )){
+		//回滚优惠券
+		String[] strs=uc.getDisCountdepict().split( "," );
+		List<String> codes=new ArrayList<>(  );
+		for(String str:strs){
+		    if(CommonUtil.isNotEmpty( str )){
+			codes.add(  str );
+		    }
+		}
+		if(codes.size()>0) {
+		    duofenCardGetMapper.updateStateByCodes( busId,codes );
+		}
+	    }
+
+
+
+	    MemberEntity upmember = new MemberEntity();
+	    upmember.setId( member.getId() );
+	    if (CommonUtil.isNotEmpty( uc.getIntegral() ) && uc.getIntegral() > 0 ) {
+		Integer jifen = member.getIntegral() + uc.getIntegral();
+		upmember.setIntegral( jifen );
+		memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 2, uc.getIntegral().doubleValue(), "退积分", member.getBusId(), jifen.doubleValue(),
+				uc.getOrderCode(), 1 );
+		bool = true;
+	    }
+
+	    if (CommonUtil.isNotEmpty( uc.getFenbi() ) && uc.getFenbi() > 0 ) {
+		Double refundFenbi = uc.getRefundFenbi() + uc.getFenbi();
+		//退款 退粉币
+		Integer code = requestService.getPowerApi( 0, member.getBusId(), uc.getFenbi(), "退粉币" );
+		if ( code == 0 ) {
+		    updateUc.setRefundFenbi( refundFenbi );
+		    Double balaceFenbi = member.getFansCurrency() + uc.getFenbi();
+		    upmember.setFansCurrency( balaceFenbi );
+		    memberCommonService
+				    .saveCardRecordOrderCodeNew( member.getId(), 3, uc.getFenbi(), "退粉币", member.getBusId(), balaceFenbi, uc.getOrderCode(),
+						    1 );
+		    bool = true;
+		} else {
+		    LOG.error( "调用陈丹粉币接口问题" );
+		}
+	    }
+
+	    List<UserConsumePay> userConsumePays=userConsumePayDAO.findByUcId( uc.getId() );
+	    if(userConsumePays.size()>0){
+		for(UserConsumePay userConsumePay:userConsumePays){
+		    //支付明细
+		    if(userConsumePay.getPaymentType()==5){
+		        //储值卡支付回滚
+			MemberCard mc = new MemberCard();
+			mc.setMcId( card.getMcId() );
+			Double money = card.getMoney() + userConsumePay.getPayMoney();
+			mc.setMoney( money );
+			memberCardDAO.updateById( mc );
+			memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 1, userConsumePay.getPayMoney(), "退款", member.getBusId(), money, uc.getOrderCode(), 1 );
+		    }else{
+			memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 1, userConsumePay.getPayMoney(), "退款", member.getBusId(), 0.0, uc.getOrderCode(), 1 );
+		    }
+		}
+	    }
+	    if ( bool ) {
+		memberDAO.updateById( upmember );
+	    }
+	} catch ( BusinessException e ) {
+	    throw e;
+	} catch ( Exception e ) {
+	    LOG.error( "支付失败退款异常",e );
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
     }

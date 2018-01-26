@@ -102,8 +102,6 @@ web:
  mallHome: http://nb.mall.deeptel.com.cn/
  #联盟卡
  untion_url: https://nb.union.deeptel.com.cn
- #项目类型 0多粉 1微站
- webType: 0
  materialUrl:
  webLoginUrl: https://nb.deeptel.com.cn/user/tologin.do
 

@@ -540,7 +540,6 @@ public class RequestServiceImpl implements RequestService {
 	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
 	JSONObject json = JSON.parseObject( returnData );
 	if ( "0".equals( json.getString( "code" ) ) ) {
-	    WxPublicUsers wxPublicUsers = JSONObject.parseObject( json.getString( "data" ), WxPublicUsers.class );
 	    List<Map> returnList=JSONArray.parseArray( json.getString( "data" ),Map.class );
 	    return returnList;
 	}else{

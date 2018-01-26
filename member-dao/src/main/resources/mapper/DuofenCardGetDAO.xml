@@ -341,5 +341,12 @@
 
 	</select>
 
+	<update id="updateStateByCodes">
+		update t_duofen_card_get set state=0 where busId=#{busId} and state=1 and
+		<foreach close=")" collection="codes" item="code" open="(" separator="or">
+			code=#{code}
+		</foreach>
+	</update>
+
 
 </mapper>

@@ -754,8 +754,8 @@ public class MemberController {
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
 	    Integer dangqianbusId = SessionUtils.getLoginUser( request ).getId();
-	    List<Map<String,Object>> list= memberCardService.findBusUserShop(busId,dangqianbusId);
-	    return ServerResponse.createBySuccess(  list );
+	    Map<String,Object> map= memberCardService.findBusUserShop(busId,dangqianbusId);
+	    return ServerResponse.createBySuccess(  map );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}catch ( Exception e ){

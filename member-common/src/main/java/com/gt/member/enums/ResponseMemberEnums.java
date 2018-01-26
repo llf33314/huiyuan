@@ -53,6 +53,7 @@ public enum ResponseMemberEnums {
     SEND_NOTICE(5031,"模板已经发送不能删除"),
     PLEASE_RECHARGE(5032,"卡内剩余次数不足,请充值"),
     ERROR_COUNT(5033,"计算错误"),
+    PLEASE_SAOMA_CONSUME(5034,"仅支持扫码枪查询会员信息"),
 
 
 
@@ -75,6 +76,7 @@ public enum ResponseMemberEnums {
     END_ORDER(7007,"订单已终结,不能退款"),
     REPEAT_ORDER(7008,"订单号重复"),
     INVALID_SESSION(7009,"SESSION失效,请重新登录"),
+    ORDER_NOT_PAY(7010,"当前订单未支付"),
 
 
     GIFT_EXIST(8001,"赠送物品已存在,请修改"),

@@ -3255,8 +3255,10 @@ public class MemberCardServiceImpl implements MemberCardService {
     }
 
 
-    public List<Map<String,Object>> findBusUserShop(Integer pbusId,Integer dangqianUserId){
-	List<Map<String,Object>> list=new ArrayList<>(  );
+    public Map<String,Object> findBusUserShop(Integer pbusId,Integer dangqianUserId){
+	Map<String,Object> returnMap=new HashMap<>(  );
+
+        List<Map<String,Object>> list=new ArrayList<>(  );
         if(pbusId.equals( dangqianUserId )){
 	    //主门店
 	    Map<String,Object> map=new HashMap<>(  );
@@ -3280,7 +3282,15 @@ public class MemberCardServiceImpl implements MemberCardService {
 		list.add(  map );
 	    }
 	}
-	return list;
+	returnMap.put( "shops",list );
+
+        PublicParameterset ps= publicParametersetDAO.findBybusId( pbusId );
+        if(CommonUtil.isEmpty( ps )){
+	    returnMap.put( "isPhoneQuery", 0);
+	}else{
+	    returnMap.put( "isPhoneQuery", ps.getIsPhoneQuery());
+	}
+	return returnMap;
     }
 
     public Map< String,Object > consumefindMemberCard( Integer busId, String cardNo,Integer shopId ) {
@@ -3296,8 +3306,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		// 如果不是扫码 判断商家是否允许不扫码
 		PublicParameterset ps=publicParametersetDAO.findBybusId( busId );
 		if ( ps.getIsPhoneQuery()==0) {
-		    map.put( "tishiMsg", "请扫码支付,可享受更多的会员权益。" );
-		    map.put( "usehuiyuanquanyi", 0 );
+		    throw new BusinessException( ResponseMemberEnums.PLEASE_SAOMA_CONSUME );
 		}
 	    }
 	    map.put( "shopId", shopId );
@@ -3350,18 +3359,13 @@ public class MemberCardServiceImpl implements MemberCardService {
 		}
 	    }
 	    if( CommonUtil.isEmpty( memberEntity ) && CommonUtil.isEmpty( card )){
-		map.put( "youke", 2 );
-	    }else if ( CommonUtil.isEmpty( memberEntity ) ) {
-		map.put( "youke", 1 );
-		if ( CommonUtil.isNotEmpty( card ) ) {
-		    memberEntity = memberMapper.findByMcIdAndbusId( busId, card.getMcId() );
-		    map.put( "memberId", memberEntity.getId() );
-		    map.put( "usehuiyuanquanyi", 1 );
-		}
+	        throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR );
+	    }else if ( CommonUtil.isEmpty( memberEntity ) && CommonUtil.isNotEmpty( card ) ) {
+		memberEntity = memberMapper.findByMcIdAndbusId( busId, card.getMcId() );
+		map.put( "memberId", memberEntity.getId() );
+		map.put( "usehuiyuanquanyi", 1 );
 	    } else if ( CommonUtil.isEmpty( card ) ) {
-		map.put( "usehuiyuanquanyi", 0 );
-		map.put( "youke",0 );
-		//throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR.getCode(), ResponseMemberEnums.NOT_MEMBER_CAR.getMsg() );
+		throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_CAR.getCode(), ResponseMemberEnums.NOT_MEMBER_CAR.getMsg() );
 	    } else if ( card.getCardStatus() == 1 && card.getIsChecked()==0 ) {
 		throw new BusinessException( ResponseMemberEnums.CARD_STATUS.getCode(), ResponseMemberEnums.CARD_STATUS.getMsg() );
 	    } else {
@@ -3573,9 +3577,6 @@ public class MemberCardServiceImpl implements MemberCardService {
 				memberCardLentDAO.updateById( memberCardLent1 );
 			    }
 
-			    if ( card.getMoney() < ce.getBalanceMoney() ) {
-				throw new BusinessException( ResponseMemberEnums.MEMBER_LESS_MONEY );
-			    }
 
 			    if ( payType == 5 ) {
 				double banlan = card.getMoney() - ce.getBalanceMoney();
@@ -3583,6 +3584,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 				updateCard.setMcId( card.getMcId() );
 				updateCard.setMoney( banlan );
 				memberCardDAO.updateById( updateCard );
+
+				if ( card.getMoney() < ce.getBalanceMoney() ) {
+				    throw new BusinessException( ResponseMemberEnums.MEMBER_LESS_MONEY );
+				}
 
 				bool = true;
 				MemberCardrecordNew memberCardrecordNew = memberCommonService

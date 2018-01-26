@@ -455,6 +455,13 @@ public interface MemberApiService {
      */
     public void refundErp(String erpRefundBo) throws BusinessException;
 
+    /**
+     * 支付异常回滚
+     * @param params
+     * @throws BusinessException
+     */
+    public void errorPayRollback(String params) throws BusinessException;
+
 
     /**
      * 商场积分赠送

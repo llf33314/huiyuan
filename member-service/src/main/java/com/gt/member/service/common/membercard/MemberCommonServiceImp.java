@@ -1250,7 +1250,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    }
 
 	    // 计算积分金额
-	    if (ce.getUsehuiyuanquanyi()==1 && ce.getUseFenbi() == 1 ) {
+	    if (ce.getUsehuiyuanquanyi()==1 && ce.getUserJifen() == 1 ) {
 		PublicParameterset pps = publicParameterSetMapper.findBybusId( memberEntity.getBusId() );
 		Double discountjifenMoney =integralCount( pay, memberEntity.getIntegral().doubleValue(), memberEntity.getBusId() ); // 计算积分
 		if ( discountjifenMoney > 0 ) {
