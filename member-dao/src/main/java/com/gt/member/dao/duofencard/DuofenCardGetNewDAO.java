@@ -33,4 +33,6 @@ public interface DuofenCardGetNewDAO extends BaseMapper<DuofenCardGetNew > {
     List<Map<String,Object>> getReceiveCouponList( Page<DuofenCardGetNew> pagination, HashMap< String,Object > couponReceiveWrapper );
 
     List<Map<String,Object>> countByCardIds(@Param( "cardIds" ) List<Integer> cardIds);
+
+    List<Map<String,Object>> usageStatistics( Integer busId );
 }
