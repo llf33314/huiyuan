@@ -53,14 +53,21 @@ public interface DuofenCardNewPhoneService {
      * @param memberId
      * @return
      */
-    public Map<String,Object> myDuofenCard(Integer memberId);
+    public Map<String,Object> myDuofenCard(Integer busId,Integer memberId);
+
+    /**
+     * 已失效的优惠券
+     * @param memberId
+     * @return
+     */
+    public List<Map<String,Object>> invalidDuofenCard(Integer memberId);
 
     /**
      * 单张优惠券使用
-     * @param duofenCardGetId
+     * @param receiveId
      * @return
      */
-    public Map<String,Object> useDuofenCardByCardId(Integer duofenCardGetId,Integer memberId);
+    public Map<String,Object> useDuofenCardByCardId(Integer receiveId,Integer memberId);
 
 
     /**
@@ -75,7 +82,7 @@ public interface DuofenCardNewPhoneService {
      * @param duofenCardGetId
      * @return
      */
-    public Map<String,Object> findDuofenCardDetailsByDuofenCardGetId(Integer duofenCardGetId);
+    public Map<String,Object> findDuofenCardDetailsByreceiveId(Integer receiveId);
 
 
     /*
@@ -84,4 +91,19 @@ public interface DuofenCardNewPhoneService {
      */
     public void bingdingPhone( HttpServletRequest request,Integer memberId, String phone,  Integer busId,String vcode ) throws BusinessException;
 
+    public List<Map> findShopByReceiveId(Map<String,Object> params);
+
+    /**
+     * 优惠券核销
+     * @param receiveId
+     * @return
+     */
+    public Map<String,Object> useVerificationDuofenCard(Integer receiveId );
+
+    /**
+     * 自助核销
+     * @param receiveId
+     * @param shopId
+     */
+    public void verificationDuofenCardGet(Integer receiveId,Integer shopId);
 }

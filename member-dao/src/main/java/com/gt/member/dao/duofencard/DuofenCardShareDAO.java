@@ -2,6 +2,10 @@ package com.gt.member.dao.duofencard;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.duofencard.entity.DuofenCardShare;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -12,5 +16,7 @@ import com.gt.duofencard.entity.DuofenCardShare;
  * @since 2018-01-23
  */
 public interface DuofenCardShareDAO extends BaseMapper<DuofenCardShare > {
+
+    List<Map<String,Object>> findDuofenCardShareByMemeberId(@Param( "memberId" ) Integer memberId);
 
 }

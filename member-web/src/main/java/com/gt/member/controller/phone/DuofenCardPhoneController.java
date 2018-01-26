@@ -13,6 +13,7 @@ import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.DuofenCardNewPhoneService;
 import com.gt.member.util.CommonUtil;
+import com.gt.member.util.QRcodeKit;
 import com.gt.member.util.RedisCacheUtil;
 import com.gt.util.entity.param.sms.NewApiSms;
 import io.swagger.annotations.Api;
@@ -212,7 +213,7 @@ public class DuofenCardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    Map<String,Object> map=duofenCardNewPhoneService.myDuofenCard(member.getId());
+	    Map<String,Object> map=duofenCardNewPhoneService.myDuofenCard(busId,member.getId());
 	    return ServerResponse.createBySuccess( map  );
 	}catch ( BusinessException e ){
 	    return ServerResponse.createByError(e.getCode(),e.getMessage());
@@ -222,6 +223,35 @@ public class DuofenCardPhoneController extends AuthorizeOrLoginController {
 	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
 	}
     }
+
+    @ApiOperation( value = "已失效的优惠券", notes = "已失效的优惠券" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
+		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" )} )
+    @ResponseBody
+    @RequestMapping( value = "/invalidDuofenCard", method = RequestMethod.POST )
+    public ServerResponse invalidDuofenCard(HttpServletRequest request, HttpServletResponse response,@RequestParam String json){
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    List<Map<String,Object>> invalidS=duofenCardNewPhoneService.invalidDuofenCard(member.getId());
+	    return ServerResponse.createBySuccess( invalidS  );
+	}catch ( BusinessException e ){
+	    return ServerResponse.createByError(e.getCode(),e.getMessage());
+	} catch ( Exception e ) {
+	    log.error( "我的优惠券查询异常：", e );
+	    e.printStackTrace();
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getMsg() );
+	}
+    }
+
+
 
     @ApiOperation( value = "单张优惠券使用", notes = "单张优惠券使用" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
@@ -239,8 +269,8 @@ public class DuofenCardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    Integer duofenCardGetId=CommonUtil.toInteger( params.get( "duofenCardGetId" ) );
-	    Map<String,Object> map=duofenCardNewPhoneService.useDuofenCardByCardId(duofenCardGetId,member.getId());
+	    Integer receiveId=CommonUtil.toInteger( params.get( "receiveId" ) );
+	    Map<String,Object> map=duofenCardNewPhoneService.useDuofenCardByCardId(receiveId,member.getId());
 	    return ServerResponse.createBySuccess( map  );
 	}catch ( BusinessException e ){
 	    return ServerResponse.createByError(e.getCode(),e.getMessage());
@@ -275,8 +305,8 @@ public class DuofenCardPhoneController extends AuthorizeOrLoginController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = false, dataType = "string" ),
 		    @ApiImplicitParam( name = "requestUrl", value = "授权回调地址", paramType = "query", required = false, dataType = "int" )} )
     @ResponseBody
-    @RequestMapping( value = "/findDuofenCardDetailsByDuofenCardGetId", method = RequestMethod.POST )
-    public ServerResponse findDuofenCardDetailsByDuofenCardGetId(HttpServletRequest request, HttpServletResponse response,@RequestParam String json){
+    @RequestMapping( value = "/findDuofenCardDetailsByreceiveId", method = RequestMethod.POST )
+    public ServerResponse findDuofenCardDetailsByreceiveId(HttpServletRequest request, HttpServletResponse response,@RequestParam String json){
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
@@ -287,8 +317,8 @@ public class DuofenCardPhoneController extends AuthorizeOrLoginController {
 		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
 		}
 	    }
-	    Integer duofenCardGetId=CommonUtil.toInteger( params.get( "duofenCardGetId" ) );
-	    Map<String,Object> map=duofenCardNewPhoneService.findDuofenCardDetailsByDuofenCardGetId(duofenCardGetId);
+	    Integer receiveId=CommonUtil.toInteger( params.get( "receiveId" ) );
+	    Map<String,Object> map=duofenCardNewPhoneService.findDuofenCardDetailsByreceiveId(receiveId);
 	    return ServerResponse.createBySuccess( map  );
 	}catch ( BusinessException e ){
 	    return ServerResponse.createByError(e.getCode(),e.getMessage());
@@ -390,4 +420,101 @@ public class DuofenCardPhoneController extends AuthorizeOrLoginController {
 	}
     }
 
+    @ApiOperation( value = "优惠券核销", notes = "优惠券核销" )
+    @ApiImplicitParams( {
+		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/useVerificationDuofenCard", method = RequestMethod.POST )
+    public ServerResponse useVerificationDuofenCard(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    Integer receiveId = CommonUtil.toInteger( params.get( "receiveId" ) );
+	    Map<String,Object> map=duofenCardNewPhoneService.useVerificationDuofenCard( receiveId );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    log.error( "优惠券核销展现异常", e );
+	    return ServerResponse.createByError();
+	}
+    }
+
+    @ApiOperation( value = "关注公众号二维码", notes = "关注公众号二维码" )
+    @ResponseBody
+    @RequestMapping( value = "/guangzhuiQrcode", method = RequestMethod.GET )
+    public void guangzhuiQrcode( HttpServletRequest request, HttpServletResponse response, @RequestParam String url ) throws Exception {
+	QRcodeKit.buildQRcode( url, 500, 500, response );
+    }
+
+
+    @ApiOperation( value = "优惠券二维码", notes = "优惠券二维码" )
+    @ResponseBody
+    @RequestMapping( value = "/useVerificationQrcode", method = RequestMethod.GET )
+    public void useVerificationQrcode( HttpServletRequest request, HttpServletResponse response, @RequestParam String code ) throws Exception {
+	QRcodeKit.buildQRcode( code, 500, 500, response );
+    }
+
+    @ApiOperation( value = "查询门店信息", notes = "查询门店信息" )
+    @ResponseBody
+    @RequestMapping( value = "/findShopByReceiveId", method = RequestMethod.POST )
+    public ServerResponse findShopByReceiveId(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    List<Map> returnList=duofenCardNewPhoneService.findShopByReceiveId( params );
+	    return ServerResponse.createBySuccess( returnList );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    log.error( "查询门店信息异常", e );
+	    return ServerResponse.createByError();
+	}
+    }
+
+
+
+    @ApiOperation( value = "自助核销优惠券", notes = "自助核销优惠券" )
+    @ResponseBody
+    @RequestMapping( value = "/verificationDuofenCardGet", method = RequestMethod.POST )
+    public ServerResponse verificationDuofenCardGet(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    Integer receiveId = CommonUtil.toInteger( params.get( "receiveId" ) );
+	    Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
+	    duofenCardNewPhoneService.verificationDuofenCardGet( receiveId,shopId );
+	    return ServerResponse.createBySuccess(  );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    log.error( "优惠券核销展现异常", e );
+	    return ServerResponse.createByError();
+	}
+    }
 }

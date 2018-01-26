@@ -72,6 +72,9 @@ public class DuofenCardGetNew extends Model<DuofenCardGetNew> {
      */
 	@TableField("busId")
 	private Integer busId;
+
+	@TableField("verificationType")
+	private Integer verificationType;
     /**
      * 核销门店id
      */
@@ -104,5 +107,23 @@ public class DuofenCardGetNew extends Model<DuofenCardGetNew> {
 		return this.receiveId;
 	}
 
-
+	@Override
+	public String toString() {
+		return "DuofenCardGetNew{" +
+			"id=" + receiveId +
+			", cardId=" + cardId +
+			", getType=" + getType +
+			", code=" + code +
+			", state=" + state +
+			", getDate=" + getDate +
+			", memberId=" + memberId +
+			", startTime=" + startTime +
+			", endTime=" + endTime +
+			", busId=" + busId +
+			", storeId=" + storeId +
+			", operateBusId=" + operateBusId +
+			", operateDate=" + operateDate +
+			", recommendId=" + recommendId +
+			"}";
+	}
 }

@@ -66,6 +66,7 @@ public enum ResponseMemberEnums {
     PLESASE_BUY(6007,"请购买优惠券"),
     PLESASE_FREE(6008,"免费领取不需要购买"),
     PLEASASE_BUY_URL(6009,"购买地址"),
+    NOT_DOUFENCARD_NUM(6010,"亲,您来完了,优惠券已领取完"),
 
 
 

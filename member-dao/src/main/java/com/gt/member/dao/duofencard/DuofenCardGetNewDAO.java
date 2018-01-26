@@ -1,6 +1,7 @@
 package com.gt.member.dao.duofencard;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.gt.duofencard.entity.DuofenCardGetNew;
 import org.apache.ibatis.annotations.Param;
@@ -34,5 +35,13 @@ public interface DuofenCardGetNewDAO extends BaseMapper<DuofenCardGetNew > {
 
     List<Map<String,Object>> countByCardIds(@Param( "cardIds" ) List<Integer> cardIds);
 
-    List<Map<String,Object>> usageStatistics( Integer busId );
+
+    List<Map<String,Object>> findByMemberId(@Param( "memberId" ) Integer memberId);
+
+    List<Map<String,Object>> findFriendByMemberId(@Param( "busId" ) Integer busId,@Param( "getIds" ) List<Integer> getIds);
+
+    List<Map<String,Object>> findInvalidByMemberId(@Param( "memberId" ) Integer memberId);
+
+
+    Integer countByCardId(@Param( "cardId" )Integer cardId);
 }

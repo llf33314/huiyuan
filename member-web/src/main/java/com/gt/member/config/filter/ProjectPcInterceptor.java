@@ -34,10 +34,10 @@ public class ProjectPcInterceptor implements HandlerInterceptor {
 	boolean isSuccess = true;
 
 
-//	BusUser b=new BusUser();
-//	b.setId( 36 );
-//	SessionUtils.setLoginUser( servletRequest,b );
-//	SessionUtils.setPidBusId( servletRequest,36 );
+	BusUser b=new BusUser();
+	b.setId( 36 );
+	SessionUtils.setLoginUser( servletRequest,b );
+	SessionUtils.setPidBusId( servletRequest,36 );
 
 	BusUser busUser= SessionUtils.getLoginUser(servletRequest );
 	if( CommonUtil.isEmpty( busUser )){

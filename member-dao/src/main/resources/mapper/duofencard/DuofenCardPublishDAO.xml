@@ -35,7 +35,7 @@
 		 cp.isReceiveNum AS isReceiveNum, cp.limitType AS limitType, cp.limitNum AS limitNum,
 		  cp.isRecommend AS isRecommend, cp.jifen, cp.fenbi, cp.flow, cp.money,c.* from t_duofen_card_publish cp
 		 inner join t_duofen_card_new c on cp.cardId=c.id
-		 where c.busId=#{busId} and cardStatus=2
+		 where c.busId=#{busId} and c.useType=0 and  c.cardStatus=2
 		 limit #{page},#{pageSize}
 	</select>
 

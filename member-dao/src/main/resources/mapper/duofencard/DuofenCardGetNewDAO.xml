@@ -15,6 +15,7 @@
 		<result column="startTime" property="startTime" />
 		<result column="endTime" property="endTime" />
 		<result column="busId" property="busId" />
+        <result column="verificationType" property="verificationType"/>
 		<result column="storeId" property="storeId" />
 		<result column="operateBusId" property="operateBusId" />
 		<result column="operateDate" property="operateDate" />
@@ -70,8 +71,36 @@
                 cardId=#{cardId}
             </foreach>
         </where>
-
         group by cardId
+    </select>
+
+    <select id="findByMemberId" resultType="java.util.Map">
+        select dg.receiveId, dg.startTime,dg.endTime,cn.* from t_duofen_card_get_new dg
+        inner join t_duofen_card_new cn on dg.cardId=cn.id
+        where dg.memberId=#{memberId} and dg.state=0
+
+    </select>
+
+    <select id="findFriendByMemberId" resultType="Map">
+        select dg.receiveId,dg.startTime,dg.endTime,cn.* from t_duofen_card_get_new dg
+        inner join t_duofen_card_new cn on dg.cardId=cn.id
+        where  dg.state=0 and dg.busId=#{busId} and
+        <foreach close=")" collection="getIds" item="getId" open="("
+                 separator="or">
+            dg.receiveId=#{getId}
+        </foreach>
+    </select>
+
+    <select id="findInvalidByMemberId" resultType="Map">
+
+          select dg.state,dg.startTime,dg.endTime,cn.* from t_duofen_card_get_new dg
+        inner join t_duofen_card_new cn on dg.cardId=cn.id
+        where dg.memberId=#{memberId} and (dg.state=1 or dg.state=2 )
+    </select>
+
+
+    <select id="countByCardId" resultType="java.lang.Integer">
+        select count(*) from t_duofen_card_get_new where cardId=#{cardId}
 
     </select>
     <select id="usageStatistics" resultType="java.util.Map" parameterType="integer">

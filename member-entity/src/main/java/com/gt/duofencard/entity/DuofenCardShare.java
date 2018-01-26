@@ -34,6 +34,9 @@ public class DuofenCardShare extends Model<DuofenCardShare> {
 	@TableField("getId")
 	private Integer getId;
 
+   	 @TableField("memberId")
+	private Integer memberId;
+
 
 	@Override
 	protected Serializable pkVal() {

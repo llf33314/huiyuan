@@ -3,16 +3,10 @@ package com.gt.member.service.member.impl;
 import com.gt.api.bean.session.Member;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.SessionUtils;
-import com.gt.duofencard.entity.DuofenCardGetNew;
-import com.gt.duofencard.entity.DuofenCardNew;
-import com.gt.duofencard.entity.DuofenCardPublish;
-import com.gt.duofencard.entity.DuofenCardTime;
+import com.gt.duofencard.entity.*;
 import com.gt.entityBo.MemberShopEntity;
 import com.gt.member.dao.*;
-import com.gt.member.dao.duofencard.DuofenCardGetNewDAO;
-import com.gt.member.dao.duofencard.DuofenCardNewDAO;
-import com.gt.member.dao.duofencard.DuofenCardPublishDAO;
-import com.gt.member.dao.duofencard.DuofenCardTimeDAO;
+import com.gt.member.dao.duofencard.*;
 import com.gt.member.entity.*;
 import com.gt.member.enums.ResponseMemberEnums;
 import com.gt.member.exception.BusinessException;
@@ -86,6 +80,9 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
     @Autowired
     private RedisCacheUtil redisCacheUtil;
 
+    @Autowired
+    private DuofenCardShareDAO duofenCardShareDAO;
+
     public List< Map< String,Object > > findPublishDuofenCard( Integer busId, Integer memberId, Map< String,Object > params ) {
 	Integer page = CommonUtil.toInteger( params.get( "page" ) );
 	Integer pageSize = 5;
@@ -100,11 +97,12 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 	List<Map<String,Object>> countMaps=duofenCardGetNewDAO.countByCardIds(cardIds);
 	List< Map< String,Object > > returnMap = new ArrayList<>();
 	for ( Map< String,Object > map : listMap ) {
+	    map.put( "lingquOver",0 );
 	    for(Map< String,Object > countMap:countMaps){
 	        if(CommonUtil.toString( map.get( "cardId" ) ).equals( CommonUtil.toString( countMap.get( "cardId" ) ) )){
 			Integer number=CommonUtil.toInteger( map.get( "number" ) );
-			Integer count=CommonUtil.toInteger( map.get( "count" ) );
-			if(number>count){
+			Integer count=CommonUtil.toInteger( countMap.get( "count" ) );
+			if(CommonUtil.isEmpty( count ) || number>count){
 			    map.put( "lingquOver",0 );
 			}else{
 			    map.put( "lingquOver",1 );
@@ -166,6 +164,11 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 	    throw new BusinessException( ResponseMemberEnums.PLEASE_BINDING_PHONE );
 	}
 	DuofenCardPublish duofenCardPublish = duofenCardPublishDAO.findByCardId( cardId );
+	Integer count=duofenCardGetNewDAO.countByCardId(cardId);
+	if(CommonUtil.isNotEmpty( count ) && count>=duofenCardPublish.getNumber()){
+	    throw new BusinessException( ResponseMemberEnums.NOT_DOUFENCARD_NUM );
+	}
+
 	DuofenCardNew duofenCardNew = duofenCardNewDAO.selectById( cardId );
 	if ( duofenCardPublish.getIsBuy() == 0 ) {
 	    //免费领取
@@ -209,6 +212,7 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 	map.put( "duofenCardNew", duofenCardNew );
 	DuofenCardPublish duofenCardPublish = duofenCardPublishDAO.findByCardId( cardId );
 	map.put( "duofenCardPublish", duofenCardPublish );
+	map.put("path",PropertiesUtil.getRes_web_path());
 
 	MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
 	Integer type = CommonUtil.judgeBrowser( request );
@@ -459,15 +463,55 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
     }
 
 
-    public Map<String,Object> myDuofenCard(Integer memberId){
+    public Map<String,Object> myDuofenCard(Integer busId,Integer memberId){
+        Map<String,Object> map=new HashMap<>(  );
+	//粉丝的优惠券或朋友的券
+	List<Map<String,Object>> myDuofenCard=duofenCardGetNewDAO.findByMemberId(memberId);
+	map.put( "myDuofenCard",myDuofenCard );
 
-	return null;
+	//朋友的券
+	List<Map<String,Object>> shares=duofenCardShareDAO.findDuofenCardShareByMemeberId(memberId);
+	if(CommonUtil.isNotEmpty( shares ) && shares.size()>0){
+	    List<Integer> getIds=new ArrayList<>(  );
+	    for ( Map<String,Object> share:shares ){
+		if(CommonUtil.isNotEmpty( share.get( "getId" ) )){
+		    getIds.add( CommonUtil.toInteger( share.get( "getId" ) ) );
+		}
+	    }
+	    if(getIds.size()>0){
+		List<Map<String,Object>> duofenFriends=duofenCardGetNewDAO.findFriendByMemberId(busId,getIds);
+		map.put( "duofenFriends",duofenFriends );
+	    }
+	}
+	MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
+	map.put( "phone",memberEntity.getPhone() );
+	map.put( "headimgurl",memberEntity.getHeadimgurl() );
+	map.put( "nickName",memberEntity.getNickname() );
+	if(CommonUtil.isNotEmpty( memberEntity.getMcId() )){
+	    map.put( "isHuiyuan",1 );
+	}else{
+	    map.put( "isHuiyuan",0 );
+	}
+	String url=PropertiesUtil.getWebHome()+"/html/phone/index.html#/home/"+busId;
+	map.put( "lingquUrl",url );
+	return map;
+    }
+
+    /**
+     * 已失效的优惠券
+     * @param memberId
+     * @return
+     */
+    public List<Map<String,Object>> invalidDuofenCard(Integer memberId){
+	return duofenCardGetNewDAO.findInvalidByMemberId(memberId);
     }
 
 
-    public Map<String,Object> useDuofenCardByCardId(Integer duofenCardGetId,Integer memberId){
+
+    public Map<String,Object> useDuofenCardByCardId(Integer receiveId,Integer memberId){
         Map<String,Object> map=new HashMap<>(  );
-        DuofenCardGetNew duofenCardGetNew=duofenCardGetNewDAO.selectById( duofenCardGetId );
+        DuofenCardGetNew duofenCardGetNew=duofenCardGetNewDAO.selectById( receiveId );
+	map.put( "duofenCardGetNew",duofenCardGetNew );
         Integer cardId=duofenCardGetNew.getCardId();
 	DuofenCardPublish duofenCardPublish = duofenCardPublishDAO.findByCardId( cardId );
 	DuofenCardNew duofenCardNew = duofenCardNewDAO.selectById( cardId );
@@ -475,6 +519,7 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 	map.put( "duofenCardNew",duofenCardNew );
 	DuofenCardTime duofenCardTime=duofenCardTimeDAO.findDuofenCardTimeByCardId( cardId );
 	map.put( "duofenCardTime",duofenCardTime );
+	map.put( "path",PropertiesUtil.getRes_web_path() );
 
 	MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
 	if(CommonUtil.isNotEmpty( memberEntity.getPublicId() )) {
@@ -495,9 +540,10 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 	return map;
     }
 
-    public Map<String,Object> findDuofenCardDetailsByDuofenCardGetId(Integer duofenCardGetId){
+    public Map<String,Object> findDuofenCardDetailsByreceiveId(Integer receiveId){
 	Map<String,Object> map=new HashMap<>(  );
-	DuofenCardGetNew duofenCardGetNew=duofenCardGetNewDAO.selectById( duofenCardGetId );
+	DuofenCardGetNew duofenCardGetNew=duofenCardGetNewDAO.selectById( receiveId );
+	map.put( "duofenCardGetNew",duofenCardGetNew );
 	Integer cardId=duofenCardGetNew.getCardId();
 	DuofenCardPublish duofenCardPublish = duofenCardPublishDAO.findByCardId( cardId );
 	DuofenCardNew duofenCardNew = duofenCardNewDAO.selectById( cardId );
@@ -505,6 +551,7 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 	map.put( "duofenCardNew",duofenCardNew );
 	DuofenCardTime duofenCardTime=duofenCardTimeDAO.findDuofenCardTimeByCardId( cardId );
 	map.put( "duofenCardTime",duofenCardTime );
+	map.put( "path",PropertiesUtil.getRes_web_path() );
 	return map;
     }
 
@@ -569,5 +616,43 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 	    log.error( "优惠券绑定手机号码异常", e );
 	    throw new BusinessException( ResponseEnums.ERROR );
 	}
+    }
+
+
+    public List<Map> findShopByReceiveId(Map<String,Object> params){
+	Double longitude1=CommonUtil.toDouble( params.get( "longitude" ) );
+	Double latitude1=CommonUtil.toDouble( params.get( "latitude" ) );
+        Integer busId=CommonUtil.toInteger( params.get( "busId" ) );
+	List<Map> mapList=requestService.findShopAllByBusId( busId );
+	List<Map> returnList=new ArrayList<>(  );
+	for(Map map:mapList){
+	    Double longitude=CommonUtil.toDouble( map.get( "longitude" ) );
+	    Double latitude=CommonUtil.toDouble( map.get( "latitude" ) );
+	    Double distance=CommonUtil.getDistance( longitude, latitude,longitude1,latitude1);
+	    map.put( "distance",distance );
+	    returnList.add( map );
+	}
+	return returnList;
+    }
+
+    public Map<String,Object> useVerificationDuofenCard(Integer receiveId ){
+        Map<String,Object> map=new HashMap<>(  );
+        DuofenCardGetNew duofenCardGetNew= duofenCardGetNewDAO.selectById( receiveId );
+        map.put( "code",duofenCardGetNew.getCode() );
+
+	DuofenCardNew duofenCardNew= duofenCardNewDAO.selectById( duofenCardGetNew.getCardId() );
+	map.put( "duofenCardNew",duofenCardNew );
+	return map;
+    }
+
+    public void verificationDuofenCardGet(Integer receiveId,Integer shopId){
+        if(CommonUtil.isEmpty( receiveId ) || CommonUtil.isEmpty( shopId )){
+            throw new BusinessException( ResponseMemberEnums.NULL );
+	}
+        DuofenCardGetNew duofenCardGetNew=new DuofenCardGetNew();
+	duofenCardGetNew.setReceiveId( receiveId );
+	duofenCardGetNew.setStoreId( shopId );
+	duofenCardGetNew.setOperateDate(new Date(  ));
+	duofenCardGetNewDAO.updateById( duofenCardGetNew );
     }
 }
