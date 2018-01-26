@@ -109,6 +109,7 @@ public class RequestServiceImpl implements RequestService {
     private final static String NEW_QRCODE_CREATE_FINAL="/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/newqrcodeCreateFinal.do";
 
 
+
     public String codeConsume( String cardId, String code, Integer busId ) throws Exception {
 	try {
 	    LOG.error( "codeConsume请求李逢喜参数:"+cardId+","+code+","+busId);
@@ -261,6 +262,7 @@ public class RequestServiceImpl implements RequestService {
 	    WsWxShopInfo  wsWxShopInfo = JSON.parseObject( json.getString( "data" ), WsWxShopInfo.class );
 	    return wsWxShopInfo;
 	} else {
+	    LOG.error( "调用李逢喜请求门店信息返回参数"+shopStr);
 	    throw new BusinessException( ResponseMemberEnums.QUERY_SHOP_BUSID );
 	}
     }
@@ -293,7 +295,7 @@ public class RequestServiceImpl implements RequestService {
 	    List< Map > mapList = JSONArray.parseArray( json.getString( "data" ), Map.class );
 	    return mapList;
 	} else {
-	    throw new BusinessException( ResponseMemberEnums.QUERY_SHOP_BUSID );
+	    throw new BusinessException( ResponseMemberEnums.QUERY_SHOP_BUSID.getCode(),CommonUtil.toString( json.get( "msg" ) ) );
 	}
     }
 
@@ -425,7 +427,7 @@ public class RequestServiceImpl implements RequestService {
 
 
     public List<Map<String,Object>> getPayType(Integer busId,Integer type){
-        LOG.error( "查询支付方式接口参数:"+busId+" 请求类型 "+type );
+	LOG.error( "查询支付方式接口参数:"+busId+" 请求类型 "+type );
 	List<Map<String,Object>> list=new ArrayList<>(  );
 	RequestUtils< Integer > requestUtils = new RequestUtils< Integer >();
 	requestUtils.setReqdata( busId );
@@ -448,12 +450,12 @@ public class RequestServiceImpl implements RequestService {
 		list.add( map );
 	    }
 
-//	    if(payWay.getDfpay()==0){
-//		Map<String,Object> map=new HashMap<>(  );
-//		map.put( "payType", 3 );  //微信支付
-//		map.put( "name","多粉钱包" );
-//		list.add( map );
-//	    }
+	    //	    if(payWay.getDfpay()==0){
+	    //		Map<String,Object> map=new HashMap<>(  );
+	    //		map.put( "payType", 3 );  //微信支付
+	    //		map.put( "name","多粉钱包" );
+	    //		list.add( map );
+	    //	    }
 	}
 	return list;
     }
@@ -468,7 +470,7 @@ public class RequestServiceImpl implements RequestService {
 	    if ( CommonUtil.isNotEmpty( returnMsg ) ) {
 		Map< String,Object > json = JSON.parseObject( returnMsg, Map.class );
 		if("0".equals( CommonUtil.toString( json.get( "code" ) ) )){
-		  return JSONObject.parseObject( CommonUtil.toString( json.get( "data" ) ),BusUser.class );
+		    return JSONObject.parseObject( CommonUtil.toString( json.get( "data" ) ),BusUser.class );
 		}else{
 		    LOG.error( "调用陈丹商家信息异常"+returnMsg );
 		}
@@ -560,7 +562,9 @@ public class RequestServiceImpl implements RequestService {
     public Integer getMainBusId(Integer busId){
 	try {
 	    String url = PropertiesUtil.getWxmp_home() + GETMAINBUSID;
-	    String returnMsg = SignHttpUtils.WxmppostByHttp( url, null, PropertiesUtil.getWxmpsignKey() );
+	    Map<String,Object> map=new HashMap<>(  );
+	    map.put( "userId",busId );
+	    String returnMsg = SignHttpUtils.WxmppostByHttp( url, map, PropertiesUtil.getWxmpsignKey() );
 	    if ( CommonUtil.isNotEmpty( returnMsg ) ) {
 		Map< String,Object > json = JSON.parseObject( returnMsg, Map.class );
 		if("0".equals( CommonUtil.toString( json.get( "code" ) ) )){
