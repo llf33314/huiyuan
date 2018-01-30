@@ -870,6 +870,23 @@ public class MemberApiController extends BaseController {
     }
 
 
+
+    @ApiOperation( value = "魔盒充值记录统计查询", notes = "魔盒充值记录统计查询" )
+    @ResponseBody
+    @RequestMapping( value = "/totalRechargeLog", method = RequestMethod.POST )
+    public ServerResponse totalRechargeLog(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    Map<String,Object> map =memberApiService.totalRechargeLog(param);
+	    return ServerResponse.createBySuccess(map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(),e.getMessage() );
+	}catch ( Exception e ){
+	    LOG.error( "魔盒充值记录查询异常",e );
+	    return ServerResponse.createByError( );
+	}
+    }
+
+
     @ApiOperation( value = "魔盒充值记录查询", notes = "魔盒充值记录查询" )
     @ResponseBody
     @RequestMapping( value = "/rechargeLog", method = RequestMethod.POST )

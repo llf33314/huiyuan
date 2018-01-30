@@ -176,7 +176,7 @@
         <dependency>
             <groupId>com.gt.member</groupId>
             <artifactId>member_bo</artifactId>
-            <version>1.0.7-SNAPSHOT</version>
+            <version>1.0.8-SNAPSHOT</version>
         </dependency>
 
 
