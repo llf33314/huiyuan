@@ -116,11 +116,9 @@ public class CardPhoneController extends AuthorizeOrLoginController {
     public ServerResponse findCityByCityCode( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
-	    String cityCode = CommonUtil.toString( params.get( "cityCode" ) );
-	    List<  Map<String,Object> > listMap =new ArrayList<>(  );
-	    Map<String,Object> map = requestService.queryBasisByName( cityCode );
-	    listMap.add( map );
-	    return ServerResponse.createBySuccess( listMap );
+	    Integer cityCode = CommonUtil.toInteger( params.get( "cityCode" ) );
+	    List<Map> mapList = requestService.queryCityByParentId( cityCode );
+	    return ServerResponse.createBySuccess( mapList );
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {

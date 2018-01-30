@@ -217,7 +217,7 @@ public interface RequestService {
      * @param cityCode
      * @return
      */
-    public Map<String, Object> queryBasisByName(String cityCode);
+    public Map queryBasisByName(String cityCode);
 
     /**
      * 根据父级ID查询城市数据

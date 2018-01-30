@@ -2,6 +2,9 @@ package com.gt.member.dao;
 
 import com.gt.member.entity.MemberGiveconsumeNew;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +15,7 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
  * @since 2017-11-18
  */
 public interface MemberGiveconsumeNewDAO extends BaseMapper<MemberGiveconsumeNew> {
+
+    List<MemberGiveconsumeNew> findByUcId(@Param( "ucId" ) Integer ucId);
 
 }

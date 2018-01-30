@@ -20,4 +20,9 @@
         id, ucId AS ucId, gtId AS gtId, gcTotal AS gcTotal, gtName AS gtName, gtUnit AS gtUnit, sendType AS sendType, sendDate AS sendDate, memberId AS memberId
     </sql>
 
+	<select id="findByUcId" resultMap="BaseResultMap">
+		select * from t_member_giveconsume_new where ucId=#{ucId}
+
+	</select>
+
 </mapper>

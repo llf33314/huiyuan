@@ -1022,17 +1022,19 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	List< Map> provinceList = requestService.queryCityByLevel();
 	map.put( "provinceList", provinceList );
 	if ( CommonUtil.isNotEmpty( memberParamter ) && CommonUtil.isNotEmpty( memberParamter.getProvinceCode() ) ) {
-	    Map<String, Object> city=requestService.queryBasisByName( memberParamter.getProvinceCode() );
-	    List< Map<String, Object> > cityList = new ArrayList<>(  );
-	    cityList.add( city );
-	     map.put( "cityList", cityList );
+	    if(CommonUtil.isNotEmpty( memberParamter.getProvinceCode() ) && !"0".equals( memberParamter.getProvinceCode() )){
+		Map prvince = requestService.queryBasisByName( memberParamter.getProvinceCode() );
+		List<Map> cityList=requestService.queryCityByParentId(CommonUtil.toInteger( prvince.get( "id" ) ));
+		map.put( "cityList", cityList );
+	    }
 	}
 
 	if ( CommonUtil.isNotEmpty( memberParamter ) && CommonUtil.isNotEmpty( memberParamter.getCityCode() ) ) {
-	    Map<String, Object> city=requestService.queryBasisByName( memberParamter.getProvinceCode() );
-	    List< Map<String, Object> > countyList = new ArrayList<>(  );
-	    countyList.add( city );
-	    map.put( "countyList", countyList );
+	    if(CommonUtil.isNotEmpty( memberParamter.getCityCode() )&& !"0".equals( memberParamter.getCityCode() )){
+		Map< String,Object > city = requestService.queryBasisByName( memberParamter.getCityCode() );
+		List<Map> countyList=requestService.queryCityByParentId(CommonUtil.toInteger( city.get( "id" ) ));
+		map.put( "countyList", countyList );
+	    }
 	}
 	return map;
     }

@@ -580,7 +580,7 @@ public class RequestServiceImpl implements RequestService {
 	return null;
     }
 
-    public Map<String, Object> queryBasisByName(String cityCode){
+    public Map queryBasisByName(String cityCode){
 	LOG.error( "查询李逢喜省市区接口参数:"+cityCode);
 	List<Map<String,Object>> list=new ArrayList<>(  );
 	RequestUtils< String > requestUtils = new RequestUtils< String >();
@@ -589,8 +589,8 @@ public class RequestServiceImpl implements RequestService {
 	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
 	JSONObject json = JSON.parseObject( returnData );
 	if ( "0".equals( json.getString( "code" ) ) ) {
-	    Map<String, Object> map=JSONObject.parseObject( json.getString( "data" ),Map.class );
-	    return map;
+	    List<Map> mapList=JSONArray.parseArray( json.getString( "data" ),Map.class );
+	    return mapList.get( 0 );
 	}else{
 	    LOG.error( "查查询李逢喜省市区接口参数:"+returnData);
 	    return null;
