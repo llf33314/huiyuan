@@ -689,6 +689,7 @@ public class MemberApiController extends BaseController {
     @ApiOperation( value = "findMemberPage", notes = "分页查询会员信息" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "pageSize", value = "每页条数", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "curPage", value = "当前页", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "cardNo", value = "卡号", paramType = "query", required = true, dataType = "string" ),
 		    @ApiImplicitParam( name = "phone", value = "手机号", paramType = "query", required = true, dataType = "string" ),
 		    @ApiImplicitParam( name = "ctId", value = "会员卡类型", paramType = "query", required = true, dataType = "int" ),
@@ -706,6 +707,7 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
+
 
     @ApiOperation( value = "loginMemberByPhone", notes = "手机号+验证码登录,验证码不足校验处理" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "int" ),
@@ -801,8 +803,24 @@ public class MemberApiController extends BaseController {
 	}
     }
 
+    @ApiOperation( value = "魔盒充值记录统计查询", notes = "魔盒充值记录统计查询" )
+    @ResponseBody
+    @RequestMapping( value = "/totalRechargeLog", method = RequestMethod.POST )
+    public ServerResponse totalRechargeLog(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
+	try {
+	    Map<String,Object> map =memberApiService.totalRechargeLog(param);
+	    return ServerResponse.createBySuccess(map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(),e.getMessage() );
+	}catch ( Exception e ){
+	    LOG.error( "魔盒充值记录查询异常",e );
+	    return ServerResponse.createByError( );
+	}
+    }
+
 
     @ApiOperation( value = "魔盒充值记录查询", notes = "魔盒充值记录查询" )
+    @ResponseBody
     @RequestMapping( value = "/rechargeLog", method = RequestMethod.POST )
     public ServerResponse rechargeLog(HttpServletRequest request, HttpServletResponse response, @RequestBody String param){
 	try {
@@ -833,10 +851,4 @@ public class MemberApiController extends BaseController {
 	    return ServerResponse.createByError( );
 	}
     }
-
-
-
-
-
-
 }

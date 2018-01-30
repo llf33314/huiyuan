@@ -165,6 +165,24 @@
 	</select>
 
 
+	<select id="countUserConsumeChongZhiByMohe" resultType="Map">
+		SELECT COUNT(*) as chongzhiCount,SUM(discountAfterMoney) as totalMoney FROM t_wx_user_consume_new
+		 WHERE busId=#{busId} and recordType=1 and payStatus=1
+		<if test="shopId>0">
+			and shopId=#{shopId}
+		</if>
+
+		<if test="startDate!=null">
+			and createDate <![CDATA[>=]]> #{startDate}
+		</if>
+
+		<if test="endDate!=null">
+			and createDate <![CDATA[<=]]> #{endDate}
+		</if>
+
+
+	</select>
+
 	<select id="findUserConsumeChongZhiByMemberId" resultType="Map">
 		select * from t_wx_user_consume_new where busId=#{busId} and recordType=1
 		<if test="memberId!=null">

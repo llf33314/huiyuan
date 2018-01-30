@@ -22,6 +22,15 @@ public interface UserConsumeNewDAO extends BaseMapper<UserConsumeNew> {
 
     UserConsumeNew findOneByCode(@Param( "orderCode" )String orderCode);
 
+    /**
+     * 统计充值信息
+     * @param busId
+     * @param shopId
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    Map<String,Object> countUserConsumeChongZhiByMohe(@Param( "busId" )Integer busId,@Param( "shopId" )Integer shopId,@Param("startDate")String startDate,@Param("endDate")String endDate);
 
     List<Map<String,Object>> findUserConsumeChongZhiByMohe(@Param( "busId" )Integer busId,@Param( "memberId" )Integer memberId,@Param( "shopId" )Integer shopId,@Param("startDate")String startDate,@Param("endDate")String endDate,@Param("first")Integer first,
                     @Param("pageSize")Integer pageSize);

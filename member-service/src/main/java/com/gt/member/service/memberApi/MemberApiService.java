@@ -140,6 +140,14 @@ public interface MemberApiService {
     public void bingdingPhoneH5( HttpServletRequest request,Integer memberId, String phone,  Integer busId ) throws BusinessException;
 
 
+
+    /*
+   * 小程序绑定手机号码
+   * @return
+   */
+    public MemberEntity bingdingPhoneAreaPhone( HttpServletRequest request,Integer memberId, String phone,  Integer busId,Integer areaId,String areaCode ) throws BusinessException;
+
+
     /*
      *
      * 会员卡充值查询接口
@@ -464,6 +472,8 @@ public interface MemberApiService {
      */
     public Page findMemberPage(String params) throws BusinessException;
 
+
+
     /**
      * 查询商家发布的会员卡信息
      * @param busId
@@ -523,6 +533,13 @@ public interface MemberApiService {
      * @throws BusinessException
      */
     public Member findMemberByPhoneAndbusId(Integer busId,String phone) throws BusinessException;
+
+    /**
+     * 魔盒充值统计查询
+     * @param params
+     * @return
+     */
+    public Map<String,Object> totalRechargeLog(String params);
 
     /**
      * 墨盒充值记录查询

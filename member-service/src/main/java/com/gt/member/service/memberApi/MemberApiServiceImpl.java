@@ -769,6 +769,61 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}
     }
 
+
+
+    @Transactional
+    @Override
+    public MemberEntity bingdingPhoneAreaPhone( HttpServletRequest request, Integer memberId, String phone, Integer busId ,Integer areaId,String areaCode) throws BusinessException {
+	Map< String,Object > map = new HashMap< String,Object >();
+	try {
+	    // 短信校验
+	    if ( CommonUtil.isEmpty( memberId ) ) {
+		throw new BusinessException( ResponseMemberEnums.NULL );
+	    }
+
+	    if ( CommonUtil.isEmpty( phone ) ) {
+		throw new BusinessException( ResponseMemberEnums.NULL );
+	    }
+
+	    if ( CommonUtil.isEmpty( busId ) ) {
+		throw new BusinessException( ResponseMemberEnums.NULL );
+	    }
+	    // 短信判断
+
+	    // 查询要绑定的手机号码
+	    MemberEntity oldMemberEntity = memberDAO.findByPhone( busId, phone );
+
+	    MemberEntity memberEntity = null;
+	    if ( CommonUtil.isEmpty( oldMemberEntity ) ) {
+		// 新用户
+		memberEntity = memberDAO.selectById( memberId );
+		MemberEntity m = new MemberEntity();
+		m.setId( memberEntity.getId() );
+		m.setPhone( phone );
+		memberDAO.updateById( m );
+		memberEntity.setPhone( phone );
+	    } else {
+		memberEntity = memberDAO.selectById( memberId );
+		memberCommonService.newMemberMerge( memberEntity, busId, phone );
+		memberEntity = memberDAO.findByPhone( busId, phone );
+	    }
+	    Member member = new Member();
+	    member.setId( memberEntity.getId() );
+	    member.setNickname( memberEntity.getNickname() );
+	    member.setIntegral( memberEntity.getIntegral() );
+	    member.setFansCurrency( memberEntity.getFansCurrency() );
+	    member.setPhone( memberEntity.getPhone() );
+	    member.setMcId( memberEntity.getMcId() );
+	    return memberEntity;
+	} catch ( BusinessException e ) {
+	    throw new BusinessException( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    LOG.error( "小程序绑定手机号码异常", e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
     @Override
     public List< Map< String,Object > > findMemberCardRecharge( Integer busId, String cardNo ) {
 	MemberCard card = memberCardDAO.findCardByCardNo( busId, cardNo );
@@ -2864,6 +2919,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 	}
     }
 
+
+
     public List< Map< String,Object > > findGradeTypeBybusId( Integer busId ) {
 	return memberGradetypeDAO.findGradeTypeByBusId( busId );
     }
@@ -3004,6 +3061,39 @@ public class MemberApiServiceImpl implements MemberApiService {
 	return member;
 
     }
+
+
+    /**
+     * 魔盒充值统计查询
+     * @param params
+     * @return
+     */
+    public Map<String,Object> totalRechargeLog(String params){
+	JSONObject json = JSON.parseObject( params );
+	Integer busId = CommonUtil.toInteger( json.get( "busId" ) );
+	Integer shopId = 0;
+	if ( CommonUtil.isNotEmpty( json.get( "shopId" ) ) ) {
+	    shopId = CommonUtil.toInteger( json.get( "shopId" ) );
+	}
+
+	String startTime = "";
+	if ( CommonUtil.isNotEmpty( json.get( "startTime" ) ) ) {
+	    startTime = CommonUtil.toString( json.get( "startTime" ) )+"-01";
+	}
+
+	String endTime = "";
+	if ( CommonUtil.isNotEmpty( json.get( "startTime" ) ) ) {
+	    endTime =DateTimeKit.getMonthEnd(  CommonUtil.toString( json.get( "startTime" ) )+"-01" );
+	}
+
+	Map< String,Object >  map = userConsumeNewDAO
+			.countUserConsumeChongZhiByMohe( busId, shopId, startTime, endTime);
+	return map;
+
+
+    }
+
+
 
     public Map< String,Object > rechargeLog( String params ) {
 	try {
