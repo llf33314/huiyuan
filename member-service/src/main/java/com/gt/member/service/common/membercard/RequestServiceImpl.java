@@ -103,7 +103,6 @@ public class RequestServiceImpl implements RequestService {
 
     private final static String GETMAINBUSID="/8A5DA52E/childBusUserApi/getMainBusId.do";
 
-    private final static String QUERYBASISBYNAME="/8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/queryBasisByName.do";
 
     private final static String QUERYCITYBYLEVEL="/8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/queryCityByLevel.do";
 
