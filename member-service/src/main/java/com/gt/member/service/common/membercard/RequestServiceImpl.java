@@ -103,8 +103,13 @@ public class RequestServiceImpl implements RequestService {
 
     private final static String GETMAINBUSID="/8A5DA52E/childBusUserApi/getMainBusId.do";
 
-    private final static String QUERYBASISBYNAME="8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/queryBasisByName.do";
+    private final static String QUERYBASISBYNAME="/8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/queryBasisByName.do";
 
+    private final static String QUERYCITYBYLEVEL="/8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/queryCityByLevel.do";
+
+    private final static String QUERYCITYBYPARENTID="/8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/queryCityByParentId.do";
+
+    private final static String QUERYBASISBYCODES="/8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/queryBasisByCodes.do";
 
     public String codeConsume( String cardId, String code, Integer busId ) throws Exception {
 	try {
@@ -581,7 +586,7 @@ public class RequestServiceImpl implements RequestService {
 	List<Map<String,Object>> list=new ArrayList<>(  );
 	RequestUtils< String > requestUtils = new RequestUtils< String >();
 	requestUtils.setReqdata( cityCode );
-	String url = PropertiesUtil.getWxmp_home() + QUERYBASISBYNAME;
+	String url = PropertiesUtil.getWxmp_home() + QUERYBASISBYCODES;
 	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
 	JSONObject json = JSON.parseObject( returnData );
 	if ( "0".equals( json.getString( "code" ) ) ) {
@@ -598,7 +603,7 @@ public class RequestServiceImpl implements RequestService {
 	List<Map<String,Object>> list=new ArrayList<>(  );
 	RequestUtils< Integer > requestUtils = new RequestUtils< Integer >();
 	requestUtils.setReqdata( pId );
-	String url = PropertiesUtil.getWxmp_home() + QUERYBASISBYNAME;
+	String url = PropertiesUtil.getWxmp_home() + QUERYCITYBYPARENTID;
 	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
 	JSONObject json = JSON.parseObject( returnData );
 	if ( "0".equals( json.getString( "code" ) ) ) {
@@ -615,7 +620,7 @@ public class RequestServiceImpl implements RequestService {
 	List<Map<String,Object>> list=new ArrayList<>(  );
 	RequestUtils< Integer > requestUtils = new RequestUtils< Integer >();
 	requestUtils.setReqdata( 2 );
-	String url = PropertiesUtil.getWxmp_home() + QUERYBASISBYNAME;
+	String url = PropertiesUtil.getWxmp_home() + QUERYCITYBYLEVEL;
 	String returnData = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, String.class, PropertiesUtil.getWxmpsignKey() );
 	JSONObject json = JSON.parseObject( returnData );
 	if ( "0".equals( json.getString( "code" ) ) ) {
