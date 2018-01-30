@@ -548,6 +548,14 @@ public interface MemberApiService {
      */
     public Member findMemberByPhoneAndbusId(Integer busId,String phone) throws BusinessException;
 
+
+    /**
+     * 魔盒充值统计查询
+     * @param params
+     * @return
+     */
+    public Map<String,Object> totalRechargeLog(String params);
+
     /**
      * 墨盒充值记录查询
      * @param params

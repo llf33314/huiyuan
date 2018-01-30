@@ -3224,6 +3224,29 @@ public class MemberApiServiceImpl implements MemberApiService {
 
     }
 
+    public Map<String,Object> totalRechargeLog(String params){
+	JSONObject json = JSON.parseObject( params );
+	Integer busId = CommonUtil.toInteger( json.get( "busId" ) );
+	Integer shopId = 0;
+	if ( CommonUtil.isNotEmpty( json.get( "shopId" ) ) ) {
+	    shopId = CommonUtil.toInteger( json.get( "shopId" ) );
+	}
+
+	String startTime = "";
+	if ( CommonUtil.isNotEmpty( json.get( "startTime" ) ) ) {
+	    startTime = CommonUtil.toString( json.get( "startTime" ) )+"-01";
+	}
+
+	String endTime = "";
+	if ( CommonUtil.isNotEmpty( json.get( "startTime" ) ) ) {
+	    endTime =DateTimeKit.getMonthEnd(  CommonUtil.toString( json.get( "startTime" ) )+"-01" );
+	}
+
+	Map< String,Object >  map = userConsumeNewDAO
+			.countUserConsumeChongZhiByMohe( busId, shopId, startTime, endTime);
+	return map;
+    }
+
     public Map< String,Object > rechargeLog( String params ) {
 	try {
 	    Map<String,Object> returnMap=new HashMap<>(  );
