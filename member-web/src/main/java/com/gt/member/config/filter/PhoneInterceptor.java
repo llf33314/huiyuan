@@ -47,7 +47,7 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
 	try {
 	    boolean isSuccess = true;
 //	    Member m=new Member();
-//	    m.setId( 1225554 );
+//	    m.setId( 1225341 );
 //	    m.setBusid( 36 );
 //	    SessionUtils.setLoginMember( servletRequest,m );
 	    return isSuccess;// 只有返回true才会继续向下执行，返回false取消当前请求

@@ -171,6 +171,7 @@ public class CardController {
     public ServerResponse saveOrUpdateGradeType( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
 	Integer busId = SessionUtils.getPidBusId( request );
 	try {
+	    LOG.error( "保存参数:"+json );
 	    memberCardService.saveOrUpdateGradeType( json, busId );
 	    return ServerResponse.createBySuccess();
 	} catch ( BusinessException e ) {

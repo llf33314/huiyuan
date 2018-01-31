@@ -672,9 +672,9 @@ public class MemberCardServiceImpl implements MemberCardService {
 		gt.setCmId( CommonUtil.toInteger( map.get( "cmId" ) ) );
 		gt.setGtTextColor( CommonUtil.toString( map.get( "gtTextColor" ) ) );
 		gt.setCtId( ctId );
-		String gtLoginUrl = CommonUtil.toString( map.get( "gtLoginUrl" ) );
 
-		if ( CommonUtil.isNotEmpty( gtLoginUrl ) ) {
+		if ( CommonUtil.isNotEmpty( map.get( "gtLoginUrl" ) ) ) {
+		    String gtLoginUrl = CommonUtil.toString( map.get( "gtLoginUrl" ) );
 		    gt.setGtLoginUrl( gtLoginUrl.split( "/upload" )[1] );
 		}
 
@@ -938,10 +938,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    }
 		    grgt.setBusId( busUserId );
 		    grgt.setCtId( ctId );
-		    Integer goodTypeId = CommonUtil.toInteger( goodtype.get( "goodTypeId" ) );
-		    if ( CommonUtil.isEmpty( goodTypeId ) ) {
+		    if ( CommonUtil.isEmpty(  goodtype.get( "goodTypeId" )  ) ) {
 			memberGiverulegoodstypeDAO.insert( grgt );
 		    } else {
+			Integer goodTypeId = CommonUtil.toInteger( goodtype.get( "goodTypeId" ) );
 			grgt.setId( goodTypeId );
 			memberGiverulegoodstypeDAO.updateById( grgt );
 		    }
