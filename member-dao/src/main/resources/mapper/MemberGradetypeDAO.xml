@@ -215,7 +215,7 @@
 		FROM t_member_gradetype gt
 		INNER JOIN t_member_cardtype  ct ON gt.ct_id=ct.ct_id
 		INNER JOIN t_member_cardmodel cm ON cm.cm_id=gt.cm_id
-		WHERE gt.busId=#{busId} and gt.ct_id=#{ctId} ORDER BY gt.iseasy DESC
+		WHERE gt.busId=#{busId} and gt.ct_id=#{ctId} ORDER BY gt.iseasy DESC ,gt.gt_id ASC
 	</select>
 
 

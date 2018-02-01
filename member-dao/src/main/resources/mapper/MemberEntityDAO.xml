@@ -48,6 +48,7 @@
 		<result column="subscribeDate" property="subscribeDate" />
 		<result column="openid2" property="openid2" />
 		<result column="rechargeMoney" property="rechargeMoney"/>
+		<result column="recommendMoney" property="recommendMoney"/>
 	</resultMap>
 
     <!-- 通用查询结果列 -->
@@ -55,7 +56,7 @@
         id, df_member_id , public_id , fans_currency, flow, integral, level, openid, phone, nickname, sex, province, city,
         country, headimgurl, operate_type , mc_id , totalMoney, totalIntegral, address, email, cardId, cardImgback,
         cardImg, birth, currencyDate, flowDate, integralDate, shareCount, shareDate, remark, cardChecked, name, isBuy,
-        isSubscribe, scence_code , busId, pwd, loginMode, oldId, subscribeDate, openid2,rechargeMoney
+        isSubscribe, scence_code , busId, pwd, loginMode, oldId, subscribeDate, openid2,rechargeMoney,recommendMoney
     </sql>
 
 

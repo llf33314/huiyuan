@@ -66,5 +66,20 @@ public interface MemberRecommendDAO extends BaseMapper<MemberRecommend> {
     int findRecommendByphone(@Param("phone")String phone,@Param("memberId")Integer memberId);
 
 
+    /**
+     * 查询卡券成功推荐已使用
+     * @param memberId
+     * @return
+     */
+    Map<String,Object> countRecommendSuccessByMemberId(@Param("memberId")Integer memberId);
 
+
+    /**
+     * 查询卡券推荐
+     * @param memberId
+     * @return
+     */
+    Integer countRecommendByMemberId(@Param("memberId")Integer memberId);
+
+    List<Map<String,Object>> findRecommendPageByMemberId(@Param("memberId")Integer memberId,@Param( "firstResult" )Integer firstResult,@Param( "pageSize" )Integer pageSize);
 }

@@ -16,10 +16,14 @@ import java.util.Map;
  * @since 2017-07-25
  */
 public interface MemberPicklogDAO extends BaseMapper<MemberPicklog> {
+
     List<MemberPicklog> findByMemberId(@Param("busId")Integer busId,@Param("memberIds")List<Integer> memberIds);
 
     int countPickLog(@Param("busId")Integer busId,@Param("search")String search);
 
     List<Map<String, Object>> findPickLog(@Param("busId")Integer busId, @Param("search")String search, @Param("fristpage")Integer fristpage,
                                           @Param("pagesize")Integer pagesize);
+
+
+    List<MemberPicklog> findPickMoneyByMemberId(@Param("busId")Integer busId,@Param("memberId")Integer memberId);
 }

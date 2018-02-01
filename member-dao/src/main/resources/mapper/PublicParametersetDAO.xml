@@ -24,12 +24,13 @@
 		<result column="isOpen" property="isOpen" />
 		<result column="pickMoney" property="pickMoney" />
 		<result column="isPhoneQuery" property="isPhoneQuery" />
+		<result column="dfcardPickMoney" property="dfcardPickMoney"/>
 	</resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, integralRatio, changeMoney, startMoney, publicId, startType, findImage, isOpenCard, busId, loginImage, isclearJifen, month,
-        memberView, youhuiButton, youhuiText, buttonType, buttonUrl,isOpen,pickMoney,isPhoneQuery
+        memberView, youhuiButton, youhuiText, buttonType, buttonUrl,isOpen,pickMoney,isPhoneQuery,dfcardPickMoney
     </sql>
 
 

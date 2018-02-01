@@ -19,7 +19,7 @@
 
 
 	<select id="findByMemberId"  resultMap="BaseResultMap">
-		select   <include refid="Base_Column_List" /> from t_member_picklog where busId=#{busId} and
+		select   <include refid="Base_Column_List" /> from t_member_picklog where busId=#{busId} and pickType=0 and
 		<foreach collection="memberIds" item="memberId"  separator="or">
 			memberId=#{memberId}
 		</foreach>
@@ -45,4 +45,12 @@
 		</if>
 		limit #{fristpage},#{pagesize}
 	</select>
+
+
+	<select id="findPickMoneyByMemberId"  resultMap="BaseResultMap">
+		select   <include refid="Base_Column_List" /> from t_member_picklog where busId=#{busId} and memberId=#{memberId}
+		and pickType=1
+		order by id desc
+	</select>
+
 </mapper>

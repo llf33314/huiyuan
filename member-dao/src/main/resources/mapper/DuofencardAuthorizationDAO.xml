@@ -30,6 +30,8 @@
 	</select>
 
 	<select id="findByOpenId" resultMap="BaseResultMap">
-		select * from t_duofencard_authorization where busId=#{busId} and  openId = #{openId} and status=0 limit 1
+		select * from t_duofencard_authorization where busId=#{busId}
+		and  openId = #{openId}
+		limit 1
 	</select>
 </mapper>

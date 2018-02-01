@@ -44,4 +44,12 @@ public interface DuofenCardGetNewDAO extends BaseMapper<DuofenCardGetNew > {
 
 
     Integer countByCardId(@Param( "cardId" )Integer cardId);
+
+    /**
+     * 查询粉丝的优惠券信息
+     * @param busId
+     * @param code
+     * @return
+     */
+    DuofenCardGetNew findByCode(@Param( "busId" )Integer busId,@Param( "code" )String code);
 }

@@ -24,6 +24,4 @@ public interface DuofencardAuthorizationDAO extends BaseMapper<DuofencardAuthori
     int findByMemberOpenId(@Param("busId")Integer busId,@Param("openId")String openId);
 
     DuofencardAuthorization findByOpenId(@Param("busId")Integer busId,@Param("openId")String openId);
-
-
 }

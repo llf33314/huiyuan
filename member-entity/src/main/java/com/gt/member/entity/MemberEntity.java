@@ -181,6 +181,9 @@ public class MemberEntity extends Model< MemberEntity > {
 
     private Double rechargeMoney;
 
+    @TableField("recommendMoney")
+    private Double recommendMoney;
+
     @Override
     protected Serializable pkVal() {
 	return this.id;

@@ -78,11 +78,30 @@
 	</select>
 
 	<select id="findRecommendByCardId" resultMap="BaseResultMap">
-		select <include refid="Base_Column_List" /> from t_member_recommend where cardId=#{cardId} and memberId=#{memberId}
+		select <include refid="Base_Column_List" /> from t_member_recommend
+		where cardId=#{cardId} and memberId=#{memberId} and recommendType=1
 	</select>
 
 	<select id="findRecommendByphone" resultType="java.lang.Integer">
 		select count(id) from t_member_recommend where memberId=#{memberId} and phone=#{phone}
 	</select>
+
+	<select id="countRecommendSuccessByMemberId" resultType="Map">
+		SELECT SUM(integral) as totalIntegral,SUM(fenbi) as totalFenbi,SUM(flow) as totalFlow,SUM(money) as totalMoney,
+		 COUNT(*) as successNum FROM t_member_recommend WHERE memberId=#{memberId} and recommendType=1 and isGive=1
+	</select>
+
+	<select id="countRecommendByMemberId" resultType="java.lang.Integer">
+		select count(*) as number  FROM t_member_recommend WHERE memberId=#{memberId} and recommendType=1
+	</select>
+
+	<select id="findRecommendPageByMemberId" resultType="Map">
+		select r.isUser,r.integral,r.fenbi,r.flow,r.datetime,r.money,m.nickname from t_member_recommend r
+		inner join t_wx_bus_member m on m.id=r.getMemberId
+		where r.memberId=#{memberId} and r.recommendType=1
+		ORDER BY r.id DESC
+		limit #{firstResult},#{pageSize}
+	</select>
+
 
 </mapper>

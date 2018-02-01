@@ -117,4 +117,10 @@
         GROUP BY storeId
     </select>
 
+
+
+    <select id="findByCode" resultMap="BaseResultMap">
+        select * from t_duofen_card_get_new where busId=#{busId} and code=#{code}
+    </select>
+
 </mapper>
