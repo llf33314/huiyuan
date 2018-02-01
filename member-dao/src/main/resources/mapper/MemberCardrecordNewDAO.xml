@@ -31,11 +31,6 @@
 				 separator="or">
 			memberId= #{memberId}
 		</foreach>
-		SELECT itemName,number,date_format(createDate, '%Y-%c-%d %T') as createDate FROM t_member_cardrecord_new WHERE recordType = 2 AND
-		<foreach close=")" collection="memberIds" item="memberId" open="("
-				 separator="or">
-			memberId= #{memberId}
-		</foreach>
 		order by id desc limit #{page},#{pageSize}
 
 	</select>
