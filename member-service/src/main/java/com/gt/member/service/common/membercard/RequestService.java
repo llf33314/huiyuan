@@ -239,4 +239,18 @@ public interface RequestService {
      */
     public String newqrcodeCreateFinal(Integer publicId);
 
+    /**
+     * 查询节假日
+     * @return
+     */
+    public List<Map> findHoliList();
+
+    /**
+     * 推送
+     * @param pushMsg
+     * @param pushName
+     * @param pushStyle
+     */
+    public void sendSock(String pushMsg,String pushName,String pushStyle);
+
 }

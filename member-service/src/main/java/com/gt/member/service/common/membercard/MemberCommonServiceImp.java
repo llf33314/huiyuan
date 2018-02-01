@@ -1,9 +1,11 @@
 package com.gt.member.service.common.membercard;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.sign.SignHttpUtils;
+import com.gt.duofencard.entity.DuofenCardTime;
 import com.gt.entityBo.MemberShopEntity;
 import com.gt.member.dao.*;
 import com.gt.member.entity.*;
@@ -14,7 +16,6 @@ import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.DateTimeKit;
 import com.gt.member.util.PropertiesUtil;
-import net.sf.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,13 +85,8 @@ public class MemberCommonServiceImp implements MemberCommonService {
     @Autowired
     private MemberRechargegiveAssistantDAO memberRechargegiveAssistantDAO;
 
-
-
-
     @Autowired
     private MemberGiveconsumeNewDAO memberGiveconsumeNewDAO;
-
-
 
     @Autowired
     private DuofenCardGetDAO duofenCardGetMapper;
@@ -109,7 +105,6 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
     @Autowired
     private MemberGiverulegoodstypeDAO memberGiverulegoodstypeDAO;
-
 
     @Autowired
     private MemberOldIdDAO memberOldIdDAO;
@@ -275,9 +270,9 @@ public class MemberCommonServiceImp implements MemberCommonService {
 		case 3:
 		    // 区间
 		    String dateStr = memberdate.getDateStr();
-		    List< Map< String,Object > > list = JSONArray.toList( JSONArray.fromObject( dateStr ), Map.class );
+		    List< Map> list = JSONArray.parseArray(  dateStr , Map.class );
 		    Integer year = DateTimeKit.getYear( new Date() );
-		    for ( Map< String,Object > map : list ) {
+		    for ( Map map : list ) {
 			String time = CommonUtil.toString( map.get( "time" ) );
 			if ( time.length() == 1 ) {
 			    time = "0" + time;
@@ -1157,33 +1152,34 @@ public class MemberCommonServiceImp implements MemberCommonService {
 
 	    if(ce.getUsehuiyuanquanyi()==1) {
 		// 查询会员折扣
-
-		//副卡
-		MemberGradetypeAssistant memberGradetypeAssistant=memberGradetypeAssistantDAO.findAssistantBygtIdAndFuctId( memberEntity.getBusId(),card.getGtId(),2);
-		Double fukaDiscount=10.0;
-		if(CommonUtil.isNotEmpty( memberGradetypeAssistant )){
-		    //返回副卡折扣
-		    fukaDiscount= memberGradetypeAssistant.getDiscount();
-		}
-		if ( CommonUtil.isNotEmpty( card ) ) {
-		    if ( !isUseDisCount ) {
-			// 折扣卡
-			if(card.getCtId() == 2 ) {
-			    //判断是否是会员日 会员日存在折上折
-			    MemberGiverule gr = memberGiveruleDAO.selectById( card.getGrId() );
-			    MemberDate memberDate = findMemeberDate( card.getBusId(), card.getCtId() );
-			    Double discount = 1.0;
-			    if ( CommonUtil.isNotEmpty( memberDate ) ) {
-				discount = memberDate.getDiscount().doubleValue();
+		if(ce.getUserDiscount()==1) {
+		    //副卡
+		    MemberGradetypeAssistant memberGradetypeAssistant = memberGradetypeAssistantDAO.findAssistantBygtIdAndFuctId( memberEntity.getBusId(), card.getGtId(), 2 );
+		    Double fukaDiscount = 10.0;
+		    if ( CommonUtil.isNotEmpty( memberGradetypeAssistant ) ) {
+			//返回副卡折扣
+			fukaDiscount = memberGradetypeAssistant.getDiscount();
+		    }
+		    if ( CommonUtil.isNotEmpty( card ) ) {
+			if ( !isUseDisCount ) {
+			    // 折扣卡
+			    if ( card.getCtId() == 2 ) {
+				//判断是否是会员日 会员日存在折上折
+				MemberGiverule gr = memberGiveruleDAO.selectById( card.getGrId() );
+				MemberDate memberDate = findMemeberDate( card.getBusId(), card.getCtId() );
+				Double discount = 1.0;
+				if ( CommonUtil.isNotEmpty( memberDate ) ) {
+				    discount = memberDate.getDiscount().doubleValue();
+				}
+				discount = discount * gr.getGrDiscount() / 100.0;
+				Double discountMemberMoney = formatNumber( pay * ( 1 - discount ) );
+				pay = pay - discountMemberMoney; // 折扣后的金额
+				ce.setDiscountMemberMoney( discountMemberMoney ); // 会员优惠金额
+			    } else if ( card.getCtId() == 3 ) {
+				Double discountMemberMoney = formatNumber( pay * ( 1 - fukaDiscount / 10.0 ) );
+				pay = pay - discountMemberMoney; // 折扣后的金额
+				ce.setDiscountMemberMoney( discountMemberMoney ); // 会员优惠金额
 			    }
-			    discount = discount * gr.getGrDiscount() / 100.0;
-			    Double discountMemberMoney = formatNumber( pay * (1-discount) );
-			    pay = pay - discountMemberMoney; // 折扣后的金额
-			    ce.setDiscountMemberMoney( discountMemberMoney ); // 会员优惠金额
-			}else if(card.getCtId()==3){
-			    Double discountMemberMoney = formatNumber( pay * (1-fukaDiscount/10.0) );
-			    pay = pay - discountMemberMoney; // 折扣后的金额
-			    ce.setDiscountMemberMoney( discountMemberMoney ); // 会员优惠金额
 			}
 		    }
 		}
@@ -1250,7 +1246,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    }
 
 	    // 计算积分金额
-	    if (ce.getUsehuiyuanquanyi()==1 && ce.getUseFenbi() == 1 ) {
+	    if (ce.getUsehuiyuanquanyi()==1 && ce.getUserJifen() == 1 ) {
 		PublicParameterset pps = publicParameterSetMapper.findBybusId( memberEntity.getBusId() );
 		Double discountjifenMoney =integralCount( pay, memberEntity.getIntegral().doubleValue(), memberEntity.getBusId() ); // 计算积分
 		if ( discountjifenMoney > 0 ) {
@@ -1375,7 +1371,7 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    Date startDate=DateTimeKit.parseDate( startTime,"yyyy-MM-dd hh:mm:ss" );
 	    Date endDate=DateTimeKit.parseDate( endTime,"yyyy-MM-dd hh:mm:ss" );
 	    if(DateTimeKit.isBetween( startDate, endDate)){
-		return CommonUtil.toDouble( map.get( "buyMoney" ) );
+		return CommonUtil.toDouble( map.get( "money" ) );
 	    }
 	}
 	return buyMoney;
@@ -1405,5 +1401,57 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    LOG.error( "自动审核查询异常", e );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(),"自动审核查询异常");
 	}
+    }
+
+
+    public boolean isUseDuofenCardTime(DuofenCardTime duofenCardTime){
+	if(CommonUtil.isEmpty( duofenCardTime  )){
+	    return true;
+	}
+
+	if(duofenCardTime.getHolidays()==1){
+	    //节假日不可用
+	    List<Map> holiList=requestService.findHoliList();
+	    for(Map map:holiList){
+		String startTime=CommonUtil.toString( map.get( "startTime" ) );
+		String endTime=CommonUtil.toString( map.get( "endTime" ) );
+		Date date1=DateTimeKit.parseDate( startTime );
+		Date date2=DateTimeKit.parseDate( endTime );
+		if(DateTimeKit.isBetween( date1,date2 )){
+		    return false;
+		}
+	    }
+	}
+
+	//自定义时间
+	if(duofenCardTime.getOtherTime()==1){
+	    List< Map> list = JSONArray.parseArray(  duofenCardTime.getOtherTimeSet() , Map.class );
+	    Integer year = DateTimeKit.getYear( new Date() );
+	    for ( Map map : list ) {
+		String time = CommonUtil.toString( map.get( "month_start" ) );
+		String time1 = CommonUtil.toString( map.get( "day_start" ) );
+		String time2 = CommonUtil.toString( map.get( "month_end" ) );
+		String time3 = CommonUtil.toString( map.get( "day_end" ) );
+		String date1 = year + "-" + time + "-" + time1 + " 00:00:00";
+		String date2 = year + "-" + time2 + "-" + time3 + " 23:59:59";
+		Date d1 = DateTimeKit.parse( date1, "yyyy-MM-dd HH:mm:ss" );
+		Date d2 = DateTimeKit.parse( date2, "yyyy-MM-dd HH:mm:ss" );
+		if ( DateTimeKit.isBetween( d1, d2 ) ) {
+		    return false;
+		}
+	    }
+	}
+
+	Integer d = DateTimeKit.getNow().getDay();
+	if(!duofenCardTime.getWeek().contains( d.toString() )){
+	    return false;
+	}
+
+	return true;
+    }
+
+
+    public void memberRecommend(Integer recommendId){
+
     }
 }

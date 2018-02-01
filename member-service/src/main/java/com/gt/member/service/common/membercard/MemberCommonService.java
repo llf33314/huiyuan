@@ -1,6 +1,7 @@
 package com.gt.member.service.common.membercard;
 
 import com.gt.api.enums.ResponseEnums;
+import com.gt.duofencard.entity.DuofenCardTime;
 import com.gt.entityBo.MemberShopEntity;
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
@@ -233,4 +234,17 @@ public interface MemberCommonService {
      * @return
      */
     boolean getAutoAuditFlag( Integer busId );
+
+    /**
+     * 卡券判断当前时间端是否可以用
+     * @param duofenCardTime
+     * @return
+     */
+    public boolean isUseDuofenCardTime(DuofenCardTime duofenCardTime);
+
+    /**
+     * 优惠券推荐赠送
+     * @param recommendId
+     */
+    public void memberRecommend(Integer recommendId);
 }

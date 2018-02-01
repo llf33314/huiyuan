@@ -108,6 +108,9 @@ public class RequestServiceImpl implements RequestService {
 
     private final static String NEW_QRCODE_CREATE_FINAL="/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/newqrcodeCreateFinal.do";
 
+    private final static String HOLILIST="/8A5DA52E/Holiday/HoliList.do";
+
+    private final static String GETSOCKETAPI="/8A5DA52E/socket/getSocketApi.do";
 
 
     public String codeConsume( String cardId, String code, Integer busId ) throws Exception {
@@ -655,4 +658,50 @@ public class RequestServiceImpl implements RequestService {
 	return null;
     }
 
+
+
+    public List<Map> findHoliList(){
+	try {
+	    LOG.error( "调用成功节假日接口" );
+	    String url = PropertiesUtil.getWxmp_home() + HOLILIST;
+	    String returnMsg = SignHttpUtils.WxmppostByHttp( url, null, PropertiesUtil.getWxmpsignKey() );
+	    if ( CommonUtil.isNotEmpty( returnMsg ) ) {
+		Map< String,Object > json = JSON.parseObject( returnMsg, Map.class );
+		if("0".equals( CommonUtil.toString( json.get( "code" ) ) )){
+		    return JSONArray.parseArray( CommonUtil.toString( json.get( "data" ) ),Map.class );
+		}else{
+		    LOG.error( "调用成功节假日接口异常"+returnMsg );
+		}
+
+	    }
+	}catch ( Exception e ){
+	    LOG.error( "调用成功节假日接口异常",e );
+	}
+	return null;
+    }
+
+
+    public void sendSock(String pushMsg,String pushName,String pushStyle){
+	try {
+	    String socketUrl= PropertiesUtil.getWxmp_home()+"/8A5DA52E/socket/getSocketApi.do";
+	    Map<String,Object> socketMap=new HashMap<>(  );
+	    log.error( "调用推送地址："+pushName );
+	    socketMap.put( "pushName",pushName );
+	    socketMap.put( "pushMsg",pushMsg);
+	    socketMap.put( "pushStyle","1" );
+	    String returnMsg= SignHttpUtils.WxmppostByHttp( socketUrl, socketMap, PropertiesUtil.getWxmpsignKey() );  //推送
+	    if ( CommonUtil.isNotEmpty( returnMsg ) ) {
+		Map< String,Object > json = JSON.parseObject( returnMsg, Map.class );
+		if("0".equals( CommonUtil.toString( json.get( "code" ) ) )){
+		    LOG.error( "推送成功" );
+		}else{
+		    LOG.error( "调用推送接口异常"+returnMsg );
+		}
+
+	    }
+	}catch ( Exception e ){
+	    LOG.error( "调用推送异常",e );
+	}
+
+    }
 }
