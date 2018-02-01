@@ -123,4 +123,28 @@
         select * from t_duofen_card_get_new where busId=#{busId} and code=#{code}
     </select>
 
+    <select id="selectUsageListCount" resultType="java.lang.Integer" parameterType="hashmap">
+         SELECT COUNT(1) from t_duofen_card_get_new g INNER JOIN  t_duofen_card_new c   ON g.cardId=c.id
+         <where>
+             <if test="busId!=null and busId!=''">
+                 AND  g.busId=${busId}
+             </if>
+             <if test="searchContent!=null and searchContent!=''">
+                 AND   g.code  like '%${searchContent}%' OR  c.title like  '%${searchContent}%'
+             </if>
+         </where>
+    </select>
+    <select id="selectUsageList" resultType="java.util.Map" parameterType="hashmap" >
+        SELECT g.*,c.title,c.cardType from t_duofen_card_get_new g INNER JOIN  t_duofen_card_new c   ON g.cardId=c.id
+        <where>
+            <if test="busId!=null and busId!=''">
+                AND  g.busId=${busId}
+            </if>
+            <if test="searchContent!=null and searchContent!=''">
+                AND   g.code  like '%${searchContent}%' OR  c.title like  '%${searchContent}%'
+            </if>
+        </where>
+    </select>
+
+
 </mapper>

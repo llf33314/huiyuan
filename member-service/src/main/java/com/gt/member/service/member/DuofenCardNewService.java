@@ -52,4 +52,16 @@ public interface DuofenCardNewService extends BaseService<DuofenCardNew > {
     Integer deleteByCouponId( Integer couponId );
 
     Page getCouponListByBusId2( Integer curPage, Integer pageSize, Integer busId, Integer cardStatus, String couponName, Integer useType );
+
+    Page recommendReceiveList( Integer curPage, Integer pageSize, Integer recommendId, String searchContent );
+
+    Page withdrawList( Integer curPage, Integer pageSize, Integer busId, String searchContent );
+
+    /**
+     * 提现金额set
+     * @param busId
+     * @param money
+     * @return
+     */
+    Integer withdrawMoneySet( Integer busId, Integer money );
 }

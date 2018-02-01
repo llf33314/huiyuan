@@ -6,10 +6,7 @@ import com.gt.api.enums.ResponseEnums;
 import com.gt.bean.vo.DuofenCardNewVO;
 import com.gt.duofencard.entity.*;
 import com.gt.member.base.BaseServiceImpl;
-import com.gt.member.dao.MemberEntityDAO;
-import com.gt.member.dao.MemberRecommendDAO;
-import com.gt.member.dao.UserConsumeNewDAO;
-import com.gt.member.dao.UserConsumePayDAO;
+import com.gt.member.dao.*;
 import com.gt.member.dao.duofencard.DuofenCardGetNewDAO;
 import com.gt.member.dao.duofencard.DuofenCardNewDAO;
 import com.gt.member.dao.duofencard.DuofenCardPublishDAO;
@@ -23,6 +20,7 @@ import com.gt.member.util.CommonUtil;
 import com.gt.member.util.Page;
 import com.gt.member.util.PropertiesUtil;
 import org.apache.log4j.Logger;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,21 +43,23 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
     @Autowired
     private DuofenCardTimeDAO    cardTimeMapper;
     @Autowired
-    private DuofenCardPublishDAO cardPublishMapper;
+    private DuofenCardPublishDAO  cardPublishMapper;
     @Autowired
-    private DuofenCardGetNewDAO  cardGetMapper;
+    private DuofenCardGetNewDAO   cardGetMapper;
     @Autowired
-    private MemberEntityDAO      MemberEntityMapper;
+    private MemberEntityDAO       MemberEntityMapper;
     @Autowired
-    private UserConsumeNewDAO    userConsumeMapper;
+    private UserConsumeNewDAO     userConsumeMapper;
     @Autowired
-    private UserConsumePayDAO    userConsumePayMapper;
+    private UserConsumePayDAO     userConsumePayMapper;
     @Autowired
-    private DictService          dictService;
+    private DictService           dictService;
     @Autowired
-    private RequestService       requestService;
+    private RequestService        requestService;
     @Autowired
-    private MemberRecommendDAO   memberRecommendMapper;
+    private MemberRecommendDAO    memberRecommendMapper;
+    @Autowired
+    private PublicParametersetDAO publicParametersetMapper;
 
     public Integer addCoupon( DuofenCardNewVO coupon ) throws BusinessException {
 	try {
@@ -324,11 +324,10 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
     public Page recommendList( Integer curPage, Integer pageSize, Integer busId, String searchContent ) {
 	try {
 	    HashMap< String,Object > condition = new HashMap< String,Object >();
-	    condition.put( "memberId", busId );
+	    condition.put( "busId", busId );
 	    if ( searchContent != null ) {
 		condition.put( "searchContent", searchContent );
 	    }
-
 	    Integer recordCount = memberRecommendMapper.selectRecommendListCount( condition );
 
 	    com.baomidou.mybatisplus.plugins.Page< MemberRecommend > pagination = new com.baomidou.mybatisplus.plugins.Page< MemberRecommend >( curPage, pageSize );
@@ -592,6 +591,77 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	} catch ( Exception e ) {
 	    LOG.error( "获取优惠卷列表异常" );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "获取优惠卷列表异常" );
+	}
+    }
+
+    @Override
+    public Page recommendReceiveList( Integer curPage, Integer pageSize, Integer recommendId, String searchContent ) {
+	try {
+	    HashMap< String,Object > condition = new HashMap< String,Object >();
+	    condition.put( "recommendId", recommendId );
+	    if ( searchContent != null ) {
+		condition.put( "searchContent", searchContent );
+	    }
+	    Integer recordCount = memberRecommendMapper.selectRecommendReceiveListCount( condition );
+
+	    com.baomidou.mybatisplus.plugins.Page< MemberRecommend > pagination = new com.baomidou.mybatisplus.plugins.Page< MemberRecommend >( curPage, pageSize );
+	    List< Map< String,Object > > recommendList = memberRecommendMapper.selectRecommendReceiveList( pagination, condition );
+
+	    if ( recordCount == 0 ) {
+		return new Page();
+	    }
+	    Page page = new Page( curPage, pageSize, recordCount, "" );
+	    page.setSubList( recommendList );
+	    return page;
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    LOG.error( "查询优惠券推荐列表异常" + e.getMessage() );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "查询优惠券推荐列表异常" );
+	}
+    }
+
+    @Override
+    public Page withdrawList( Integer curPage, Integer pageSize, Integer busId, String searchContent ) {
+	try {
+	    HashMap< String,Object > condition = new HashMap< String,Object >();
+	    condition.put( "busId", busId );
+	    if ( searchContent != null ) {
+		condition.put( "searchContent", searchContent );
+	    }
+	    Integer recordCount = memberRecommendMapper.selectWithdrawListCount( condition );
+
+	    com.baomidou.mybatisplus.plugins.Page< MemberRecommend > pagination = new com.baomidou.mybatisplus.plugins.Page< MemberRecommend >( curPage, pageSize );
+	    List< Map< String,Object > > recommendList = memberRecommendMapper.selectWithdrawList( pagination, condition );
+
+	    if ( recordCount == 0 ) {
+		return new Page();
+	    }
+	    Page page = new Page( curPage, pageSize, recordCount, "" );
+	    page.setSubList( recommendList );
+	    return page;
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    LOG.error( "查询推荐提现列表异常" + e.getMessage() );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "查询推荐提现列表异常" );
+	}
+    }
+
+    @Override
+    public Integer withdrawMoneySet( Integer busId, Integer money ) {
+	try {
+	    Integer count =publicParametersetMapper.selectCount( new EntityWrapper<PublicParameterset>().eq("busId",busId) );
+	    PublicParameterset parameterset =new PublicParameterset();
+	    parameterset.setDfcardPickMoney( CommonUtil.toDouble( money ) );
+	    if(count==0){
+		parameterset.setBusId( busId );
+		publicParametersetMapper.insert(parameterset);
+	    }else{
+		publicParametersetMapper.update(parameterset,new EntityWrapper<PublicParameterset>().eq("busId",busId));
+	    }
+	    return 1;
+	} catch ( Exception e ) {
+	    LOG.error( "提现金额设置异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "提现金额设置异常" );
 	}
     }
 

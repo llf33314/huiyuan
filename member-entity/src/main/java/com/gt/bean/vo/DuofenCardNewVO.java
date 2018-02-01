@@ -74,7 +74,12 @@ public class DuofenCardNewVO extends DuofenCardNew {
 
     @TableField("isJifen")
     private Integer isJifen;
-
+    /**
+     * 停用    0=启用  1=停用 ',
+     */
+    @TableField("forbidden")
+    private Integer forbidden;
+    /**
     /**
      * 领取数量限制设置 0不限制 1限制
      */

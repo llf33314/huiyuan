@@ -34,4 +34,27 @@
 		and  openId = #{openId}
 		limit 1
 	</select>
+	<select id="getAuthorizationUserCount" resultType="java.lang.Integer"  parameterType="hashmap">
+		select count(1) from t_duofencard_authorization a Inner JOIN t_wx_bus_member m ON a.memberId = m.id
+
+		<where>
+			<if test="busId!=null and busId!=''">
+				AND  a.busId=${busId}
+			</if>
+			<if test="searchContent!=null and searchContent!=''">
+				AND m.phone like '%${searchContent}%'
+			</if>
+		</where>
+	</select>
+	<select id="getAuthorizationUserList" resultType="java.util.Map" parameterType="hashmap">
+		select a.*,m.nickname,m.phone from t_duofencard_authorization a Inner JOIN t_wx_bus_member m ON a.memberId = m.id
+		<where>
+			<if test="busId!=null and busId!=''">
+				AND  a.busId=${busId}
+			</if>
+			<if test="searchContent!=null and searchContent!=''">
+				AND m.phone like '%${searchContent}%'
+			</if>
+		</where>
+	</select>
 </mapper>

@@ -52,4 +52,10 @@ public interface DuofenCardGetNewDAO extends BaseMapper<DuofenCardGetNew > {
      * @return
      */
     DuofenCardGetNew findByCode(@Param( "busId" )Integer busId,@Param( "code" )String code);
+
+    List<Map<String,Object>> usageStatistics( Integer busId );
+
+    Integer selectUsageListCount( HashMap<String, Object> condition );
+
+    List<Map<String,Object>> selectUsageList( Page<DuofenCardGetNew> pagination, HashMap<String, Object> condition );
 }

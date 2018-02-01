@@ -357,6 +357,51 @@ public class DuofenCardController {
 
 	}
     }
+    @ApiOperation( value = "优惠券推荐领取列表", notes = "优惠券推荐领取列表" )
+    @ResponseBody
+    @RequestMapping( value = "/recommend/recommendReceiveList", method = { RequestMethod.POST, RequestMethod.GET } )
+    public ServerResponse recommendReceiveList( HttpServletRequest request, HttpServletResponse response, @RequestParam( defaultValue = "1" ) Integer curPage,
+		    @RequestParam( defaultValue = "10" ) Integer pageSize,@RequestParam Integer recommendId ,  String searchContent ) {
+	try {
+	    Page page = duofenCardNewService.recommendReceiveList(curPage ,pageSize ,recommendId,searchContent );
+	    return ServerResponse.createBySuccess( page );
+	} catch ( BusinessException e ) {
+	    log.error( "查询优惠券推荐领取列表异常", e );
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+
+	}
+    }
+    @ApiOperation( value = "推荐提现列表", notes = "推荐提现列表" )
+    @ResponseBody
+    @RequestMapping( value = "/recommend/withdrawList", method = { RequestMethod.POST, RequestMethod.GET } )
+    public ServerResponse withdrawList( HttpServletRequest request, HttpServletResponse response, @RequestParam( defaultValue = "1" ) Integer curPage,
+		    @RequestParam( defaultValue = "10" ) Integer pageSize,  String searchContent ) {
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    Page page = duofenCardNewService.withdrawList(curPage ,pageSize ,busId,searchContent );
+	    return ServerResponse.createBySuccess( page );
+	} catch ( BusinessException e ) {
+	    log.error( "查询推荐提现列表异常", e );
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+
+	}
+    }
+
+    @ApiOperation( value = "推荐提现金额设置", notes = "推荐提现金额设置" )
+    @ResponseBody
+    @RequestMapping( value = "/recommend/withdrawMoneySet", method = { RequestMethod.POST, RequestMethod.GET } )
+    public ServerResponse withdrawMoneySet( HttpServletRequest request, HttpServletResponse response,  Integer money ) {
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    Integer num = duofenCardNewService.withdrawMoneySet(busId,money );
+	    return ServerResponse.createBySuccess( );
+	} catch ( BusinessException e ) {
+	    log.error( "提现金额设置异常", e );
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+
+	}
+    }
+
     @ApiOperation( value = "导出excel", notes = "导出excel" )
     @RequestMapping( value = "/exportExcel", method = { RequestMethod.POST, RequestMethod.GET } )
     public void exportExcel( HttpServletRequest request, HttpServletResponse response,@RequestParam Map<String, Object> params) {

@@ -1,9 +1,11 @@
 package com.gt.member.dao;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.gt.member.entity.DuofencardAuthorization;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,4 +26,8 @@ public interface DuofencardAuthorizationDAO extends BaseMapper<DuofencardAuthori
     int findByMemberOpenId(@Param("busId")Integer busId,@Param("openId")String openId);
 
     DuofencardAuthorization findByOpenId(@Param("busId")Integer busId,@Param("openId")String openId);
+
+    Integer getAuthorizationUserCount( HashMap<String, Object> condition );
+
+    List<Map<String,Object>> getAuthorizationUserList( Page<DuofencardAuthorization> pagination, HashMap<String, Object> condition );
 }
