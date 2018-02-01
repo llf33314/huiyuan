@@ -117,6 +117,15 @@ public interface MemberCommonService {
 
 
     /**
+     * 新增会员处理数据合并问题 不判断是否是会员
+     * @param member
+     * @param busId
+     * @param phone
+     */
+    public MemberEntity judgeNewMemberMerge(MemberEntity member,Integer busId,String phone)throws BusinessException;
+
+
+    /**
      * 主卡充值
      * @param price
      * @param grId
@@ -217,5 +226,11 @@ public interface MemberCommonService {
      */
     public boolean giveMemberGift(MemberEntity memberOld,
                     MemberParameter memberParameter1);
+
+    /**
+     * 会员推荐赠送
+     * @param memberRecommend
+     */
+    public void memberRecommend(MemberRecommend memberRecommend);
 
 }

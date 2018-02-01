@@ -39,6 +39,7 @@
 		<result column="refundJifen" property="refundJifen" />
 		<result column="refundDate" property="refundDate" />
 		<result column="fukaCtId" property="fukaCtId" />
+		<result column="expireDate" property="expireDate"/>
 	</resultMap>
 
     <!-- 通用查询结果列 -->
@@ -47,7 +48,7 @@
        id, busId AS busId, memberId AS memberId, mcId AS mcId, ctId AS ctId, gtId AS gtId, recordType AS recordType, ucType AS ucType, totalMoney AS totalMoney, integral, fenbi, uccount, discountMoney AS discountMoney, discountAfterMoney AS discountAfterMoney,
 		changeFlow AS changeFlow, dvId AS dvId, disCountdepict AS disCountdepict, cardType AS cardType, balance, flowState AS flowState, dataSource AS dataSource, isend, ischongzhi,
 		isendDate AS isendDate, orderCode AS orderCode, shopId AS shopId, createDate AS createDate, payStatus AS payStatus, balanceCount AS balanceCount, refundMoney AS refundMoney,
-		refundFenbi AS refundFenbi, refundJifen AS refundJifen, refundDate AS refundDate,flowbalance,fukaCtId
+		refundFenbi AS refundFenbi, refundJifen AS refundJifen, refundDate AS refundDate,flowbalance,fukaCtId,expireDate
 
 	</sql>
 

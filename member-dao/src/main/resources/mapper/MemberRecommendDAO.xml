@@ -85,4 +85,12 @@
 		select count(id) from t_member_recommend where memberId=#{memberId} and phone=#{phone}
 	</select>
 
+	<select id="findMemberByMemberIds" resultMap="BaseResultMap">
+		select * from t_member_recommend where recommendType=0 and isGive=0
+		and
+		<foreach collection="getMemberIds" item="memberId"  separator="or" open="(" close=")">
+			getMemberId=#{memberId}
+		</foreach>
+	</select>
+
 </mapper>

@@ -1,5 +1,6 @@
 package com.gt.member.service.common.membercard;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.enums.ResponseEnums;
@@ -511,6 +512,80 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	}
 	return memberEntity;
     }
+
+    public MemberEntity judgeNewMemberMerge(MemberEntity memberEntity,Integer busId,String phone)throws BusinessException{
+	MemberEntity m1 = memberEntityDAO.findByPhone( busId, phone );
+	if ( CommonUtil.isNotEmpty( m1 ) && !memberEntity.getId().equals( m1.getId() ) ) {
+	    // 合并member数据(保存最老的memberId,删除当前用户id)
+	    memberEntity.setFlow( m1.getFlow() + memberEntity.getFlow() );
+	    memberEntity.setIntegral( m1.getIntegral() + memberEntity.getIntegral() );
+	    memberEntity.setFansCurrency( m1.getFansCurrency() + memberEntity.getFansCurrency() );
+	    if ( CommonUtil.isNotEmpty( memberEntity.getPwd() ) ) {
+		memberEntity.setPwd( memberEntity.getPwd() );
+	    }
+
+	    if ( CommonUtil.isNotEmpty( memberEntity.getOldId() ) ) {
+		memberEntity.setOldId( m1.getOldId() + "," + memberEntity.getId() );
+	    } else {
+		memberEntity.setOldId( m1.getId() + "," + memberEntity.getId() );
+	    }
+
+	    if ( CommonUtil.isEmpty( memberEntity.getOpenid() ) && CommonUtil.isNotEmpty( m1.getOpenid() ) ) {
+		memberEntity.setOpenid( m1.getOpenid() );
+	    }
+
+	    //如果之前就存在会员卡 已当前会员卡为主
+	    if(CommonUtil.isNotEmpty( m1.getMcId() )){
+		memberEntity.setMcId( m1.getMcId() );
+	    }
+	    memberEntity.setPhone( phone );
+	    memberEntity.setHeadimgurl( memberEntity.getHeadimgurl() );
+	    memberEntity.setTotalMoney( memberEntity.getTotalMoney() + m1.getTotalMoney() );
+	    memberEntity.setTotalIntegral( memberEntity.getTotalIntegral() + m1.getTotalIntegral() );
+	    memberEntity.setRechargeMoney( memberEntity.getRechargeMoney()+m1.getRechargeMoney() );
+	    memberEntity.setRemark( memberEntity.getRemark() );
+	    memberEntity.setLoginMode( 0 );
+	    // 删除数据做移出到memberold
+	    memberEntityDAO.deleteById( memberEntity.getId() );
+
+	    memberEntity.setId( m1.getId() );
+	    memberEntityDAO.updateById( memberEntity );
+
+	    MemberParameter mp = memberParameterDAO.findByMemberId( memberEntity.getId() );
+	    if ( CommonUtil.isNotEmpty( mp ) ) {
+		memberParameterDAO.deleteById( mp.getId() );
+	    }
+
+	    //数据合并建立关系表
+	    MemberOldId memberOldId = new MemberOldId();
+	    memberOldId.setOldId( memberEntity.getId() );
+	    memberOldId.setMemberId( m1.getId() );
+	    memberOldIdDAO.insert( memberOldId );
+
+	    // 修改小程序之前openId对应的memberId
+	    memberAppletOpenidDAO.updateMemberId(  m1.getId(),memberEntity.getId() );
+	}else{
+	    //如果是当前粉丝没有绑定过手机号码，判断粉丝是否存在泛会员卡，如果存在，升级到正式会员卡
+	    if(CommonUtil.isNotEmpty( memberEntity.getMcId() )){
+		MemberCard memberCard=memberCardDAO.selectById( memberEntity.getMcId() );
+		if(memberCard.getApplyType()==4){
+		    //给简易会员卡升级
+		    List<Map<String, Object>> gradeTypes = gradeTypeMapper
+				    .findAllBybusId(memberEntity.getBusId(),
+						    memberCard.getCtId());
+		    MemberCard card1 = new MemberCard();
+		    card1.setMcId(memberCard.getMcId());
+		    card1.setGtId(CommonUtil.toInteger(gradeTypes.get(0).get("gt_id")));
+		    card1.setGrId(CommonUtil.toInteger(gradeTypes.get(0).get("gr_id")));
+		    card1.setApplyType(0);
+		    memberCardDAO.updateById(card1);
+		}
+	    }
+	}
+	return memberEntity;
+    }
+
+
 
     /**
      * 多粉卡券核销 推荐调用
@@ -1361,5 +1436,61 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    return null;
 	}
 	return null;
+    }
+
+
+    /**
+     * 会员推荐赠送
+     * @param memberRecommend
+     */
+    public void memberRecommend(MemberRecommend memberRecommend){
+        try {
+	    Integer memberId = memberRecommend.getMemberId();
+	    Boolean bool = false;
+	    MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
+	    MemberEntity m = new MemberEntity();
+	    m.setId( memberId );
+	    if ( memberRecommend.getIntegral() > 0 ) {
+		//积分
+		Integer jifen = memberEntity.getIntegral() + memberRecommend.getIntegral();
+		m.setIntegral( jifen );
+		saveCardRecordOrderCodeNew( memberId, 2, memberRecommend.getIntegral().doubleValue(), "推荐会员卡赠送", memberEntity.getBusId(), jifen.doubleValue(), "", 1 );
+		bool = true;
+	    }
+	    if ( memberRecommend.getFenbi() > 0 ) {
+		//粉币
+		Integer code = requestService.getPowerApi( 1, memberEntity.getBusId(), memberRecommend.getFenbi().doubleValue(), "推荐会员卡赠送" );
+		if ( code == 0 ) {
+		    Double fenbi = memberEntity.getFansCurrency() + memberRecommend.getFenbi();
+		    m.setFansCurrency( fenbi );
+		    saveCardRecordOrderCodeNew( memberId, 3, memberRecommend.getFenbi().doubleValue(), "推荐会员卡赠送", memberEntity.getBusId(), fenbi, "", 1 );
+		    bool = true;
+		}
+	    }
+	    if ( memberRecommend.getFlow() > 0 ) {
+		//流量
+		Integer flow = memberEntity.getFlow() + memberRecommend.getFlow();
+		m.setFlow( flow );
+		saveCardRecordOrderCodeNew( memberId, 4, memberRecommend.getFlow().doubleValue(), "推荐会员卡赠送", memberEntity.getBusId(), flow.doubleValue(), "", 1 );
+		bool = true;
+	    }
+	    if ( bool ) {
+		memberEntityDAO.updateById( m );
+	    }
+	    if ( memberRecommend.getMoney() > 0 ) {
+		//推荐会员赠送金额
+		MemberCard memberCard = memberCardDAO.selectById( memberEntity.getMcId() );
+		if ( CommonUtil.isNotEmpty( memberCard ) ) {
+		    MemberCard mc = new MemberCard();
+		    Double giveMoney = memberCard.getGiveMoney() + memberRecommend.getMoney();
+		    mc.setGiveMoney( giveMoney );
+		    mc.setMcId( memberCard.getMcId() );
+		    memberCardDAO.updateById( mc );
+		}
+	    }
+	}catch ( Exception e ){
+            LOG.error( "推荐赠送异常参数"+ JSON.toJSONString( memberRecommend ) );
+            LOG.error( "推荐赠送异常",e );
+	}
     }
 }

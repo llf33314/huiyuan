@@ -1221,14 +1221,30 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    }
 	    String[] str = memberIds.split( "," );
 	    StringBuffer ids = new StringBuffer();// 会员Id集合
+	    List<Integer> getIds=new ArrayList<>(  );
 	    for ( int i = 0; i < str.length; i++ ) {
 		if ( i == 0 ) {
 		    ids.append( str[i] );
 		} else {
 		    ids.append( "," + str[i] );
 		}
+		getIds.add( CommonUtil.toInteger( str[i] ) );
 	    }
 	    List< MemberEntity > memberList = memberMapper.selectByPrimaryKeys( ids.toString() );
+
+	    if ( ischecked == 1 ) {
+		//审核通过 推荐需要赠送记录
+		List<MemberRecommend> list=memberRecommendDAO.findMemberByMemberIds(  getIds );
+		//赠送当前粉丝赠送物品
+		for(MemberRecommend mr:list){
+		    Integer memberId=mr.getMemberId();
+		    //给粉丝赠送 积分 、流量 、粉币、金额
+		    memberCommonService.memberRecommend( mr );
+		}
+
+
+	    }
+
 
 	    StringBuffer mcIds = new StringBuffer();
 	    StringBuffer phoneSb = new StringBuffer();
@@ -1240,6 +1256,9 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    mcIds.append( "," + memberList.get( i ).getMcId() );
 		    phoneSb.append( "," + memberList.get( i ).getPhone() );
 		}
+
+
+
 	    }
 	    List< MemberCard > cardList = memberCardDAO.selectByPrimaryKeys( mcIds.toString() );
 	    for ( int b = 0; b < cardList.size(); b++ ) {
@@ -1249,14 +1268,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 			card.setIsChecked( 1 );
 			memberCardDAO.updateById( card );
 		    } else {
-			MemberCardOld old = JSONObject.toJavaObject( JSON.parseObject( JSONObject.toJSONString( card ) ), MemberCardOld.class );
 			memberCardDAO.deleteById( card.getMcId() );
-			//
-			memberCardOldDAO.insert( old );
 			if ( CommonUtil.isNotEmpty( card.getMcId() ) ) {
 			    memberMapper.updateMemberByMcId( card.getBusId(), card.getMcId() );
 			}
-
 		    }
 		}
 	    }
@@ -2659,9 +2674,11 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    map.put( "phone", memberEntity.getPhone() );
 	    map.put( "headImg", memberEntity.getHeadimgurl() );
 	    List< Map< String,Object > > cards = memberCardDAO.findCardById( memberEntity.getMcId() );
-	    map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
-	    map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
-	    map.put( "cardNo", cards.get( 0 ).get( "cardNo" ) );
+	    if(CommonUtil.isNotEmpty( cards ) && cards.size()>0) {
+		map.put( "ctName", cards.get( 0 ).get( "ct_name" ) );
+		map.put( "gradeName", cards.get( 0 ).get( "gt_grade_name" ) );
+		map.put( "cardNo", cards.get( 0 ).get( "cardNo" ) );
+	    }
 
 	    /**
 	     * 订单
@@ -3070,8 +3087,6 @@ public class MemberCardServiceImpl implements MemberCardService {
 
 	    MemberEntity member = memberMapper.findByMcIdAndbusId( busId, card.getMcId() );
 
-
-
 	    // 添加会员记录
 	    UserConsumeNew uc = new UserConsumeNew();
 	    uc.setBusId( busId );
@@ -3123,7 +3138,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    newCard.setGtId( gtId );
 		    memberCardDAO.updateById( newCard );
 		    memberCommonService.saveCardRecordOrderCodeNew( member.getId(), 1, uc.getDiscountAfterMoney(), "会员充值", member.getBusId(), 0.0, uc.getOrderCode(), 0 );
-
+		    uc.setExpireDate(newCard.getExpireDate());
 		} else if ( ctId == 3 ) {
 		    MemberRechargegive rechargegive = memberCommonService.findRechargegive( money, card.getGrId(), member.getBusId(), card.getCtId() );
 		    //储值卡充值
@@ -3195,6 +3210,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 			    newCard.setExpireDate( DateTimeKit.addMonths( new Date(), rechargegiveAssistant.getValidDate() ) );
 			}
 		    }
+		    uc.setExpireDate(newCard.getExpireDate());
 		    MemberCardrecordNew memberCardrecordNew = memberCommonService
 				    .saveCardRecordOrderCodeNew( member.getId(), 1, uc.getDiscountAfterMoney(), "会员充值", member.getBusId(), 0.0, uc.getOrderCode(), 0 );
 		    memberCardDAO.updateById( newCard );

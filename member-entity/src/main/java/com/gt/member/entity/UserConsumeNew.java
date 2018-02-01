@@ -196,6 +196,9 @@ public class UserConsumeNew extends Model<UserConsumeNew > {
 	@TableField("fukaCtId")
 	private Integer fukaCtId;
 
+	@TableField("expireDate")
+	private Date expireDate;
+
 
 	@Override
 	protected Serializable pkVal() {

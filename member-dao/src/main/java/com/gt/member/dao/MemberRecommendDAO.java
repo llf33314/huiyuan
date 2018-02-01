@@ -67,4 +67,5 @@ public interface MemberRecommendDAO extends BaseMapper<MemberRecommend> {
 
 
 
+    List<MemberRecommend> findMemberByMemberIds(@Param("getMemberIds")List<Integer> getMemberIds);
 }

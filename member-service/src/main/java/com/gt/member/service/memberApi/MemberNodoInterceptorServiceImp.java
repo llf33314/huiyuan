@@ -175,6 +175,8 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 		    newCard.setGrId( grId );
 		    newCard.setGtId( gtId );
 
+		    uc1.setExpireDate( newCard.getExpireDate() );
+
 		    memberCardDAO.updateById( newCard );
 		    memberCardrecordNew = memberCommonService.saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId, 0.0, uc.getOrderCode(), 0 );
 
@@ -244,6 +246,7 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 			    newCard.setExpireDate( DateTimeKit.addMonths( new Date(), rechargegiveAssistant.getValidDate() ) );
 			}
 		    }
+		    uc1.setExpireDate( newCard.getExpireDate() );
 		    memberCardDAO.updateById( newCard );
 		    memberCardrecordNew = memberCommonService
 				    .saveCardRecordOrderCodeNew( memberId, 1, uc.getDiscountAfterMoney(), "会员充值", busId,0.0 , uc.getOrderCode(), 0 );
@@ -326,7 +329,8 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 	    UserConsume newUc = new UserConsume();
 	    newUc.setId( uc.getId() );
 	    newUc.setPayStatus( 1 );
-	    userConsumeNewDAO.updateById( uc );
+
+
 	    UserConsumePay userConsumePay = new UserConsumePay();
 	    userConsumePay.setPayMoney( uc.getDiscountAfterMoney() );
 	    userConsumePay.setUcId( uc.getId() );
@@ -391,8 +395,9 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 			}
 		    }
 		}
+		uc.setExpireDate(card.getExpireDate());
 	    }
-
+	    userConsumeNewDAO.updateById( uc );
 	    memberCardDAO.insert( card );
 
 	    MemberEntity member = new MemberEntity();

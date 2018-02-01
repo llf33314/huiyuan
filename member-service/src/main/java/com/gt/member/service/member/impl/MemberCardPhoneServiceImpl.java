@@ -422,6 +422,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 
 			MemberRecommend recommend = new MemberRecommend();
 			recommend.setName( memberEntity.getNickname() );
+			recommend.setGetMemberId( memberEntity.getId() );
 			recommend.setMemberId( member2.getId() );
 			recommend.setCode( tuijianCode );
 			recommend.setPhone( phone );

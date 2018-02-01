@@ -682,7 +682,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		memberEntity.setPhone( phone );
 	    } else {
 		memberEntity = memberDAO.selectById( memberId );
-		memberEntity=memberCommonService.newMemberMerge( memberEntity, busId, phone );
+		memberEntity=memberCommonService.judgeNewMemberMerge( memberEntity, busId, phone );
 	    }
 	    Member member = new Member();
 	    member.setId( memberEntity.getId() );
@@ -733,7 +733,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		memberEntity.setPhone( phone );
 	    } else {
 		memberEntity = memberDAO.selectById( memberId );
-		memberEntity=memberCommonService.newMemberMerge( memberEntity, busId, phone );
+		memberEntity=memberCommonService.judgeNewMemberMerge( memberEntity, busId, phone );
 	    }
 	    Member member = new Member();
 	    member.setId( memberEntity.getId() );
@@ -787,7 +787,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		memberEntity.setPhone( phone );
 	    } else {
 		memberEntity = memberDAO.selectById( memberId );
-		memberEntity=memberCommonService.newMemberMerge( memberEntity, busId, phone );
+		memberEntity=memberCommonService.judgeNewMemberMerge( memberEntity, busId, phone );
 	    }
 
 	    MemberParameter mp=memberParameterDAO.findByMemberId(  memberEntity.getId());
@@ -853,7 +853,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		memberEntity.setPhone( phone );
 	    } else {
 		memberEntity = memberDAO.selectById( memberId );
-		memberEntity=memberCommonService.newMemberMerge( memberEntity, busId, phone );
+		memberEntity=memberCommonService.judgeNewMemberMerge( memberEntity, busId, phone );
 	    }
 	    MemberParameter mp=memberParameterDAO.findByMemberId(  memberEntity.getId());
 	    if(CommonUtil.isNotEmpty( mp )){
@@ -2145,7 +2145,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
 		Integer memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 		memberEntity = memberDAO.selectById( memberId );
-		memberEntity=memberCommonService.newMemberMerge( memberEntity, busId, phone );
+		memberEntity=memberCommonService.judgeNewMemberMerge( memberEntity, busId, phone );
 	    }
 
 
