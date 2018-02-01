@@ -49,6 +49,7 @@ public class GlobalDefaultExceptionHandler {
     @ResponseBody
     @ExceptionHandler( value = MissingServletRequestParameterException.class )
     public ServerResponse defaultErrorHandler( HttpServletRequest request, MissingServletRequestParameterException e ) {
+	e.printStackTrace();
 	return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), "请求参数有误" );
     }
 

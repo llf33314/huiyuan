@@ -5,6 +5,7 @@
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberRecommend">
 		<id column="id" property="id" />
+		<result column="busId" property="busId" />
 		<result column="memberId" property="memberId" />
 		<result column="name" property="name" />
 		<result column="phone" property="phone" />
@@ -103,5 +104,24 @@
 		limit #{firstResult},#{pageSize}
 	</select>
 
+    <select id="selectRecommendListCount" resultType="java.lang.Integer" parameterType="hashmap">
 
+	</select>
+
+	<select id="selectRecommendList" resultType="java.util.Map" parameterType="hashmap">
+
+	</select>
+
+	<!--<select id="selectReceiveCouponCount"  parameterType="hashmap" resultType="java.lang.Integer">
+		select count(1) from t_duofen_card_get_new c INNER JOIN t_wx_bus_member m on c.memberId=m.id
+		<where>
+			<if test="cardId!=null and cardId!=''">
+				AND  c.cardId=${cardId}
+			</if>
+			<if test="searchContent!=null and searchContent!=''">
+				AND m.phone like '%${searchContent}%'
+			</if>
+		</where>
+	</select>
+-->
 </mapper>

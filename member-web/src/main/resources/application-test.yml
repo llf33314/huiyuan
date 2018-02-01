@@ -110,7 +110,7 @@ web:
  static_source_ftp_user: gt123456
  #图片资源ftp密码
  static_source_ftp_password: gt12345612
- res_web_path: http://maint.yifriend.net/upload/   #图片域名
+ res_web_path: http://maint.deeptel.com.cn/upload/   #图片域名
   #商城域名
  mallHome: http://mall.deeptel.com.cn/
   #联盟卡
