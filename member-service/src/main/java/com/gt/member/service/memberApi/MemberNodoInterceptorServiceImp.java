@@ -17,6 +17,7 @@ import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.SystemMsgService;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.DateTimeKit;
+import com.gt.member.util.RedisCacheUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,9 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 
     @Autowired
     private DuofenCardGetNewDAO duofenCardGetNewDAO;
+
+    @Autowired
+    private RedisCacheUtil redisCacheUtil;
 
     @Transactional
     public void changeFlow( Map< String,Object > params ) throws BusinessException {
@@ -501,7 +505,6 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 	    memberDAO.updateById( memberEntity1 );
 	}
 
-
 	//分配优惠券
 	DuofenCardPublish duofenCardPublish = duofenCardPublishDAO.findByCardId( uc.getDvId() );
 	DuofenCardNew duofenCardNew = duofenCardNewDAO.selectById( uc.getDvId() );
@@ -530,5 +533,10 @@ public class MemberNodoInterceptorServiceImp implements MemberNodoInterceptorSer
 	    dc.setEndTime( endTime );
 	}
 	duofenCardGetNewDAO.insert( dc );
+	if(redisCacheUtil.exists( uc.getOrderCode() )){
+	    String code=redisCacheUtil.get( uc.getOrderCode() );
+	    memberCommonService.lingquMemberRecommend( uc.getBusId(),code );
+	}
+
     }
 }

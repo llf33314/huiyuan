@@ -82,4 +82,6 @@ public interface MemberRecommendDAO extends BaseMapper<MemberRecommend> {
     Integer countRecommendByMemberId(@Param("memberId")Integer memberId);
 
     List<Map<String,Object>> findRecommendPageByMemberId(@Param("memberId")Integer memberId,@Param( "firstResult" )Integer firstResult,@Param( "pageSize" )Integer pageSize);
+
+    MemberRecommend findRecommendByBusIdAndCode(@Param( "busId" )Integer busId,@Param( "code" )String code);
 }

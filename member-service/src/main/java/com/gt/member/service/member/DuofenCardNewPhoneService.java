@@ -1,7 +1,10 @@
 package com.gt.member.service.member;
 
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.duofencard.entity.DuofenCardNew;
 import com.gt.member.exception.BusinessException;
+import com.gt.member.util.CommonUtil;
+import com.gt.util.entity.result.wx.WxJsSdkResult;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -33,7 +36,7 @@ public interface DuofenCardNewPhoneService {
      * @param cardId
      * @throws BusinessException
      */
-    public void getDuofenCard(Integer cardId,Integer memberId)throws BusinessException;
+    public void getDuofenCard(Integer cardId,Integer memberId,Map< String,Object > params)throws BusinessException;
 
     /**
      * 购买优惠券信息查询
@@ -94,6 +97,13 @@ public interface DuofenCardNewPhoneService {
     public List<Map> findShopByReceiveId(Map<String,Object> params);
 
     /**
+     * 商家核销优惠券
+     * @param memberId
+     * @param code
+     */
+    public Map<String,Object> useVerificationByUser(Integer memberId,Integer busId,String code);
+
+    /**
      * 优惠券核销
      * @param receiveId
      * @return
@@ -106,4 +116,49 @@ public interface DuofenCardNewPhoneService {
      * @param shopId
      */
     public void verificationDuofenCardGet(Integer receiveId,Integer shopId);
+
+    /**
+     * 推荐统计
+     * @param memberId
+     * @return
+     */
+    public Map<String,Object> findTuiJianDuofenCard(HttpServletRequest request,Integer busId,Integer memberId);
+
+    /**
+     *  推荐分页查询
+     * @param memberId
+     * @param params
+     * @return
+     */
+    public List<Map<String,Object>> findRecommendPage(Integer memberId,Map<String,Object> params);
+
+
+    /**
+     * 佣金提取
+     * @param memberId
+     * @param busId
+     * @param pickMoney
+     * @throws BusinessException
+     */
+    public void pickMoney(Integer memberId, Integer busId,Double pickMoney)throws  BusinessException;
+
+    /**
+     * 添加核销人员
+     * @param memberId
+     * @param busId
+     * @param params
+     * @throws BusinessException
+     */
+    public void addAuthorization(HttpServletRequest request,Integer memberId,Integer busId,Map<String,Object> params)throws  BusinessException;
+
+    /**
+     * 粉丝推荐优惠券
+     * @param memberId
+     * @param params
+     * @return
+     */
+    public Map<String,Object> tuijianDuofenCard(Integer memberId,Integer busId,Map<String,Object> params);
+
+
+    public WxJsSdkResult wxshareCard( Integer memberId, Integer busId, String url );
 }

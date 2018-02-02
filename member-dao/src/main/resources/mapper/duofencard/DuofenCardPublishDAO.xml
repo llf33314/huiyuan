@@ -43,4 +43,13 @@
 		select * from t_duofen_card_publish where cardId=#{cardId}
 	</select>
 
+	<select id="findPublishByCardId" resultType="Map">
+		select cp.publishId, cp.cardId AS cardId, cp.number, cp.isBuy AS isBuy, cp.buyMoney AS buyMoney,
+		cp.giftBuyMoney AS giftBuyMoney,
+		cp.isReceiveNum AS isReceiveNum, cp.limitType AS limitType, cp.limitNum AS limitNum,
+		cp.isRecommend AS isRecommend, cp.jifen, cp.fenbi, cp.flow, cp.money,c.* from t_duofen_card_publish cp
+		inner join t_duofen_card_new c on cp.cardId=c.id
+		where cp.cardId=#{cardId} and c.useType=0 and  c.cardStatus=2
+	</select>
+
 </mapper>

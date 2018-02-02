@@ -147,7 +147,7 @@ public class MemberCardServiceImpl implements MemberCardService {
     private DuofenCardGetDAO duofenCardGetDAO;
 
     @Autowired
-    private MemberGradetypeOldDAO memberGradetypeOldDAO;
+    private MemberGiveconsumeDAO memberGiveconsumeDAO;
 
     /**
      * 查询会员卡类型
@@ -2363,6 +2363,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 		payType += CommonUtil.toString( sortemap.get( CommonUtil.toString( userConsumePay.getPaymentType() ) ) ) + "   ";
 	    }
 	    map.put( "payType", payType );
+
+	    List<MemberGiveconsume>  giveConsume= memberGiveconsumeDAO.findByUcId( ucId );
+	    map.put( "giveConsume",giveConsume );
+
 	    return map;
 	} catch ( Exception e ) {
 	    LOG.error( "查询订单详情异常", e );
@@ -2704,6 +2708,10 @@ public class MemberCardServiceImpl implements MemberCardService {
 		}
 	    }
 	    map.put( "payType", payType );
+
+	    List<MemberGiveconsume>  giveConsume= memberGiveconsumeDAO.findByUcId( ucId );
+	    map.put( "giveConsume",giveConsume );
+
 	    return map;
 	} catch ( Exception e ) {
 	    LOG.error( "查询订单详情异常", e );

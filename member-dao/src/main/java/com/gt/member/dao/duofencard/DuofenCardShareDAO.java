@@ -19,4 +19,12 @@ public interface DuofenCardShareDAO extends BaseMapper<DuofenCardShare > {
 
     List<Map<String,Object>> findDuofenCardShareByMemeberId(@Param( "memberId" ) Integer memberId);
 
+    /**
+     * 查询分享的券
+     * @param getId
+     * @param memberId
+     * @return
+     */
+    Integer countByGetIdAndMemberId(@Param( "getId" )Integer getId,@Param( "memberId" )Integer memberId);
+
 }

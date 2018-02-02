@@ -5,6 +5,7 @@
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="com.gt.member.entity.MemberRecommend">
 		<id column="id" property="id" />
+		<result column="busId" property="busId"/>
 		<result column="memberId" property="memberId" />
 		<result column="name" property="name" />
 		<result column="phone" property="phone" />
@@ -31,7 +32,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, memberId, name, phone, ischeck, code, ctId, image, isUser, integral, fenbi, flow, datetime, retext, money, reType,
+        id, busId,memberId, name, phone, ischeck, code, ctId, image, isUser, integral, fenbi, flow, datetime, retext, money, reType,
          cardId, recommendType, lingquNum, userNum, cardName,getMemberId,isGive
     </sql>
 
@@ -103,5 +104,10 @@
 		limit #{firstResult},#{pageSize}
 	</select>
 
+
+	<select id="findRecommendByBusIdAndCode" resultType="Map">
+		select * from t_member_recommend where busId=#{busId}  and recommendType=1 and code=#{code}
+
+	</select>
 
 </mapper>

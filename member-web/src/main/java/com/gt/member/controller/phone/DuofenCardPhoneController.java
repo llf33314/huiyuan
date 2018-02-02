@@ -13,9 +13,11 @@ import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.DuofenCardNewPhoneService;
 import com.gt.member.util.CommonUtil;
+import com.gt.member.util.PropertiesUtil;
 import com.gt.member.util.QRcodeKit;
 import com.gt.member.util.RedisCacheUtil;
 import com.gt.util.entity.param.sms.NewApiSms;
+import com.gt.util.entity.result.wx.WxJsSdkResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -126,7 +128,7 @@ public class DuofenCardPhoneController extends AuthorizeOrLoginController {
 		}
 	    }
 	    Integer cardId=CommonUtil.toInteger( params.get( "cardId" ) );
-	    duofenCardNewPhoneService.getDuofenCard( cardId,member.getId());
+	    duofenCardNewPhoneService.getDuofenCard( cardId,member.getId(),params);
 	    return ServerResponse.createBySuccess(  );
 	}catch ( BusinessException e ){
 	    return ServerResponse.createByError(e.getCode(),e.getMessage());
@@ -285,7 +287,7 @@ public class DuofenCardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "购买优惠券详情", notes = "购买优惠券详情" )
     @ResponseBody
     @RequestMapping( value = "/findDuofenCardDetailsByCardId", method = RequestMethod.POST )
-    public ServerResponse findBuyDuofenCardDetailsByDuofenCardGetId(HttpServletRequest request, HttpServletResponse response,@RequestParam String json){
+    public ServerResponse findDuofenCardDetailsByCardId(HttpServletRequest request, HttpServletResponse response,@RequestParam String json){
 	try {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    Integer cardId=CommonUtil.toInteger( params.get( "cardId" ) );
@@ -460,8 +462,37 @@ public class DuofenCardPhoneController extends AuthorizeOrLoginController {
     @ApiOperation( value = "优惠券二维码", notes = "优惠券二维码" )
     @ResponseBody
     @RequestMapping( value = "/useVerificationQrcode", method = RequestMethod.GET )
-    public void useVerificationQrcode( HttpServletRequest request, HttpServletResponse response, @RequestParam String code ) throws Exception {
-	QRcodeKit.buildQRcode( code, 500, 500, response );
+    public void useVerificationQrcode( HttpServletRequest request, HttpServletResponse response,@RequestParam Integer busId, @RequestParam String code ) throws Exception {
+	String saomaoUrl=PropertiesUtil.getWebHome()+"html/duofencard/phone/#/writeoffs/"+busId+"/"+code;
+        //String saomaoUrl=PropertiesUtil.getWebHome()+"/duofencard/pc/#/writeoffs/"+busId+"/"+code;
+        QRcodeKit.buildQRcode( saomaoUrl, 500, 500, response );
+    }
+
+
+    @ApiOperation( value = "优惠券二维码", notes = "优惠券二维码" )
+    @ResponseBody
+    @RequestMapping( value = "/useVerificationByUser", method = RequestMethod.POST )
+    public ServerResponse useVerificationByUser(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    String code=CommonUtil.toString( params.get( "code" ) );
+	    Map<String,Object> map=duofenCardNewPhoneService.useVerificationByUser(member.getId(),busId, code );
+	    return ServerResponse.createBySuccess( map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    log.error( "查询门店信息异常", e );
+	    return ServerResponse.createByError();
+	}
     }
 
     @ApiOperation( value = "查询门店信息", notes = "查询门店信息" )
@@ -514,6 +545,161 @@ public class DuofenCardPhoneController extends AuthorizeOrLoginController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    log.error( "优惠券核销展现异常", e );
+	    return ServerResponse.createByError();
+	}
+    }
+
+    @ApiOperation( value = "推荐", notes = "推荐" )
+    @ResponseBody
+    @RequestMapping( value = "/findTuiJianDuofenCard", method = RequestMethod.POST )
+    public ServerResponse findTuiJianDuofenCard(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	   Map<String,Object> map= duofenCardNewPhoneService.findTuiJianDuofenCard(request,busId, member.getId());
+	    return ServerResponse.createBySuccess( map );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    log.error( "推荐查询异常", e );
+	    return ServerResponse.createByError();
+	}
+    }
+
+    @ApiOperation( value = "分页查询推荐信息", notes = "分页查询推荐信息" )
+    @ResponseBody
+    @RequestMapping( value = "/findRecommendPage", method = RequestMethod.POST )
+    public ServerResponse findRecommendPage(HttpServletRequest request, HttpServletResponse response, @RequestParam String json){
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    List<Map<String,Object>> list= duofenCardNewPhoneService.findRecommendPage( member.getId(),params);
+	    return ServerResponse.createBySuccess( list );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    log.error( "分页查询推荐", e );
+	    return ServerResponse.createByError();
+	}
+    }
+
+    @ApiOperation( value = "提取佣金", notes = "提取佣金" )
+    @ResponseBody
+    @RequestMapping( value = "/pickMoney", method = RequestMethod.POST )
+    public ServerResponse pickMoney( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    duofenCardNewPhoneService.pickMoney( member.getId(), busId, CommonUtil.toDouble( params.get( "money" ) ) );
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    log.error( "提取佣金信息异常", e );
+	    return ServerResponse.createByError();
+	}
+    }
+
+    @ApiOperation( value = "添加核销人员", notes = "添加核销人员" )
+    @ResponseBody
+    @RequestMapping( value = "/addAuthorization", method = RequestMethod.POST )
+    public ServerResponse addAuthorization(HttpServletRequest request, HttpServletResponse response, @RequestParam String json ){
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    duofenCardNewPhoneService.addAuthorization( request,member.getId(), busId,params  );
+	    return ServerResponse.createBySuccess();
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    log.error( "添加核销人员异常", e );
+	    return ServerResponse.createByError();
+	}
+    }
+
+    @ApiOperation( value = "推荐优惠券", notes = "推荐优惠券" )
+    @ResponseBody
+    @RequestMapping( value = "/tuijianDuofenCard", method = RequestMethod.POST )
+    public ServerResponse tuijianDuofenCard(HttpServletRequest request, HttpServletResponse response, @RequestParam String json ){
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    Map<String,Object> map=  duofenCardNewPhoneService.tuijianDuofenCard(member.getId(), busId,params  );
+	    return ServerResponse.createBySuccess(map);
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    log.error( "推荐优惠券异常", e );
+	    return ServerResponse.createByError();
+	}
+    }
+
+    @ApiOperation( value = "推荐优惠券二维码", notes = "推荐优惠券二维码" )
+    @ResponseBody
+    @RequestMapping( value = "/tuijianQRcode", method = RequestMethod.GET )
+    public void tuijianQRcode(HttpServletRequest request, HttpServletResponse response,@RequestParam Integer busId, @RequestParam String code){
+        String url=PropertiesUtil.getWebHome()+"/html/duofencard/phone/#/home/"+busId+"/"+code;
+	QRcodeKit.buildQRcode( url, 500, 500, response );
+    }
+
+    @ApiOperation( value = "优惠券分享推荐", notes = "优惠券分享推荐" )
+    @ResponseBody
+    @RequestMapping( value = "/wxshareCard", method = RequestMethod.POST )
+    public ServerResponse wxshareCard( HttpServletRequest request, HttpServletResponse response, @RequestParam String json ) {
+	try {
+	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
+	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
+	    String wxshareUrl=CommonUtil.toString( params.get( "wxshareUrl" ) );
+	    WxJsSdkResult wxJsSdkResult = duofenCardNewPhoneService.wxshareCard( member.getId(), busId ,wxshareUrl);
+	    return ServerResponse.createBySuccess( wxJsSdkResult );
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    log.error( "优惠券分享推荐异常", e );
 	    return ServerResponse.createByError();
 	}
     }

@@ -1415,8 +1415,8 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	    for(Map map:holiList){
 		String startTime=CommonUtil.toString( map.get( "startTime" ) );
 		String endTime=CommonUtil.toString( map.get( "endTime" ) );
-		Date date1=DateTimeKit.parseDate( startTime );
-		Date date2=DateTimeKit.parseDate( endTime );
+		Date date1=DateTimeKit.parseDate( startTime+" 00:00:00","yyyy-MM-dd hh:mm:ss" );
+		Date date2=DateTimeKit.parseDate( endTime+" 23:59:59","yyyy-MM-dd hh:mm:ss" );
 		if(DateTimeKit.isBetween( date1,date2 )){
 		    return false;
 		}
@@ -1450,8 +1450,69 @@ public class MemberCommonServiceImp implements MemberCommonService {
 	return true;
     }
 
+    public void lingquMemberRecommend(Integer busId,String code){
+	MemberRecommend memberRecommend=memberRecommendDAO.findRecommendByBusIdAndCode( busId,code );
+	if(CommonUtil.isEmpty( memberRecommend )){
+	    return;
+	}
+	MemberRecommend mr = new MemberRecommend();
+	mr.setId( memberRecommend.getId() );
+	mr.setLingquNum( memberRecommend.getLingquNum() + 1 );
+	memberRecommendDAO.updateById( mr );
+    }
+
 
     public void memberRecommend(Integer recommendId){
+        try {
+	    MemberRecommend memberRecommend = memberRecommendDAO.selectById( recommendId );
+	    if ( CommonUtil.isEmpty( memberRecommend ) ) {
+		return;
+	    }
+	    MemberEntity memberEntity = memberEntityDAO.selectById( memberRecommend.getMemberId() );
+	    MemberEntity m = new MemberEntity();
+	    m.setId( memberEntity.getId() );
+	    Boolean flag = false;
+	    if ( memberRecommend.getIntegral() > 0 ) {
+		Integer jifen = memberEntity.getIntegral() + memberRecommend.getIntegral();
+		m.setIntegral( jifen );
+		saveCardRecordOrderCodeNew( memberEntity.getId(), 2, memberRecommend.getIntegral().doubleValue(), "优惠券推荐送积分", memberEntity.getBusId(), jifen.doubleValue(), "", 1 );
+		flag = true;
+	    }
 
+	    if ( memberRecommend.getFenbi() > 0 ) {
+		Integer code = requestService.getPowerApi( 0, memberEntity.getBusId(), memberRecommend.getFenbi().doubleValue(), "优惠券推荐送粉币" );
+		if ( code == 0 ) {
+		    Double balaceFenbi = memberEntity.getFansCurrency() + memberRecommend.getFenbi();
+		    m.setFansCurrency( balaceFenbi );
+		    // 粉币操作
+		    saveCardRecordOrderCodeNew( memberEntity.getId(), 2, memberRecommend.getFenbi().doubleValue(), "优惠券推荐送粉币", memberEntity.getBusId(), balaceFenbi, "", 1 );
+		    flag = true;
+		}
+	    }
+
+	    if ( memberRecommend.getFlow() > 0 ) {
+		Integer balaceFlow = memberEntity.getFlow() + memberRecommend.getFlow();
+		m.setFlow( balaceFlow );
+		saveCardRecordOrderCodeNew( memberEntity.getId(), 4, memberRecommend.getFlow().doubleValue(), "优惠券推荐送流量", memberEntity.getBusId(), balaceFlow.doubleValue(), "", 1 );
+		flag = true;
+	    }
+
+	    if ( memberRecommend.getMoney() > 0 ) {
+		Double balaceMoney = memberEntity.getRecommendMoney() + memberRecommend.getMoney();
+		m.setRecommendMoney( balaceMoney );
+		saveCardRecordOrderCodeNew( memberEntity.getId(), 1, memberRecommend.getMoney(), "优惠券推荐送钱", memberEntity.getBusId(), balaceMoney, "", 1 );
+		flag = true;
+
+	    }
+	    if ( flag ) {
+		memberEntityDAO.updateById( m );
+	    }
+	    MemberRecommend mr = new MemberRecommend();
+	    mr.setId( memberRecommend.getId() );
+	    mr.setUserNum( memberRecommend.getUserNum() + 1 );
+	    memberRecommendDAO.updateById( mr );
+	}catch ( Exception e ){
+            LOG.error( "优惠券核销赠送推荐信息异常",e );
+	}
     }
 }

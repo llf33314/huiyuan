@@ -243,6 +243,13 @@ public interface MemberCommonService {
     public boolean isUseDuofenCardTime(DuofenCardTime duofenCardTime);
 
     /**
+     * 优惠券推荐领取
+     * @param busId
+     * @param code
+     */
+    public void lingquMemberRecommend(Integer busId,String code);
+
+    /**
      * 优惠券推荐赠送
      * @param recommendId
      */

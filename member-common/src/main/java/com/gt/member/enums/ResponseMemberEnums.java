@@ -60,14 +60,18 @@ public enum ResponseMemberEnums {
     COUPONSE_VERIFICATION(6001, "卡券核销失败"),
     COUPONSE_NO_NUM(6002, "券包您已领取完"),
     COUPONSE_NO_NUM_TODAY(6003,"券包您今天已领取完"),
-    COUPONSE_NO_EXIST(6004,"卡券不存在"),
+    COUPONSE_NO_EXIST(6004,"亲,卡券不存在"),
     COUPONSE_NO_GUOQI(6005,"卡券过期或已核销,不能执行卡券核销操作"),
     COUPONSE_NOT_USE_SHOP(6006,"卡券不能在当前门店使用"),
     PLESASE_BUY(6007,"请购买优惠券"),
     PLESASE_FREE(6008,"免费领取不需要购买"),
     PLEASASE_BUY_URL(6009,"购买地址"),
     NOT_DOUFENCARD_NUM(6010,"亲,您来完了,优惠券已领取完"),
-
+    PLEASASE_USE_WECHAT(6011,"请使用微信添加核销人员"),
+    EXIST_AUTHORIZATION(6012,"亲,您已经成为了核销人员"),
+    NOT_USE_DUOFENCARD(6013,"亲,优惠券当前时间不能使用"),
+    NOT_VERIFICATION(6014,"亲,您不是核销人员,不能核销优惠券"),
+    NOT_MEMBER_RECOMMEND(6015,"亲,推荐信息不存在"),
 
 
     NOT_PAY_TYPE(7001,"不存在当前支付方式"),

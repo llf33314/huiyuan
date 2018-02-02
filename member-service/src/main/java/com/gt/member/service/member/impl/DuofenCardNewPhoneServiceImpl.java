@@ -1,8 +1,11 @@
 package com.gt.member.service.member.impl;
 
 import com.gt.api.bean.session.Member;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.enums.ResponseEnums;
+import com.gt.api.util.RequestUtils;
 import com.gt.api.util.SessionUtils;
+import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.duofencard.entity.*;
 import com.gt.entityBo.MemberShopEntity;
 import com.gt.member.dao.*;
@@ -19,8 +22,10 @@ import com.gt.member.util.CommonUtil;
 import com.gt.member.util.DateTimeKit;
 import com.gt.member.util.PropertiesUtil;
 import com.gt.member.util.RedisCacheUtil;
+import com.gt.util.entity.param.pay.ApiEnterprisePayment;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
+import com.gt.util.entity.result.wx.WxJsSdkResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -83,31 +88,61 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
     @Autowired
     private DuofenCardShareDAO duofenCardShareDAO;
 
+    @Autowired
+    private MemberRecommendDAO memberRecommendDAO;
+
+    @Autowired
+    private MemberPicklogDAO memberPicklogDAO;
+
+    @Autowired
+    private PublicParametersetDAO publicParametersetDAO;
+
+    @Autowired
+    private DuofencardAuthorizationDAO duofencardAuthorizationDAO;
+
+
     public List< Map< String,Object > > findPublishDuofenCard( Integer busId, Integer memberId, Map< String,Object > params ) {
-	Integer page = CommonUtil.toInteger( params.get( "page" ) );
-	Integer pageSize = 5;
-	page = ( page - 1 ) * pageSize;
-	List< Map< String,Object > > listMap = duofenCardPublishDAO.findPublishDuofenCard( busId, page, pageSize );
+	String code=CommonUtil.toString( params.get( "code" ) );
+	if("0".equals( code )){
+	  return  findPublishDuofenCardNotCode(  busId,  memberId,  params);
+	}else{
+	    //推荐的优惠券
+	    return findPublishDuofenCardCode( busId,  memberId,  params);
+	}
+
+    }
+
+
+    public List< Map< String,Object > > findPublishDuofenCardCode( Integer busId, Integer memberId, Map< String,Object > params ) {
+	String code=CommonUtil.toString( params.get( "code" ) );
+	MemberRecommend memberRecommend= memberRecommendDAO.findRecommendByBusIdAndCode( busId,code );
+	if(CommonUtil.isEmpty( memberRecommend )){
+	    throw new BusinessException( ResponseMemberEnums.NOT_MEMBER_RECOMMEND );
+	}
+	DuofenCardGetNew duofenCardGetNew=duofenCardGetNewDAO.selectById( memberRecommend.getCardId() );
+
+
+	List< Map< String,Object > > listMap = duofenCardPublishDAO.findPublishByCardId( duofenCardGetNew.getCardId() );
 	//查询对于的领取数量
-	List<Integer> cardIds=new ArrayList<>(  );
-	for(Map< String,Object > map:listMap){
+	List< Integer > cardIds = new ArrayList<>();
+	for ( Map< String,Object > map : listMap ) {
 	    cardIds.add( CommonUtil.toInteger( map.get( "cardId" ) ) );
 	}
 
-	List<Map<String,Object>> countMaps=duofenCardGetNewDAO.countByCardIds(cardIds);
+	List< Map< String,Object > > countMaps = duofenCardGetNewDAO.countByCardIds( cardIds );
 	List< Map< String,Object > > returnMap = new ArrayList<>();
 	for ( Map< String,Object > map : listMap ) {
-	    map.put( "lingquOver",0 );
-	    for(Map< String,Object > countMap:countMaps){
-	        if(CommonUtil.toString( map.get( "cardId" ) ).equals( CommonUtil.toString( countMap.get( "cardId" ) ) )){
-			Integer number=CommonUtil.toInteger( map.get( "number" ) );
-			Integer count=CommonUtil.toInteger( countMap.get( "count" ) );
-			if(CommonUtil.isEmpty( count ) || number>count){
-			    map.put( "lingquOver",0 );
-			}else{
-			    map.put( "lingquOver",1 );
+	    map.put( "lingquOver", 0 );
+	    for ( Map< String,Object > countMap : countMaps ) {
+		if ( CommonUtil.toString( map.get( "cardId" ) ).equals( CommonUtil.toString( countMap.get( "cardId" ) ) ) ) {
+		    Integer number = CommonUtil.toInteger( map.get( "number" ) );
+		    Integer count = CommonUtil.toInteger( countMap.get( "count" ) );
+		    if ( CommonUtil.isEmpty( count ) || number > count ) {
+			map.put( "lingquOver", 0 );
+		    } else {
+			map.put( "lingquOver", 1 );
 
-			}
+		    }
 		}
 	    }
 	    if ( "0".equals( CommonUtil.toString( map.get( "isBuy" ) ) ) ) {
@@ -146,6 +181,75 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 	return returnMap;
     }
 
+
+
+    public List< Map< String,Object > > findPublishDuofenCardNotCode( Integer busId, Integer memberId, Map< String,Object > params ) {
+	Integer page = CommonUtil.toInteger( params.get( "page" ) );
+	Integer pageSize = 5;
+	page = ( page - 1 ) * pageSize;
+	List< Map< String,Object > > listMap = duofenCardPublishDAO.findPublishDuofenCard( busId, page, pageSize );
+	//查询对于的领取数量
+	List< Integer > cardIds = new ArrayList<>();
+	for ( Map< String,Object > map : listMap ) {
+	    cardIds.add( CommonUtil.toInteger( map.get( "cardId" ) ) );
+	}
+
+	List< Map< String,Object > > countMaps = duofenCardGetNewDAO.countByCardIds( cardIds );
+	List< Map< String,Object > > returnMap = new ArrayList<>();
+	for ( Map< String,Object > map : listMap ) {
+	    map.put( "lingquOver", 0 );
+	    for ( Map< String,Object > countMap : countMaps ) {
+		if ( CommonUtil.toString( map.get( "cardId" ) ).equals( CommonUtil.toString( countMap.get( "cardId" ) ) ) ) {
+		    Integer number = CommonUtil.toInteger( map.get( "number" ) );
+		    Integer count = CommonUtil.toInteger( countMap.get( "count" ) );
+		    if ( CommonUtil.isEmpty( count ) || number > count ) {
+			map.put( "lingquOver", 0 );
+		    } else {
+			map.put( "lingquOver", 1 );
+
+		    }
+		}
+	    }
+	    if ( "0".equals( CommonUtil.toString( map.get( "isBuy" ) ) ) ) {
+		if ( CommonUtil.isNotEmpty( memberId ) ) {
+		    //粉丝已经授权或登录
+		    //非购买查询领取数量是否已到领取最高值
+		    if ( "1".equals( CommonUtil.toString( map.get( "isReceiveNum" ) ) ) ) {
+			//统计现在数量
+			Integer limitNum = CommonUtil.toInteger( map.get( "limitNum" ) );
+			Integer cardId = CommonUtil.toInteger( map.get( "cardId" ) );
+			Integer count = 0;
+			if ( "0".equals( CommonUtil.toString( map.get( "limitType" ) ) ) ) {
+			    // 0每人每天最多领取
+			    Date date = DateTimeKit.parseDate( DateTimeKit.getDate() + " 00:00:00", "yyyy-MM-dd hh:mm:ss" );
+			    count = duofenCardGetNewDAO.countDuofenCardGetByCardId( cardId, memberId, date );
+			} else {
+			    //1此券最多领取数量
+			    count = duofenCardGetNewDAO.countDuofenCardGetByCardId( cardId, memberId, null );
+			}
+			if ( count >= limitNum ) {
+			    map.put( "linquType", 1 );
+			} else {
+			    map.put( "linquType", 0 );
+			}
+		    }
+		}
+	    } else {
+		//购买判断时价
+		if ( "3".equals( CommonUtil.toString( map.get( "cardType" ) ) ) ) {
+		    double buyMoney = memberCommonService.getBuyMoney( CommonUtil.toString( map.get( "giftBuyMoney" ) ), CommonUtil.toDouble( map.get( "buyMoney" ) ) );
+		    map.put( "buyMoney", buyMoney );
+		}
+	    }
+	    returnMap.add( map );
+	}
+	return returnMap;
+    }
+
+
+
+
+
     public Map< String,Object > findDuofenCardNewByCardId( Integer cardId ) {
 	Map< String,Object > map = new HashMap<>();
 	DuofenCardNew duofenCardNew = duofenCardNewDAO.selectById( cardId );
@@ -158,14 +262,14 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
     }
 
     @Transactional
-    public void getDuofenCard( Integer cardId, Integer memberId ) throws BusinessException {
+    public void getDuofenCard( Integer cardId, Integer memberId,Map< String,Object > params ) throws BusinessException {
 	MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
 	if ( CommonUtil.isEmpty( memberEntity.getPhone() ) ) {
 	    throw new BusinessException( ResponseMemberEnums.PLEASE_BINDING_PHONE );
 	}
 	DuofenCardPublish duofenCardPublish = duofenCardPublishDAO.findByCardId( cardId );
-	Integer count=duofenCardGetNewDAO.countByCardId(cardId);
-	if(CommonUtil.isNotEmpty( count ) && count>=duofenCardPublish.getNumber()){
+	Integer count = duofenCardGetNewDAO.countByCardId( cardId );
+	if ( CommonUtil.isNotEmpty( count ) && count >= duofenCardPublish.getNumber() ) {
 	    throw new BusinessException( ResponseMemberEnums.NOT_DOUFENCARD_NUM );
 	}
 
@@ -196,6 +300,10 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 		dc.setEndTime( endTime );
 	    }
 	    duofenCardGetNewDAO.insert( dc );
+	    String code=CommonUtil.toString( params.get( "code" ) );
+	    if(!"0".equals( code )){
+	       	memberCommonService.lingquMemberRecommend(memberEntity.getBusId(),code);
+	    }
 	} else {
 	    throw new BusinessException( ResponseMemberEnums.PLESASE_BUY );
 	}
@@ -212,7 +320,14 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 	map.put( "duofenCardNew", duofenCardNew );
 	DuofenCardPublish duofenCardPublish = duofenCardPublishDAO.findByCardId( cardId );
 	map.put( "duofenCardPublish", duofenCardPublish );
-	map.put("path",PropertiesUtil.getRes_web_path());
+	if ( 3 == duofenCardNew.getCardType() ) {
+	    double buyMoney = memberCommonService.getBuyMoney( duofenCardPublish.getGiftBuyMoney(), duofenCardPublish.getBuyMoney() );
+	    map.put( "buyMoney", buyMoney );
+	} else {
+	    map.put( "buyMoney", duofenCardPublish.getBuyMoney() );
+	}
+
+	map.put( "path", PropertiesUtil.getRes_web_path() );
 
 	MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
 	Integer type = CommonUtil.judgeBrowser( request );
@@ -256,13 +371,11 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 
 		Double fenbiMoeny = memberCommonService.currencyCount( null, memberEntity.getFansCurrency() );
 		map.put( "fenbiMoney", fenbiMoeny );
-		map.put( "getFenbiMoeny", 10 );
 
 		Double jifenMoeny = memberCommonService.integralCount( null, new Double( memberEntity.getIntegral() ), memberEntity.getBusId() );
 		map.put( "jifenMoney", jifenMoeny );
 		PublicParameterset ps = publicParameterSetMapper.findBybusId( memberEntity.getBusId() );
 		if ( CommonUtil.isNotEmpty( ps ) ) {
-		    map.put( "getJifenMoeny", ps.getStartMoney() );
 		    map.put( "jifenRatio", ps.getIntegralRatio() );
 		    map.put( "jifenStartMoney", ps.getStartMoney() );
 		}
@@ -280,13 +393,15 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 		    }
 		}
 	    }
+	} else {
+	    map.put( "usehuiyuanquanyi", 0 );
 	}
 	map.put( "payTypes", payTypes );
 	return map;
     }
 
     @Transactional
-    public void buyDuofenCard( HttpServletRequest request,Integer cardId, Integer memberId, Map< String,Object > params ) throws BusinessException {
+    public void buyDuofenCard( HttpServletRequest request, Integer cardId, Integer memberId, Map< String,Object > params ) throws BusinessException {
 	try {
 	    MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
 	    if ( CommonUtil.isEmpty( memberEntity.getPhone() ) ) {
@@ -302,8 +417,8 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 	    uc.setMemberId( memberId );
 	    uc.setRecordType( 2 );
 	    uc.setUcType( 201 );
-	    WsWxShopInfo wsWxShopInfo= requestService.findMainShop( memberEntity.getBusId() );
-	    if(CommonUtil.isNotEmpty( wsWxShopInfo )) {
+	    WsWxShopInfo wsWxShopInfo = requestService.findMainShop( memberEntity.getBusId() );
+	    if ( CommonUtil.isNotEmpty( wsWxShopInfo ) ) {
 		uc.setShopId( wsWxShopInfo.getId() );
 	    }
 
@@ -319,15 +434,22 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 	    m.setMemberId( memberId );
 	    Integer usehuiyuanquanyi = CommonUtil.toInteger( params.get( "usehuiyuanquanyi" ) );
 	    m.setUsehuiyuanquanyi( usehuiyuanquanyi );
-	    Integer useFenbi = CommonUtil.toInteger( params.get( "useFenbi" ) );
-	    m.setUseFenbi( useFenbi );
-	    Integer useJifen = CommonUtil.toInteger( params.get( "useJifen" ) );
-	    m.setUserJifen( useJifen );
+	    if ( duofenCardPublish.getIsDiscount() == 0 ) {
+		m.setUserDiscount( 0 );
+	    }
+	    if ( duofenCardPublish.getIsFenbi() == 1 ) {
+		Integer useFenbi = CommonUtil.toInteger( params.get( "useFenbi" ) );
+		m.setUseFenbi( useFenbi );
+	    }
+	    if ( duofenCardPublish.getIsJifen() == 1 ) {
+		Integer useJifen = CommonUtil.toInteger( params.get( "useJifen" ) );
+		m.setUserJifen( useJifen );
+	    }
 	    //计算粉丝使用金额
 	    m = memberCommonService.publicMemberCountMoney( m );
 
 	    Double qianduanMoney = CommonUtil.toDouble( params.get( "qianduanMoney" ) );
-	    if ( m.getBalanceMoney() != qianduanMoney ) {
+	    if ( !m.getBalanceMoney().equals( qianduanMoney ) ) {
 		throw new BusinessException( ResponseMemberEnums.ERROR_COUNT );
 	    }
 	    uc.setDiscountAfterMoney( m.getBalanceMoney() );
@@ -336,10 +458,11 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 	    uc.setFenbi( m.getFenbiNum().doubleValue() );
 	    uc.setPayStatus( 0 );
 	    uc.setIschongzhi( 0 );
-	    Integer dataSource=memberCommonService.dataSource(request);
+	    Integer dataSource = memberCommonService.dataSource( request );
 	    uc.setDataSource( dataSource );
 	    uc.setDvId( cardId );
-	    uc.setCardType(2);
+	    uc.setCardType( 2 );
+	    uc.setCreateDate( new Date(  ) );
 
 	    MemberCard card = null;
 	    if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
@@ -353,6 +476,8 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 	    }
 
 	    Integer payType = CommonUtil.toInteger( params.get( "payType" ) );
+
+	    String code=CommonUtil.toString( params.get( "code" ) );
 	    if ( usehuiyuanquanyi == 1 ) {
 		if ( payType == 5 ) {
 		    if ( card.getCtId() == 3 ) {
@@ -364,19 +489,22 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 			updateCard.setMcId( card.getMcId() );
 			updateCard.setMoney( banlan );
 			memberCardDAO.updateById( updateCard );
-			MemberCardrecordNew memberCardrecordNew = memberCommonService
-					.saveCardRecordOrderCodeNew( memberEntity.getId(), 1, m.getBalanceMoney(), "消费", memberEntity.getBusId(), banlan, uc.getOrderCode(), 0 );
-			systemMsgService.sendChuzhiCard( memberEntity, memberCardrecordNew );
+			if ( m.getBalanceMoney() > 0 ) {
+			    MemberCardrecordNew memberCardrecordNew = memberCommonService
+					    .saveCardRecordOrderCodeNew( memberEntity.getId(), 1, m.getBalanceMoney(), "消费", memberEntity.getBusId(), banlan, uc.getOrderCode(),
+							    0 );
+			    systemMsgService.sendChuzhiCard( memberEntity, memberCardrecordNew );
+			}
 			uc.setBalance( banlan );
 			uc.setPayStatus( 1 );
 
-			Boolean flag=false;
-			MemberEntity memberEntity1=new MemberEntity();
+			Boolean flag = false;
+			MemberEntity memberEntity1 = new MemberEntity();
 			//调用扣除积分和粉币
 			if ( m.getUseFenbi() == 1 && m.getFenbiNum() > 0 ) {
 			    Double fenbi = memberEntity.getFansCurrency() - m.getFenbiNum();
-			    Integer code = requestService.getPowerApi( 1, memberEntity.getBusId(), m.getFenbiNum().doubleValue(), "消费抵扣粉币" );
-			    if ( code == 0 ) {
+			    Integer codeFenbi = requestService.getPowerApi( 1, memberEntity.getBusId(), m.getFenbiNum().doubleValue(), "消费抵扣粉币" );
+			    if ( codeFenbi == 0 ) {
 				memberEntity1.setFansCurrency( fenbi );
 				memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, m.getFenbiNum().doubleValue(), "消费粉币", memberEntity.getBusId(), fenbi,
 						uc.getOrderCode(), 0 );
@@ -389,12 +517,11 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 			if ( m.getUserJifen() == 1 && m.getJifenNum() > 0 ) {
 			    Integer jifenBanlan = memberEntity.getIntegral() - m.getJifenNum();
 			    memberEntity1.setIntegral( jifenBanlan );
-			    memberCommonService
-					    .saveCardRecordOrderCodeNew( memberEntity.getId(), 2, m.getJifenNum().doubleValue(), "消费积分", memberEntity.getBusId(), jifenBanlan.doubleValue(),
-							    uc.getOrderCode(), 0 );
+			    memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 2, m.getJifenNum().doubleValue(), "消费积分", memberEntity.getBusId(),
+					    jifenBanlan.doubleValue(), uc.getOrderCode(), 0 );
 			    flag = true;
 			}
-			if(flag){
+			if ( flag ) {
 			    memberEntity1.setId( memberId );
 			    memberEntityDAO.updateById( memberEntity1 );
 			}
@@ -404,8 +531,8 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 		    dc.setCardId( cardId );
 		    dc.setGetType( 0 );
 		    dc.setIsbuy( 1 );
-		    String duofenCardCode=CommonUtil.getDuofenCardCode( memberEntity.getBusId() );
-		    uc.setDisCountdepict(duofenCardCode);
+		    String duofenCardCode = CommonUtil.getDuofenCardCode( memberEntity.getBusId() );
+		    uc.setDisCountdepict( duofenCardCode );
 
 		    dc.setCode( duofenCardCode );
 		    dc.setGetDate( new Date() );
@@ -428,12 +555,15 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 		    }
 		    duofenCardGetNewDAO.insert( dc );
 
+		    if(!"0".equals( code )){
+		        memberCommonService.lingquMemberRecommend( memberEntity.getBusId(),code );
+		    }
 		}
 	    }
 	    userConsumeNewDAO.insert( uc );
 
-	    if(payType!=5){
-	        //调用支付接口
+	    if ( payType != 5 ) {
+		//调用支付接口
 		SubQrPayParams sub = new SubQrPayParams();
 		sub.setTotalFee( uc.getDiscountAfterMoney() );
 		sub.setModel( 54 );
@@ -443,16 +573,18 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 		sub.setMemberId( uc.getMemberId() );
 		sub.setDesc( "优惠券购买" );
 		sub.setIsreturn( 1 );
-		String returnUrl= PropertiesUtil.getWebHome()+"/html/phone/index.html#/home/"+memberEntity.getBusId();
+		String returnUrl = PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/" + memberEntity.getBusId();
 		sub.setReturnUrl( returnUrl );
 		String notifyUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/paySuccess";
 		sub.setNotifyUrl( notifyUrl );
 		sub.setIsSendMessage( 0 );
 		sub.setPayWay( payType );
 		String url = requestService.payApi( sub );
-		throw new BusinessException( ResponseMemberEnums.PLEASASE_BUY_URL.getCode(),url );
+		if(!"0".equals( code )){
+		    redisCacheUtil.set( uc.getOrderCode(),code );
+		}
+		throw new BusinessException( ResponseMemberEnums.PLEASASE_BUY_URL.getCode(), url );
 	    }
-
 
 	} catch ( BusinessException e ) {
 	    throw e;
@@ -462,103 +594,118 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 
     }
 
-
-    public Map<String,Object> myDuofenCard(Integer busId,Integer memberId){
-        Map<String,Object> map=new HashMap<>(  );
+    public Map< String,Object > myDuofenCard( Integer busId, Integer memberId ) {
+	Map< String,Object > map = new HashMap<>();
 	//粉丝的优惠券或朋友的券
-	List<Map<String,Object>> myDuofenCard=duofenCardGetNewDAO.findByMemberId(memberId);
-	map.put( "myDuofenCard",myDuofenCard );
+	List< Map< String,Object > > myDuofenCard = duofenCardGetNewDAO.findByMemberId( memberId );
+	map.put( "myDuofenCard", myDuofenCard );
 
 	//朋友的券
-	List<Map<String,Object>> shares=duofenCardShareDAO.findDuofenCardShareByMemeberId(memberId);
-	if(CommonUtil.isNotEmpty( shares ) && shares.size()>0){
-	    List<Integer> getIds=new ArrayList<>(  );
-	    for ( Map<String,Object> share:shares ){
-		if(CommonUtil.isNotEmpty( share.get( "getId" ) )){
+	List< Map< String,Object > > shares = duofenCardShareDAO.findDuofenCardShareByMemeberId( memberId );
+	if ( CommonUtil.isNotEmpty( shares ) && shares.size() > 0 ) {
+	    List< Integer > getIds = new ArrayList<>();
+	    for ( Map< String,Object > share : shares ) {
+		if ( CommonUtil.isNotEmpty( share.get( "getId" ) ) ) {
 		    getIds.add( CommonUtil.toInteger( share.get( "getId" ) ) );
 		}
 	    }
-	    if(getIds.size()>0){
-		List<Map<String,Object>> duofenFriends=duofenCardGetNewDAO.findFriendByMemberId(busId,getIds);
-		map.put( "duofenFriends",duofenFriends );
+	    if ( getIds.size() > 0 ) {
+		List< Map< String,Object > > duofenFriends = duofenCardGetNewDAO.findFriendByMemberId( busId, getIds );
+		map.put( "duofenFriends", duofenFriends );
 	    }
 	}
-	MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
-	map.put( "phone",memberEntity.getPhone() );
-	map.put( "headimgurl",memberEntity.getHeadimgurl() );
-	map.put( "nickName",memberEntity.getNickname() );
-	if(CommonUtil.isNotEmpty( memberEntity.getMcId() )){
-	    map.put( "isHuiyuan",1 );
-	}else{
-	    map.put( "isHuiyuan",0 );
+	MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
+	map.put( "phone", memberEntity.getPhone() );
+	map.put( "headimgurl", memberEntity.getHeadimgurl() );
+	map.put( "nickName", memberEntity.getNickname() );
+	if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
+	    map.put( "isHuiyuan", 1 );
+	} else {
+	    map.put( "isHuiyuan", 0 );
 	}
-	String url=PropertiesUtil.getWebHome()+"/html/phone/index.html#/home/"+busId;
-	map.put( "lingquUrl",url );
+	String url = PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/" + busId;
+	map.put( "lingquUrl", url );
 	return map;
     }
 
     /**
      * 已失效的优惠券
+     *
      * @param memberId
+     *
      * @return
      */
-    public List<Map<String,Object>> invalidDuofenCard(Integer memberId){
-	return duofenCardGetNewDAO.findInvalidByMemberId(memberId);
+    public List< Map< String,Object > > invalidDuofenCard( Integer memberId ) {
+	return duofenCardGetNewDAO.findInvalidByMemberId( memberId );
     }
 
-
-
-    public Map<String,Object> useDuofenCardByCardId(Integer receiveId,Integer memberId){
-        Map<String,Object> map=new HashMap<>(  );
-        DuofenCardGetNew duofenCardGetNew=duofenCardGetNewDAO.selectById( receiveId );
-	map.put( "duofenCardGetNew",duofenCardGetNew );
-        Integer cardId=duofenCardGetNew.getCardId();
+    public Map< String,Object > useDuofenCardByCardId( Integer receiveId, Integer memberId ) {
+	Map< String,Object > map = new HashMap<>();
+	DuofenCardGetNew duofenCardGetNew = duofenCardGetNewDAO.selectById( receiveId );
+	map.put( "duofenCardGetNew", duofenCardGetNew );
+	Integer cardId = duofenCardGetNew.getCardId();
 	DuofenCardPublish duofenCardPublish = duofenCardPublishDAO.findByCardId( cardId );
 	DuofenCardNew duofenCardNew = duofenCardNewDAO.selectById( cardId );
-	map.put( "duofenCardPublish",duofenCardPublish );
-	map.put( "duofenCardNew",duofenCardNew );
-	DuofenCardTime duofenCardTime=duofenCardTimeDAO.findDuofenCardTimeByCardId( cardId );
-	map.put( "duofenCardTime",duofenCardTime );
-	map.put( "path",PropertiesUtil.getRes_web_path() );
+	map.put( "duofenCardPublish", duofenCardPublish );
+	map.put( "duofenCardNew", duofenCardNew );
+	DuofenCardTime duofenCardTime = duofenCardTimeDAO.findDuofenCardTimeByCardId( cardId );
+	map.put( "duofenCardTime", duofenCardTime );
+	map.put( "path", PropertiesUtil.getRes_web_path() );
 
-	MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
-	if(CommonUtil.isNotEmpty( memberEntity.getPublicId() )) {
-	   String url= requestService.newqrcodeCreateFinal(memberEntity.getPublicId());
-	   map.put( "guanzhuUrl",url );
+	map.put( "webPath",PropertiesUtil.getWebHome() );
+	map.put( "host", PropertiesUtil.getSocket_url() );
+	MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
+	if ( CommonUtil.isNotEmpty( memberEntity.getPublicId() ) ) {
+	    String url = requestService.newqrcodeCreateFinal( memberEntity.getPublicId() );
+	    map.put( "guanzhuUrl", url );
+	}
+	if(duofenCardGetNew.getMemberId().equals( memberId )){
+	    map.put( "isOwn",0 );
+	}else{
+	    map.put( "isOwn",1 );
+	    //添加关系表
+	    Integer count=duofenCardShareDAO.countByGetIdAndMemberId( duofenCardGetNew.getReceiveId(),memberId );
+	    if(count==0){
+	        DuofenCardShare dcs=new DuofenCardShare();
+	        dcs.setGetId( duofenCardGetNew.getReceiveId() );
+	        dcs.setMemberId( memberId );
+	        dcs.setShareDate( new Date(  ) );
+	        duofenCardShareDAO.insert( dcs );
+	    }
 	}
 	return map;
     }
 
-    public Map<String,Object> findDuofenCardDetailsByCardId(Integer cardId){
-	Map<String,Object> map=new HashMap<>(  );
+    public Map< String,Object > findDuofenCardDetailsByCardId( Integer cardId ) {
+	Map< String,Object > map = new HashMap<>();
 	DuofenCardPublish duofenCardPublish = duofenCardPublishDAO.findByCardId( cardId );
 	DuofenCardNew duofenCardNew = duofenCardNewDAO.selectById( cardId );
-	map.put( "duofenCardPublish",duofenCardPublish );
-	map.put( "duofenCardNew",duofenCardNew );
-	DuofenCardTime duofenCardTime=duofenCardTimeDAO.findDuofenCardTimeByCardId( cardId );
-	map.put( "duofenCardTime",duofenCardTime );
+	map.put( "duofenCardPublish", duofenCardPublish );
+	map.put( "duofenCardNew", duofenCardNew );
+	DuofenCardTime duofenCardTime = duofenCardTimeDAO.findDuofenCardTimeByCardId( cardId );
+	map.put( "duofenCardTime", duofenCardTime );
+	map.put( "path", PropertiesUtil.getRes_web_path() );
 	return map;
     }
 
-    public Map<String,Object> findDuofenCardDetailsByreceiveId(Integer receiveId){
-	Map<String,Object> map=new HashMap<>(  );
-	DuofenCardGetNew duofenCardGetNew=duofenCardGetNewDAO.selectById( receiveId );
-	map.put( "duofenCardGetNew",duofenCardGetNew );
-	Integer cardId=duofenCardGetNew.getCardId();
+    public Map< String,Object > findDuofenCardDetailsByreceiveId( Integer receiveId ) {
+	Map< String,Object > map = new HashMap<>();
+	DuofenCardGetNew duofenCardGetNew = duofenCardGetNewDAO.selectById( receiveId );
+	map.put( "duofenCardGetNew", duofenCardGetNew );
+	Integer cardId = duofenCardGetNew.getCardId();
 	DuofenCardPublish duofenCardPublish = duofenCardPublishDAO.findByCardId( cardId );
 	DuofenCardNew duofenCardNew = duofenCardNewDAO.selectById( cardId );
-	map.put( "duofenCardPublish",duofenCardPublish );
-	map.put( "duofenCardNew",duofenCardNew );
-	DuofenCardTime duofenCardTime=duofenCardTimeDAO.findDuofenCardTimeByCardId( cardId );
-	map.put( "duofenCardTime",duofenCardTime );
-	map.put( "path",PropertiesUtil.getRes_web_path() );
+	map.put( "duofenCardPublish", duofenCardPublish );
+	map.put( "duofenCardNew", duofenCardNew );
+	DuofenCardTime duofenCardTime = duofenCardTimeDAO.findDuofenCardTimeByCardId( cardId );
+	map.put( "duofenCardTime", duofenCardTime );
+	map.put( "path", PropertiesUtil.getRes_web_path() );
 	return map;
     }
-
 
     @Transactional
     @Override
-    public void bingdingPhone( HttpServletRequest request, Integer memberId, String phone, Integer busId,String vcode ) throws BusinessException {
+    public void bingdingPhone( HttpServletRequest request, Integer memberId, String phone, Integer busId, String vcode ) throws BusinessException {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
 	    // 短信校验
@@ -581,7 +728,6 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 	    if ( CommonUtil.isEmpty( vcode1 ) ) {
 		throw new BusinessException( ResponseMemberEnums.NO_PHONE_CODE );
 	    }
-
 
 	    // 查询要绑定的手机号码
 	    MemberEntity oldMemberEntity = memberEntityDAO.findByPhone( busId, phone );
@@ -618,41 +764,275 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 	}
     }
 
-
-    public List<Map> findShopByReceiveId(Map<String,Object> params){
-	Double longitude1=CommonUtil.toDouble( params.get( "longitude" ) );
-	Double latitude1=CommonUtil.toDouble( params.get( "latitude" ) );
-        Integer busId=CommonUtil.toInteger( params.get( "busId" ) );
-	List<Map> mapList=requestService.findShopAllByBusId( busId );
-	List<Map> returnList=new ArrayList<>(  );
-	for(Map map:mapList){
-	    Double longitude=CommonUtil.toDouble( map.get( "longitude" ) );
-	    Double latitude=CommonUtil.toDouble( map.get( "latitude" ) );
-	    Double distance=CommonUtil.getDistance( longitude, latitude,longitude1,latitude1);
-	    map.put( "distance",distance );
+    public List< Map > findShopByReceiveId( Map< String,Object > params ) {
+	Double longitude1 = CommonUtil.toDouble( params.get( "longitude" ) );
+	Double latitude1 = CommonUtil.toDouble( params.get( "latitude" ) );
+	Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
+	List< Map > mapList = requestService.findShopAllByBusId( busId );
+	List< Map > returnList = new ArrayList<>();
+	for ( Map map : mapList ) {
+	    Double longitude = CommonUtil.toDouble( map.get( "longitude" ) );
+	    Double latitude = CommonUtil.toDouble( map.get( "latitude" ) );
+	    Double distance = CommonUtil.getDistance( longitude, latitude, longitude1, latitude1 );
+	    map.put( "distance", distance );
 	    returnList.add( map );
 	}
 	return returnList;
     }
 
-    public Map<String,Object> useVerificationDuofenCard(Integer receiveId ){
-        Map<String,Object> map=new HashMap<>(  );
-        DuofenCardGetNew duofenCardGetNew= duofenCardGetNewDAO.selectById( receiveId );
-        map.put( "code",duofenCardGetNew.getCode() );
 
-	DuofenCardNew duofenCardNew= duofenCardNewDAO.selectById( duofenCardGetNew.getCardId() );
-	map.put( "duofenCardNew",duofenCardNew );
+    public Map<String,Object> useVerificationByUser(Integer memberId,Integer busId,String code){
+        Map<String,Object> map=new HashMap<>(  );
+        DuofenCardGetNew dcg=duofenCardGetNewDAO.findByCode(busId,code);
+        if(CommonUtil.isEmpty( dcg )){
+            throw new BusinessException( ResponseMemberEnums.COUPONSE_NO_EXIST );
+	}
+	Date startTime=dcg.getStartTime();
+	Date endTime=dcg.getEndTime();
+	if(!DateTimeKit.isBetween( startTime,endTime )){
+	    throw new BusinessException( ResponseMemberEnums.NOT_USE_DUOFENCARD );
+	}
+	if(dcg.getState()!=1){
+	    throw new BusinessException( ResponseMemberEnums.COUPONSE_NO_GUOQI );
+	}
+	DuofenCardTime duofenCardTime=duofenCardTimeDAO.findDuofenCardTimeByCardId( dcg.getCardId() );
+	boolean flag=memberCommonService.isUseDuofenCardTime(duofenCardTime);
+	if(!flag){
+	    throw new BusinessException( ResponseMemberEnums.NOT_USE_DUOFENCARD );
+	}
+	MemberEntity memberEntity=memberEntityDAO.selectById( memberId );
+	DuofencardAuthorization duofencardAuthorization= duofencardAuthorizationDAO.findByOpenId( busId,memberEntity.getOpenid() );
+	if(CommonUtil.isEmpty( duofencardAuthorization )){
+	    throw new BusinessException( ResponseMemberEnums.NOT_VERIFICATION );
+	}
+	DuofenCardGetNew duofenCardGetNew = new DuofenCardGetNew();
+	duofenCardGetNew.setReceiveId( dcg.getReceiveId() );
+	duofenCardGetNew.setStoreId(duofencardAuthorization.getShopId() );
+	duofenCardGetNew.setOperateDate( new Date() );
+	duofenCardGetNew.setVerificationType(0);
+	duofenCardGetNew.setState(1);
+	duofenCardGetNewDAO.updateById( duofenCardGetNew );
+	if(dcg.getRecommendId()>0){
+	    //推荐
+	    memberCommonService.memberRecommend( dcg.getRecommendId() );
+	}
+	requestService.sendSock(dcg.getCode(),"优惠券推送","1");
+
+	DuofenCardNew duofenCardNew= duofenCardNewDAO.selectById( dcg.getCardId() );
+	map.put( "duofencardCode",code );
+	map.put( "title",duofenCardNew.getTitle() );
 	return map;
     }
 
-    public void verificationDuofenCardGet(Integer receiveId,Integer shopId){
-        if(CommonUtil.isEmpty( receiveId ) || CommonUtil.isEmpty( shopId )){
-            throw new BusinessException( ResponseMemberEnums.NULL );
+
+    public Map< String,Object > useVerificationDuofenCard( Integer receiveId ) {
+	Map< String,Object > map = new HashMap<>();
+	DuofenCardGetNew duofenCardGetNew = duofenCardGetNewDAO.selectById( receiveId );
+	map.put( "code", duofenCardGetNew.getCode() );
+
+	DuofenCardNew duofenCardNew = duofenCardNewDAO.selectById( duofenCardGetNew.getCardId() );
+	map.put( "duofenCardNew", duofenCardNew );
+	return map;
+    }
+
+    public void verificationDuofenCardGet( Integer receiveId, Integer shopId ) {
+	if ( CommonUtil.isEmpty( receiveId ) || CommonUtil.isEmpty( shopId ) ) {
+	    throw new BusinessException( ResponseMemberEnums.NULL );
 	}
-        DuofenCardGetNew duofenCardGetNew=new DuofenCardGetNew();
+	DuofenCardGetNew dcg=duofenCardGetNewDAO.selectById( receiveId );
+	Date startTime=dcg.getStartTime();
+	Date endTime=dcg.getEndTime();
+	if(!DateTimeKit.isBetween( startTime,endTime )){
+	    throw new BusinessException( ResponseMemberEnums.NOT_USE_DUOFENCARD );
+	}
+	if(dcg.getState()!=1){
+	    throw new BusinessException( ResponseMemberEnums.COUPONSE_NO_GUOQI );
+	}
+
+	DuofenCardTime duofenCardTime=duofenCardTimeDAO.findDuofenCardTimeByCardId( dcg.getCardId() );
+	boolean flag=memberCommonService.isUseDuofenCardTime(duofenCardTime);
+	if(!flag){
+	    throw new BusinessException( ResponseMemberEnums.NOT_USE_DUOFENCARD );
+	}
+	DuofenCardGetNew duofenCardGetNew = new DuofenCardGetNew();
 	duofenCardGetNew.setReceiveId( receiveId );
 	duofenCardGetNew.setStoreId( shopId );
-	duofenCardGetNew.setOperateDate(new Date(  ));
+	duofenCardGetNew.setOperateDate( new Date() );
+	duofenCardGetNew.setVerificationType(0);
+	duofenCardGetNew.setState(1);
 	duofenCardGetNewDAO.updateById( duofenCardGetNew );
+    }
+
+    public Map< String,Object > findTuiJianDuofenCard( HttpServletRequest request, Integer busId, Integer memberId ) {
+	Map< String,Object > map = memberRecommendDAO.countRecommendSuccessByMemberId( memberId );
+	Integer number = memberRecommendDAO.countRecommendByMemberId( memberId );
+	if ( CommonUtil.isEmpty( map ) ) {
+	    map = new HashMap<>();
+	}
+	map.put( "number", number );
+
+	Integer browser = CommonUtil.judgeBrowser( request );
+	List< Map< String,Object > > payTypes = requestService.getPayType( busId, browser );
+	for ( Map< String,Object > payType : payTypes ) {
+	    if ( "1".equals( CommonUtil.toString( payType.get( "payType" ) ) ) ) {
+		map.put( "payType", 1 );  //微信支付
+	    }
+	}
+
+	List< MemberPicklog > pickList = memberPicklogDAO.findPickMoneyByMemberId( busId, memberId );
+	map.put( "pickList", pickList );
+	Double pickMoney = 0.0;
+	for ( MemberPicklog memberPickLog : pickList ) {
+	    if ( CommonUtil.isNotEmpty( memberPickLog.getPickMoney() ) ) {
+		pickMoney = pickMoney + memberPickLog.getPickMoney();
+	    }
+	}
+	map.put( "pickMoney", pickMoney );
+
+	MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
+	PublicParameterset parameterset = publicParametersetDAO.findBybusId( busId );
+	map.put( "tuijianMoney", memberEntity.getRecommendMoney() );
+	if ( CommonUtil.isNotEmpty( parameterset ) ) {
+	    map.put( "lessPickMoney", parameterset.getDfcardPickMoney() );
+	}
+	return map;
+    }
+
+    public List< Map< String,Object > > findRecommendPage( Integer memberId, Map< String,Object > params ) {
+	Integer page = CommonUtil.toInteger( params.get( "page" ) );
+	Integer pageSize = 10;
+	page = ( page - 1 ) * pageSize;
+	List< Map< String,Object > > listMap = memberRecommendDAO.findRecommendPageByMemberId( memberId, page, pageSize );
+	List< Map< String,Object > > list = new ArrayList<>();
+	for ( Map< String,Object > map : listMap ) {
+	    if ( map.containsKey( "nickname" ) ) {
+		try {
+		    byte[] bytes = (byte[]) map.get( "nickname" );
+		    map.put( "nickname", new String( bytes, "UTF-8" ) );
+		} catch ( Exception e ) {
+		    map.put( "nickname", null );
+		}
+		list.add( map );
+	    } else {
+		list.add( map );
+	    }
+	}
+	return list;
+    }
+
+    @Transactional
+    public void pickMoney( Integer memberId, Integer busId, Double pickMoney ) throws BusinessException {
+	try {
+	    WxPublicUsers wxPublicUsers = requestService.findWxPublicUsersByBusId( busId );
+	    MemberEntity member = memberEntityDAO.selectById( memberId );
+	    PublicParameterset parameterset = publicParametersetDAO.findBybusId( busId );
+
+	    if ( CommonUtil.isEmpty( parameterset ) ) {
+		throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(), "商家未设置提取最低值" );
+	    }
+	    if ( member.getRecommendMoney() < parameterset.getPickMoney() || pickMoney < parameterset.getPickMoney() ) {
+		throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(), "提取金额不足，必须要大于" + parameterset.getPickMoney() + "元才能提取" );
+	    }
+
+	    RequestUtils< ApiEnterprisePayment > requestUtils = new RequestUtils< ApiEnterprisePayment >();
+	    ApiEnterprisePayment apiEnterprisePayment = new ApiEnterprisePayment();
+	    apiEnterprisePayment.setAppid( wxPublicUsers.getAppid() );
+	    apiEnterprisePayment.setPartner_trade_no( "YJ" + new Date().getTime() );
+	    apiEnterprisePayment.setOpenid( member.getOpenid() );
+	    apiEnterprisePayment.setDesc( "会员推荐佣金发放" );
+	    apiEnterprisePayment.setAmount( pickMoney );
+	    apiEnterprisePayment.setBusId( busId );
+	    apiEnterprisePayment.setModel( 14 );
+	    apiEnterprisePayment.setPaySource( 0 );
+	    requestUtils.setReqdata( apiEnterprisePayment );
+	    Map< String,Object > returnMap = requestService.enterprisePayment( requestUtils );
+	    if ( "0".equals( returnMap.get( "code" ).toString() ) ) {
+		// 新增佣金提交记录
+		MemberPicklog mpl = new MemberPicklog();
+		mpl.setBusId( busId );
+		mpl.setMemberId( memberId );
+		mpl.setPickDate( new Date() );
+		mpl.setPickMoney( pickMoney );
+		mpl.setPickType( 1 );
+		memberPicklogDAO.insert( mpl );
+
+		MemberEntity m1 = new MemberEntity();
+		m1.setId( member.getId() );
+		Double recommendMoney = member.getRecommendMoney() - pickMoney;
+		m1.setRecommendMoney( recommendMoney );
+		memberEntityDAO.updateById( m1 );
+	    } else {
+		log.error( "用户领取推荐佣金调用微信企业支付失败:" + returnMap.get( "msg" ) );
+		throw new BusinessException( ResponseMemberEnums.ERROR_USER_DEFINED.getCode(), returnMap.get( "msg" ).toString() );
+	    }
+	} catch ( BusinessException e ) {
+	    throw e;
+	} catch ( Exception e ) {
+	    log.error( "用户领取推荐佣金", e );
+	    throw new BusinessException( ResponseEnums.ERROR );
+	}
+    }
+
+    public void addAuthorization( HttpServletRequest request, Integer memberId, Integer busId, Map< String,Object > params ) throws BusinessException {
+	Integer browser = CommonUtil.judgeBrowser( request );
+	if ( browser != 1 ) {
+	    throw new BusinessException( ResponseMemberEnums.PLEASASE_USE_WECHAT );
+	}
+	Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
+	MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
+	DuofencardAuthorization duofencardAuthorization = duofencardAuthorizationDAO.findByOpenId( busId, memberEntity.getOpenid());
+	if ( CommonUtil.isNotEmpty( duofencardAuthorization ) ) {
+	    throw new BusinessException( ResponseMemberEnums.EXIST_AUTHORIZATION );
+	}
+	DuofencardAuthorization da = new DuofencardAuthorization();
+	da.setOpenId( memberEntity.getOpenid() );
+	da.setBusId( busId );
+	da.setShopId( shopId );
+	da.setMemberId( memberId );
+	duofencardAuthorizationDAO.insert( da );
+    }
+
+    public Map<String,Object> tuijianDuofenCard(Integer memberId,Integer busId,Map<String,Object> params){
+	Map<String,Object> map=new HashMap<>(  );
+        Integer receiveId=CommonUtil.toInteger( params.get( "receiveId" ) );
+        DuofenCardGetNew duofenCardGetNew=duofenCardGetNewDAO.selectById( receiveId );
+	DuofenCardNew duofenCardNew= duofenCardNewDAO.selectById( duofenCardGetNew.getCardId() );
+        DuofenCardPublish duofenCardPublish=duofenCardPublishDAO.findByCardId( duofenCardGetNew.getCardId() );
+	MemberRecommend mr=memberRecommendDAO.findRecommendByCardId( duofenCardNew.getId(),memberId );
+	if(CommonUtil.isEmpty( mr ) && memberId.equals( duofenCardGetNew.getMemberId() )) {
+	    mr = new MemberRecommend();
+	    mr.setMemberId( memberId );
+	    mr.setCode( CommonUtil.getNominateCode() );
+	    mr.setIntegral( duofenCardPublish.getJifen() );
+	    mr.setFenbi( duofenCardPublish.getFenbi().intValue() );
+	    mr.setFlow( duofenCardPublish.getFlow() );
+	    mr.setMoney( duofenCardPublish.getMoney() );
+	    mr.setDatetime( new Date() );
+	    mr.setCardId( receiveId );
+	    mr.setRecommendType( 1 );
+	    mr.setCardName( duofenCardNew.getTitle() );
+	    memberRecommendDAO.insert( mr );
+	}
+
+	if(memberId.equals( duofenCardGetNew.getMemberId() )){
+	    map.put( "tuijianIden",0 );
+	}else{
+	    map.put( "tuijianIden",1 );
+	}
+
+	map.put("code", mr.getCode() );
+	map.put( "duofenCardNew",duofenCardNew );
+	map.put( "path",PropertiesUtil.getRes_web_path() );
+	return map;
+    }
+
+
+    public WxJsSdkResult wxshareCard( Integer memberId, Integer busId, String url ) {
+	WxPublicUsers wxPublicUsers= requestService.findWxPublicUsersByBusId(busId);
+	if ( CommonUtil.isEmpty( wxPublicUsers ) ) {
+	    return null;
+	}
+	return requestService.wxShare( wxPublicUsers.getId(), url );
+
     }
 }

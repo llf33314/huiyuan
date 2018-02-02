@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableName;
 import java.io.Serializable;
+import java.util.Date;
+
 import com.baomidou.mybatisplus.enums.FieldFill;
 
 import lombok.Data;
@@ -36,6 +38,9 @@ public class DuofenCardShare extends Model<DuofenCardShare> {
 
    	 @TableField("memberId")
 	private Integer memberId;
+
+    	@TableField("shareDate")
+   	 private Date shareDate;
 
 
 	@Override
