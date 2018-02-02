@@ -2839,6 +2839,29 @@ public class MemberCardServiceImpl implements MemberCardService {
 	memberCardDAO.deleteById( memberEntity.getMcId() );
     }
 
+    public Map<String,Object> findCardImage(Integer memberId){
+        Map<String,Object> map=new HashMap<>(  );
+        MemberEntity memberEntity=memberMapper.selectById( memberId );
+        map.put( "path",PropertiesUtil.getRes_web_path() );
+        map.put("cardImg", memberEntity.getCardImg() );
+	map.put("cardImgback", memberEntity.getCardImgback() );
+	map.put( "memberId",memberId );
+	return map;
+    }
+
+
+    public void checkCard(String json){
+       Map<String,Object> map=JSONObject.parseObject( json,Map.class );
+       Integer memberId=CommonUtil.toInteger( map.get( "memberId" ) );
+       Integer checked=CommonUtil.toInteger( map.get( "checked" ) );
+       //身份证审核 0未上传 1待审核 2审核 3审核未通过
+	MemberEntity memberEntity=new MemberEntity();
+	memberEntity.setId( memberId );
+	memberEntity.setCardChecked( checked );
+	memberMapper.updateById( memberEntity );
+    }
+
+
     public Map< String,Object > findCard( Integer busId ) {
 	Map< String,Object > map = new HashMap<>();
 	map.put( "path", PropertiesUtil.getRes_web_path() );

@@ -46,12 +46,7 @@ public interface MemberQuartzService {
 	 * 会员生日发送短信
 	 */
 	public void sendBir();
-	
-	
-	/**
-	 * 短信发送
-	 */
-	public void birthdaySms();
+
 
 
 

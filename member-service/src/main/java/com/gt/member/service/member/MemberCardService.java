@@ -367,6 +367,21 @@ public interface MemberCardService {
     public void deleteMemberCard( HttpServletRequest request, Integer memberId ) throws BusinessException;
 
     /**
+     * 查询身份证
+     * @param memberId
+     * @return
+     */
+    public Map<String,Object> findCardImage(Integer memberId);
+
+    /**
+     * 审核身份证
+     * @param json
+     */
+    public void checkCard(String json);
+
+
+
+    /**
      * 查询会员卡
      * @param busId
      * @return

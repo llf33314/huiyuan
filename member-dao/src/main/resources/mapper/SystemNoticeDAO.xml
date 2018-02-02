@@ -32,9 +32,9 @@
 
 
 	<select id="findMsgBybusIdEq13" resultType="Map">
-		select msgStatus,smsStatus,busId from system_notice where callType=13 and msgStatus=1 and busId in
-		<foreach close=")" collection="busIds" item="b" open="(" separator=",">
-			#{b}
+		select msgStatus,smsStatus,busId from system_notice where callType=13 and msgStatus=1 and
+		<foreach close=")" collection="busIds" item="b" open="(" separator="or">
+			busId=#{b}
 		</foreach>
 	</select>
 
@@ -46,7 +46,7 @@
 	</select>
 
 	<select id="findMsgBybusIdEq10" resultType="Map">
-		select msgContent,msgStatus,busId from system_notice where callType=10  and msgStatus=1 and msgContent!=''
+		select msgContent,msgStatus,busId,smsContent,smsStatus from system_notice where callType=10  and msgStatus=1 and msgContent!=''
 
 	</select>
 

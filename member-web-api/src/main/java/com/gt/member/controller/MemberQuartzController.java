@@ -3,6 +3,7 @@ package com.gt.member.controller;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.service.common.quartz.MemberQuartzService;
 import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 @Api(value = "定时任务api接口",description = "定时任务api接口")
 @Controller
 @RequestMapping("/memberAPI/memberQuartz")
+@Slf4j
 public class MemberQuartzController {
 
     @Autowired
@@ -28,6 +30,7 @@ public class MemberQuartzController {
     @RequestMapping( value = "/updateCardGet", method = RequestMethod.POST )
     public ServerResponse updateCardGet(HttpServletRequest request, HttpServletResponse response){
         try {
+            log.error( "过期卡券 修改领取卡券状态" );
             memberQuartzService.updateCardGet();
             return ServerResponse.createBySuccess(  );
         } catch ( Exception e ) {
@@ -41,6 +44,7 @@ public class MemberQuartzController {
     @RequestMapping( value = "/updateNotice", method = RequestMethod.POST )
     public ServerResponse updateNotice(HttpServletRequest request, HttpServletResponse response){
         try {
+            log.error( "修改会员消息信息" );
             memberQuartzService.updateNotice();
             return ServerResponse.createBySuccess(  );
         } catch ( Exception e ) {
@@ -55,6 +59,7 @@ public class MemberQuartzController {
     @RequestMapping( value = "/sendNotice", method = RequestMethod.POST )
     public ServerResponse sendNotice(HttpServletRequest request, HttpServletResponse response){
         try {
+            log.error( "定时发送短信" );
             memberQuartzService.sendNotice();
             return ServerResponse.createBySuccess(  );
         } catch ( Exception e ) {
@@ -68,6 +73,7 @@ public class MemberQuartzController {
     @RequestMapping( value = "/clearJifenSendMessage", method = RequestMethod.POST )
     public ServerResponse clearJifenSendMessage(HttpServletRequest request, HttpServletResponse response){
         try {
+            log.error( " 积分清0 七天前短信 或系统消息提醒" );
             memberQuartzService.clearJifenSendMessage();
             return ServerResponse.createBySuccess(  );
         } catch ( Exception e ) {
@@ -81,6 +87,7 @@ public class MemberQuartzController {
     @RequestMapping( value = "/clearJifenSendSmsMessage", method = RequestMethod.POST )
     public ServerResponse  clearJifenSendSmsMessage(HttpServletRequest request, HttpServletResponse response){
         try {
+            log.error( " 每月22号触发 短信" );
             memberQuartzService.clearJifenSendSmsMessage();
             return ServerResponse.createBySuccess(  );
         } catch ( Exception e ) {
@@ -95,6 +102,7 @@ public class MemberQuartzController {
     @RequestMapping( value = "/clearJifen", method = RequestMethod.POST )
     public ServerResponse clearJifen(HttpServletRequest request, HttpServletResponse response){
         try {
+            log.error( " 积分清0" );
             memberQuartzService.clearJifen();
             return ServerResponse.createBySuccess(  );
         } catch ( Exception e ) {
@@ -108,40 +116,26 @@ public class MemberQuartzController {
     @RequestMapping( value = "/birthdayMsg", method = RequestMethod.POST )
     public ServerResponse  birthdayMsg(HttpServletRequest request, HttpServletResponse response){
         try {
+            log.error( " 会员生日推送" );
             memberQuartzService.birthdayMsg();
             return ServerResponse.createBySuccess(  );
         } catch ( Exception e ) {
             return ServerResponse.createByError( "错误" );
         }
     }
+    
 
     /**
-     * 会员生日发送短信
+     * 下午3点会员生日发送短信
      */
     @RequestMapping( value = "/sendBir", method = RequestMethod.POST )
     public ServerResponse sendBir(HttpServletRequest request, HttpServletResponse response){
         try {
+            log.error( "下午3点会员生日发送短信" );
             memberQuartzService.sendBir();
             return ServerResponse.createBySuccess(  );
         } catch ( Exception e ) {
             return ServerResponse.createByError( "错误" );
         }
     }
-
-
-    /**
-     * 短信发送
-     */
-    @RequestMapping( value = "/birthdaySms", method = RequestMethod.POST )
-    public ServerResponse birthdaySms(HttpServletRequest request, HttpServletResponse response){
-        try {
-            memberQuartzService.birthdaySms();
-            return ServerResponse.createBySuccess(  );
-        } catch ( Exception e ) {
-            return ServerResponse.createByError( "错误" );
-        }
-    }
-
-
-
 }

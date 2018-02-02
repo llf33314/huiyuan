@@ -28,7 +28,6 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
 
     private static final Logger LOG = LoggerFactory.getLogger( MemberQuartzServiceImpl.class );
 
-
     @Autowired
     private MemberEntityDAO memberMapper;
 
@@ -100,9 +99,7 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
     @Override
     public void sendNotice() {
 	try {
-
 	    List< Map< String,Object > > memberNotices = memberNoticeMapper.findAllNotSend( new Date() );
-
 	    for ( Map< String,Object > notice : memberNotices ) {
 		Integer noticeId = CommonUtil.toInteger( notice.get( "id" ) );
 		String smsContent = CommonUtil.toString( notice.get( "smsContent" ) );
@@ -463,7 +460,7 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
     /**
      * 每天凌晨 生日推送
      */
-    //  @Scheduled( cron = "0 0 3 * * ?" )
+    //  @Scheduled( cron = "0 0 1 * * ?" )
     @Override
     public void birthdayMsg() {
 
@@ -472,18 +469,28 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
 	List< Map< String,Object > > sysNoticeList = systemNoticeMapper.findMsgBybusIdEq10();
 
 	List< Systemnoticecall > sncs = new ArrayList< Systemnoticecall >();
+	List< MemberBir > list = new ArrayList< MemberBir >();
 	Systemnoticecall s = null;
 	for ( Map< String,Object > sn : sysNoticeList ) {
-	    if ( CommonUtil.isEmpty( sn.get( "msgContent" ) ) || CommonUtil.toInteger( sn.get( "msgStatus" ) ) == 0 ) {
-		continue;
-	    }
 	    for ( Map< String,Object > map : memberList ) {
-		if ( CommonUtil.toString( sn.get( "busId" ) ).equals( CommonUtil.toString( map.get( "busId" ) ) ) ) {
-		    s = new Systemnoticecall();
-		    s.setMemberId( CommonUtil.toInteger( map.get( "id" ) ) );
-		    s.setDescribes( CommonUtil.toString( sn.get( "msgContent" ) ) );
-		    s.setCreateDate( new Date() );
-		    sncs.add( s );
+	        if(CommonUtil.toInteger( sn.get( "busId" ) ).equals( CommonUtil.toInteger( map.get( "busId" ) ) )) {
+		    if ( CommonUtil.isEmpty( sn.get( "msgContent" ) ) && CommonUtil.toInteger( sn.get( "msgStatus" ) ) == 1 ) {
+			if ( CommonUtil.toString( sn.get( "busId" ) ).equals( CommonUtil.toString( map.get( "busId" ) ) ) ) {
+			    s = new Systemnoticecall();
+			    s.setMemberId( CommonUtil.toInteger( map.get( "id" ) ) );
+			    s.setDescribes( CommonUtil.toString( sn.get( "msgContent" ) ) );
+			    s.setCreateDate( new Date() );
+			    sncs.add( s );
+			}
+		    }
+		    if ( CommonUtil.isEmpty( sn.get( "smsContent" ) ) && CommonUtil.toInteger( sn.get( "smsStatus" ) ) == 1 ) {
+			if ( CommonUtil.isNotEmpty( map.get( "phone" ) ) ) {
+			    MemberBir mb = new MemberBir();
+			    mb.setPhone( CommonUtil.toString( map.get( "phone" ) ) );
+			    mb.setBusId( CommonUtil.toInteger( map.get( "busId" ) ) );
+			    list.add( mb );
+			}
+		    }
 		}
 	    }
 	}
@@ -491,30 +498,12 @@ public class MemberQuartzServiceImpl implements MemberQuartzService {
 	if ( sncs.size() > 0 ) {
 	    systemNoticeCallMapper.saveList( sncs );
 	}
-    }
 
-    /**
-     * 每天凌晨3点触发  过滤数据
-     */
-    // @Scheduled( cron = "0 0 3 * * ?" )
-    @Override
-    public void birthdaySms() {
-
-	List< Map< String,Object > > memberList = memberMapper.findMemberBir();
-
-	List< MemberBir > list = new ArrayList<>();
-	for ( Map< String,Object > map : memberList ) {
-	    if ( CommonUtil.isNotEmpty( map.get( "phone" ) ) ) {
-		MemberBir mb = new MemberBir();
-		mb.setPhone( CommonUtil.toString( map.get( "phone" ) ) );
-		mb.setBusId( CommonUtil.toInteger( map.get( "busId" ) ) );
-		list.add( mb );
-	    }
-	}
 	if ( list.size() > 0 ) {
 	    memberBirMapper.insertList( list );
 	}
     }
+
 
     /**
      * 每天凌晨9点触发 短信提醒

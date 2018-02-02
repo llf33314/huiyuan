@@ -1037,6 +1037,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 		map.put( "countyList", countyList );
 	    }
 	}
+	map.put( "path",PropertiesUtil.getRes_web_path() );
 	return map;
     }
 
