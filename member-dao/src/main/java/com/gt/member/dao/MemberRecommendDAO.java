@@ -1,5 +1,6 @@
 package com.gt.member.dao;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.gt.member.entity.MemberRecommend;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
