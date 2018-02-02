@@ -462,6 +462,15 @@ public class DuofenCardController {
 	}
     }
 
+    @ApiOperation( value = "获取所有门店", notes = "获取所有门店" )
+    @ResponseBody
+    @RequestMapping( value = "/getWxshops", method = { RequestMethod.POST, RequestMethod.GET } )
+    public ServerResponse getWxshops( HttpServletRequest request, HttpServletResponse response, String content, Integer width, Integer height ) {
+	Integer busId = SessionUtils.getPidBusId( request );
+	List< Map > wxShops = requestService.findShopAllByBusId( busId );
+	return ServerResponse.createBySuccess( wxShops );
+    }
+
     @ApiOperation( value = "生成二维码", notes = "生成二维码" )
     @RequestMapping( value = "/qrCode", method = { RequestMethod.POST, RequestMethod.GET } )
     public void qrCode( HttpServletRequest request, HttpServletResponse response, String content ) {
