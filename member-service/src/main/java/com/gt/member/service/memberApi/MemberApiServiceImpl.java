@@ -2665,9 +2665,10 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    if ( CommonUtil.isNotEmpty( memberEntity.getMcId() ) ) {
 		if ( erpPaySuccess.getIsDiatelyGive() == 1 ) {
 		    //立即送 TODO
-		    //findGiveRule( uc.getOrderCode(), "消费会员赠送", (byte) 1 );
+		    memberCommonService.findGiveRule( uc.getOrderCode() );
 		} else if ( erpPaySuccess.getIsDiatelyGive() == 0 ) {
 		    //延迟送
+		    memberCommonService.findGiveRuleDelay(uc.getOrderCode());
 		}
 	    }
 
