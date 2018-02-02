@@ -30,6 +30,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -163,18 +164,18 @@ public class DuofenCardController {
 	}
     }
 
-    @ApiOperation( value = "优惠券信息", notes = "优惠券信息" )
-    @ResponseBody
-    @RequestMapping( value = "/findCouponById", method = { RequestMethod.POST, RequestMethod.GET } )
-    public ServerResponse findCouponById( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer id ) {
-	try {
-	    Map< String,Object > coupon = duofenCardNewService.findCouponById( id );
-	    return ServerResponse.createBySuccess( coupon );
-	} catch ( Exception e ) {
-	    log.error( "优惠券查询异常", e );
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), "优惠券查询异常" );
+	@ApiOperation( value = "优惠券信息", notes = "优惠券信息" )
+	@ResponseBody
+	@RequestMapping( value = "/findCouponById", method = { RequestMethod.POST, RequestMethod.GET } )
+	public ServerResponse findCouponById( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer id ) {
+	    try {
+		Map< String,Object > coupon = duofenCardNewService.findCouponById( id );
+		return ServerResponse.createBySuccess( coupon );
+	    } catch ( Exception e ) {
+		log.error( "优惠券查询异常", e );
+		return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), "优惠券查询异常" );
+	    }
 	}
-    }
 
     @ApiOperation( value = "优惠券详情", notes = "优惠券详情" )
     @ResponseBody
@@ -253,13 +254,25 @@ public class DuofenCardController {
     @ApiOperation( value = "优惠券购买详情", notes = "优惠券购买详情" )
     @ResponseBody
     @RequestMapping( value = "/getPaymentDetailById", method = { RequestMethod.POST, RequestMethod.GET } )
-    public ServerResponse getPaymentDetailById( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer id,@RequestParam Integer code ) {
+    public ServerResponse getPaymentDetailById( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer id,@RequestParam String code ) {
 	try {
 	    Map< String,Object > map = duofenCardNewService.getPaymentDetailById( id,code );
 	    return ServerResponse.createBySuccess( map );
 	} catch ( BusinessException e ) {
 	    log.error( "查询购买详情异常", e );
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+	}
+    }
+    @ApiOperation( value = "核销优惠券信息", notes = "核销优惠券信息" )
+    @ResponseBody
+    @RequestMapping( value = "/findCouponInfoByCode", method = { RequestMethod.POST, RequestMethod.GET } )
+    public ServerResponse findCouponInfoByCode( HttpServletRequest request, HttpServletResponse response, @RequestParam String code ) {
+	try {
+	    Map< String,Object > coupon = duofenCardNewService.findCouponInfoByCode( code );
+	    return ServerResponse.createBySuccess( coupon );
+	} catch ( Exception e ) {
+	    log.error( "优惠券查询异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), "优惠券查询异常" );
 	}
     }
 
@@ -274,6 +287,23 @@ public class DuofenCardController {
 	    return ServerResponse.createBySuccess( page );
 	} catch ( BusinessException e ) {
 	    log.error( "查询优惠券核销列表异常", e );
+	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
+
+	}
+    }
+
+    @ApiOperation( value = "新增核销员二维码URL", notes = "新增核销员二维码URL" )
+    @ResponseBody
+    @RequestMapping( value = "/authorization/getAddAuthUserUrl", method = { RequestMethod.POST, RequestMethod.GET } )
+    public ServerResponse getAddAuthUserUrl( HttpServletRequest request, HttpServletResponse response ,@RequestParam  Integer shopId ) {
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    String url =PropertiesUtil.getWebHome()+"/html/duofencard/phone/#/accredit/"+busId+"/"+shopId;
+	   	HashMap<String,Object> map = new HashMap<String,Object>();
+	   	map.put( "url",url );
+	    return ServerResponse.createBySuccess(map);
+	} catch ( BusinessException e ) {
+	    log.error( "路径获取异常", e );
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 
 	}

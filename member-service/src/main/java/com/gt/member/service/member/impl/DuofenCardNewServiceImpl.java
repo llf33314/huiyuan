@@ -20,7 +20,6 @@ import com.gt.member.util.CommonUtil;
 import com.gt.member.util.Page;
 import com.gt.member.util.PropertiesUtil;
 import org.apache.log4j.Logger;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -226,7 +225,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
     }
 
     @Override
-    public Map< String,Object > getPaymentDetailById( Integer couponId, Integer code ) {
+    public Map< String,Object > getPaymentDetailById( Integer couponId, String code ) {
 	try {
 	    Wrapper< UserConsumeNew > consumeCondition = new EntityWrapper< UserConsumeNew >();
 	    consumeCondition.eq( "recordType", 2 );
@@ -662,6 +661,40 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	} catch ( Exception e ) {
 	    LOG.error( "提现金额设置异常" );
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "提现金额设置异常" );
+	}
+    }
+
+    @Override
+    public Map< String,Object > findCouponInfoByCode( String code ) {
+	try {
+
+	    List< Map< String,Object > > couponGetMapItem = cardGetMapper.selectMaps( new EntityWrapper< DuofenCardGetNew >().eq( "code", code ) );
+
+	    if ( couponGetMapItem.size() == 0 || couponGetMapItem == null ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "查询优惠券不存在" );
+	    }
+
+	    Map< String,Object > couponInfo = couponGetMapItem.get( 0 );
+	    Integer id = (Integer) couponInfo.get( "cardId" );
+	    List< Map< String,Object > > couponMapItem = baseMapper.selectMaps( new EntityWrapper< DuofenCardNew >().eq( "id", id ) );
+	    couponInfo.putAll( couponMapItem.get( 0 ) );
+
+	    if ( CommonUtil.toInteger( couponInfo.get( "state" ) ) == 1 ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券已使用" );
+	    }
+	    if ( CommonUtil.toInteger( couponInfo.get( "state" ) ) == 2 ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券已过期" );
+	    }
+	    if ( CommonUtil.toInteger( couponInfo.get( "state" ) ) == 2 ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券已过期" );
+	    }
+
+
+
+	    return couponInfo;
+	} catch ( Exception e ) {
+	    LOG.error( "优惠券信息获取异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券信息获取异常" );
 	}
     }
 
