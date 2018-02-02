@@ -799,6 +799,12 @@ public class CardPhoneController extends AuthorizeOrLoginController {
 	    Map< String,Object > params = JSON.toJavaObject( JSON.parseObject( json ), Map.class );
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    Member member = SessionUtils.getLoginMember( request, busId );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		String url = authorizeMember( request, response, params );
+		if ( CommonUtil.isNotEmpty( url ) ) {
+		    return ServerResponse.createByError( ResponseMemberEnums.USERGRANT.getCode(), ResponseMemberEnums.USERGRANT.getMsg(), url );
+		}
+	    }
 	    String systemCode=CommonUtil.toString( params.get( "systemCode" ) );
 	    Map<String,Object> map = memberCardPhoneService.judgeTuijian( member.getId(),systemCode);
 	    return ServerResponse.createBySuccess( map );
