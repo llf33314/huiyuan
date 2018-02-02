@@ -57,9 +57,8 @@ public class BusUserServiceTest extends BasicTest {
 //	}
 //
 	String wxmpsignKey="MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM";
-	String socketUrl="http://sz.yifriend.net/8A5DA52E/socket/getSocketApi.do";
+	String socketUrl="http://localhost/memberAPI/memberQuartz/updateExpiredCoupond";
 	Map<String,Object> socketMap=new HashMap<>(  );
-	socketMap.put( "pushName","member_count_"+23 );
 	String ss=SignHttpUtils.WxmppostByHttp( socketUrl, socketMap, wxmpsignKey );  //推送
 	System.out.println(ss);
 //	System.out.println(aa);

@@ -15,5 +15,6 @@ import com.gt.member.util.Page;
 public interface DuofencardAuthorizationService extends BaseService<DuofencardAuthorization > {
 
 
-    Page getAuthorizationUser( Integer curPage, Integer pageSize, Integer busId );
+    Page getAuthorizationUser( Integer curPage, Integer pageSize, Integer busId, String searchContent );
+
 }

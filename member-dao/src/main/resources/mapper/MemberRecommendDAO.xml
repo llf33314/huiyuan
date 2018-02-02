@@ -104,6 +104,87 @@
 		limit #{firstResult},#{pageSize}
 	</select>
 
+    <select id="selectRecommendListCount" resultType="java.lang.Integer" parameterType="hashmap">
+          select count(1) from t_member_recommend r INNER JOIN t_wx_bus_member m ON r.memberId =m.id
+		<where>
+			<if test="busId!=null and busId!=''">
+				AND  r.busId=${busId}
+			</if>
+			<if test="searchContent!=null and searchContent!=''">
+				AND (m.phone like '%${searchContent}%' or r.cardName like '%${searchContent}%' )
+			</if>
+		</where>
+	</select>
+
+	<select id="selectRecommendList" resultType="java.util.Map" parameterType="hashmap">
+		select m.nickname,m.phone  as userPhone,r.* from t_member_recommend r INNER JOIN t_wx_bus_member m ON r.memberId =m.id
+		<where>
+			<if test="busId!=null and busId!=''">
+				AND  r.busId=${busId}
+			</if>
+			<if test="searchContent!=null and searchContent!=''">
+				AND (m.phone like '%${searchContent}%' or r.cardName like '%${searchContent}%' )
+			</if>
+		</where>
+	</select>
+	<select id="selectRecommendReceiveListCount" resultType="java.lang.Integer" parameterType="hashmap">
+		select count(1)  from t_duofen_card_get_new g INNER JOIN t_wx_bus_member m ON g.memberId =m.id
+		<where>
+			<if test="recommendId!=null and recommendId!=''">
+				AND  g.recommendId=${recommendId}
+			</if>
+			<if test="searchContent!=null and searchContent!=''">
+				AND ( m.phone  like '%${searchContent}%'   or g.code  like '%${searchContent}%')
+			</if>
+		</where>
+	</select>
+	<select id="selectRecommendReceiveList" resultType="java.util.Map"  parameterType="hashmap">
+		   select m.nickname,m.phone,g.*  from t_duofen_card_get_new g INNER JOIN t_wx_bus_member m ON g.memberId =m.id
+		<where>
+			<if test="recommendId!=null and recommendId!=''">
+				AND  g.recommendId=${recommendId}
+			</if>
+			<if test="searchContent!=null and searchContent!=''">
+				AND ( m.phone  like '%${searchContent}%'   or g.code  like '%${searchContent}%')
+			</if>
+		</where>
+	</select>
+	<select id="selectWithdrawListCount" resultType="java.lang.Integer" parameterType="hashmap">
+		select count(1) from  t_member_picklog  p INNER JOIN  t_wx_bus_member m ON p.memberId=m.id
+		<where>
+			<if test="busId!=null and busId!=''">
+				AND  p.busId=${busId}
+			</if>
+			<if test="searchContent!=null and searchContent!=''">
+				AND m.phone like '%${searchContent}%'
+			</if>
+		</where>
+	</select>
+
+	<select id="selectWithdrawList" resultType="java.util.Map" parameterType="hashmap">
+			select m.phone,m.nickname,p.* from  t_member_picklog  p INNER JOIN  t_wx_bus_member m ON p.memberId=m.id
+		<where>
+			<if test="busId!=null and busId!=''">
+				AND  p.busId=${busId}
+			</if>
+			<if test="searchContent!=null and searchContent!=''">
+				AND m.phone like '%${searchContent}%'
+			</if>
+		</where>
+	</select>
+
+	<!--<select id="selectReceiveCouponCount"  parameterType="hashmap" resultType="java.lang.Integer">
+		select count(1) from t_duofen_card_get_new c INNER JOIN t_wx_bus_member m on c.memberId=m.id
+		<where>
+			<if test="cardId!=null and cardId!=''">
+				AND  c.cardId=${cardId}
+			</if>
+			<if test="searchContent!=null and searchContent!=''">
+				AND m.phone like '%${searchContent}%'
+			</if>
+		</where>
+	</select>
+-->
 
 	<select id="findRecommendByBusIdAndCode" resultType="Map">
 		select * from t_member_recommend where busId=#{busId}  and recommendType=1 and code=#{code}

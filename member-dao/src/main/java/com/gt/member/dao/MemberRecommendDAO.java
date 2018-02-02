@@ -4,6 +4,7 @@ import com.gt.member.entity.MemberRecommend;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,6 +83,30 @@ public interface MemberRecommendDAO extends BaseMapper<MemberRecommend> {
     Integer countRecommendByMemberId(@Param("memberId")Integer memberId);
 
     List<Map<String,Object>> findRecommendPageByMemberId(@Param("memberId")Integer memberId,@Param( "firstResult" )Integer firstResult,@Param( "pageSize" )Integer pageSize);
+
+    Integer selectRecommendListCount( HashMap<String, Object> condition );
+
+    /**
+     * 推荐列表
+     * @param pagination
+     * @param condition
+     * @return
+     */
+    List<Map<String,Object>> selectRecommendList( Page<MemberRecommend> pagination, HashMap<String, Object> condition );
+
+    Integer selectRecommendReceiveListCount( HashMap<String, Object> condition );
+
+    /**
+     * 推荐领取列表
+     * @param pagination
+     * @param condition
+     * @return
+     */
+    List<Map<String,Object>> selectRecommendReceiveList( Page<MemberRecommend> pagination, HashMap<String, Object> condition );
+
+    Integer selectWithdrawListCount( HashMap<String, Object> condition );
+
+    List<Map<String,Object>> selectWithdrawList( Page<MemberRecommend> pagination, HashMap<String, Object> condition );
 
     MemberRecommend findRecommendByBusIdAndCode(@Param( "busId" )Integer busId,@Param( "code" )String code);
 }

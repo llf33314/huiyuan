@@ -36,6 +36,11 @@ public class MemberRecommend extends Model<MemberRecommend> {
     /**
      * 推荐人
      */
+	@TableField("busId")
+	private Integer busId;
+    /**
+     * 推荐人
+     */
 	@TableField("memberId")
 	private Integer memberId;
     /**

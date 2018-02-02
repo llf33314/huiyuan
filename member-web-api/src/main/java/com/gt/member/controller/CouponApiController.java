@@ -58,7 +58,7 @@ public class CouponApiController extends BaseController {
 	    String couponName= (String) CommonUtil.get("couponName",requestBody);
 	    Integer useType= (Integer) CommonUtil.get("useType",requestBody);
 
-	    Page page = duofenCardNewService.getCouponListByBusId( curPage, pageSize, busId, cardStatus, couponName, useType );
+	    Page page = duofenCardNewService.getCouponListByBusId2( curPage, pageSize, busId, cardStatus, couponName, useType );
 	    return ServerResponse.createBySuccess( page );
 	} catch ( BusinessException e ) {
 	    LOG.error( "获取优惠券异常", e );
