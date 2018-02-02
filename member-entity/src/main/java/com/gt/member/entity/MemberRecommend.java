@@ -30,9 +30,6 @@ public class MemberRecommend extends Model<MemberRecommend> {
 	@TableId(value="id", type= IdType.AUTO)
 	private Integer id;
 
-    	@TableField("busId")
-	private Integer busId;
-
     /**
      * 推荐人
      */
