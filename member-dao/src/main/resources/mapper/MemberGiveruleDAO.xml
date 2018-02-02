@@ -32,12 +32,13 @@
 
 	<select id="findByBusIdAndCtId" resultType="Map">
 		SELECT
-		 gr_id as grId , gt_id as gtId, gr_rechargeMoney as grRechargemoney ,
-		 gr_number as grNumber  , gr_discount as grDiscount, gr_giveCount, gr_giveType,
-		  gr_startDate, gr_validDate as grValidDate   ,
-         gr_upgradeType, gr_upgradeCount as grUpgradeCount, gr_equities ,delayDay, busId
-		FROM t_member_giverule
-		where busId=#{busId} and ct_id=#{ctId} ORDER BY gr_id ASC
+		 g.gr_id as grId , g.gt_id as gtId, g.gr_rechargeMoney as grRechargemoney ,
+		 g.gr_number as grNumber  , g.gr_discount as grDiscount, g.gr_giveCount, g.gr_giveType,
+		  g.gr_startDate, g.gr_validDate as grValidDate   ,
+         g.gr_upgradeType, g.gr_upgradeCount as grUpgradeCount, g.gr_equities ,g.delayDay, g.busId
+		FROM t_member_giverule g
+		inner join  t_member_gradetype gt on gt.gt_id=g.gt_id
+		where g.busId=#{busId} and g.ct_id=#{ctId} ORDER BY gt.iseasy DESC
 	</select>
 
 	<delete id="deleteBygrIds">

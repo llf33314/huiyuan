@@ -2085,10 +2085,10 @@ public class MemberCardServiceImpl implements MemberCardService {
     public Map< String,Object > memberTongJi( Integer busId, Integer ctId ) throws BusinessException {
 	try {
 	    Map< String,Object > map = new HashMap<>();
-
+	    map.put( "path",PropertiesUtil.getWebHome() );
 	    List< Map< String,Object > > grades = memberGradetypeDAO.findGradeTyeBybusId( busId );
 	    if ( CommonUtil.isEmpty( grades ) || grades.size() == 0 ) {
-		return null;
+		return map;
 	    }
 	    map.put( "cardType", grades );
 
@@ -2117,7 +2117,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    Double buyCard = userConsumeNewDAO.buyCard( busId, ctId );
 	    map.put( "sumXiaofei", sumXiaofei );
 	    map.put( "buyCard", buyCard );
-	    map.put( "path",PropertiesUtil.getWebHome() );
+
 
 	    switch ( ctId ) {
 		case 0:
