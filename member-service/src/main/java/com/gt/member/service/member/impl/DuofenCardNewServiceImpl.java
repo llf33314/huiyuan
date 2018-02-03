@@ -14,6 +14,7 @@ import com.gt.member.dao.duofencard.DuofenCardTimeDAO;
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.dict.DictService;
+import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.DuofenCardNewService;
 import com.gt.member.util.CommonUtil;
@@ -59,6 +60,8 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
     private MemberRecommendDAO    memberRecommendMapper;
     @Autowired
     private PublicParametersetDAO publicParametersetMapper;
+    @Autowired
+    private MemberCommonService   memberCommonService;
 
     public Integer addCoupon( DuofenCardNewVO coupon ) throws BusinessException {
 	try {
@@ -101,7 +104,6 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	    baseMapper.updateById( cardNew );
 	    cardTimeMapper.updateById( cardTime );
 	    cardPublishMapper.updateById( cardPublish );
-
 
 	    return 1;
 	} catch ( Exception e ) {
@@ -679,18 +681,18 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	    List< Map< String,Object > > couponMapItem = baseMapper.selectMaps( new EntityWrapper< DuofenCardNew >().eq( "id", id ) );
 	    couponInfo.putAll( couponMapItem.get( 0 ) );
 
+	    DuofenCardTime  cardTime  =  cardTimeMapper.selectOne( new DuofenCardTime().setCardId( id ) );
+
 	    if ( CommonUtil.toInteger( couponInfo.get( "state" ) ) == 1 ) {
 		throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券已使用" );
 	    }
 	    if ( CommonUtil.toInteger( couponInfo.get( "state" ) ) == 2 ) {
 		throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券已过期" );
 	    }
-	    if ( CommonUtil.toInteger( couponInfo.get( "state" ) ) == 2 ) {
-		throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券已过期" );
+	    //当前日期是否可以用
+	    if ( ! memberCommonService.isUseDuofenCardTime( cardTime ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "当前日期优惠券不可用" );
 	    }
-
-
-
 	    return couponInfo;
 	} catch ( Exception e ) {
 	    LOG.error( "优惠券信息获取异常" );
@@ -741,7 +743,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	    for ( Map< String,Object > couponMap : listItem ) {
 		Integer cardId = (Integer) couponMap.get( "id" );
                //优惠券二维码领取url
-		String receiveCouponUrl = PropertiesUtil.getWebHome()+"/html/phone/index.html#/home/" + busId+cardId;
+		String receiveCouponUrl = PropertiesUtil.getWebHome()+"/html/duofencard/phone/index.html#/home/" + busId+cardId;
 		couponMap.put( "receiveCouponUrl", receiveCouponUrl );
 
 		//领取数量
