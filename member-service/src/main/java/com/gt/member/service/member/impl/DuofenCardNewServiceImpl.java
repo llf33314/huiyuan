@@ -14,13 +14,13 @@ import com.gt.member.dao.duofencard.DuofenCardTimeDAO;
 import com.gt.member.entity.*;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.dict.DictService;
+import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.DuofenCardNewService;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.Page;
 import com.gt.member.util.PropertiesUtil;
 import org.apache.log4j.Logger;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,6 +60,8 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
     private MemberRecommendDAO    memberRecommendMapper;
     @Autowired
     private PublicParametersetDAO publicParametersetMapper;
+    @Autowired
+    private MemberCommonService   memberCommonService;
 
     public Integer addCoupon( DuofenCardNewVO coupon ) throws BusinessException {
 	try {
@@ -102,7 +104,6 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	    baseMapper.updateById( cardNew );
 	    cardTimeMapper.updateById( cardTime );
 	    cardPublishMapper.updateById( cardPublish );
-
 
 	    return 1;
 	} catch ( Exception e ) {
@@ -226,7 +227,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
     }
 
     @Override
-    public Map< String,Object > getPaymentDetailById( Integer couponId, Integer code ) {
+    public Map< String,Object > getPaymentDetailById( Integer couponId, String code ) {
 	try {
 	    Wrapper< UserConsumeNew > consumeCondition = new EntityWrapper< UserConsumeNew >();
 	    consumeCondition.eq( "recordType", 2 );
@@ -666,6 +667,40 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
     }
 
     @Override
+    public Map< String,Object > findCouponInfoByCode( String code ) {
+	try {
+
+	    List< Map< String,Object > > couponGetMapItem = cardGetMapper.selectMaps( new EntityWrapper< DuofenCardGetNew >().eq( "code", code ) );
+
+	    if ( couponGetMapItem.size() == 0 || couponGetMapItem == null ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "查询优惠券不存在" );
+	    }
+
+	    Map< String,Object > couponInfo = couponGetMapItem.get( 0 );
+	    Integer id = (Integer) couponInfo.get( "cardId" );
+	    List< Map< String,Object > > couponMapItem = baseMapper.selectMaps( new EntityWrapper< DuofenCardNew >().eq( "id", id ) );
+	    couponInfo.putAll( couponMapItem.get( 0 ) );
+
+	    DuofenCardTime  cardTime  =  cardTimeMapper.selectOne( new DuofenCardTime().setCardId( id ) );
+
+	    if ( CommonUtil.toInteger( couponInfo.get( "state" ) ) == 1 ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券已使用" );
+	    }
+	    if ( CommonUtil.toInteger( couponInfo.get( "state" ) ) == 2 ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券已过期" );
+	    }
+	    //当前日期是否可以用
+	    if ( ! memberCommonService.isUseDuofenCardTime( cardTime ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "当前日期优惠券不可用" );
+	    }
+	    return couponInfo;
+	} catch ( Exception e ) {
+	    LOG.error( "优惠券信息获取异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券信息获取异常" );
+	}
+    }
+
+    @Override
     public Page getCouponListByBusId( Integer curPage, Integer pageSize, Integer busId, String cardStatus, String title, Integer useType ) {
 
 	EntityWrapper< DuofenCardNew > couponCondition = new EntityWrapper< DuofenCardNew >();
@@ -707,9 +742,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	    //		}
 	    for ( Map< String,Object > couponMap : listItem ) {
 		Integer cardId = (Integer) couponMap.get( "id" );
-               //优惠券二维码领取url
-		String receiveCouponUrl = PropertiesUtil.getWebHome()+"/html/phone/index.html#/home/" + busId+cardId;
-		couponMap.put( "receiveCouponUrl", receiveCouponUrl );
+
 
 		//领取数量
 		Integer receiveQuantity = getCouponReceiveQuantity( cardId );
@@ -720,8 +753,16 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 
 		//时间设置参数
 		List< Map< String,Object > > cardTimeItem = cardTimeMapper.selectMaps( new EntityWrapper< DuofenCardTime >().eq( "cardId", cardId ) );
-		if ( cardPublishItem.size() > 0 ) couponMap.putAll( cardPublishItem.get( 0 ) );
-		if ( cardTimeItem.size() > 0 ) couponMap.putAll( cardTimeItem.get( 0 ) );
+		if ( cardPublishItem.size() > 0 ) {
+		    //优惠券二维码领取url
+		    Integer publishId = (Integer) cardPublishItem.get(0).get( "publishId" );
+		    String receiveCouponUrl = PropertiesUtil.getWebHome()+"/html/duofencard/phone/index.html#/home/" + busId+"/"+publishId+"/0";
+		    couponMap.put( "receiveCouponUrl", receiveCouponUrl );
+		    couponMap.putAll( cardPublishItem.get( 0 ) );
+		}
+		if ( cardTimeItem.size() > 0 ){
+		    couponMap.putAll( cardTimeItem.get( 0 ) );
+		}
 	    }
 
 	    Page page = new Page( curPage, pageSize, recordCount, "" );
