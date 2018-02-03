@@ -742,9 +742,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	    //		}
 	    for ( Map< String,Object > couponMap : listItem ) {
 		Integer cardId = (Integer) couponMap.get( "id" );
-               //优惠券二维码领取url
-		String receiveCouponUrl = PropertiesUtil.getWebHome()+"/html/duofencard/phone/index.html#/home/" + busId+cardId;
-		couponMap.put( "receiveCouponUrl", receiveCouponUrl );
+
 
 		//领取数量
 		Integer receiveQuantity = getCouponReceiveQuantity( cardId );
@@ -755,8 +753,16 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 
 		//时间设置参数
 		List< Map< String,Object > > cardTimeItem = cardTimeMapper.selectMaps( new EntityWrapper< DuofenCardTime >().eq( "cardId", cardId ) );
-		if ( cardPublishItem.size() > 0 ) couponMap.putAll( cardPublishItem.get( 0 ) );
-		if ( cardTimeItem.size() > 0 ) couponMap.putAll( cardTimeItem.get( 0 ) );
+		if ( cardPublishItem.size() > 0 ) {
+		    //优惠券二维码领取url
+		    Integer publishId = (Integer) cardPublishItem.get(0).get( "publishId" );
+		    String receiveCouponUrl = PropertiesUtil.getWebHome()+"/html/duofencard/phone/index.html#/home/" + busId+"/"+publishId+"/0";
+		    couponMap.put( "receiveCouponUrl", receiveCouponUrl );
+		    couponMap.putAll( cardPublishItem.get( 0 ) );
+		}
+		if ( cardTimeItem.size() > 0 ){
+		    couponMap.putAll( cardTimeItem.get( 0 ) );
+		}
 	    }
 
 	    Page page = new Page( curPage, pageSize, recordCount, "" );
