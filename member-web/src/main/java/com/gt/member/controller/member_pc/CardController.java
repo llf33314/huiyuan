@@ -466,7 +466,7 @@ public class CardController {
     public ServerResponse browseAddr(HttpServletRequest request, HttpServletResponse response){
 	try {
 	    Integer busId = SessionUtils.getPidBusId( request );
-	    String url = PropertiesUtil.getWebHome()+"/html/phone/index.html#/home/" + busId;
+	    String url = PropertiesUtil.getWebHome()+"/html/member/phone/index.html#/home/" + busId;
 	    return ServerResponse.createBySuccess(url);
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
@@ -480,7 +480,7 @@ public class CardController {
     @RequestMapping( value = "/browseImg", method = RequestMethod.GET )
     public void browseImg( HttpServletRequest request, HttpServletResponse response ) {
 	Integer busId = SessionUtils.getPidBusId( request );
-	String url = PropertiesUtil.getWebHome()+"/html/phone/index.html#/home/" + busId;
+	String url = PropertiesUtil.getWebHome()+"/html/member/phone/index.html#/home/" + busId;
 	QRcodeKit.buildQRcode( url, 500, 500, response );
     }
 
@@ -489,7 +489,7 @@ public class CardController {
     @RequestMapping( value = "/downPulishCardImage", method = RequestMethod.GET )
     public void downPulishCardImage( HttpServletRequest request, HttpServletResponse response ) throws IOException {
 	Integer busId = SessionUtils.getPidBusId( request );
-	String url = PropertiesUtil.getWebHome()+"/html/phone/index.html#/home/" + busId;
+	String url = PropertiesUtil.getWebHome()+"/html/member/phone/index.html#/home/" + busId;
 	String filename = "会员卡.jpg";
 	response.addHeader( "Content-Disposition", "attachment;filename=" + new String( filename.replaceAll( " ", "" ).getBytes( "utf-8" ), "iso8859-1" ) );
 	response.setContentType( "application/octet-stream" );

@@ -142,7 +142,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	subQrPayParams.setMemberId( consumeNew.getMemberId() );//会员id
 	subQrPayParams.setDesc( "购买会员卡" );//描述
 	subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
-	String returnUrl = PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/" + consumeNew.getBusId();
+	String returnUrl = PropertiesUtil.getWebHome() + "/html/member/phone/index.html#/home/" + consumeNew.getBusId();
 	String sucessUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/buyCardPaySuccess.do";
 	subQrPayParams.setReturnUrl( returnUrl );
 	subQrPayParams.setNotifyUrl( sucessUrl );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
@@ -276,6 +276,10 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    Integer ctId = CommonUtil.toInteger( params.get( "ctId" ) );
 
 	    MemberEntity memberEntity = memberEntityDAO.selectById( memberId );
+
+	    if(CommonUtil.isNotEmpty( memberEntity.getMcId() )){
+	        throw new BusinessException( ResponseMemberEnums.ALREADY_MEMBER_CARD );
+	    }
 
 	    //判断商家会员卡数量是否充足
 	    int count = cardMapper.countCardisBinding( busId );
@@ -477,6 +481,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 			}
 			recommend.setGetMemberId( memberId );
 			recommend.setIsUser( 1 );
+			recommend.setDatetime( new Date(  ) );
 			if ( isCheck == 0 ) {
 			    recommend.setIsGive( 1 );
 			}
@@ -755,7 +760,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	map.put( "jifen", memberEntity.getIntegral() );
 	map.put( "fenbi", memberEntity.getFansCurrency() );
 	map.put( "flow", memberEntity.getFlow() );
-	String jifenUrl = PropertiesUtil.getMallHome() + "/html/phone/index.html/#/integral/index/" + memberEntity.getBusId();
+	String jifenUrl = PropertiesUtil.getMallHome() + "/html/member/phone/index.html/#/integral/index/" + memberEntity.getBusId();
 	map.put( "jifenUrl", jifenUrl );
 	return map;
     }
@@ -993,7 +998,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
 	    sub.setMemberId( uc.getMemberId() );
 	    sub.setDesc( "会员卡充值" );
 	    sub.setIsreturn( 1 );
-	    String returnUrl = PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/" + busId;
+	    String returnUrl = PropertiesUtil.getWebHome() + "/html/member/phone/index.html#/home/" + busId;
 	    sub.setReturnUrl( returnUrl );
 	    String notifyUrl = PropertiesUtil.getWebHome() + "/memberNodoInterceptor/memberNotDo/paySuccess";
 	    sub.setNotifyUrl( notifyUrl );
@@ -1411,7 +1416,7 @@ public class MemberCardPhoneServiceImpl implements MemberCardPhoneService {
     }
 
     public String tuijianQRcode( Integer busId, String systemCode ) {
-	String url = PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/" + busId + "/" + systemCode;
+	String url = PropertiesUtil.getWebHome() + "/html/member/phone/index.html#/home/" + busId + "/" + systemCode;
 	return url;
     }
 

@@ -54,6 +54,7 @@ public enum ResponseMemberEnums {
     PLEASE_RECHARGE(5032,"卡内剩余次数不足,请充值"),
     ERROR_COUNT(5033,"计算错误"),
     PLEASE_SAOMA_CONSUME(5034,"仅支持扫码枪查询会员信息"),
+    ALREADY_MEMBER_CARD(5035,"亲,您已经领取过会员卡了"),
 
 
 

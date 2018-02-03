@@ -705,7 +705,8 @@ public class MemberApiController extends BaseController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "粉丝id", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "shopId", value = "门店id", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "intergral", value = "兑换积分", paramType = "query", required = true, dataType = "int" ),
-
+		    @ApiImplicitParam( name = "dataSource", value = "数据来源", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "ucType", value = "下单场景字典1197", paramType = "query", required = true, dataType = "int" )
     } )
     @ResponseBody
     @RequestMapping( value = "/jifenExchange", method = RequestMethod.POST )

@@ -2539,6 +2539,10 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    uc.setCreateDate( new Date() );
 	    uc.setIntegral( erpPaySuccess.getJifenNum() );
 	    uc.setFenbi( erpPaySuccess.getFenbiNum() );
+	    uc.setCouponDisCountMoney(erpPaySuccess.getCouponMoney());
+	    uc.setFenbiDisountMoney( erpPaySuccess.getFenbiMoney() );
+	    uc.setJifenDisCountMoney( erpPaySuccess.getJifenMoney() );
+
 	    if ( erpPaySuccess.getUseCoupon() == 1 ) {
 		//优惠券
 		if ( erpPaySuccess.getCouponType() == 0 ) {
@@ -2629,6 +2633,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 		Double fenbi = memberEntity.getFansCurrency() - erpPaySuccess.getFenbiNum();
 		Integer code = requestService.getPowerApi( 1, memberEntity.getBusId(), erpPaySuccess.getFenbiNum(), "消费抵扣粉丝" );
 		if ( code == 0 ) {
+		    uc.setFenbiBalance(fenbi);
 		    memberEntity1.setFansCurrency( fenbi );
 		    memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, erpPaySuccess.getFenbiNum().doubleValue(), "消费粉币", memberEntity.getBusId(), fenbi,
 				    erpPaySuccess.getOrderCode(), 0 );
@@ -2641,6 +2646,7 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    if ( erpPaySuccess.getUserJifen() == 1 && CommonUtil.isNotEmpty( memberEntity.getMcId() ) && erpPaySuccess.getJifenNum() > 0 ) {
 
 		Integer banlan = memberEntity.getIntegral() - erpPaySuccess.getJifenNum();
+		uc.setJifenBalance(banlan);
 		memberEntity1.setIntegral( banlan );
 		flag = true;
 		memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 2, erpPaySuccess.getJifenNum().doubleValue(), "消费积分", memberEntity.getBusId(),
@@ -2905,6 +2911,8 @@ public class MemberApiServiceImpl implements MemberApiService {
 
 	    Integer memberId = jsonObject.getInteger( "memberId" );
 	    Integer shopId = jsonObject.getInteger( "shopId" );
+	    Integer dataSource=CommonUtil.toInteger(jsonObject.get( "dataSource" )  );
+	    Integer ucType=CommonUtil.toInteger( jsonObject.get( "ucType" ) );
 
 	    MemberEntity member = memberDAO.selectById( memberId );
 	    if ( CommonUtil.isEmpty( member.getMcId() ) ) {
@@ -2934,17 +2942,17 @@ public class MemberApiServiceImpl implements MemberApiService {
 	    uc.setGtId( memberCard.getGtId() );
 	    uc.setRecordType( 0 );
 	    uc.setCreateDate( new Date() );
-	    uc.setUcType( 5 );
+	    uc.setUcType( ucType );
 	    uc.setIntegral( intergral );
 	    uc.setFenbi( 0.0 );
 	    uc.setUccount( 0 );
 	    uc.setDiscountMoney( 0.0 );
 	    String orderCode = CommonUtil.getMEOrderCode();
 	    uc.setOrderCode( orderCode );
-	    uc.setDataSource( 0 );
+	    uc.setDataSource( dataSource );
 	    uc.setIsendDate( new Date() );
 	    uc.setIsend( 1 );
-	    uc.setBalance( shenyuJifen.doubleValue() );
+	    uc.setJifenBalance( shenyuJifen);
 	    uc.setPayStatus( 1 );
 
 	    uc.setShopId( shopId );

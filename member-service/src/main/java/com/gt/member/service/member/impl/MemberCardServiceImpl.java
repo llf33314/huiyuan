@@ -2051,7 +2051,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	    uc.setDataSource( 0 );
 	    uc.setIsendDate( new Date() );
 	    uc.setIsend( 1 );
-	    uc.setBalance( shenyuJifen.doubleValue() );
+	    uc.setJifenBalance( shenyuJifen );
 	    uc.setPayStatus( 1 );
 	    WsWxShopInfo wxShopInfo= requestService.findMainShop( busId );
 
@@ -2867,8 +2867,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 	map.put( "path", PropertiesUtil.getRes_web_path() );
 	List< Map< String,Object > > mapList = memberGradetypeDAO.findBybusId( busId );
 	map.put( "gradeType", mapList );
-	String url = PropertiesUtil.getWebHome() + "/html/phone/index.html#/home/" + busId;
-	;
+	String url = PropertiesUtil.getWebHome() + "/html/member/phone/index.html#/home/" + busId;
 	map.put( "url", url );
 	return map;
     }
@@ -3580,6 +3579,9 @@ public class MemberCardServiceImpl implements MemberCardService {
 		uc.setIsend( 0 );
 		uc.setIsendDate( new Date() );
 		uc.setCreateDate( new Date(  ) );
+		uc.setCouponDisCountMoney( ce.getDiscountConponMoney() );
+		uc.setJifenDisCountMoney( ce.getDiscountjifenMoney() );
+		uc.setFenbiDisountMoney( ce.getDiscountfenbiMoney() );
 
 		uc.setIntegral( ce.getJifenNum() );
 		uc.setFenbi( ce.getFenbiNum().doubleValue() );
@@ -3655,6 +3657,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 			//memberCommonService.reduceFansCurrency( memberEntity, erpPaySuccess.getFenbiNum() );
 			Integer code = requestService.getPowerApi( 1, memberEntity.getBusId(), ce.getFenbiNum().doubleValue(), "消费抵扣粉丝" );
 			if ( code == 0 ) {
+			    uc.setFenbiBalance( fenbi );
 			    memberEntity1.setFansCurrency( fenbi );
 			    memberCommonService.saveCardRecordOrderCodeNew( memberEntity.getId(), 3, ce.getFenbiNum().doubleValue(), "消费粉币", memberEntity.getBusId(), fenbi,
 					    uc.getOrderCode(), 0 );
@@ -3668,6 +3671,7 @@ public class MemberCardServiceImpl implements MemberCardService {
 		    if ( ce.getUserJifen() == 1 && ce.getJifenNum() > 0 ) {
 			Integer banlan = memberEntity.getIntegral() - ce.getJifenNum();
 			memberEntity1.setIntegral( banlan );
+			uc.setJifenBalance( banlan );
 			memberCommonService
 					.saveCardRecordOrderCodeNew( memberEntity.getId(), 2, ce.getJifenNum().doubleValue(), "消费积分", memberEntity.getBusId(), banlan.doubleValue(),
 							uc.getOrderCode(), 0 );
