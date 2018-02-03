@@ -675,7 +675,7 @@ public class DuofenCardPhoneController extends AuthorizeOrLoginController {
     @ResponseBody
     @RequestMapping( value = "/tuijianQRcode", method = RequestMethod.GET )
     public void tuijianQRcode(HttpServletRequest request, HttpServletResponse response,@RequestParam Integer busId, @RequestParam String code){
-        String url=PropertiesUtil.getWebHome()+"/html/duofencard/phone/#/home/"+busId+"/"+code;
+        String url=PropertiesUtil.getWebHome()+"/html/duofencard/phone/#/home/"+busId+"/0/"+code;
 	QRcodeKit.buildQRcode( url, 500, 500, response );
     }
 

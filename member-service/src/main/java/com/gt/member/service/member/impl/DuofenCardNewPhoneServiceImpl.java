@@ -104,7 +104,12 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
     public List< Map< String,Object > > findPublishDuofenCard( Integer busId, Integer memberId, Map< String,Object > params ) {
 	String code=CommonUtil.toString( params.get( "code" ) );
 	if("0".equals( code )){
-	  return  findPublishDuofenCardNotCode(  busId,  memberId,  params);
+	    Integer publishId=CommonUtil.toInteger( params.get( "publishId" ) );
+	    if("0".equals( publishId )){
+		return  findPublishDuofenCardNotCode(  busId,  memberId,  params);
+	    }else{
+	        return findPublishDuofenCardById(publishId,memberId);
+	    }
 	}else{
 	    //推荐的优惠券
 	    return findPublishDuofenCardCode( busId,  memberId,  params);
@@ -248,6 +253,66 @@ public class DuofenCardNewPhoneServiceImpl implements DuofenCardNewPhoneService 
 
 
 
+
+    public List< Map< String,Object > > findPublishDuofenCardById( Integer publishId,Integer memberId ) {
+	List< Map< String,Object > > listMap = duofenCardPublishDAO.findPublishDuofenCardByPublishId( publishId );
+	//查询对于的领取数量
+	List< Integer > cardIds = new ArrayList<>();
+	for ( Map< String,Object > map : listMap ) {
+	    cardIds.add( CommonUtil.toInteger( map.get( "cardId" ) ) );
+	}
+
+	List< Map< String,Object > > countMaps = duofenCardGetNewDAO.countByCardIds( cardIds );
+	List< Map< String,Object > > returnMap = new ArrayList<>();
+	for ( Map< String,Object > map : listMap ) {
+	    map.put( "lingquOver", 0 );
+	    for ( Map< String,Object > countMap : countMaps ) {
+		if ( CommonUtil.toString( map.get( "cardId" ) ).equals( CommonUtil.toString( countMap.get( "cardId" ) ) ) ) {
+		    Integer number = CommonUtil.toInteger( map.get( "number" ) );
+		    Integer count = CommonUtil.toInteger( countMap.get( "count" ) );
+		    if ( CommonUtil.isEmpty( count ) || number > count ) {
+			map.put( "lingquOver", 0 );
+		    } else {
+			map.put( "lingquOver", 1 );
+
+		    }
+		}
+	    }
+	    if ( "0".equals( CommonUtil.toString( map.get( "isBuy" ) ) ) ) {
+		if ( CommonUtil.isNotEmpty( memberId ) ) {
+		    //粉丝已经授权或登录
+		    //非购买查询领取数量是否已到领取最高值
+		    if ( "1".equals( CommonUtil.toString( map.get( "isReceiveNum" ) ) ) ) {
+			//统计现在数量
+			Integer limitNum = CommonUtil.toInteger( map.get( "limitNum" ) );
+			Integer cardId = CommonUtil.toInteger( map.get( "cardId" ) );
+			Integer count = 0;
+			if ( "0".equals( CommonUtil.toString( map.get( "limitType" ) ) ) ) {
+			    // 0每人每天最多领取
+			    Date date = DateTimeKit.parseDate( DateTimeKit.getDate() + " 00:00:00", "yyyy-MM-dd hh:mm:ss" );
+			    count = duofenCardGetNewDAO.countDuofenCardGetByCardId( cardId, memberId, date );
+			} else {
+			    //1此券最多领取数量
+			    count = duofenCardGetNewDAO.countDuofenCardGetByCardId( cardId, memberId, null );
+			}
+			if ( count >= limitNum ) {
+			    map.put( "linquType", 1 );
+			} else {
+			    map.put( "linquType", 0 );
+			}
+		    }
+		}
+	    } else {
+		//购买判断时价
+		if ( "3".equals( CommonUtil.toString( map.get( "cardType" ) ) ) ) {
+		    double buyMoney = memberCommonService.getBuyMoney( CommonUtil.toString( map.get( "giftBuyMoney" ) ), CommonUtil.toDouble( map.get( "buyMoney" ) ) );
+		    map.put( "buyMoney", buyMoney );
+		}
+	    }
+	    returnMap.add( map );
+	}
+	return returnMap;
+    }
 
 
     public Map< String,Object > findDuofenCardNewByCardId( Integer cardId ) {
