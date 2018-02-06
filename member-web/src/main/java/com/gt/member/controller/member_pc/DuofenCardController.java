@@ -1,9 +1,10 @@
 package com.gt.member.controller.member_pc;
 
+import com.gt.api.bean.session.Member;
 import com.gt.api.enums.ResponseEnums;
 import com.gt.api.util.SessionUtils;
+import com.gt.api.util.ShortUtil;
 import com.gt.bean.vo.DuofenCardNewVO;
-import com.gt.duofencard.entity.DuofenCardNew;
 import com.gt.member.dto.ServerResponse;
 import com.gt.member.exception.BusinessException;
 import com.gt.member.service.common.membercard.MemberCommonService;
@@ -27,10 +28,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -263,18 +262,6 @@ public class DuofenCardController {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 	}
     }
-    @ApiOperation( value = "核销优惠券信息", notes = "核销优惠券信息" )
-    @ResponseBody
-    @RequestMapping( value = "/findCouponInfoByCode", method = { RequestMethod.POST, RequestMethod.GET } )
-    public ServerResponse findCouponInfoByCode( HttpServletRequest request, HttpServletResponse response, @RequestParam String code ) {
-	try {
-	    Map< String,Object > coupon = duofenCardNewService.findCouponInfoByCode( code );
-	    return ServerResponse.createBySuccess( coupon );
-	} catch ( Exception e ) {
-	    log.error( "优惠券查询异常", e );
-	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), "优惠券查询异常" );
-	}
-    }
 
     @ApiOperation( value = "核销人员列表", notes = "核销人员列表" )
     @ResponseBody
@@ -292,7 +279,7 @@ public class DuofenCardController {
 	}
     }
 
-    @ApiOperation( value = "新增核销员二维码URL", notes = "新增核销员二维码URL" )
+  /*  @ApiOperation( value = "新增核销员二维码URL", notes = "新增核销员二维码URL" )
     @ResponseBody
     @RequestMapping( value = "/authorization/getAddAuthUserUrl", method = { RequestMethod.POST, RequestMethod.GET } )
     public ServerResponse getAddAuthUserUrl( HttpServletRequest request, HttpServletResponse response ,@RequestParam  Integer shopId ) {
@@ -307,7 +294,7 @@ public class DuofenCardController {
 	    return ServerResponse.createByError( e.getCode(), e.getMessage() );
 
 	}
-    }
+    }*/
 
     @ApiOperation( value = "删除核销人员", notes = "删除核销人员" )
     @ResponseBody
@@ -495,10 +482,79 @@ public class DuofenCardController {
     @ApiOperation( value = "获取所有门店", notes = "获取所有门店" )
     @ResponseBody
     @RequestMapping( value = "/getWxshops", method = { RequestMethod.POST, RequestMethod.GET } )
-    public ServerResponse getWxshops( HttpServletRequest request, HttpServletResponse response, String content, Integer width, Integer height ) {
+    public ServerResponse getWxshops( HttpServletRequest request, HttpServletResponse response ) {
 	Integer busId = SessionUtils.getPidBusId( request );
 	List< Map > wxShops = requestService.findShopAllByBusId( busId );
 	return ServerResponse.createBySuccess( wxShops );
+    }
+
+
+    @ApiOperation( value = "生成手机领取优惠券二维码", notes = "生成手机领取优惠券二维码" )
+    @RequestMapping( value = "/couponMobilHomeCode", method = { RequestMethod.POST, RequestMethod.GET } )
+    public void couponMobilHomeCode( HttpServletRequest request, HttpServletResponse response ) {
+	Integer busId = SessionUtils.getPidBusId( request );
+	String url =PropertiesUtil.getWebHome()+"html/duofencard/phone/#/home/"+busId+"/0/0";
+	QRcodeKit.buildQRcode( url, 500, 500, response );
+    }
+
+    @ApiOperation( value = "领取优惠券短地址", notes = "生成手机领取优惠券二维码" )
+    @ResponseBody
+    @RequestMapping( value = "/getReceiveCouponShortUrl", method = { RequestMethod.POST, RequestMethod.GET } )
+    public ServerResponse getReceiveCouponShortUrl( HttpServletRequest request, HttpServletResponse response ) {
+
+	Integer busId = SessionUtils.getPidBusId( request );
+	String url =PropertiesUtil.getWebHome()+"html/duofencard/phone/#/home/"+busId+"/0/0";
+
+	String httpUrl = PropertiesUtil.getShortUrlDomain()+"/service/rest/shortUrl/getNewShortUrl";
+	String result = ShortUtil.newSendLongUrlToShortApi(httpUrl, url);
+	System.out.println( result );
+	return ServerResponse.createBySuccess( result );
+    }
+
+    @ApiOperation( value = "下载手机领取优惠券二维码", notes = "下载手机领取优惠券二维码" )
+    @RequestMapping( value = "/downCouponMobilHomeCode", method = { RequestMethod.POST, RequestMethod.GET } )
+    public void downCouponMobilHomeCode( HttpServletRequest request, HttpServletResponse response ) {
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    String url =PropertiesUtil.getWebHome()+"html/duofencard/phone/#/home/"+busId+"/0/0";
+	    String filename = "领取优惠券二维码.jpg";
+	    response.addHeader( "Content-Disposition", "attachment;filename=" + new String( filename.replaceAll( " ", "" ).getBytes( "utf-8" ), "iso8859-1" ) );
+	    response.setContentType( "application/octet-stream" );
+	    QRcodeKit.buildQRcode( url, 500, 500, response );
+	} catch ( UnsupportedEncodingException e ) {
+	    log.error( "下载二维码异常" );
+	    e.printStackTrace();
+	}
+    }
+
+    @ApiOperation( value = "生成领取优惠券二维码", notes = "生成领取优惠券二维码" )
+    @RequestMapping( value = "/couponCode", method = { RequestMethod.POST, RequestMethod.GET } )
+    public void couponCode( HttpServletRequest request, HttpServletResponse response,Integer publishId ) {
+	Integer busId = SessionUtils.getPidBusId( request );
+	String url =PropertiesUtil.getWebHome()+"/html/duofencard/phone/index.html#/home/" + busId+"/"+publishId+"/0";
+	QRcodeKit.buildQRcode( url, 500, 500, response );
+    }
+    @ApiOperation( value = "下载领取优惠券二维码", notes = "下载领取优惠券二维码" )
+    @RequestMapping( value = "/downCouponCode", method = { RequestMethod.POST, RequestMethod.GET } )
+    public void downCouponCode( HttpServletRequest request, HttpServletResponse response,Integer publishId ) {
+	try {
+	    Integer busId = SessionUtils.getPidBusId( request );
+	    String url =PropertiesUtil.getWebHome()+"/html/duofencard/phone/index.html#/home/" + busId+"/"+publishId+"/0";
+	    String filename = "领取优惠券二维码.jpg";
+	    response.addHeader( "Content-Disposition", "attachment;filename=" + new String( filename.replaceAll( " ", "" ).getBytes( "utf-8" ), "iso8859-1" ) );
+	    response.setContentType( "application/octet-stream" );
+	    QRcodeKit.buildQRcode( url, 500, 500, response );
+	} catch ( UnsupportedEncodingException e ) {
+	    log.error( "下载二维码异常" );
+	    e.printStackTrace();
+	}
+    }
+    @ApiOperation( value = "生成新增授权人二维码", notes = "生成新增授权人二维码" )
+    @RequestMapping( value = "/authoCode", method = { RequestMethod.POST, RequestMethod.GET } )
+    public void authoCode( HttpServletRequest request, HttpServletResponse response,Integer shopId ) {
+	Integer busId = SessionUtils.getPidBusId( request );
+	String url =PropertiesUtil.getWebHome()+"/html/duofencard/phone/#/accredit/"+busId+"/"+shopId;
+	QRcodeKit.buildQRcode( url, 500, 500, response );
     }
 
     @ApiOperation( value = "生成二维码", notes = "生成二维码" )
@@ -506,7 +562,6 @@ public class DuofenCardController {
     public void qrCode( HttpServletRequest request, HttpServletResponse response, String content ) {
 	QRcodeKit.buildQRcode( content, 500, 500, response );
     }
-
     @ApiOperation( value = "下载二维码", notes = "下载二维码" )
     @RequestMapping( value = "/downLoadQrCode", method = { RequestMethod.POST, RequestMethod.GET } )
     public void downLoadQrCode( HttpServletRequest request, HttpServletResponse response, String content ) {
@@ -520,6 +575,33 @@ public class DuofenCardController {
 	} catch ( UnsupportedEncodingException e ) {
 	    log.error( "下载二维码异常" );
 	    e.printStackTrace();
+	}
+    }
+
+    @ApiOperation( value = "核销优惠券信息", notes = "核销优惠券信息" )
+    @ResponseBody
+    @RequestMapping( value = "/findCouponInfoByCode", method = { RequestMethod.POST, RequestMethod.GET } )
+    public ServerResponse findCouponInfoByCode( HttpServletRequest request, HttpServletResponse response, @RequestParam String code ) {
+	try {
+	    Map< String,Object > coupon = duofenCardNewService.findCouponInfoByCode( code );
+	    return ServerResponse.createBySuccess( coupon );
+	} catch ( Exception e ) {
+	    log.error( "优惠券查询异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), e.getMessage() );
+	}
+    }
+
+    @ApiOperation( value = "核销优惠券", notes = "核销优惠券" )
+    @ResponseBody
+    @RequestMapping( value = "/useCoupon", method = { RequestMethod.POST} )
+    public ServerResponse useCoupon( HttpServletRequest request, HttpServletResponse response, @RequestParam String code,Double money,Double discountAfterMoney,Integer shopId  ) {
+	try {
+	    Integer currentBusId = SessionUtils.getLoginUser( request ).getId();
+	    duofenCardNewService.useCoupon( code,money,discountAfterMoney,shopId,currentBusId );
+	    return ServerResponse.createBySuccess( );
+	} catch ( Exception e ) {
+	    log.error( "核销优惠券异常", e );
+	    return ServerResponse.createByError( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 }

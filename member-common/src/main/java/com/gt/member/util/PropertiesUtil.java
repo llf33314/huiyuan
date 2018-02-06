@@ -58,6 +58,7 @@ public class PropertiesUtil {
     private static String materialUrl;
 
     private static String webLoginUrl;
+    private static String shortUrlDomain;
 
     public static String getWebHome() {
 	return webHome;
@@ -117,6 +118,10 @@ public class PropertiesUtil {
 
     public static String getStatic_source_ftp_password() {
 	return static_source_ftp_password;
+    }
+
+    public static String getShortUrlDomain() {
+	return shortUrlDomain;
     }
 
     @Value( "${web.webHome}" )

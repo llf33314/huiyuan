@@ -5,16 +5,9 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -984,6 +977,22 @@ public class CommonUtil {
     public static Object get( String key, Map< String,Object > requestBody ) {
 	if ( requestBody.containsKey( key ) ) return requestBody.get( key );
 
+	return null;
+    }
+
+    public static String byteToUTF8str( String str ) {
+	try {
+	    if (str == null) {
+		throw new Exception( "对象为空，转换失败！" );
+	    }
+	    byte[] byteArray = str.getBytes();
+	    System.out.println( new String( byteArray, "UTF-8" ) );
+
+
+	    return new String( byteArray, "UTF-8" );
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	}
 	return null;
     }
 }

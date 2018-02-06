@@ -66,4 +66,13 @@ public interface DuofenCardNewService extends BaseService<DuofenCardNew > {
     Integer withdrawMoneySet( Integer busId, Integer money );
 
     Map<String,Object> findCouponInfoByCode( String code );
+
+    /**
+     * @param code   领取券code
+     * @param money  应收金额
+     * @param discountAfterMoney  //优惠后金额
+     * @param shopId  //门店ID
+     * @param currentBusId //当前登录用户
+     */
+    void useCoupon( String code, Double money, Double discountAfterMoney, Integer shopId, Integer currentBusId );
 }

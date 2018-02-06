@@ -23,7 +23,26 @@
             <artifactId>member-web-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.gt.api</groupId>
+            <artifactId>gt_api</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gt.api</groupId>
+            <artifactId>gt_api</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gt.api</groupId>
+            <artifactId>gt_api</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gt.api</groupId>
+            <artifactId>gt_api</artifactId>
+            <version>RELEASE</version>
+        </dependency>
 
 
     </dependencies>

@@ -115,8 +115,11 @@ web:
  mallHome: http://mall.deeptel.com.cn/
   #联盟卡
  untion_url: https://union.deeptel.com.cn
+ #短链接域名  测试域名：http://short.duofee.com 正式域名：http://r25.cn
+  shortUrlDomain: http://short.duofee.com
  materialUrl: https://suc.deeptel.com.cn/common/material.do
  webLoginUrl: https://deeptel.com.cn/user/tologin.do
+ http://short.duofee.com
 
 redisSession:
  domainName: .deeptel.com.cn

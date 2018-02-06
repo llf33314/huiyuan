@@ -116,6 +116,8 @@ web:
  mallHome: http://mall.yifriend.net/
   #联盟卡
  untion_url: https://union.deeptel.com.cn
+  #短链接域名  测试域名：http://short.duofee.com 正式域名：http://r25.cn
+ shortUrlDomain: http://short.duofee.com
   #项目类型 0多粉 1微站
  webType: 0
  materialUrl: https://suc.deeptel.com.cn/common/material.do

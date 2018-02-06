@@ -17,6 +17,7 @@ import com.gt.member.service.common.dict.DictService;
 import com.gt.member.service.common.membercard.MemberCommonService;
 import com.gt.member.service.common.membercard.RequestService;
 import com.gt.member.service.member.DuofenCardNewService;
+import com.gt.member.util.BigDecimalUtil;
 import com.gt.member.util.CommonUtil;
 import com.gt.member.util.Page;
 import com.gt.member.util.PropertiesUtil;
@@ -62,6 +63,12 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
     private PublicParametersetDAO publicParametersetMapper;
     @Autowired
     private MemberCommonService   memberCommonService;
+    @Autowired
+    private MemberEntityDAO memberDAO;
+    @Autowired
+    private UserConsumeNewDAO userConsumeNewDAO;
+    @Autowired
+    private UserConsumePayDAO userConsumePayDAO;
 
     public Integer addCoupon( DuofenCardNewVO coupon ) throws BusinessException {
 	try {
@@ -85,7 +92,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	    return success;
 	} catch ( Exception e ) {
 	    LOG.error( "添加优惠失败", e );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "添加优惠失败" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -109,7 +116,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    LOG.error( "更新优惠券异常", e );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "更新优惠券异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -137,7 +144,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 
 		MemberEntity member = MemberEntityMapper.selectById( (Serializable) couponReceiveMap.get( "memberId" ) );
 		couponReceiveMap.put( "phone", member.getPhone() );
-		couponReceiveMap.put( "nickname", member.getNickname() );
+		couponReceiveMap.put( "nickname", CommonUtil.byteToUTF8str(member.getNickname()));
 
 		/*if ( Objects.equal( 1, couponReceiveMap.get( "isbuy" ) ) ) {
 		    Wrapper< UserConsumeNew > consumeCondition = new EntityWrapper< UserConsumeNew >();
@@ -160,7 +167,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    LOG.error( "优惠券领取列表查询异常" );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券领取列表查询异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -194,7 +201,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	    return couponMap;
 	} catch ( Exception e ) {
 	    LOG.error( "优惠券详情获取异常" );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券详情获取异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -222,7 +229,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	    return couponMap;
 	} catch ( Exception e ) {
 	    LOG.error( "优惠券信息获取异常" );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券信息获取异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -258,7 +265,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	    return consumeMap;
 	} catch ( Exception e ) {
 	    LOG.error( "查询购买详情异常" );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "查询购买详情异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -317,7 +324,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    LOG.error( "查询优惠券核销列表异常" + e.getMessage() );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "查询优惠券核销列表异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -333,6 +340,10 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 
 	    com.baomidou.mybatisplus.plugins.Page< MemberRecommend > pagination = new com.baomidou.mybatisplus.plugins.Page< MemberRecommend >( curPage, pageSize );
 	    List< Map< String,Object > > recommendList = memberRecommendMapper.selectRecommendList( pagination, condition );
+	    for ( Map< String,Object > map : recommendList ) {
+		byte[] bytes = (byte[]) map.get( "nickname" );
+		map.put( "nickname", new String( bytes, "UTF-8" ) );
+	    }
 
 	    if ( recordCount == 0 ) {
 		return new Page();
@@ -343,7 +354,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    LOG.error( "查询优惠券推荐列表异常" + e.getMessage() );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "查询优惠券推荐列表异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -369,7 +380,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    LOG.error( "查询数量异常" + e.getMessage() );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "查询数量异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -407,7 +418,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    LOG.error( "查询异常" + e.getMessage() );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "查询异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -423,7 +434,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    LOG.error( "更新优惠券异常", e );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "更新优惠券异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -438,7 +449,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    LOG.error( "更新优惠券异常", e );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "更新优惠券异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -453,7 +464,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    LOG.error( "更新优惠券异常", e );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "更新优惠券异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -471,7 +482,8 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 
 		MemberEntity member = MemberEntityMapper.selectById( (Serializable) couponReceiveMap.get( "memberId" ) );
 		couponReceiveMap.put( "phone", member.getPhone() );
-		couponReceiveMap.put( "nickname", member.getNickname() );
+
+		couponReceiveMap.put( "nickname", CommonUtil.byteToUTF8str(member.getNickname()));
 
 		if ( Objects.equals( 1, couponReceiveMap.get( "isbuy" ) ) ) {
 		    Wrapper< UserConsumeNew > consumeCondition = new EntityWrapper< UserConsumeNew >();
@@ -499,9 +511,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 			    paymentNames = paymentNames.concat( "," ).concat( payMaps.get( paymentType ).toString() );
 			}
 			couponReceiveMap.put( "paymentNames", paymentNames );
-
 		    }
-
 		}
 	    }
 	    return listItem;
@@ -591,7 +601,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	    return page;
 	} catch ( Exception e ) {
 	    LOG.error( "获取优惠卷列表异常" );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "获取优惠卷列表异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -617,7 +627,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    LOG.error( "查询优惠券推荐列表异常" + e.getMessage() );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "查询优惠券推荐列表异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -633,6 +643,11 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 
 	    com.baomidou.mybatisplus.plugins.Page< MemberRecommend > pagination = new com.baomidou.mybatisplus.plugins.Page< MemberRecommend >( curPage, pageSize );
 	    List< Map< String,Object > > recommendList = memberRecommendMapper.selectWithdrawList( pagination, condition );
+	    for ( Map< String,Object > map : recommendList ) {
+		byte[] bytes = (byte[]) map.get( "nickname" );
+		map.put( "nickname", new String( bytes, "UTF-8" ) );
+
+	    }
 
 	    if ( recordCount == 0 ) {
 		return new Page();
@@ -643,7 +658,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    LOG.error( "查询推荐提现列表异常" + e.getMessage() );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "查询推荐提现列表异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -662,7 +677,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	    return 1;
 	} catch ( Exception e ) {
 	    LOG.error( "提现金额设置异常" );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "提现金额设置异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -696,7 +711,108 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	    return couponInfo;
 	} catch ( Exception e ) {
 	    LOG.error( "优惠券信息获取异常" );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券信息获取异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
+	}
+    }
+
+    @Override
+    public void useCoupon( String code, Double money, Double discountAfterMoney, Integer shopId, Integer currentBusId ) {
+	try {
+
+	    DuofenCardGetNew couponGetInfo = cardGetMapper.selectOne( new DuofenCardGetNew().setCode( code ) );
+
+	    if ( couponGetInfo == null ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "查询优惠券不存在" );
+	    }
+
+	    DuofenCardTime  couponTime  =  cardTimeMapper.selectOne( new DuofenCardTime().setCardId( couponGetInfo.getCardId() ) );
+	    DuofenCardNew   couponInfo  =  baseMapper.selectOne( new DuofenCardNew().setId( couponGetInfo.getCardId() ) );
+	    MemberEntity memberEntity = memberDAO.selectById( couponGetInfo.getMemberId() );//被核销用户
+
+
+	    if ( CommonUtil.toInteger( couponGetInfo.getState(  ) ) == 1 ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券已使用" );
+	    }
+	    if ( CommonUtil.toInteger( couponGetInfo.getState(  ) ) == 2 ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "优惠券已过期" );
+	    }
+	    //当前日期是否可以用
+	    if ( ! memberCommonService.isUseDuofenCardTime( couponTime ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "当前日期优惠券不可用" );
+	    }
+	    Integer  couponType =couponInfo.getCardType();
+
+	    //折扣券
+	    if(couponType==1){
+		Double discountMoney =money *couponInfo.getDiscount();
+		discountMoney = BigDecimalUtil.HALF_UP(discountMoney,2);
+		if(!discountMoney.equals( discountAfterMoney )){
+		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "折扣券金额计算错误" );
+		}
+	    }
+	    //代金券
+	    if(couponType==2){
+	        //小于起用金额
+	        if(couponInfo.getCashLeastCost()>money){
+		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "小于起用金额" );
+		}
+		Double discountMoney =(money -couponInfo.getReduceCost());
+		discountMoney = BigDecimalUtil.HALF_UP(discountMoney,2);
+		if(!discountMoney.equals( discountAfterMoney )){
+		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "代金券金额计算错误" );
+		}
+	    }
+
+	    couponGetInfo.setState( 1 );  //使用状态
+	    couponGetInfo.setStoreId( shopId );  //核销门店
+	    couponGetInfo.setVerificationType( 1 );//核销方式 0自助核销 1人工核销
+	    couponGetInfo.setOperateDate( new Date() );  //核销时间
+	    couponGetInfo.setOperateBusId( currentBusId );//核销人员
+	    couponGetInfo.setUseLocation(2);  //核销场景
+
+	    cardGetMapper.updateById(couponGetInfo );
+
+	    UserConsumeNew consumeRecord = new UserConsumeNew();  //消费记录
+
+	    consumeRecord.setDvId(couponInfo.getId());  //优惠券ID
+	    consumeRecord.setDisCountdepict(code); //用户领取卡券code值
+
+	    //会员消费记录添加
+	    consumeRecord.setBusId( memberEntity.getBusId() );  //商户ID
+	    consumeRecord.setMemberId( memberEntity.getId() );  //消费会员ID
+	    consumeRecord.setRecordType( 2 );	// 记录类型 0积分记录 1充值记录 2消费记录 3次卡消费
+	    consumeRecord.setUcType( 201 );     //消费类型 字典1197 7会员卡充值 13购买会员卡 14线下核销 18优惠买单 20流量充值 21微预约
+	    consumeRecord.setCardType( 2 );    //卡券类型 -1未使用优惠券 0微信卡券 1多粉卡券 2新版多粉优惠券
+
+
+	    consumeRecord.setTotalMoney( CommonUtil.toDouble(money) );    //总金额
+	    consumeRecord.setDiscountMoney( CommonUtil.toDouble(money-discountAfterMoney) ); //优惠金额
+	    consumeRecord.setDiscountAfterMoney( CommonUtil.toDouble( discountAfterMoney ) );  //优惠后金额
+
+            consumeRecord.setPayStatus( 1 );    //支付状态 0未支付 1已支付 2支付失败 3退单 4部分退单
+
+
+	   String orderCode= CommonUtil.getMEOrderCode();
+	    consumeRecord.setOrderCode( orderCode );  //订单号
+	    consumeRecord.setShopId( shopId );             //门店ID
+	    consumeRecord.setDataSource( 0 ); 	//数据来源 0:pc端 1:微信 2:uc端 3:小程序 4魔盒 5:ERP
+	    consumeRecord.setIsend( 1 );       //订单是否已终结（不能退单）0未终结 1终结
+	    consumeRecord.setIsendDate( new Date() );//订单终结时间
+	    consumeRecord.setCreateDate( new Date() );  //创建时间
+
+	    consumeRecord.setIntegral( 0 );     //积分
+	    consumeRecord.setFenbi( 0.0 );  	//粉币
+
+	    userConsumeNewDAO.insert( consumeRecord );
+	    UserConsumePay userConsumePay = new UserConsumePay();//订单支付表
+	    userConsumePay.setUcId( consumeRecord.getId() );   //记录表ID
+	    userConsumePay.setPayMoney( CommonUtil.toDouble( discountAfterMoney ) );  //支付金额
+	    userConsumePay.setPaymentType( 10); //支付方式
+	    userConsumePayDAO.insert( userConsumePay );
+
+	} catch ( Exception e ) {
+	    LOG.error( "核销优惠券异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
@@ -771,7 +887,7 @@ public class DuofenCardNewServiceImpl extends BaseServiceImpl< DuofenCardNewDAO,
 	    return page;
 	} catch ( Exception e ) {
 	    LOG.error( "获取优惠卷列表异常" );
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "获取优惠卷列表异常" );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	}
     }
 
