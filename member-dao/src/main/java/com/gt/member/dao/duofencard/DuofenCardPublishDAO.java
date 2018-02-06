@@ -25,4 +25,7 @@ public interface DuofenCardPublishDAO extends BaseMapper<DuofenCardPublish > {
 
     public List<Map<String,Object>> findPublishByCardId(@Param( "cardId" )Integer cardId);
 
+
+    public List<Map<String,Object>> findPublishDuofenCardByPublishId(@Param( "publishId" )Integer publishId);
+
 }
