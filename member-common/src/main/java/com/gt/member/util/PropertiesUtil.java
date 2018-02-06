@@ -120,6 +120,11 @@ public class PropertiesUtil {
 	return static_source_ftp_password;
     }
 
+    @Value( "${web.shortUrlDomain}" )
+    public static void setShortUrlDomain( String shortUrlDomain ) {
+	PropertiesUtil.shortUrlDomain = shortUrlDomain;
+    }
+
     public static String getShortUrlDomain() {
 	return shortUrlDomain;
     }
